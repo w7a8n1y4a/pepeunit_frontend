@@ -1,0 +1,14 @@
+schema: 'https://devunit.pepeunit.com/pepeunit/graphql'
+documents: 'src/gql/**/*.ts'
+generates:
+    src/types/composition-functions.ts:
+        plugins:
+            - typescript
+            - typescript-operations
+            - typed-document-node
+        config:
+            scalars:
+                Date: string
+                Datetime: string
+                Number: number
+                Upload: File
