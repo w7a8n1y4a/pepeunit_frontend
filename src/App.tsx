@@ -1,38 +1,41 @@
 import ForceGraph from './components/ForceGraph'
 import './App.css'
+import { ApolloClient, InMemoryCache, ApolloProvider, gql } from '@apollo/client';
 
+const cache = new InMemoryCache();
 
-// const allFilmsWithVariablesQueryDocument = graphql(/* GraphQL */ `
-//   query allFilmsWithVariablesQuery($first: Int!) {
-//     allFilms(first: $first) {
-//       edges {
-//         node {
-//           id
-//           title
-//         }
-//       }
-//     }
-//   }
-// `)
-
-// const queryClient = new QueryClient()
+const client = new ApolloClient({
+  uri: 'https://devunit.pepeunit.com/pepeunit/graphql',
+  cache,
+  defaultOptions: {
+    watchQuery: {
+        fetchPolicy: 'network-only',
+    },
+    query: {
+        fetchPolicy: 'network-only',
+        partialRefetch: true,
+    },
+  },
+});
 
 function App() {
 
-  // const { data } = useQuery({
-  //   queryKey: ['films'],
-  //   queryFn: async () =>
-  //     request(
-  //       'https://swapi-graphql.netlify.app/.netlify/functions/index',
-  //       allFilmsWithVariablesQueryDocument,
-  //       // variables are type-checked too!
-  //       { first: 10 },
-  //     ),
-  // })
+  client
+  .query({ 
+    query: gql`{
+      query getToken (data: { credentials: "string", password: "string" }) {
+        ...UserType
+      }
+    }
+    `,
+  })
+  .then((result) => console.log(result));
 
   return (
     <>
-      <ForceGraph></ForceGraph>
+      <ApolloProvider client={client}>
+        <ForceGraph></ForceGraph>
+      </ApolloProvider>
     </>
   )
 }
