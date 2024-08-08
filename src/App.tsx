@@ -23,9 +23,7 @@ function App() {
   client
   .query({ 
     query: gql`{
-      query getToken (data: { credentials: "string", password: "string" }) {
-        ...UserType
-      }
+      getToken (data: { credentials: "string", password: "string" })
     }
     `,
   })
