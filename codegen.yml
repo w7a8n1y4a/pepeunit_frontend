@@ -9,6 +9,7 @@ generates:
         config:
             scalars:
                 Date: string
-                Datetime: string
+                DateTime: string
+                UUID: string
                 Number: number
                 Upload: File
