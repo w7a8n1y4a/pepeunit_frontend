@@ -7,6 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "stylelint": "stylelint ./src/**/*.{ts,tsx} --fix --config=./stylelint.config.cjs",
+    "generate-api-types": "graphql-codegen --config codegen.yml && prettier src/types/composition-functions.ts  --write",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -15,9 +17,19 @@
     "@tanstack/react-query": "^5.51.21",
     "dotenv": "^16.4.5",
     "graphql": "^16.9.0",
+    "postcss-html": "^1.7.0",
+    "postcss-scss": "^4.0.9",
+    "prettier": "^3.3.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-force-graph": "^1.44.4",
+    "stylelint": "14.9.1",
+    "stylelint-config-prettier": "9.0.3",
+    "stylelint-config-rational-order": "0.1.2",
+    "stylelint-config-recommended-scss": "7.0.0",
+    "stylelint-config-standard": "26.0.0",
+    "stylelint-order": "5.0.0",
+    "stylelint-prettier": "2.0.0",
     "three-spritetext": "^1.8.2"
   },
   "devDependencies": {
