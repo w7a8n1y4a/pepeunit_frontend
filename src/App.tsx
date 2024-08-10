@@ -1,6 +1,7 @@
 import ForceGraph from './components/ForceGraph'
 import './App.css'
 import { ApolloClient, InMemoryCache, ApolloProvider, gql } from '@apollo/client';
+import Header from './components/header/Header';
 
 const cache = new InMemoryCache();
 
@@ -32,6 +33,7 @@ function App() {
   return (
     <>
       <ApolloProvider client={client}>
+        <Header/>
         <ForceGraph></ForceGraph>
       </ApolloProvider>
     </>
