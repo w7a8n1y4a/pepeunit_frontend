@@ -17,9 +17,8 @@ export default function ForceGraph(){
       }
 
     return (
-    <ForceGraph3D
-        graphData={genRandomTree()}
-    />
-    
+      <ForceGraph3D
+          graphData={genRandomTree()}
+      />
     )
 }
