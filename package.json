@@ -13,8 +13,10 @@
   },
   "dependencies": {
     "@apollo/client": "^3.11.3",
+    "@graphql-codegen/typescript-react-apollo": "^4.3.0",
     "@parcel/watcher": "^2.4.1",
     "@tanstack/react-query": "^5.51.21",
+    "@types/base-64": "^1.0.2",
     "apollo-upload-client": "^17.0.0",
     "base-64": "^1.0.0",
     "dayjs": "^1.11.12",
@@ -37,6 +39,7 @@
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^5.0.2",
+    "@types/apollo-upload-client": "^17.0.0",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@typescript-eslint/eslint-plugin": "^7.15.0",

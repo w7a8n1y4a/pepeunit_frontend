@@ -3,7 +3,7 @@ import './App.css'
 import { onError } from '@apollo/client/link/error';
 import { setContext } from '@apollo/client/link/context';
 import { createUploadLink } from 'apollo-upload-client';
-import { ApolloClient, InMemoryCache, ApolloProvider, gql, from } from '@apollo/client';
+import { ApolloClient, InMemoryCache, ApolloProvider, from } from '@apollo/client';
 import { isAuthTokenExpired } from './utils/isAuthTokenExpired';
 import Header from './components/header/Header';
 
@@ -68,16 +68,6 @@ const client = new ApolloClient({
 });
 
 function App() {
-
-  client
-  .query({ 
-    query: gql`{
-      getToken (data: { credentials: "string", password: "string" })
-    }
-    `,
-  })
-  .then((result) => console.log(result));
-
   return (
     <>
       <ApolloProvider client={client}>

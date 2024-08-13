@@ -1,4 +1,5 @@
-import { TypedDocumentNode as DocumentNode } from "@graphql-typed-document-node/core";
+import { gql } from "@apollo/client";
+import * as Apollo from "@apollo/client";
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = {
@@ -19,6 +20,7 @@ export type Incremental<T> =
   | {
       [P in keyof T]?: P extends " $fragmentName" | "__typename" ? T[P] : never;
     };
+const defaultOptions = {} as const;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: { input: string; output: string };
@@ -499,79 +501,71 @@ export type GetTokenQueryVariables = Exact<{
 
 export type GetTokenQuery = { __typename?: "Query"; getToken: string };
 
-export const GetTokenDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "query",
-      name: { kind: "Name", value: "getToken" },
-      variableDefinitions: [
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "credentials" },
-          },
-          type: {
-            kind: "NonNullType",
-            type: {
-              kind: "NamedType",
-              name: { kind: "Name", value: "String" },
-            },
-          },
-        },
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "password" },
-          },
-          type: {
-            kind: "NonNullType",
-            type: {
-              kind: "NamedType",
-              name: { kind: "Name", value: "String" },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "getToken" },
-            arguments: [
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "data" },
-                value: {
-                  kind: "ObjectValue",
-                  fields: [
-                    {
-                      kind: "ObjectField",
-                      name: { kind: "Name", value: "credentials" },
-                      value: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "credentials" },
-                      },
-                    },
-                    {
-                      kind: "ObjectField",
-                      name: { kind: "Name", value: "password" },
-                      value: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "password" },
-                      },
-                    },
-                  ],
-                },
-              },
-            ],
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<GetTokenQuery, GetTokenQueryVariables>;
+export const GetTokenDocument = gql`
+  query getToken($credentials: String!, $password: String!) {
+    getToken(data: { credentials: $credentials, password: $password })
+  }
+`;
+
+/**
+ * __useGetTokenQuery__
+ *
+ * To run a query within a React component, call `useGetTokenQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTokenQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTokenQuery({
+ *   variables: {
+ *      credentials: // value for 'credentials'
+ *      password: // value for 'password'
+ *   },
+ * });
+ */
+export function useGetTokenQuery(
+  baseOptions: Apollo.QueryHookOptions<GetTokenQuery, GetTokenQueryVariables> &
+    ({ variables: GetTokenQueryVariables; skip?: boolean } | { skip: boolean }),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetTokenQuery, GetTokenQueryVariables>(
+    GetTokenDocument,
+    options,
+  );
+}
+export function useGetTokenLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetTokenQuery,
+    GetTokenQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetTokenQuery, GetTokenQueryVariables>(
+    GetTokenDocument,
+    options,
+  );
+}
+export function useGetTokenSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    GetTokenQuery,
+    GetTokenQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<GetTokenQuery, GetTokenQueryVariables>(
+    GetTokenDocument,
+    options,
+  );
+}
+export type GetTokenQueryHookResult = ReturnType<typeof useGetTokenQuery>;
+export type GetTokenLazyQueryHookResult = ReturnType<
+  typeof useGetTokenLazyQuery
+>;
+export type GetTokenSuspenseQueryHookResult = ReturnType<
+  typeof useGetTokenSuspenseQuery
+>;
+export type GetTokenQueryResult = Apollo.QueryResult<
+  GetTokenQuery,
+  GetTokenQueryVariables
+>;
