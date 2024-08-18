@@ -1,13 +1,16 @@
 import { useGetTokenLazyQuery, useCreateUserMutation, useGetUserLazyQuery } from '../../types/composition-functions'
 import BaseModal from '../modal/BaseModal'
 import logo from '/images/logo_32_32.png'
-import signin from '/images/signin.svg'
+import signin_icon from '/images/signin.svg'
+import signout_icon from '/images/signout.svg'
 import { getUserUuidByToken } from '../../utils/getUserUuidByToken';
 import { useState } from 'react'
 
 export default function Header(){
     const [isModalSignInOpen, setIsModalSignInOpen] = useState(false)
     const [isModalRegisterOpen, setIsModalRegisterOpen] = useState(false)
+    const [isShowLogin, setShowLogin] = useState(true);
+
     const [login, setLogin] = useState('')
     const [password, setPassword] = useState('')
     const [loginReg, setLoginReg] = useState('')
@@ -32,6 +35,12 @@ export default function Header(){
         setIsModalSignInOpen(false)
         setIsModalRegisterOpen(true)
     }
+    function signout(){
+        localStorage.removeItem('token')
+        localStorage.removeItem('user')
+        setIsModalSignInOpen(false)
+        setShowLogin(true)
+    }
     
     const [ createUserMutation ] = useCreateUserMutation();
     const [ getToken ] = useGetTokenLazyQuery();
@@ -54,11 +63,11 @@ export default function Header(){
                         uuid: getUserUuidByToken(tokenData.data.getToken)
                     }
                 }).then(userData => {
-                    console.log(userData)
                     if (userData.data) {
-                        console.log(userData.data)
                         localStorage.setItem('user', JSON.stringify(userData.data));
                     }
+                    setShowLogin(false)
+                    setIsModalSignInOpen(false)
                 })
             } else {
                 console.error('Ошибка получения токена:', tokenData.error);
@@ -84,8 +93,6 @@ export default function Header(){
                 password: passwordReg
             }
         }).then(createUserData => {
-            console.log(createUserData.data)
-
             if (createUserData.data) {
                 console.log('Пользователь создан:', createUserData.data);
 
@@ -96,7 +103,6 @@ export default function Header(){
                     }
                 }).then(tokenData => {
                     if (tokenData.data) { 
-                        console.log(tokenData.data.getToken)
                         localStorage.setItem('token', tokenData.data.getToken);
                         localStorage.setItem('user', JSON.stringify(createUserData.data));
                     } else {
@@ -122,9 +128,22 @@ export default function Header(){
                 </a>
             </div>
             <div>
-                <button className="signin" onClick={openModalSignIn}>
-                    <img src={signin} width="32" height="32" alt="Signin"/>
-                </button>
+                {
+                    isShowLogin
+                    ?
+                    <button className="signin" onClick={openModalSignIn}>
+                        <img src={signin_icon} width="32" height="32" alt="Signin"/>
+                    </button>
+                    :
+                    <div>
+                        <button className="signout" onClick={signout}>
+                            {login}
+                        </button>
+                        <button className="signout" onClick={signout}>
+                            <img src={signout_icon} width="32" height="32" alt="signout"/>
+                        </button>
+                    </div>
+                }
                 <BaseModal open={isModalSignInOpen} closeModal={() => {setIsModalSignInOpen(false)}}>
                     <button className="signin" onClick={openModalRegister}>
                         Регистрация
