@@ -14,13 +14,13 @@ export default function Header(){
     const [confirmPassReg, setConfirmPassReg] = useState('') 
 
     function isValidLogin(login: string) {
-        const regex = /^[a-zA-Z0-9_.-]$/; 
-        return regex.test(login) && login.length >= 8 && login.length <= 100;
+        const regex = /^[a-zA-Z0-9_.-]{4,20}$/;
+        return regex.test(login);
     };
   
     function isValidPassword(password: string) {
-        const regex = /^[a-zA-Z0-9_.-]$/; 
-        return regex.test(password) && password.length >= 4 && password.length <= 20;
+        const regex = /^[a-zA-Z0-9!"#$%&'()*+,\-./:;<=>?@[\]\\^_`{|}~]{8,100}$/;;
+        return regex.test(password);
     };
 
     function openModalSignIn(){
@@ -31,7 +31,7 @@ export default function Header(){
         setIsModalSignInOpen(false)
         setIsModalRegisterOpen(true)
     }
-
+    
     const [createUserMutation] = useCreateUserMutation({
         variables: {
             login: loginReg,
@@ -69,6 +69,8 @@ export default function Header(){
         }
 
         if (!isValidLogin(loginReg) || !isValidPassword(passwordReg)) {
+            console.log(isValidLogin(loginReg))
+            console.log(isValidPassword(loginReg))
             alert("Неверный формат логина или пароля!");
             return;
         }
