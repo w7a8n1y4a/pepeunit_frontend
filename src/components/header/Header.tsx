@@ -1,7 +1,8 @@
-import { useGetTokenLazyQuery, useCreateUserMutation } from '../../types/composition-functions'
+import { useGetTokenLazyQuery, useCreateUserMutation, useGetUserLazyQuery } from '../../types/composition-functions'
 import BaseModal from '../modal/BaseModal'
 import logo from '/images/logo_32_32.png'
 import signin from '/images/signin.svg'
+import { getUserUuidByToken } from '../../utils/getUserUuidByToken';
 import { useState } from 'react'
 
 export default function Header(){
@@ -32,30 +33,33 @@ export default function Header(){
         setIsModalRegisterOpen(true)
     }
     
-    const [createUserMutation] = useCreateUserMutation({
-        variables: {
-            login: loginReg,
-            password: passwordReg
-        },
-    });
-    
-    const [
-        getToken,
-    ] = useGetTokenLazyQuery({
-        variables: {
-            credentials: login,
-            password: password,
-        },
-    });
+    const [ createUserMutation ] = useCreateUserMutation();
+    const [ getToken ] = useGetTokenLazyQuery();
+    const [ getUser ]  = useGetUserLazyQuery();
 
     const handleLogin = () => {
-        getToken().then(tokenData => {
+        localStorage.removeItem('token')
 
-            console.log(tokenData)
+        getToken({
+            variables: {
+                credentials: login,
+                password: password,
+            }
+        }).then(tokenData => {
             if (tokenData.data) { 
-                localStorage.removeItem('token');
                 localStorage.setItem('token', tokenData.data.getToken);
-                console.log(tokenData.data.getToken)
+
+                getUser({
+                    variables: {
+                        uuid: getUserUuidByToken(tokenData.data.getToken)
+                    }
+                }).then(userData => {
+                    console.log(userData)
+                    if (userData.data) {
+                        console.log(userData.data)
+                        localStorage.setItem('user', JSON.stringify(userData.data));
+                    }
+                })
             } else {
                 console.error('Ошибка получения токена:', tokenData.error);
             }
@@ -69,17 +73,36 @@ export default function Header(){
         }
 
         if (!isValidLogin(loginReg) || !isValidPassword(passwordReg)) {
-            console.log(isValidLogin(loginReg))
-            console.log(isValidPassword(loginReg))
             alert("Неверный формат логина или пароля!");
             return;
         }
 
-        createUserMutation().then(createUserData => {
+        localStorage.removeItem('token');
+        createUserMutation({
+            variables: {
+                login: loginReg,
+                password: passwordReg
+            }
+        }).then(createUserData => {
             console.log(createUserData.data)
 
             if (createUserData.data) {
                 console.log('Пользователь создан:', createUserData.data);
+
+                getToken({
+                    variables: {
+                        credentials: loginReg,
+                        password: passwordReg,
+                    }
+                }).then(tokenData => {
+                    if (tokenData.data) { 
+                        console.log(tokenData.data.getToken)
+                        localStorage.setItem('token', tokenData.data.getToken);
+                        localStorage.setItem('user', JSON.stringify(createUserData.data));
+                    } else {
+                        console.error('Ошибка получения токена:', tokenData.error);
+                    }
+                })
             }
         })
 

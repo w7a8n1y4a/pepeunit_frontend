@@ -8,10 +8,10 @@ import { isAuthTokenExpired } from './utils/isAuthTokenExpired';
 import Header from './components/header/Header';
 
 const authLink = setContext((_, { headers }) => {
-  const token = localStorage.getItem('newToken');
+  const token = localStorage.getItem('token');
 
   if (token && isAuthTokenExpired(token)) {
-      localStorage.removeItem('newToken');
+      localStorage.removeItem('token');
 
       return {
           headers: { ...headers },
