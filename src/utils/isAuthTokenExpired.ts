@@ -5,13 +5,10 @@ import utc from 'dayjs/plugin/utc';
 dayjs.extend(utc);
 
 const getExpirationDateFromToken = (token: string) => {
-    const expirationStringPosition = 5;
-    const expirationDatePosition = 2;
-
-    return JSON.parse(Base64.decode(token))
-        .body.split('\n')
-        [expirationStringPosition].split(' ')[expirationDatePosition];
+    return JSON.parse(Base64.decode(token.split('.')[1])).exp;
 };
 
-export const isAuthTokenExpired = (token: string) =>
-    dayjs(getExpirationDateFromToken(token)).utc().diff(dayjs().utc()) < 0;
+export const isAuthTokenExpired = (token: string) =>{
+    console.log(getExpirationDateFromToken(token) - Math.floor(Date.now()/1000))
+    return getExpirationDateFromToken(token) - Math.floor(Date.now()/1000) < 0;
+}
