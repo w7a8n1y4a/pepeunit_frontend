@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { useCreateUserMutation, useGetTokenLazyQuery } from '../../types/composition-functions';
+import isValidPassword from '../../utils/isValidPassword'
+import isValidLogin from '../../utils/isValidLogin'
 
 interface RegisterFormProps {
     openModalSignIn: () => void;
@@ -14,16 +16,6 @@ export default function RegisterForm({ openModalSignIn, setShowLogin, setIsModal
     
     const [createUserMutation] = useCreateUserMutation();
     const [getToken] = useGetTokenLazyQuery();
-
-    function isValidLogin(login: string) {
-        const regex = /^[a-zA-Z0-9_.-]{4,20}$/;
-        return regex.test(login);
-    };
-
-    function isValidPassword(password: string) {
-        const regex = /^[a-zA-Z0-9!"#$%&'()*+,\-./:;<=>?@[\]\\^_`{|}~]{8,100}$/;
-        return regex.test(password);
-    };
 
     const handleRegister = () => {
         if (password !== confirmPassword) {

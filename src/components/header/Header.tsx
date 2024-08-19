@@ -1,18 +1,22 @@
-import { useGetVerificationUserLazyQuery } from '../../types/composition-functions';
 import BaseModal from '../modal/BaseModal'
 import logo from '/images/logo_32_32.png'
 import signin_icon from '/images/signin.svg'
 import signout_icon from '/images/signout.svg'
 import SignInForm from '../forms/SignInForm';
 import RegisterForm from '../forms/RegisterForm';
+import VerificationForm from '../forms/VerificationForm';
+import ChangeLoginForm from '../forms/ChangeLoginForm';
+import ChangePassForm from '../forms/ChangePassForm';
 import { useState } from 'react'
 
 export default function Header(){
     const [isModalSignInOpen, setIsModalSignInOpen] = useState(false)
     const [isModalRegisterOpen, setIsModalRegisterOpen] = useState(false)
     const [isModalUserMenu, setIsModalUserMenuOpen] = useState(false)
+    const [isModalVerification, setIsModalVerificationOpen] = useState(false)
+    const [isModalChangeLogin, setIsModalChangeLoginOpen] = useState(false)
+    const [isModalChangePass, setIsModalChangePassOpen] = useState(false)
     const [isShowLogin, setShowLogin] = useState(true);
-    const [verificationCode, setVerificationCode] = useState('');
 
     let user = localStorage.getItem('user')
     let login = user ? JSON.parse(user).login : ''
@@ -31,20 +35,6 @@ export default function Header(){
         setIsModalSignInOpen(false)
         setShowLogin(true)
     }
-
-    const [getVerification] = useGetVerificationUserLazyQuery();
-
-    const handleVerification = () => {
-        localStorage.removeItem('verificationCode')
-
-        getVerification().then(verificationCode => {
-            if (verificationCode.data) { 
-                setVerificationCode(verificationCode.data.getVerificationUser)
-            } else {
-                console.error('Ошибка получения кода:', verificationCode.error);
-            }
-        })
-    };
 
     return (
         <header>
@@ -92,17 +82,39 @@ export default function Header(){
                 </BaseModal>
                 <BaseModal open={isModalUserMenu} closeModal={() => {setIsModalUserMenuOpen(false)}}>
                     <div>
-                        Меню Пользователя {verificationCode}
+                        Меню Пользователя
                     </div>
-                    <button className="verification" onClick={handleVerification}>
+                    <button className="verification" onClick={() => {
+                        setIsModalVerificationOpen(true)
+                        setIsModalUserMenuOpen(false)
+                    }}>
                         Верификация в Telegram
                     </button>
-                    <button className="change_login" onClick={signout}>
+                    <button className="change_login" onClick={() => {
+                        setIsModalChangeLoginOpen(true)
+                        setIsModalUserMenuOpen(false)
+                    }}>
                         Смена Логина
                     </button>
-                    <button className="change_password" onClick={signout}>
+                    <button className="change_password" onClick={() => {
+                        setIsModalChangePassOpen(true)
+                        setIsModalUserMenuOpen(false)
+                    }}>
                         Смена Пароля
                     </button>
+                </BaseModal>
+                <BaseModal open={isModalVerification} closeModal={() => {setIsModalVerificationOpen(false)}}>
+                    <VerificationForm/>
+                </BaseModal>
+                <BaseModal open={isModalChangeLogin} closeModal={() => {setIsModalChangeLoginOpen(false)}}>
+                    <ChangeLoginForm
+                        setIsModalChangeLoginOpen={setIsModalChangeLoginOpen}
+                    />
+                </BaseModal>
+                <BaseModal open={isModalChangePass} closeModal={() => {setIsModalChangePassOpen(false)}}>
+                    <ChangePassForm
+                        setIsModalChangePassOpen={setIsModalChangePassOpen}
+                    />
                 </BaseModal>
             </div>
         </header>
