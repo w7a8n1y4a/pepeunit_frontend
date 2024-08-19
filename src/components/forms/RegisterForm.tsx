@@ -54,7 +54,7 @@ export default function RegisterForm({ openModalSignIn, setShowLogin, setIsModal
                 }).then(tokenData => {
                     if (tokenData.data) { 
                         localStorage.setItem('token', tokenData.data.getToken);
-                        localStorage.setItem('user', JSON.stringify(createUserData.data));
+                        localStorage.setItem('user', JSON.stringify(createUserData.data?.createUser));
 
                         setShowLogin(false)
                         setIsModalRegisterOpen(false)
