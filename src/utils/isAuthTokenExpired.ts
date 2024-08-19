@@ -9,6 +9,5 @@ const getExpirationDateFromToken = (token: string) => {
 };
 
 export const isAuthTokenExpired = (token: string) =>{
-    console.log(getExpirationDateFromToken(token) - Math.floor(Date.now()/1000))
     return getExpirationDateFromToken(token) - Math.floor(Date.now()/1000) < 0;
 }

@@ -228,6 +228,7 @@ export type Query = {
   getUnits: Array<UnitType>;
   getUser: UserType;
   getUsers: Array<UserType>;
+  getVerificationUser: Scalars["String"]["output"];
   getVersions: RepoVersionsType;
 };
 
@@ -511,6 +512,23 @@ export type CreateUserMutation = {
   };
 };
 
+export type UpdateUserMutationVariables = Exact<{
+  login?: InputMaybe<Scalars["String"]["input"]>;
+  password?: InputMaybe<Scalars["String"]["input"]>;
+}>;
+
+export type UpdateUserMutation = {
+  __typename?: "Mutation";
+  updateUser: {
+    __typename?: "UserType";
+    uuid: string;
+    role: UserRole;
+    status: UserStatus;
+    login: string;
+    createDatetime: string;
+  };
+};
+
 export type GetTokenQueryVariables = Exact<{
   credentials: Scalars["String"]["input"];
   password: Scalars["String"]["input"];
@@ -532,6 +550,13 @@ export type GetUserQuery = {
     login: string;
     createDatetime: string;
   };
+};
+
+export type GetVerificationUserQueryVariables = Exact<{ [key: string]: never }>;
+
+export type GetVerificationUserQuery = {
+  __typename?: "Query";
+  getVerificationUser: string;
 };
 
 export const CreateUserDocument = gql`
@@ -588,6 +613,61 @@ export type CreateUserMutationResult =
 export type CreateUserMutationOptions = Apollo.BaseMutationOptions<
   CreateUserMutation,
   CreateUserMutationVariables
+>;
+export const UpdateUserDocument = gql`
+  mutation updateUser($login: String, $password: String) {
+    updateUser(user: { login: $login, password: $password }) {
+      uuid
+      role
+      status
+      login
+      createDatetime
+    }
+  }
+`;
+export type UpdateUserMutationFn = Apollo.MutationFunction<
+  UpdateUserMutation,
+  UpdateUserMutationVariables
+>;
+
+/**
+ * __useUpdateUserMutation__
+ *
+ * To run a mutation, you first call `useUpdateUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateUserMutation, { data, loading, error }] = useUpdateUserMutation({
+ *   variables: {
+ *      login: // value for 'login'
+ *      password: // value for 'password'
+ *   },
+ * });
+ */
+export function useUpdateUserMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpdateUserMutation,
+    UpdateUserMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<UpdateUserMutation, UpdateUserMutationVariables>(
+    UpdateUserDocument,
+    options,
+  );
+}
+export type UpdateUserMutationHookResult = ReturnType<
+  typeof useUpdateUserMutation
+>;
+export type UpdateUserMutationResult =
+  Apollo.MutationResult<UpdateUserMutation>;
+export type UpdateUserMutationOptions = Apollo.BaseMutationOptions<
+  UpdateUserMutation,
+  UpdateUserMutationVariables
 >;
 export const GetTokenDocument = gql`
   query getToken($credentials: String!, $password: String!) {
@@ -727,4 +807,74 @@ export type GetUserSuspenseQueryHookResult = ReturnType<
 export type GetUserQueryResult = Apollo.QueryResult<
   GetUserQuery,
   GetUserQueryVariables
+>;
+export const GetVerificationUserDocument = gql`
+  query getVerificationUser {
+    getVerificationUser
+  }
+`;
+
+/**
+ * __useGetVerificationUserQuery__
+ *
+ * To run a query within a React component, call `useGetVerificationUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetVerificationUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetVerificationUserQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetVerificationUserQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetVerificationUserQuery,
+    GetVerificationUserQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    GetVerificationUserQuery,
+    GetVerificationUserQueryVariables
+  >(GetVerificationUserDocument, options);
+}
+export function useGetVerificationUserLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetVerificationUserQuery,
+    GetVerificationUserQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    GetVerificationUserQuery,
+    GetVerificationUserQueryVariables
+  >(GetVerificationUserDocument, options);
+}
+export function useGetVerificationUserSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    GetVerificationUserQuery,
+    GetVerificationUserQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<
+    GetVerificationUserQuery,
+    GetVerificationUserQueryVariables
+  >(GetVerificationUserDocument, options);
+}
+export type GetVerificationUserQueryHookResult = ReturnType<
+  typeof useGetVerificationUserQuery
+>;
+export type GetVerificationUserLazyQueryHookResult = ReturnType<
+  typeof useGetVerificationUserLazyQuery
+>;
+export type GetVerificationUserSuspenseQueryHookResult = ReturnType<
+  typeof useGetVerificationUserSuspenseQuery
+>;
+export type GetVerificationUserQueryResult = Apollo.QueryResult<
+  GetVerificationUserQuery,
+  GetVerificationUserQueryVariables
 >;

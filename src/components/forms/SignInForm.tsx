@@ -26,14 +26,13 @@ export default function SignInForm({openModalRegister, setShowLogin, setIsModalS
         }).then(tokenData => {
             if (tokenData.data) { 
                 localStorage.setItem('token', tokenData.data.getToken);
-
                 getUser({
                     variables: {
                         uuid: getUserUuidByToken(tokenData.data.getToken)
                     }
                 }).then(userData => {
                     if (userData.data) {
-                        localStorage.setItem('user', JSON.stringify(userData.data));
+                        localStorage.setItem('user', JSON.stringify(userData.data.getUser));
                     }
                     setShowLogin(false)
                     setIsModalSignInOpen(false)

@@ -1,3 +1,4 @@
+import { useGetVerificationUserLazyQuery } from '../../types/composition-functions';
 import BaseModal from '../modal/BaseModal'
 import logo from '/images/logo_32_32.png'
 import signin_icon from '/images/signin.svg'
@@ -9,7 +10,12 @@ import { useState } from 'react'
 export default function Header(){
     const [isModalSignInOpen, setIsModalSignInOpen] = useState(false)
     const [isModalRegisterOpen, setIsModalRegisterOpen] = useState(false)
+    const [isModalUserMenu, setIsModalUserMenuOpen] = useState(false)
     const [isShowLogin, setShowLogin] = useState(true);
+    const [verificationCode, setVerificationCode] = useState('');
+
+    let user = localStorage.getItem('user')
+    let login = user ? JSON.parse(user).login : ''
 
     function openModalSignIn(){
         setIsModalRegisterOpen(false)
@@ -25,6 +31,20 @@ export default function Header(){
         setIsModalSignInOpen(false)
         setShowLogin(true)
     }
+
+    const [getVerification] = useGetVerificationUserLazyQuery();
+
+    const handleVerification = () => {
+        localStorage.removeItem('verificationCode')
+
+        getVerification().then(verificationCode => {
+            if (verificationCode.data) { 
+                setVerificationCode(verificationCode.data.getVerificationUser)
+            } else {
+                console.error('Ошибка получения кода:', verificationCode.error);
+            }
+        })
+    };
 
     return (
         <header>
@@ -48,8 +68,8 @@ export default function Header(){
                     </button>
                     :
                     <div>
-                        <button className="signout" onClick={signout}>
-                            login
+                        <button className="user_menu" onClick={() => setIsModalUserMenuOpen(true)}>
+                            {login}
                         </button>
                         <button className="signout" onClick={signout}>
                             <img src={signout_icon} width="32" height="32" alt="signout"/>
@@ -69,6 +89,20 @@ export default function Header(){
                         setShowLogin={setShowLogin}
                         setIsModalRegisterOpen={setIsModalRegisterOpen}
                     />
+                </BaseModal>
+                <BaseModal open={isModalUserMenu} closeModal={() => {setIsModalUserMenuOpen(false)}}>
+                    <div>
+                        Меню Пользователя {verificationCode}
+                    </div>
+                    <button className="verification" onClick={handleVerification}>
+                        Верификация в Telegram
+                    </button>
+                    <button className="change_login" onClick={signout}>
+                        Смена Логина
+                    </button>
+                    <button className="change_password" onClick={signout}>
+                        Смена Пароля
+                    </button>
                 </BaseModal>
             </div>
         </header>

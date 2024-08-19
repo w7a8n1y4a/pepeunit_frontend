@@ -19,4 +19,8 @@ gql`
             createDatetime
         }
     }
+
+    query getVerificationUser{
+        getVerificationUser
+    }
 `
