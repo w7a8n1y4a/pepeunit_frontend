@@ -7,116 +7,100 @@ import RegisterForm from '../forms/RegisterForm';
 import VerificationForm from '../forms/VerificationForm';
 import ChangeLoginForm from '../forms/ChangeLoginForm';
 import ChangePassForm from '../forms/ChangePassForm';
-import { useState } from 'react'
+import { useState, useCallback } from 'react';
 
 export default function Header(){
-    const [isModalSignInOpen, setIsModalSignInOpen] = useState(false)
-    const [isModalRegisterOpen, setIsModalRegisterOpen] = useState(false)
-    const [isModalUserMenu, setIsModalUserMenuOpen] = useState(false)
-    const [isModalVerification, setIsModalVerificationOpen] = useState(false)
-    const [isModalChangeLogin, setIsModalChangeLoginOpen] = useState(false)
-    const [isModalChangePass, setIsModalChangePassOpen] = useState(false)
+    const [activeModal, setActiveModal] = useState<string | null>(null);
     const [isShowLogin, setShowLogin] = useState(true);
 
-    let user = localStorage.getItem('user')
-    let login = user ? JSON.parse(user).login : ''
+    const user = localStorage.getItem('user');
+    const login = user ? JSON.parse(user).login : '';
 
-    function openModalSignIn(){
-        setIsModalRegisterOpen(false)
-        setIsModalSignInOpen(true)
-    }
-    function openModalRegister(){
-        setIsModalSignInOpen(false)
-        setIsModalRegisterOpen(true)
-    }
-    function signout(){
-        localStorage.removeItem('token')
-        localStorage.removeItem('user')
-        setIsModalSignInOpen(false)
-        setShowLogin(true)
-    }
+    const openModal = useCallback((modalType: string) => {
+        setActiveModal(modalType);
+    }, []);
+
+    const closeModal = useCallback(() => {
+        setActiveModal(null);
+    }, []);
+
+    const signout = useCallback(() => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        setShowLogin(true);
+        closeModal();
+    }, [closeModal]);
 
     return (
         <header>
             <div>
                 <a href='/'>
-                    <img src={logo} alt="Icon"/>
+                    <img src={logo} alt="Icon" />
                 </a>
             </div>
             <div>
-                <span>Search</span>
                 <a href='https://pepeunit.com/' target="_blank">
                     <span>Docs</span>
                 </a>
+                <span>Search</span>
             </div>
             <div>
-                {
-                    isShowLogin
-                    ?
-                    <button className="signin" onClick={openModalSignIn}>
-                        <img src={signin_icon} width="32" height="32" alt="Signin"/>
+                {isShowLogin ? (
+                    <button className="signin" onClick={() => openModal('signin')}>
+                        <img src={signin_icon} width="32" height="32" alt="Signin" />
                     </button>
-                    :
+                ) : (
                     <div>
-                        <button className="user_menu" onClick={() => setIsModalUserMenuOpen(true)}>
+                        <button className="user_menu" onClick={() => openModal('userMenu')}>
                             {login}
                         </button>
                         <button className="signout" onClick={signout}>
-                            <img src={signout_icon} width="32" height="32" alt="signout"/>
+                            <img src={signout_icon} width="32" height="32" alt="signout" />
                         </button>
                     </div>
-                }
-                <BaseModal open={isModalSignInOpen} closeModal={() => {setIsModalSignInOpen(false)}}>
+                )}
+
+                <BaseModal open={activeModal === 'signin'} closeModal={closeModal}>
                     <SignInForm
-                        openModalRegister={openModalRegister}
+                        openModalRegister={() => openModal('register')}
                         setShowLogin={setShowLogin}
-                        setIsModalSignInOpen={setIsModalSignInOpen}
+                        setActiveModal={setActiveModal}
                     />
                 </BaseModal>
-                <BaseModal open={isModalRegisterOpen} closeModal={() => {setIsModalRegisterOpen(false)}}>
+
+                <BaseModal open={activeModal === 'register'} closeModal={closeModal}>
                     <RegisterForm
-                        openModalSignIn={openModalSignIn}
+                        openModalSignIn={() => openModal('signin')}
                         setShowLogin={setShowLogin}
-                        setIsModalRegisterOpen={setIsModalRegisterOpen}
+                        setActiveModal={setActiveModal}
                     />
                 </BaseModal>
-                <BaseModal open={isModalUserMenu} closeModal={() => {setIsModalUserMenuOpen(false)}}>
-                    <div>
-                        Меню Пользователя
-                    </div>
-                    <button className="verification" onClick={() => {
-                        setIsModalVerificationOpen(true)
-                        setIsModalUserMenuOpen(false)
-                    }}>
+
+                <BaseModal open={activeModal === 'userMenu'} closeModal={closeModal}>
+                    <div>Меню Пользователя</div>
+                    <button className="verification" onClick={() => openModal('verification')}>
                         Верификация в Telegram
                     </button>
-                    <button className="change_login" onClick={() => {
-                        setIsModalChangeLoginOpen(true)
-                        setIsModalUserMenuOpen(false)
-                    }}>
+                    <button className="change_login" onClick={() => openModal('changeLogin')}>
                         Смена Логина
                     </button>
-                    <button className="change_password" onClick={() => {
-                        setIsModalChangePassOpen(true)
-                        setIsModalUserMenuOpen(false)
-                    }}>
+                    <button className="change_password" onClick={() => openModal('changePass')}>
                         Смена Пароля
                     </button>
                 </BaseModal>
-                <BaseModal open={isModalVerification} closeModal={() => {setIsModalVerificationOpen(false)}}>
-                    <VerificationForm/>
+
+                <BaseModal open={activeModal === 'verification'} closeModal={closeModal}>
+                    <VerificationForm />
                 </BaseModal>
-                <BaseModal open={isModalChangeLogin} closeModal={() => {setIsModalChangeLoginOpen(false)}}>
-                    <ChangeLoginForm
-                        setIsModalChangeLoginOpen={setIsModalChangeLoginOpen}
-                    />
+
+                <BaseModal open={activeModal === 'changeLogin'} closeModal={closeModal}>
+                    <ChangeLoginForm setActiveModal={setActiveModal} />
                 </BaseModal>
-                <BaseModal open={isModalChangePass} closeModal={() => {setIsModalChangePassOpen(false)}}>
-                    <ChangePassForm
-                        setIsModalChangePassOpen={setIsModalChangePassOpen}
-                    />
+
+                <BaseModal open={activeModal === 'changePass'} closeModal={closeModal}>
+                    <ChangePassForm setActiveModal={setActiveModal} />
                 </BaseModal>
             </div>
         </header>
-    )
+    );
 }

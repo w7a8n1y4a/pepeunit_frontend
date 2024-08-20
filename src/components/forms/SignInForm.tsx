@@ -5,10 +5,10 @@ import { getUserUuidByToken } from '../../utils/getUserUuidByToken';
 interface SignInFormProps {
     openModalRegister: () => void;
     setShowLogin: (show: boolean) => void;
-    setIsModalSignInOpen: (show: boolean) => void;
+    setActiveModal: (show: string | null) => void;
 }
 
-export default function SignInForm({openModalRegister, setShowLogin, setIsModalSignInOpen }: SignInFormProps) {
+export default function SignInForm({openModalRegister, setShowLogin, setActiveModal }: SignInFormProps) {
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
     
@@ -35,7 +35,7 @@ export default function SignInForm({openModalRegister, setShowLogin, setIsModalS
                         localStorage.setItem('user', JSON.stringify(userData.data.getUser));
                     }
                     setShowLogin(false)
-                    setIsModalSignInOpen(false)
+                    setActiveModal(null)
                 })
             } else {
                 console.error('Ошибка получения токена:', tokenData.error);

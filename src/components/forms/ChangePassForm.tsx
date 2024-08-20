@@ -3,11 +3,10 @@ import { useUpdateUserMutation } from '../../types/composition-functions';
 import isValidPassword from '../../utils/isValidPassword'
 
 interface ChangePassFormProps {
-    setIsModalChangePassOpen: (show: boolean) => void;
+    setActiveModal: (show: string | null) => void;
 }
 
-
-export default function ChangePassForm({ setIsModalChangePassOpen }: ChangePassFormProps) {
+export default function ChangePassForm({ setActiveModal }: ChangePassFormProps) {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     
@@ -31,7 +30,7 @@ export default function ChangePassForm({ setIsModalChangePassOpen }: ChangePassF
         }).then(updateUserData => {
             if (updateUserData.data) { 
                 localStorage.setItem('user', JSON.stringify(updateUserData.data.updateUser));
-                setIsModalChangePassOpen(false)
+                setActiveModal(null)
             } else {
                 console.error('Ошибка обновления пароля:', updateUserData.errors);
             }

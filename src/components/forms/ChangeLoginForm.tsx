@@ -3,11 +3,10 @@ import { useUpdateUserMutation } from '../../types/composition-functions';
 import isValidLogin from '../../utils/isValidLogin'
 
 interface ChangeLoginFormProps {
-    setIsModalChangeLoginOpen: (show: boolean) => void;
+    setActiveModal: (show: string | null) => void;
 }
 
-
-export default function ChangeLoginForm({ setIsModalChangeLoginOpen }: ChangeLoginFormProps) {
+export default function ChangeLoginForm({ setActiveModal }: ChangeLoginFormProps) {
     const [login, setLogin] = useState('');
     
     const [updateUserMutation] = useUpdateUserMutation();
@@ -25,7 +24,7 @@ export default function ChangeLoginForm({ setIsModalChangeLoginOpen }: ChangeLog
         }).then(updateUserData => {
             if (updateUserData.data) { 
                 localStorage.setItem('user', JSON.stringify(updateUserData.data.updateUser));
-                setIsModalChangeLoginOpen(false)
+                setActiveModal(null)
             } else {
                 console.error('Ошибка обновления логина:', updateUserData.errors);
             }
