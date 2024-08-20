@@ -6,10 +6,10 @@ import isValidLogin from '../../utils/isValidLogin'
 interface RegisterFormProps {
     openModalSignIn: () => void;
     setShowLogin: (show: boolean) => void;
-    setIsModalRegisterOpen: (show: boolean) => void;
+    setActiveModal: (show: string | null) => void;
 }
 
-export default function RegisterForm({ openModalSignIn, setShowLogin, setIsModalRegisterOpen }: RegisterFormProps) {
+export default function RegisterForm({ openModalSignIn, setShowLogin, setActiveModal }: RegisterFormProps) {
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -49,7 +49,7 @@ export default function RegisterForm({ openModalSignIn, setShowLogin, setIsModal
                         localStorage.setItem('user', JSON.stringify(createUserData.data?.createUser));
 
                         setShowLogin(false)
-                        setIsModalRegisterOpen(false)
+                        setActiveModal(null)
                     } else {
                         console.error('Ошибка получения токена:', tokenData.error);
                     }
