@@ -7,21 +7,20 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 5px 10px;
+    padding: 5px 5px;
     background-color: transparent;
     box-sizing: border-box;
     font-size: 18px;
+    color: #fff;
   }
   
   .logo {
-    margin-right: 30px;
+    margin-right: 20px;
   }
   
   .search {
-    margin: 0 auto;
-    transform: translateX(-50%);
-    position: absolute;
-    left: 50%;
+    margin-left: 10px;
+    color: #fff;
   }
   
   .user_controls {
@@ -34,6 +33,7 @@
     background-color: transparent;
     border: none;
     cursor: pointer;
+    color: #fff;
   }
   
   .signin_button:focus, .user_menu_button:focus, .signout_button:focus {
@@ -45,12 +45,10 @@
     vertical-align: middle;
   }
 
-  .signin_button {
-    padding-right: 8px;
-  }
-
   .user_menu_button {
-    padding-right: 5px;
+    padding-right: 15px;
+    margin-top: 9px;
+    font-size: 18px;
   }
 
   .signout_button {
@@ -59,7 +57,7 @@
     cursor: pointer;
     transform: rotate(45deg);
   }
-  
+
   .signout_button img {
     display: inline-block;
     vertical-align: middle;

@@ -1,9 +1,14 @@
 import { ForceGraph3D } from 'react-force-graph';
-import { useWindowSize } from '@react-hook/window-size';
+import { useState } from 'react';
 
 export default function ForceGraph(){
+  const [displayWidth, setDisplayWidth] = useState(window.innerWidth);
+  const [displayHeight, setDisplayHeight] = useState(window.innerHeight);
 
-  const [width, height] = useWindowSize();
+  window.addEventListener('resize', () => {
+    setDisplayWidth(window.innerWidth);
+    setDisplayHeight(window.innerHeight);
+  });
 
   function genRandomTree(N = 500, reverse = false) {
       return {
@@ -21,8 +26,8 @@ export default function ForceGraph(){
   return (
     <ForceGraph3D
       backgroundColor='rgba(10,10,10, 1)'
-      width={width}
-      height={height}
+      width={displayWidth}
+      height={displayHeight}
       graphData={genRandomTree()}
     />
   )
