@@ -6,11 +6,10 @@ import './form.css'
 
 interface RegisterFormProps {
     openModalSignIn: () => void;
-    setShowLogin: (show: boolean) => void;
     setActiveModal: (show: string | null) => void;
 }
 
-export default function RegisterForm({ openModalSignIn, setShowLogin, setActiveModal }: RegisterFormProps) {
+export default function RegisterForm({ openModalSignIn, setActiveModal }: RegisterFormProps) {
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -49,7 +48,6 @@ export default function RegisterForm({ openModalSignIn, setShowLogin, setActiveM
                         localStorage.setItem('token', tokenData.data.getToken);
                         localStorage.setItem('user', JSON.stringify(createUserData.data?.createUser));
 
-                        setShowLogin(false)
                         setActiveModal(null)
                     } else {
                         console.error('Ошибка получения токена:', tokenData.error);
