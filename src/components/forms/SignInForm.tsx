@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useGetTokenLazyQuery, useGetUserLazyQuery } from '../../types/composition-functions';
 import { getUserUuidByToken } from '../../utils/getUserUuidByToken';
+import './form.css'
 
 interface SignInFormProps {
     openModalRegister: () => void;
@@ -45,10 +46,6 @@ export default function SignInForm({openModalRegister, setShowLogin, setActiveMo
 
     return (
         <>
-            <button className="signin" onClick={openModalRegister}>
-                Регистрация
-            </button>
-            <p>Авторизация</p>
             <form>
                 <input
                     id='login_auth'
@@ -65,8 +62,11 @@ export default function SignInForm({openModalRegister, setShowLogin, setActiveMo
                     onChange={(e) => setPassword(e.target.value)}
                 />
             </form>
-            <button className="signin" onClick={handleLogin}>
+            <button className="button_main_action" onClick={handleLogin}>
                 Войти
+            </button>
+            <button className="button_open_alter" onClick={openModalRegister}>
+                Регистрация
             </button>
         </>
     );

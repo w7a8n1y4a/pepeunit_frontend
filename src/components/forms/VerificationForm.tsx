@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useGetVerificationUserLazyQuery } from '../../types/composition-functions';
+import './form.css'
 
 export default function VerificationForm() {
     const [verificationCode, setVerificationCode] = useState('');
@@ -19,12 +20,21 @@ export default function VerificationForm() {
     };
 
     return (
-        <>
-            <a href={import.meta.env.VITE_TG_BOT_URL}target="_blank">
-                <span>Telegram Bot</span>
-            </a>
-            <p>Введите код в боте: {verificationCode}</p>
-            <button className="signin" onClick={handleVerification}>
+        <> 
+            <p>
+                1. Перейдите в бота <a href={import.meta.env.VITE_TG_BOT_URL} target="_blank">
+                    <u>{import.meta.env.VITE_TG_BOT_NAME}</u></a>
+            </p>
+            <p>
+                2. Введите команду <u>/verification</u>
+            </p>
+            <p>
+                3. Введите данный код:
+            </p>
+            <div className='code_view'>
+                {verificationCode}
+            </div>
+            <button className="button_main_action" onClick={handleVerification}>
                 Сгенерировать одноразовый код
             </button>
         </>
