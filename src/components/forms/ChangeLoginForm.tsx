@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useUpdateUserMutation } from '../../types/composition-functions';
 import isValidLogin from '../../utils/isValidLogin'
+import './form.css'
 
 interface ChangeLoginFormProps {
     setActiveModal: (show: string | null) => void;
@@ -45,8 +46,8 @@ export default function ChangeLoginForm({ setActiveModal }: ChangeLoginFormProps
                     />
                 </form>
             </div>
-            <button className="register" onClick={handleChangeLogin}>
-                Изменить Логин
+            <button className="button_main_action" onClick={handleChangeLogin}>
+                Изменить
             </button>
         </>
     );

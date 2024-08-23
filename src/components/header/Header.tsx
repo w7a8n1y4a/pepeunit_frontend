@@ -64,44 +64,40 @@ export default function Header(){
                 )}
             </div>
             <div>
-                <BaseModal open={activeModal === 'signin'} closeModal={closeModal}>
+                <BaseModal modalName='Авторизация' open={activeModal === 'signin'} closeModal={closeModal}>
                     <SignInForm
                         openModalRegister={() => openModal('register')}
                         setShowLogin={setShowLogin}
                         setActiveModal={setActiveModal}
                     />
                 </BaseModal>
-
-                <BaseModal open={activeModal === 'register'} closeModal={closeModal}>
+                <BaseModal modalName='Регистрация' open={activeModal === 'register'} closeModal={closeModal}>
                     <RegisterForm
                         openModalSignIn={() => openModal('signin')}
                         setShowLogin={setShowLogin}
                         setActiveModal={setActiveModal}
                     />
                 </BaseModal>
-
-                <BaseModal open={activeModal === 'userMenu'} closeModal={closeModal}>
-                    <div>Меню Пользователя</div>
-                    <button className="verification" onClick={() => openModal('verification')}>
-                        Верификация в Telegram
-                    </button>
-                    <button className="change_login" onClick={() => openModal('changeLogin')}>
-                        Смена Логина
-                    </button>
-                    <button className="change_password" onClick={() => openModal('changePass')}>
-                        Смена Пароля
-                    </button>
+                <BaseModal modalName='Меню' open={activeModal === 'userMenu'} closeModal={closeModal}>
+                    <div className="modal_menu_content">
+                        <button className="button_open_alter" onClick={() => openModal('verification')}>
+                            Верификация в Telegram
+                        </button>
+                        <button className="button_open_alter" onClick={() => openModal('changeLogin')}>
+                            Смена Логина
+                        </button>
+                        <button className="button_open_alter" onClick={() => openModal('changePass')}>
+                            Смена Пароля
+                        </button>
+                    </div>
                 </BaseModal>
-
-                <BaseModal open={activeModal === 'verification'} closeModal={closeModal}>
+                <BaseModal modalName='Верификация' open={activeModal === 'verification'} closeModal={closeModal}>
                     <VerificationForm />
                 </BaseModal>
-
-                <BaseModal open={activeModal === 'changeLogin'} closeModal={closeModal}>
+                <BaseModal modalName='Смена Логина' open={activeModal === 'changeLogin'} closeModal={closeModal}>
                     <ChangeLoginForm setActiveModal={setActiveModal} />
                 </BaseModal>
-
-                <BaseModal open={activeModal === 'changePass'} closeModal={closeModal}>
+                <BaseModal modalName='Смена Пароля' open={activeModal === 'changePass'} closeModal={closeModal}>
                     <ChangePassForm setActiveModal={setActiveModal} />
                 </BaseModal>
             </div>

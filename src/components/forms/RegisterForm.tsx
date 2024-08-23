@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useCreateUserMutation, useGetTokenLazyQuery } from '../../types/composition-functions';
 import isValidPassword from '../../utils/isValidPassword'
 import isValidLogin from '../../utils/isValidLogin'
+import './form.css'
 
 interface RegisterFormProps {
     openModalSignIn: () => void;
@@ -61,10 +62,6 @@ export default function RegisterForm({ openModalSignIn, setShowLogin, setActiveM
 
     return (
         <>
-            <button className="signin" onClick={openModalSignIn}>
-                Авторизация
-            </button>
-            <p>Регистрация</p>
             <form>
                 <input
                     id='login_reg'
@@ -88,8 +85,11 @@ export default function RegisterForm({ openModalSignIn, setShowLogin, setActiveM
                     onChange={(e) => setConfirmPassword(e.target.value)}
                 />
             </form>
-            <button className="register" onClick={handleRegister}>
-                Зарегистрировать
+            <button className="button_main_action" onClick={handleRegister}>
+                Войти
+            </button>
+            <button className="button_open_alter" onClick={openModalSignIn}>
+                Авторизация
             </button>
         </>
     );

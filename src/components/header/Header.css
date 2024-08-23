@@ -63,6 +63,12 @@
     transform: rotate(45deg);
   }
   
+  .modal_menu_content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
   a {
     text-decoration: none;
     color: inherit;

@@ -1,0 +1,19 @@
+dialog {
+    border-radius: 16px;
+    border: solid 3px;
+    border-color: #282828;
+}
+
+.modal_name {
+    padding-bottom: 10px;
+    font-size: 22px;
+}
+
+.close_modal {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
