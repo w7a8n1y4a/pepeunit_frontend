@@ -1,0 +1,80 @@
+.app-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px 10px;
+    background-color: transparent;
+    box-sizing: border-box;
+    font-size: 18px;
+  }
+  
+  .logo {
+    margin-right: 30px;
+  }
+  
+  .search {
+    margin: 0 auto;
+    transform: translateX(-50%);
+    position: absolute;
+    left: 50%;
+  }
+  
+  .user_controls {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+  }
+  
+  .signin_button, .user_menu_button, .signout_button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .signin_button:focus, .user_menu_button:focus, .signout_button:focus {
+    outline: none;
+  }
+  
+  .signin_button img, .user_menu_button img, .signout_button img {
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  .signin_button {
+    padding-right: 8px;
+  }
+
+  .user_menu_button {
+    padding-right: 5px;
+  }
+
+  .signout_button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    transform: rotate(45deg);
+  }
+  
+  .signout_button img {
+    display: inline-block;
+    vertical-align: middle;
+  }
+  
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+  
+  a:visited {
+    color: inherit;
+  }
+  
+  a:focus, a:active {
+    outline: none;
+  }
+  
