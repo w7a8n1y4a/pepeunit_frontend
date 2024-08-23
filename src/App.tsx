@@ -46,7 +46,6 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 });
 
 const uploadLink = createUploadLink({
-  // You should use an absolute URL here
   uri: `${import.meta.env.VITE_BACKEND_URI}`,
 });
 

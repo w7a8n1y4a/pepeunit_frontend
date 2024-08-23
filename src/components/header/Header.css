@@ -55,12 +55,12 @@
     background-color: transparent;
     border: none;
     cursor: pointer;
-    transform: rotate(45deg);
   }
 
   .signout_button img {
     display: inline-block;
     vertical-align: middle;
+    transform: rotate(45deg);
   }
   
   a {
