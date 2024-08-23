@@ -7,6 +7,7 @@ import RegisterForm from '../forms/RegisterForm';
 import VerificationForm from '../forms/VerificationForm';
 import ChangeLoginForm from '../forms/ChangeLoginForm';
 import ChangePassForm from '../forms/ChangePassForm';
+import './Header.css'
 import { useState, useCallback } from 'react';
 
 export default function Header(){
@@ -32,34 +33,37 @@ export default function Header(){
     }, [closeModal]);
 
     return (
-        <header>
-            <div>
+        <header className='app-header'>
+            <div className='logo'>
                 <a href='/'>
                     <img src={logo} alt="Icon" />
                 </a>
             </div>
-            <div>
+            <div className='docs'>
                 <a href='https://pepeunit.com/' target="_blank">
                     <span>Docs</span>
                 </a>
-                <span>Search</span>
             </div>
-            <div>
+            <span className='search'>
+                Search
+                </span>
+            <div className='user_controls'>
                 {isShowLogin ? (
-                    <button className="signin" onClick={() => openModal('signin')}>
+                    <button className="signin_button" onClick={() => openModal('signin')}>
                         <img src={signin_icon} width="32" height="32" alt="Signin" />
                     </button>
                 ) : (
                     <div>
-                        <button className="user_menu" onClick={() => openModal('userMenu')}>
+                        <button className="user_menu_button" onClick={() => openModal('userMenu')}>
                             {login}
                         </button>
-                        <button className="signout" onClick={signout}>
+                        <button className="signout_button" onClick={signout}>
                             <img src={signout_icon} width="32" height="32" alt="signout" />
                         </button>
                     </div>
                 )}
-
+            </div>
+            <div>
                 <BaseModal open={activeModal === 'signin'} closeModal={closeModal}>
                     <SignInForm
                         openModalRegister={() => openModal('register')}

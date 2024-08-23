@@ -1,4 +1,4 @@
-import ForceGraph from './components/ForceGraph'
+import ForceGraph from './components/ForceGraph/ForceGraph'
 import './App.css'
 import { onError } from '@apollo/client/link/error';
 import { setContext } from '@apollo/client/link/context';
