@@ -8,11 +8,11 @@ import VerificationForm from '../forms/VerificationForm';
 import ChangeLoginForm from '../forms/ChangeLoginForm';
 import ChangePassForm from '../forms/ChangePassForm';
 import './Header.css'
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useReducer } from 'react';
 
 export default function Header(){
     const [activeModal, setActiveModal] = useState<string | null>(null);
-    const [isShowLogin, setShowLogin] = useState(true);
+    const [, forceUpdate] = useReducer(x => x + 1, 0);
 
     const user = localStorage.getItem('user');
     const login = user ? JSON.parse(user).login : '';
@@ -28,8 +28,8 @@ export default function Header(){
     const signout = useCallback(() => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
-        setShowLogin(true);
         closeModal();
+        forceUpdate();
     }, [closeModal]);
 
     return (
@@ -48,11 +48,7 @@ export default function Header(){
                 Search
             </div>
             <div className='user_controls'>
-                {isShowLogin ? (
-                    <button className="signin_button" onClick={() => openModal('signin')}>
-                        <img src={signin_icon} width="32" height="32" alt="Signin" />
-                    </button>
-                ) : (
+                {login !== '' ? (
                     <div>
                         <button className="user_menu_button" onClick={() => openModal('userMenu')}>
                             {login}
@@ -61,20 +57,23 @@ export default function Header(){
                             <img src={signout_icon} width="32" height="32" alt="signout" />
                         </button>
                     </div>
+                ) : (
+
+                    <button className="signin_button" onClick={() => openModal('signin')}>
+                        <img src={signin_icon} width="32" height="32" alt="Signin" />
+                    </button>
                 )}
             </div>
             <div>
                 <BaseModal modalName='Авторизация' open={activeModal === 'signin'} closeModal={closeModal}>
                     <SignInForm
                         openModalRegister={() => openModal('register')}
-                        setShowLogin={setShowLogin}
                         setActiveModal={setActiveModal}
                     />
                 </BaseModal>
                 <BaseModal modalName='Регистрация' open={activeModal === 'register'} closeModal={closeModal}>
                     <RegisterForm
                         openModalSignIn={() => openModal('signin')}
-                        setShowLogin={setShowLogin}
                         setActiveModal={setActiveModal}
                     />
                 </BaseModal>

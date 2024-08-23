@@ -5,11 +5,10 @@ import './form.css'
 
 interface SignInFormProps {
     openModalRegister: () => void;
-    setShowLogin: (show: boolean) => void;
     setActiveModal: (show: string | null) => void;
 }
 
-export default function SignInForm({openModalRegister, setShowLogin, setActiveModal }: SignInFormProps) {
+export default function SignInForm({openModalRegister, setActiveModal }: SignInFormProps) {
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
     
@@ -35,7 +34,6 @@ export default function SignInForm({openModalRegister, setShowLogin, setActiveMo
                     if (userData.data) {
                         localStorage.setItem('user', JSON.stringify(userData.data.getUser));
                     }
-                    setShowLogin(false)
                     setActiveModal(null)
                 })
             } else {
