@@ -41,12 +41,12 @@ export default function Header(){
             </div>
             <div className='docs'>
                 <a href='https://pepeunit.com/' target="_blank">
-                    <span>Docs</span>
+                    Docs
                 </a>
             </div>
-            <span className='search'>
+            <div className='search'>
                 Search
-                </span>
+            </div>
             <div className='user_controls'>
                 {isShowLogin ? (
                     <button className="signin_button" onClick={() => openModal('signin')}>
