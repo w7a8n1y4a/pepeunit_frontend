@@ -6,7 +6,7 @@ gql`
         $name: String!
         $repoUrl: String!
         $isPublicRepository: Boolean!
-        credentials: CredentialsInput!
+        $credentials: CredentialsInput
     ) {
         createRepo (
             repo: {

@@ -3,6 +3,7 @@ input {
     padding: 10px;
     margin: 5px 0;
     border: 3px solid #282828;
+    background-color: #101010;
     box-sizing: border-box;
 }
 
@@ -41,4 +42,76 @@ form {
     text-align: center;
     font-size: 36px;
     padding-bottom: 15px;
+}
+
+#base_enum {
+    padding: 8px;
+    border: solid 3px;
+    padding: 10px;
+    margin: 5px 0;
+    border-color: #282828;
+    background-color: #101010;
+    color: #777;
+    appearance: none; 
+    -webkit-appearance: none; 
+}
+
+#base_enum:focus {
+    outline: none;
+    box-shadow: 0;
+}
+
+.toggle_container {
+    display: flex;
+    margin: 5px 0;
+    align-items: center;
+}
+
+.toggle_text {
+    margin-left: 10px;
+}
+
+.toggle {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+    right: 0px;
+}
+
+.toggle input {
+    display: none;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: solid 3px;
+    border-color: #282828;
+    transition: .4s;
+    border-radius: 4px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 5px;
+    bottom: 5px;
+    background-color: #fff;
+    transition: .4s;
+    border-radius: 4px;
+}
+
+input:checked+.slider {
+    background-color: #0077ff99;
+}
+
+input:checked+.slider:before {
+    transform: translateX(26px);
 }

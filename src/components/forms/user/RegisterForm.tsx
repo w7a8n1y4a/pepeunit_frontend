@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { useCreateUserMutation, useGetTokenLazyQuery } from '../../types/composition-functions';
-import isValidPassword from '../../utils/isValidPassword'
-import isValidLogin from '../../utils/isValidLogin'
-import './form.css'
+import { useCreateUserMutation, useGetTokenLazyQuery } from '../../../types/composition-functions';
+import isValidPassword from '../../../utils/isValidPassword'
+import isValidLogin from '../../../utils/isValidLogin'
+import '../form.css'
 
 interface RegisterFormProps {
     openModalSignIn: () => void;

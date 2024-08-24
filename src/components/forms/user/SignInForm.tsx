@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { useGetTokenLazyQuery, useGetUserLazyQuery } from '../../types/composition-functions';
-import { getUserUuidByToken } from '../../utils/getUserUuidByToken';
-import './form.css'
+import { useGetTokenLazyQuery, useGetUserLazyQuery } from '../../../types/composition-functions';
+import { getUserUuidByToken } from '../../../utils/getUserUuidByToken';
+import '../form.css'
 
 interface SignInFormProps {
     openModalRegister: () => void;

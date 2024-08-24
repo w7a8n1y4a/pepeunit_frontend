@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { useUpdateUserMutation } from '../../types/composition-functions';
-import isValidLogin from '../../utils/isValidLogin'
-import './form.css'
+import { useUpdateUserMutation } from '../../../types/composition-functions';
+import isValidLogin from '../../../utils/isValidLogin'
+import '../form.css'
 
 interface ChangeLoginFormProps {
     setActiveModal: (show: string | null) => void;
