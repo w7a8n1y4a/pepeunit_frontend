@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { useUpdateUserMutation } from '../../types/composition-functions';
-import isValidPassword from '../../utils/isValidPassword'
-import './form.css'
+import { useUpdateUserMutation } from '../../../types/composition-functions';
+import isValidPassword from '../../../utils/isValidPassword'
+import '../form.css'
 
 interface ChangePassFormProps {
     setActiveModal: (show: string | null) => void;

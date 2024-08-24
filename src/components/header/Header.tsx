@@ -2,11 +2,12 @@ import BaseModal from '../modal/BaseModal'
 import logo from '/images/logo_32_32.png'
 import signin_icon from '/images/signin.svg'
 import signout_icon from '/images/signout.svg'
-import SignInForm from '../forms/SignInForm';
-import RegisterForm from '../forms/RegisterForm';
-import VerificationForm from '../forms/VerificationForm';
-import ChangeLoginForm from '../forms/ChangeLoginForm';
-import ChangePassForm from '../forms/ChangePassForm';
+import SignInForm from '../forms/user/SignInForm';
+import RegisterForm from '../forms/user/RegisterForm';
+import VerificationForm from '../forms/user/VerificationForm';
+import ChangeLoginForm from '../forms/user/ChangeLoginForm';
+import ChangePassForm from '../forms/user/ChangePassForm';
+import RightMenu from '../RightMenu/RightMenu';
 import './Header.css'
 import { useState, useCallback, useReducer } from 'react';
 
@@ -100,6 +101,12 @@ export default function Header(){
                     <ChangePassForm setActiveModal={setActiveModal} />
                 </BaseModal>
             </div>
+            <RightMenu
+                activeModal={activeModal}
+                setActiveModal={setActiveModal}
+                openModal={openModal}
+                closeModal={closeModal}
+            />
         </header>
     );
 }

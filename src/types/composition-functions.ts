@@ -495,6 +495,33 @@ export enum VisibilityLevel {
   Public = "PUBLIC",
 }
 
+export type CreateRepoMutationVariables = Exact<{
+  visibilityLevel: VisibilityLevel;
+  name: Scalars["String"]["input"];
+  repoUrl: Scalars["String"]["input"];
+  isPublicRepository: Scalars["Boolean"]["input"];
+  credentials?: InputMaybe<CredentialsInput>;
+}>;
+
+export type CreateRepoMutation = {
+  __typename?: "Mutation";
+  createRepo: {
+    __typename?: "RepoType";
+    uuid: string;
+    visibilityLevel: VisibilityLevel;
+    name: string;
+    createDatetime: string;
+    repoUrl: string;
+    isPublicRepository: boolean;
+    isCredentialsSet: boolean;
+    defaultBranch?: string | null;
+    isAutoUpdateRepo: boolean;
+    lastUpdateDatetime: string;
+    branches: Array<string>;
+    creatorUuid: string;
+  };
+};
+
 export type CreateUserMutationVariables = Exact<{
   login: Scalars["String"]["input"];
   password: Scalars["String"]["input"];
@@ -559,6 +586,85 @@ export type GetVerificationUserQuery = {
   getVerificationUser: string;
 };
 
+export const CreateRepoDocument = gql`
+  mutation createRepo(
+    $visibilityLevel: VisibilityLevel!
+    $name: String!
+    $repoUrl: String!
+    $isPublicRepository: Boolean!
+    $credentials: CredentialsInput
+  ) {
+    createRepo(
+      repo: {
+        visibilityLevel: $visibilityLevel
+        name: $name
+        repoUrl: $repoUrl
+        isPublicRepository: $isPublicRepository
+        credentials: $credentials
+      }
+    ) {
+      uuid
+      visibilityLevel
+      name
+      createDatetime
+      repoUrl
+      isPublicRepository
+      isCredentialsSet
+      defaultBranch
+      isAutoUpdateRepo
+      lastUpdateDatetime
+      branches
+      creatorUuid
+    }
+  }
+`;
+export type CreateRepoMutationFn = Apollo.MutationFunction<
+  CreateRepoMutation,
+  CreateRepoMutationVariables
+>;
+
+/**
+ * __useCreateRepoMutation__
+ *
+ * To run a mutation, you first call `useCreateRepoMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateRepoMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createRepoMutation, { data, loading, error }] = useCreateRepoMutation({
+ *   variables: {
+ *      visibilityLevel: // value for 'visibilityLevel'
+ *      name: // value for 'name'
+ *      repoUrl: // value for 'repoUrl'
+ *      isPublicRepository: // value for 'isPublicRepository'
+ *      credentials: // value for 'credentials'
+ *   },
+ * });
+ */
+export function useCreateRepoMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CreateRepoMutation,
+    CreateRepoMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<CreateRepoMutation, CreateRepoMutationVariables>(
+    CreateRepoDocument,
+    options,
+  );
+}
+export type CreateRepoMutationHookResult = ReturnType<
+  typeof useCreateRepoMutation
+>;
+export type CreateRepoMutationResult =
+  Apollo.MutationResult<CreateRepoMutation>;
+export type CreateRepoMutationOptions = Apollo.BaseMutationOptions<
+  CreateRepoMutation,
+  CreateRepoMutationVariables
+>;
 export const CreateUserDocument = gql`
   mutation createUser($login: String!, $password: String!) {
     createUser(user: { login: $login, password: $password }) {
