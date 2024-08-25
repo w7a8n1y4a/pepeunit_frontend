@@ -1,4 +1,4 @@
-import ForceGraph from './components/ForceGraph/ForceGraph'
+import MainContent from './components/MainContent/MainContent'
 import './App.css'
 import { onError } from '@apollo/client/link/error';
 import { setContext } from '@apollo/client/link/context';
@@ -71,7 +71,7 @@ function App() {
     <>
       <ApolloProvider client={client}>
         <Header/>
-        <ForceGraph></ForceGraph>
+        <MainContent></MainContent>
       </ApolloProvider>
     </>
   )
