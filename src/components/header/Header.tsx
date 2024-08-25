@@ -57,7 +57,14 @@ export default function Header(){
                         <button className="signout_button" onClick={signout}>
                             <img src={signout_icon} width="32" height="32" alt="signout" />
                         </button>
+                        <RightMenu
+                            activeModal={activeModal}
+                            setActiveModal={setActiveModal}
+                            openModal={openModal}
+                            closeModal={closeModal}
+                        />
                     </div>
+                    
                 ) : (
 
                     <button className="signin_button" onClick={() => openModal('signin')}>
@@ -101,12 +108,6 @@ export default function Header(){
                     <ChangePassForm setActiveModal={setActiveModal} />
                 </BaseModal>
             </div>
-            <RightMenu
-                activeModal={activeModal}
-                setActiveModal={setActiveModal}
-                openModal={openModal}
-                closeModal={closeModal}
-            />
         </header>
     );
 }
