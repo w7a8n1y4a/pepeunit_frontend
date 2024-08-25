@@ -96,7 +96,7 @@ export default function CreateRepoForm({ setActiveModal }:CreateRepoFormProps) {
                                 />
                                 <input
                                     id='repo_pat_token'
-                                    type='text'
+                                    type='password'
                                     placeholder='Pat Token'
                                     value={repoPatToken}
                                     onChange={(e) => setPatToken(e.target.value)}
