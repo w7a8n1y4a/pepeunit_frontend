@@ -1,6 +1,8 @@
 import { useGetReposLazyQuery } from '../../types/composition-functions'
 import BaseModal from '../modal/BaseModal'
 import { ForceGraph3D } from 'react-force-graph';
+import UpdateRepoForm from '../forms/repo/UpdateRepoForm';
+import UpdateRepoCredentialsForm from '../forms/repo/UpdateRepoCredentialsForm'
 import { useState, useMemo, useCallback, useEffect } from 'react';
 
 export default function MainContent(){
@@ -55,18 +57,37 @@ export default function MainContent(){
         showNavInfo={false}
         onNodeClick={(node) => kek(node)}
       />
-      <BaseModal modalName='Меню' open={activeModal === 'repoMenu'} closeModal={closeModal}>
+      <BaseModal modalName='Repo' open={activeModal === 'repoMenu'} closeModal={closeModal}>
         <div className="modal_menu_content">
-            <button className="button_open_alter" onClick={() => openModal('verification')}>
-                Верификация в Telegram
-            </button>
-            <button className="button_open_alter" onClick={() => openModal('changeLogin')}>
-                Изменить
-            </button>
-            <button className="button_open_alter" onClick={() => openModal('changePass')}>
-                Создать Unit
-            </button>
+          <button className="button_open_alter" onClick={() => openModal('createUnit')}>
+            Создать Unit
+          </button>
+          <button className="button_open_alter" onClick={() => openModal('repoSettingsMenu')}>
+            Настройки
+          </button>
+          <button className="button_open_alter" onClick={() => openModal('updateLocalRepo')}>
+            Обновить доступные версии
+          </button>
+          <button className="button_open_alter" onClick={() => openModal('updateUnitsFirmware')}>
+            Обновить связанные Unit
+          </button>
         </div>
+      </BaseModal>
+      <BaseModal modalName='Настройки' open={activeModal === 'repoSettingsMenu'} closeModal={closeModal}>
+        <div className="modal_menu_content">
+          <button className="button_open_alter" onClick={() => openModal('updateRepo')}>
+            Параметры
+          </button>
+          <button className="button_open_alter" onClick={() => openModal('changeCredentials')}>
+            Авторизация GIT
+          </button>
+        </div>
+      </BaseModal>
+      <BaseModal modalName='Параметры' open={activeModal === 'updateRepo'} closeModal={closeModal}>
+        <UpdateRepoForm/>
+      </BaseModal>
+      <BaseModal modalName='Авторизация GIT' open={activeModal === 'changeCredentials'} closeModal={closeModal}>
+        <UpdateRepoCredentialsForm/>
       </BaseModal>
     </>
   )
