@@ -556,6 +556,37 @@ export type UpdateUserMutation = {
   };
 };
 
+export type GetReposQueryVariables = Exact<{
+  creatorUuid?: InputMaybe<Scalars["UUID"]["input"]>;
+  searchString?: InputMaybe<Scalars["String"]["input"]>;
+  isPublicRepository?: InputMaybe<Scalars["Boolean"]["input"]>;
+  isAutoUpdateRepo?: InputMaybe<Scalars["Boolean"]["input"]>;
+  visibilityLevel?: InputMaybe<Array<VisibilityLevel> | VisibilityLevel>;
+  orderByCreateDate?: InputMaybe<OrderByDate>;
+  orderByLastUpdate?: InputMaybe<OrderByDate>;
+  offset?: InputMaybe<Scalars["Int"]["input"]>;
+  limit?: InputMaybe<Scalars["Int"]["input"]>;
+}>;
+
+export type GetReposQuery = {
+  __typename?: "Query";
+  getRepos: Array<{
+    __typename?: "RepoType";
+    uuid: string;
+    visibilityLevel: VisibilityLevel;
+    name: string;
+    createDatetime: string;
+    repoUrl: string;
+    isPublicRepository: boolean;
+    isCredentialsSet: boolean;
+    defaultBranch?: string | null;
+    isAutoUpdateRepo: boolean;
+    lastUpdateDatetime: string;
+    branches: Array<string>;
+    creatorUuid: string;
+  }>;
+};
+
 export type GetTokenQueryVariables = Exact<{
   credentials: Scalars["String"]["input"];
   password: Scalars["String"]["input"];
@@ -774,6 +805,115 @@ export type UpdateUserMutationResult =
 export type UpdateUserMutationOptions = Apollo.BaseMutationOptions<
   UpdateUserMutation,
   UpdateUserMutationVariables
+>;
+export const GetReposDocument = gql`
+  query getRepos(
+    $creatorUuid: UUID
+    $searchString: String
+    $isPublicRepository: Boolean
+    $isAutoUpdateRepo: Boolean
+    $visibilityLevel: [VisibilityLevel!]
+    $orderByCreateDate: OrderByDate
+    $orderByLastUpdate: OrderByDate
+    $offset: Int
+    $limit: Int
+  ) {
+    getRepos(
+      filters: {
+        creatorUuid: $creatorUuid
+        searchString: $searchString
+        isPublicRepository: $isPublicRepository
+        isAutoUpdateRepo: $isAutoUpdateRepo
+        visibilityLevel: $visibilityLevel
+        orderByCreateDate: $orderByCreateDate
+        orderByLastUpdate: $orderByLastUpdate
+        offset: $offset
+        limit: $limit
+      }
+    ) {
+      uuid
+      visibilityLevel
+      name
+      createDatetime
+      repoUrl
+      isPublicRepository
+      isCredentialsSet
+      defaultBranch
+      isAutoUpdateRepo
+      lastUpdateDatetime
+      branches
+      creatorUuid
+    }
+  }
+`;
+
+/**
+ * __useGetReposQuery__
+ *
+ * To run a query within a React component, call `useGetReposQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetReposQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetReposQuery({
+ *   variables: {
+ *      creatorUuid: // value for 'creatorUuid'
+ *      searchString: // value for 'searchString'
+ *      isPublicRepository: // value for 'isPublicRepository'
+ *      isAutoUpdateRepo: // value for 'isAutoUpdateRepo'
+ *      visibilityLevel: // value for 'visibilityLevel'
+ *      orderByCreateDate: // value for 'orderByCreateDate'
+ *      orderByLastUpdate: // value for 'orderByLastUpdate'
+ *      offset: // value for 'offset'
+ *      limit: // value for 'limit'
+ *   },
+ * });
+ */
+export function useGetReposQuery(
+  baseOptions?: Apollo.QueryHookOptions<GetReposQuery, GetReposQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetReposQuery, GetReposQueryVariables>(
+    GetReposDocument,
+    options,
+  );
+}
+export function useGetReposLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetReposQuery,
+    GetReposQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetReposQuery, GetReposQueryVariables>(
+    GetReposDocument,
+    options,
+  );
+}
+export function useGetReposSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    GetReposQuery,
+    GetReposQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<GetReposQuery, GetReposQueryVariables>(
+    GetReposDocument,
+    options,
+  );
+}
+export type GetReposQueryHookResult = ReturnType<typeof useGetReposQuery>;
+export type GetReposLazyQueryHookResult = ReturnType<
+  typeof useGetReposLazyQuery
+>;
+export type GetReposSuspenseQueryHookResult = ReturnType<
+  typeof useGetReposSuspenseQuery
+>;
+export type GetReposQueryResult = Apollo.QueryResult<
+  GetReposQuery,
+  GetReposQueryVariables
 >;
 export const GetTokenDocument = gql`
   query getToken($credentials: String!, $password: String!) {
