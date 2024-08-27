@@ -3,11 +3,13 @@ import BaseModal from '../modal/BaseModal'
 import { ForceGraph3D } from 'react-force-graph';
 import UpdateRepoForm from '../forms/repo/UpdateRepoForm';
 import UpdateRepoCredentialsForm from '../forms/repo/UpdateRepoCredentialsForm'
+import { RepoType } from '../../types/composition-functions'
 import { useState, useMemo, useCallback, useEffect } from 'react';
 
 export default function MainContent(){
   const [activeModal, setActiveModal] = useState<string | null>(null);
   const [reposData, setReposData] = useState(Array);
+  const [currentRepoData, setCurrentRepoData] = useState<RepoType | null>(null)
   const [displayWidth, setDisplayWidth] = useState(window.innerWidth);
   const [displayHeight, setDisplayHeight] = useState(window.innerHeight);
   const [getRepos] = useGetReposLazyQuery();
@@ -24,7 +26,7 @@ export default function MainContent(){
 
   function kek(node: any){
     openModal("repoMenu")
-    console.log(node.data)
+    setCurrentRepoData(node.data)
   }
 
   window.addEventListener('resize', () => {
@@ -57,7 +59,7 @@ export default function MainContent(){
         showNavInfo={false}
         onNodeClick={(node) => kek(node)}
       />
-      <BaseModal modalName='Repo' open={activeModal === 'repoMenu'} closeModal={closeModal}>
+      <BaseModal modalName={'Repo ' + currentRepoData?.name} open={activeModal === 'repoMenu'} closeModal={closeModal}>
         <div className="modal_menu_content">
           <button className="button_open_alter" onClick={() => openModal('createUnit')}>
             Создать Unit
@@ -84,7 +86,9 @@ export default function MainContent(){
         </div>
       </BaseModal>
       <BaseModal modalName='Параметры' open={activeModal === 'updateRepo'} closeModal={closeModal}>
-        <UpdateRepoForm/>
+        <UpdateRepoForm
+          currentRepoData={currentRepoData}
+        />
       </BaseModal>
       <BaseModal modalName='Авторизация GIT' open={activeModal === 'changeCredentials'} closeModal={closeModal}>
         <UpdateRepoCredentialsForm/>

@@ -43,6 +43,7 @@ export type BaseMetricsType = {
 export type CommitFilterInput = {
   limit?: InputMaybe<Scalars["Int"]["input"]>;
   offset?: InputMaybe<Scalars["Int"]["input"]>;
+  onlyTag?: Scalars["Boolean"]["input"];
   repoBranch: Scalars["String"]["input"];
 };
 
@@ -75,7 +76,6 @@ export type Mutation = {
   updateLocalRepo: NoneType;
   updateRepo: RepoType;
   updateRepoCredentials: RepoType;
-  updateRepoDefaultBranch: RepoType;
   updateUnit: UnitType;
   updateUnitEnv: NoneType;
   updateUnitNode: UnitNodeType;
@@ -144,11 +144,6 @@ export type MutationUpdateRepoArgs = {
 
 export type MutationUpdateRepoCredentialsArgs = {
   data: CredentialsInput;
-  uuid: Scalars["UUID"]["input"];
-};
-
-export type MutationUpdateRepoDefaultBranchArgs = {
-  defaultBranch: Scalars["String"]["input"];
   uuid: Scalars["UUID"]["input"];
 };
 

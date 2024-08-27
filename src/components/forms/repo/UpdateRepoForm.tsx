@@ -1,13 +1,19 @@
-import { VisibilityLevel } from '../../../types/composition-functions'
+import { VisibilityLevel, RepoType } from '../../../types/composition-functions'
 import { useState } from 'react';
 import '../form.css'
 
-export default function UpdateRepoForm() {
+interface CreateRepoFormProps {
+    currentRepoData: RepoType | null;
+}
+
+
+export default function UpdateRepoForm({ currentRepoData }: CreateRepoFormProps) {
     const [repoName, setRepoName] = useState('');
     const [repoVisibilityLevel, setRepoVisibilityLevel] = useState(VisibilityLevel.Public);
+    const [targetBranch, setTargetBranch] = useState<string | null>(null);
     const [isAutoUpdateRepository, setAutoUpdateRepository] = useState(false);
     const [isOnlyTagUpdateRepository, setOnlyTagUpdateRepository] = useState(false);
-    
+
     return (
         <>
             <div>
@@ -20,12 +26,27 @@ export default function UpdateRepoForm() {
                         onChange={(e) => setRepoName(e.target.value)}
                     />
                     <select id='base_enum' value={repoVisibilityLevel} onChange={(e) => {
-                        setRepoVisibilityLevel(e.target.value as VisibilityLevel); 
-                    }}
+                            setRepoVisibilityLevel(e.target.value as VisibilityLevel); 
+                        }}
                     >
                         <option value={VisibilityLevel.Public}>Public</option>
                         <option value={VisibilityLevel.Internal}>Internal</option>
                         <option value={VisibilityLevel.Private}>Private</option>
+                    </select>
+
+                    <select id='base_enum' value={targetBranch === null ? currentRepoData?.branches[0] : targetBranch} onChange={(e) => {
+                            setTargetBranch(e.target.value); 
+                        }}
+                    >
+                        {   
+                            currentRepoData?.branches.map(
+                                item => (
+                                    <option value={item}>
+                                        {item}
+                                    </option>
+                                )
+                            )
+                        }
                     </select>
                     <div className='toggle_container'>
                         <label className="toggle">
