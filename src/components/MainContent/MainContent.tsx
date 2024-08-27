@@ -4,6 +4,7 @@ import { ForceGraph3D } from 'react-force-graph';
 import UpdateRepoForm from '../forms/repo/UpdateRepoForm';
 import UpdateRepoCredentialsForm from '../forms/repo/UpdateRepoCredentialsForm'
 import { RepoType } from '../../types/composition-functions'
+import SpriteText from 'three-spritetext';
 import { useState, useMemo, useCallback, useEffect } from 'react';
 
 export default function MainContent(){
@@ -56,6 +57,16 @@ export default function MainContent(){
         width={displayWidth}
         height={displayHeight}
         graphData={forceData}
+        nodeThreeObject={(node: any) => {
+          const sprite = new SpriteText(node.data.name) as any;
+          sprite.color = "#fff";
+          sprite.textHeight = 6;
+          sprite.position.y = 10;
+
+          console.log(sprite)
+          return sprite;
+        }}
+        nodeThreeObjectExtend={true}
         showNavInfo={false}
         onNodeClick={(node) => kek(node)}
       />
