@@ -86,9 +86,16 @@ export default function MainContent(){
         </div>
       </BaseModal>
       <BaseModal modalName='Параметры' open={activeModal === 'updateRepo'} closeModal={closeModal}>
-        <UpdateRepoForm
-          currentRepoData={currentRepoData}
-        />
+        {
+          currentRepoData !== null 
+          ? (
+          <UpdateRepoForm
+            currentRepoData={currentRepoData}
+          />
+          ) : (
+            <></>
+          ) 
+        }
       </BaseModal>
       <BaseModal modalName='Авторизация GIT' open={activeModal === 'changeCredentials'} closeModal={closeModal}>
         <UpdateRepoCredentialsForm/>

@@ -517,6 +517,35 @@ export type CreateRepoMutation = {
   };
 };
 
+export type UpdateRepoMutationVariables = Exact<{
+  uuid: Scalars["UUID"]["input"];
+  visibilityLevel?: InputMaybe<VisibilityLevel>;
+  name?: InputMaybe<Scalars["String"]["input"]>;
+  isAutoUpdateRepo?: InputMaybe<Scalars["Boolean"]["input"]>;
+  defaultBranch?: InputMaybe<Scalars["String"]["input"]>;
+  defaultCommit?: InputMaybe<Scalars["String"]["input"]>;
+  isOnlyTagUpdate?: InputMaybe<Scalars["Boolean"]["input"]>;
+}>;
+
+export type UpdateRepoMutation = {
+  __typename?: "Mutation";
+  updateRepo: {
+    __typename?: "RepoType";
+    uuid: string;
+    visibilityLevel: VisibilityLevel;
+    name: string;
+    createDatetime: string;
+    repoUrl: string;
+    isPublicRepository: boolean;
+    isCredentialsSet: boolean;
+    defaultBranch?: string | null;
+    isAutoUpdateRepo: boolean;
+    lastUpdateDatetime: string;
+    branches: Array<string>;
+    creatorUuid: string;
+  };
+};
+
 export type CreateUserMutationVariables = Exact<{
   login: Scalars["String"]["input"];
   password: Scalars["String"]["input"];
@@ -579,6 +608,24 @@ export type GetReposQuery = {
     lastUpdateDatetime: string;
     branches: Array<string>;
     creatorUuid: string;
+  }>;
+};
+
+export type GetBranchCommitsQueryVariables = Exact<{
+  uuid: Scalars["UUID"]["input"];
+  repoBranch: Scalars["String"]["input"];
+  onlyTag: Scalars["Boolean"]["input"];
+  offset?: InputMaybe<Scalars["Int"]["input"]>;
+  limit?: InputMaybe<Scalars["Int"]["input"]>;
+}>;
+
+export type GetBranchCommitsQuery = {
+  __typename?: "Query";
+  getBranchCommits: Array<{
+    __typename?: "CommitType";
+    commit: string;
+    summary: string;
+    tag?: string | null;
   }>;
 };
 
@@ -690,6 +737,91 @@ export type CreateRepoMutationResult =
 export type CreateRepoMutationOptions = Apollo.BaseMutationOptions<
   CreateRepoMutation,
   CreateRepoMutationVariables
+>;
+export const UpdateRepoDocument = gql`
+  mutation updateRepo(
+    $uuid: UUID!
+    $visibilityLevel: VisibilityLevel
+    $name: String
+    $isAutoUpdateRepo: Boolean
+    $defaultBranch: String
+    $defaultCommit: String
+    $isOnlyTagUpdate: Boolean
+  ) {
+    updateRepo(
+      uuid: $uuid
+      repo: {
+        visibilityLevel: $visibilityLevel
+        name: $name
+        isAutoUpdateRepo: $isAutoUpdateRepo
+        defaultBranch: $defaultBranch
+        defaultCommit: $defaultCommit
+        isOnlyTagUpdate: $isOnlyTagUpdate
+      }
+    ) {
+      uuid
+      visibilityLevel
+      name
+      createDatetime
+      repoUrl
+      isPublicRepository
+      isCredentialsSet
+      defaultBranch
+      isAutoUpdateRepo
+      lastUpdateDatetime
+      branches
+      creatorUuid
+    }
+  }
+`;
+export type UpdateRepoMutationFn = Apollo.MutationFunction<
+  UpdateRepoMutation,
+  UpdateRepoMutationVariables
+>;
+
+/**
+ * __useUpdateRepoMutation__
+ *
+ * To run a mutation, you first call `useUpdateRepoMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateRepoMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateRepoMutation, { data, loading, error }] = useUpdateRepoMutation({
+ *   variables: {
+ *      uuid: // value for 'uuid'
+ *      visibilityLevel: // value for 'visibilityLevel'
+ *      name: // value for 'name'
+ *      isAutoUpdateRepo: // value for 'isAutoUpdateRepo'
+ *      defaultBranch: // value for 'defaultBranch'
+ *      defaultCommit: // value for 'defaultCommit'
+ *      isOnlyTagUpdate: // value for 'isOnlyTagUpdate'
+ *   },
+ * });
+ */
+export function useUpdateRepoMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpdateRepoMutation,
+    UpdateRepoMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<UpdateRepoMutation, UpdateRepoMutationVariables>(
+    UpdateRepoDocument,
+    options,
+  );
+}
+export type UpdateRepoMutationHookResult = ReturnType<
+  typeof useUpdateRepoMutation
+>;
+export type UpdateRepoMutationResult =
+  Apollo.MutationResult<UpdateRepoMutation>;
+export type UpdateRepoMutationOptions = Apollo.BaseMutationOptions<
+  UpdateRepoMutation,
+  UpdateRepoMutationVariables
 >;
 export const CreateUserDocument = gql`
   mutation createUser($login: String!, $password: String!) {
@@ -909,6 +1041,103 @@ export type GetReposSuspenseQueryHookResult = ReturnType<
 export type GetReposQueryResult = Apollo.QueryResult<
   GetReposQuery,
   GetReposQueryVariables
+>;
+export const GetBranchCommitsDocument = gql`
+  query getBranchCommits(
+    $uuid: UUID!
+    $repoBranch: String!
+    $onlyTag: Boolean!
+    $offset: Int
+    $limit: Int
+  ) {
+    getBranchCommits(
+      uuid: $uuid
+      filters: {
+        repoBranch: $repoBranch
+        onlyTag: $onlyTag
+        offset: $offset
+        limit: $limit
+      }
+    ) {
+      commit
+      summary
+      tag
+    }
+  }
+`;
+
+/**
+ * __useGetBranchCommitsQuery__
+ *
+ * To run a query within a React component, call `useGetBranchCommitsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetBranchCommitsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetBranchCommitsQuery({
+ *   variables: {
+ *      uuid: // value for 'uuid'
+ *      repoBranch: // value for 'repoBranch'
+ *      onlyTag: // value for 'onlyTag'
+ *      offset: // value for 'offset'
+ *      limit: // value for 'limit'
+ *   },
+ * });
+ */
+export function useGetBranchCommitsQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GetBranchCommitsQuery,
+    GetBranchCommitsQueryVariables
+  > &
+    (
+      | { variables: GetBranchCommitsQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetBranchCommitsQuery, GetBranchCommitsQueryVariables>(
+    GetBranchCommitsDocument,
+    options,
+  );
+}
+export function useGetBranchCommitsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetBranchCommitsQuery,
+    GetBranchCommitsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    GetBranchCommitsQuery,
+    GetBranchCommitsQueryVariables
+  >(GetBranchCommitsDocument, options);
+}
+export function useGetBranchCommitsSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    GetBranchCommitsQuery,
+    GetBranchCommitsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<
+    GetBranchCommitsQuery,
+    GetBranchCommitsQueryVariables
+  >(GetBranchCommitsDocument, options);
+}
+export type GetBranchCommitsQueryHookResult = ReturnType<
+  typeof useGetBranchCommitsQuery
+>;
+export type GetBranchCommitsLazyQueryHookResult = ReturnType<
+  typeof useGetBranchCommitsLazyQuery
+>;
+export type GetBranchCommitsSuspenseQueryHookResult = ReturnType<
+  typeof useGetBranchCommitsSuspenseQuery
+>;
+export type GetBranchCommitsQueryResult = Apollo.QueryResult<
+  GetBranchCommitsQuery,
+  GetBranchCommitsQueryVariables
 >;
 export const GetTokenDocument = gql`
   query getToken($credentials: String!, $password: String!) {

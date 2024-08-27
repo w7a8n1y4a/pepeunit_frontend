@@ -31,4 +31,39 @@ gql`
             creatorUuid
         }
     }
+    mutation updateRepo(
+        $uuid: UUID!
+        $visibilityLevel: VisibilityLevel
+        $name: String
+        $isAutoUpdateRepo: Boolean
+        $defaultBranch: String
+        $defaultCommit: String
+        $isOnlyTagUpdate: Boolean
+    ) {
+        updateRepo (
+            uuid: $uuid
+            repo: {
+                visibilityLevel: $visibilityLevel
+                name: $name
+                isAutoUpdateRepo: $isAutoUpdateRepo
+                defaultBranch: $defaultBranch
+                defaultCommit: $defaultCommit
+                isOnlyTagUpdate: $isOnlyTagUpdate
+            }
+        ){
+            uuid
+            visibilityLevel
+            name
+            createDatetime
+            repoUrl
+            isPublicRepository
+            isCredentialsSet
+            defaultBranch
+            isAutoUpdateRepo
+            lastUpdateDatetime
+            branches
+            creatorUuid
+        }
+    }
+  
 `
