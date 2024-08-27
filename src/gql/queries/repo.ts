@@ -31,9 +31,10 @@ gql`
             createDatetime
             repoUrl
             isPublicRepository
-            isCredentialsSet
             defaultBranch
             isAutoUpdateRepo
+            defaultCommit
+            isOnlyTagUpdate
             lastUpdateDatetime
             branches
             creatorUuid

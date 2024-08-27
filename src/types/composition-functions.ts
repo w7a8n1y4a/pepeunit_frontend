@@ -310,8 +310,9 @@ export type RepoType = {
   createDatetime: Scalars["DateTime"]["output"];
   creatorUuid: Scalars["UUID"]["output"];
   defaultBranch?: Maybe<Scalars["String"]["output"]>;
+  defaultCommit?: Maybe<Scalars["String"]["output"]>;
   isAutoUpdateRepo: Scalars["Boolean"]["output"];
-  isCredentialsSet: Scalars["Boolean"]["output"];
+  isOnlyTagUpdate: Scalars["Boolean"]["output"];
   isPublicRepository: Scalars["Boolean"]["output"];
   lastUpdateDatetime: Scalars["DateTime"]["output"];
   name: Scalars["String"]["output"];
@@ -508,9 +509,10 @@ export type CreateRepoMutation = {
     createDatetime: string;
     repoUrl: string;
     isPublicRepository: boolean;
-    isCredentialsSet: boolean;
     defaultBranch?: string | null;
     isAutoUpdateRepo: boolean;
+    defaultCommit?: string | null;
+    isOnlyTagUpdate: boolean;
     lastUpdateDatetime: string;
     branches: Array<string>;
     creatorUuid: string;
@@ -537,9 +539,10 @@ export type UpdateRepoMutation = {
     createDatetime: string;
     repoUrl: string;
     isPublicRepository: boolean;
-    isCredentialsSet: boolean;
     defaultBranch?: string | null;
     isAutoUpdateRepo: boolean;
+    defaultCommit?: string | null;
+    isOnlyTagUpdate: boolean;
     lastUpdateDatetime: string;
     branches: Array<string>;
     creatorUuid: string;
@@ -602,9 +605,10 @@ export type GetReposQuery = {
     createDatetime: string;
     repoUrl: string;
     isPublicRepository: boolean;
-    isCredentialsSet: boolean;
     defaultBranch?: string | null;
     isAutoUpdateRepo: boolean;
+    defaultCommit?: string | null;
+    isOnlyTagUpdate: boolean;
     lastUpdateDatetime: string;
     branches: Array<string>;
     creatorUuid: string;
@@ -682,9 +686,10 @@ export const CreateRepoDocument = gql`
       createDatetime
       repoUrl
       isPublicRepository
-      isCredentialsSet
       defaultBranch
       isAutoUpdateRepo
+      defaultCommit
+      isOnlyTagUpdate
       lastUpdateDatetime
       branches
       creatorUuid
@@ -765,9 +770,10 @@ export const UpdateRepoDocument = gql`
       createDatetime
       repoUrl
       isPublicRepository
-      isCredentialsSet
       defaultBranch
       isAutoUpdateRepo
+      defaultCommit
+      isOnlyTagUpdate
       lastUpdateDatetime
       branches
       creatorUuid
@@ -964,9 +970,10 @@ export const GetReposDocument = gql`
       createDatetime
       repoUrl
       isPublicRepository
-      isCredentialsSet
       defaultBranch
       isAutoUpdateRepo
+      defaultCommit
+      isOnlyTagUpdate
       lastUpdateDatetime
       branches
       creatorUuid
