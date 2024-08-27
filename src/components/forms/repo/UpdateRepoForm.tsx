@@ -50,15 +50,14 @@ export default function UpdateRepoForm({ currentRepoData }: CreateRepoFormProps)
     }, [currentRepoState.defaultBranch, currentRepoState.isAutoUpdateRepo]);
 
     const handleUpdateRepo = () => {
-        if (currentRepoState){
-            updateRepoMutation({
-                variables: currentRepoState
-            }).then(UpdateRepoData =>{
-                if (UpdateRepoData.data){
-                    console.log('Repo обновлён', UpdateRepoData.data)
-                }
-            })
-        }
+        console.log(currentRepoState)
+        updateRepoMutation({
+            variables: currentRepoState
+        }).then(UpdateRepoData =>{
+            if (UpdateRepoData.data){
+                console.log('Repo обновлён', UpdateRepoData.data)
+            }
+        })
     };
   
 
@@ -164,7 +163,8 @@ export default function UpdateRepoForm({ currentRepoData }: CreateRepoFormProps)
                                     defaultCommit: e.target.value
                                 })
                             }}
-                        >
+                        >   
+                            <option value="" disabled selected>Выберите коммит</option>
                             {   
                                 repoAvailableCommits?.map(
                                     item => (
