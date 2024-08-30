@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useCreateUserMutation, useGetTokenLazyQuery } from '../../../types/composition-functions';
+import angry_img from '/images/pepe/angry.svg'
 import isValidPassword from '../../../utils/isValidPassword'
 import isValidLogin from '../../../utils/isValidLogin'
 import isValidMatchPassword from '../../../utils/isValidMatchPassword'
@@ -112,8 +113,11 @@ export default function RegisterForm({ openModalSignIn, setActiveModal }: Regist
             </button>
             {
                 errorQuery !== null ? (
-                    <div>
-                        {errorQuery}
+                    <div className="info_error_message">
+                        <img src={angry_img} width="36" height="36" alt="signout" />
+                        <div className="info_error_message_text">
+                            {errorQuery}
+                        </div>
                     </div>
                 ) : (<></>)
             }
