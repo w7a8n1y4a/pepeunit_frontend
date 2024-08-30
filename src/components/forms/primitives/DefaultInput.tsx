@@ -1,4 +1,5 @@
 import '../form.css';
+import atention_img from '/images/atention.svg'
 import { useState, useEffect, useRef } from 'react';
 
 interface DefaultInputProps {
@@ -42,8 +43,11 @@ export default function DefaultInput({ value, validateState, onChange, validateF
             />
             {
                 errorMessage !== null ? (
-                    <div className="error-message">
-                        {errorMessage}
+                    <div className="info_error_message">
+                        <img src={atention_img} width="24" height="24" alt="signout" />
+                        <div className="info_error_message_text">
+                            {errorMessage}
+                        </div>
                     </div>
                 ) : (<></>)
             }
