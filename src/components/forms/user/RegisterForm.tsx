@@ -5,6 +5,7 @@ import isValidPassword from '../../../utils/isValidPassword'
 import isValidLogin from '../../../utils/isValidLogin'
 import isValidMatchPassword from '../../../utils/isValidMatchPassword'
 import DefaultInput from '../primitives/DefaultInput'
+import Spinner from '../primitives/Spinner'
 import '../form.css'
 
 interface RegisterFormProps {
@@ -72,6 +73,7 @@ export default function RegisterForm({ openModalSignIn, setActiveModal }: Regist
 
     return (
         <>
+            <Spinner/>
             <form>
                 <DefaultInput
                     id="login_reg"
