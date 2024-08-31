@@ -9,14 +9,19 @@ import ChangeLoginForm from '../forms/user/ChangeLoginForm';
 import ChangePassForm from '../forms/user/ChangePassForm';
 import RightMenu from '../RightMenu/RightMenu';
 import './Header.css'
-import { useState, useCallback, useReducer } from 'react';
+import { useState, useCallback, useReducer, useEffect } from 'react';
 
 export default function Header(){
     const [activeModal, setActiveModal] = useState<string | null>(null);
     const [, forceUpdate] = useReducer(x => x + 1, 0);
 
     const user = localStorage.getItem('user');
-    const login = user ? JSON.parse(user).login : '';
+    const loginStorage = user ? JSON.parse(user).login : '';
+    const [login, setLogin ] = useState(loginStorage)
+
+    useEffect(() => {
+        setLogin(loginStorage)
+    }, [loginStorage]);
 
     const openModal = useCallback((modalType: string) => {
         setActiveModal(modalType);
@@ -114,7 +119,7 @@ export default function Header(){
                     openModal={openModal}
                     openModalType='userMenu'
                 >
-                    <ChangeLoginForm setActiveModal={setActiveModal} />
+                    <ChangeLoginForm setActiveModal={setActiveModal} currentLogin={login}/>
                 </BaseModal>
                 <BaseModal
                     modalName='Смена Пароля'

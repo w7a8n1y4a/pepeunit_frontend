@@ -66,7 +66,6 @@ export default function SignInForm({openModalRegister, setActiveModal }: SignInF
                 })
             }
 
-            console.log(tokenData)
             if (tokenData !== undefined && tokenData.errors) {
                 setIsLoaderActive(false)
                 setResultData({ type: ResultType.Angry, message: tokenData.errors[0].message.slice(4)})
@@ -103,7 +102,7 @@ export default function SignInForm({openModalRegister, setActiveModal }: SignInF
                     setResultData={setResultData}
                 />
             </form>
-            <button className="button_main_action" onClick={handleLogin}>
+            <button className="button_main_action" onClick={handleLogin} disabled={Object.values(errorState).some(isError => isError)}>
                 Войти
             </button>
             <button className="button_open_alter" onClick={openModalRegister}>
