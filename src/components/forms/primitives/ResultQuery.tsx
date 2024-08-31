@@ -4,12 +4,7 @@ import happy_img from '/images/pepe/happy.svg'
 import default_img from '/images/pepe/default.svg'
 import '../form.css'
 
-interface ResultQueryProps {
-    resultType: ResultType
-    resultMessage: string | null
-}
-
-export default function ResultQuery({ resultType, resultMessage }: ResultQueryProps) {
+export default function ResultQuery({ resultData }: { resultData: { type: ResultType; message: string | null }}) {
 
     const imageMap = {
         [ResultType.Happy]: happy_img,
@@ -26,14 +21,14 @@ export default function ResultQuery({ resultType, resultMessage }: ResultQueryPr
     return (
         <>
             {
-                resultMessage !== null ? (
-                    <div className={classMap[resultType]}>
-                        <img src={imageMap[resultType]} width="36" height="36" />
-                        <div className={classMap[resultType] + "_message"}>
-                            {resultMessage}
+                resultData.message && (
+                    <div className={classMap[resultData.type]}>
+                        <img src={imageMap[resultData.type]} width="36" height="36" />
+                        <div className={classMap[resultData.type] + "_message"}>
+                            {resultData.message}
                         </div>
                     </div>
-                ) : (<></>)
+                )
             }
         </>
     );

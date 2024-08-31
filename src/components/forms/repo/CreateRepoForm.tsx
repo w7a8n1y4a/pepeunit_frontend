@@ -85,7 +85,7 @@ export default function CreateRepoForm({ setActiveModal }:CreateRepoFormProps) {
                         </div>
                     </div>
                     {
-                        isPrivateRepository ? (
+                        isPrivateRepository && (
                             <div>
                                 <input
                                     id='repo_username'
@@ -102,7 +102,7 @@ export default function CreateRepoForm({ setActiveModal }:CreateRepoFormProps) {
                                     onChange={(e) => setPatToken(e.target.value)}
                                 />
                             </div>
-                        ) : (<></>)
+                        )
                     }
                 </form>
             </div>
