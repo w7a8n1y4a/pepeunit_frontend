@@ -5,6 +5,7 @@ import { setContext } from '@apollo/client/link/context';
 import { createUploadLink } from 'apollo-upload-client';
 import { ApolloClient, InMemoryCache, ApolloProvider, from } from '@apollo/client';
 import { isAuthTokenExpired } from './utils/isAuthTokenExpired';
+import { useState } from 'react';
 import Header from './components/header/Header';
 
 const authLink = setContext((_, { headers }) => {
@@ -67,11 +68,19 @@ const client = new ApolloClient({
 });
 
 function App() {
+  const [activeModal, setActiveModal] = useState<string | null>(null);
+  
   return (
     <>
       <ApolloProvider client={client}>
-        <Header/>
-        <MainContent></MainContent>
+        <Header
+          activeModal={activeModal}
+          setActiveModal={setActiveModal}
+        />
+        <MainContent
+          activeModal={activeModal}
+          setActiveModal={setActiveModal}
+        ></MainContent>
       </ApolloProvider>
     </>
   )
