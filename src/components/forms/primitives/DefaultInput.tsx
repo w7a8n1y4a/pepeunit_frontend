@@ -47,9 +47,9 @@ export default function DefaultInput({id, type, placeholder, value, validateStat
             />
             {
                 errorMessage !== null ? (
-                    <div className="info_error_message">
+                    <div className="info_error">
                         <img src={attention_img} width="24" height="24" alt="signout" />
-                        <div className="info_error_message_text">
+                        <div className="info_error_message">
                             {errorMessage}
                         </div>
                     </div>
