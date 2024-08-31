@@ -1,8 +1,8 @@
-import angry_img from '/images/pepe/angry.svg'
+import spinner_img from '/images/loader.svg'
 
 const Spinner = () => {
   return (
-    <img className="spinner" src={angry_img} width="36" height="36" alt="signout" />
+    <img className="spinner" src={spinner_img} width="36" height="36" alt="signout" />
   );
 };
 

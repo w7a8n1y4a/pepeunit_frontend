@@ -1,5 +1,5 @@
 import '../form.css';
-import atention_img from '/images/atention.svg'
+import attention_img from '/images/attention.svg'
 import { useState, useEffect, useRef } from 'react';
 
 interface DefaultInputProps {
@@ -11,9 +11,10 @@ interface DefaultInputProps {
     onChange: (value: string) => void;
     validateFunc: (value: any) => string | null;
     setIsErrorExist: (value: boolean) => void
+    errorQuery: (value: string | null) => void;
 }
 
-export default function DefaultInput({ value, validateState, onChange, validateFunc, setIsErrorExist, id, type, placeholder}: DefaultInputProps) {
+export default function DefaultInput({id, type, placeholder, value, validateState, onChange, validateFunc, setIsErrorExist, errorQuery}: DefaultInputProps) {
     const [isValid, setIsValid] = useState(true);
     const [errorMessage, setErrorMessage] = useState<null | string>(null);
     const firstRender = useRef(true);
@@ -39,12 +40,15 @@ export default function DefaultInput({ value, validateState, onChange, validateF
                 type={type}
                 placeholder={placeholder}
                 value={value}
-                onChange={(e) => onChange(e.target.value)}
+                onChange={(e) => {
+                    onChange(e.target.value)
+                    errorQuery(null)
+                }}
             />
             {
                 errorMessage !== null ? (
                     <div className="info_error_message">
-                        <img src={atention_img} width="24" height="24" alt="signout" />
+                        <img src={attention_img} width="24" height="24" alt="signout" />
                         <div className="info_error_message_text">
                             {errorMessage}
                         </div>
