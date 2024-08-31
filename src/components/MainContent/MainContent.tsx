@@ -70,7 +70,11 @@ export default function MainContent(){
         showNavInfo={false}
         onNodeClick={(node) => kek(node)}
       />
-      <BaseModal modalName={'Repo ' + currentRepoData?.name} open={activeModal === 'repoMenu'} closeModal={closeModal}>
+      <BaseModal
+        modalName={'Repo ' + currentRepoData?.name}
+        open={activeModal === 'repoMenu'}
+        closeModal={closeModal}
+      >
         <div className="modal_menu_content">
           <button className="button_open_alter" onClick={() => openModal('createUnit')}>
             Создать Unit
@@ -86,7 +90,13 @@ export default function MainContent(){
           </button>
         </div>
       </BaseModal>
-      <BaseModal modalName='Настройки' open={activeModal === 'repoSettingsMenu'} closeModal={closeModal}>
+      <BaseModal
+        modalName='Настройки'
+        open={activeModal === 'repoSettingsMenu'}
+        closeModal={closeModal}
+        openModal={openModal} 
+        openModalType='repoMenu'
+        >
         <div className="modal_menu_content">
           <button className="button_open_alter" onClick={() => openModal('updateRepo')}>
             Параметры
@@ -96,7 +106,13 @@ export default function MainContent(){
           </button>
         </div>
       </BaseModal>
-      <BaseModal modalName='Параметры' open={activeModal === 'updateRepo'} closeModal={closeModal}>
+      <BaseModal
+        modalName='Параметры'
+        open={activeModal === 'updateRepo'}
+        closeModal={closeModal}
+        openModal={openModal} 
+        openModalType='repoSettingsMenu'  
+      >
         {
           currentRepoData && (
             <UpdateRepoForm
@@ -105,7 +121,13 @@ export default function MainContent(){
           )
         }
       </BaseModal>
-      <BaseModal modalName='Авторизация GIT' open={activeModal === 'changeCredentials'} closeModal={closeModal}>
+      <BaseModal
+        modalName='Авторизация GIT'
+        open={activeModal === 'changeCredentials'}
+        closeModal={closeModal}
+        openModal={openModal} 
+        openModalType='repoSettingsMenu'
+      >
         <UpdateRepoCredentialsForm/>
       </BaseModal>
     </>

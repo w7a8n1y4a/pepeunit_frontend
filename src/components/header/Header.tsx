@@ -98,13 +98,31 @@ export default function Header(){
                         </button>
                     </div>
                 </BaseModal>
-                <BaseModal modalName='Верификация' open={activeModal === 'verification'} closeModal={closeModal}>
+                <BaseModal
+                    modalName='Верификация'
+                    open={activeModal === 'verification'}
+                    closeModal={closeModal}
+                    openModal={openModal} 
+                    openModalType='userMenu'
+                >
                     <VerificationForm />
                 </BaseModal>
-                <BaseModal modalName='Смена Логина' open={activeModal === 'changeLogin'} closeModal={closeModal}>
+                <BaseModal
+                    modalName='Смена Логина'
+                    open={activeModal === 'changeLogin'}
+                    closeModal={closeModal}
+                    openModal={openModal}
+                    openModalType='userMenu'
+                >
                     <ChangeLoginForm setActiveModal={setActiveModal} />
                 </BaseModal>
-                <BaseModal modalName='Смена Пароля' open={activeModal === 'changePass'} closeModal={closeModal}>
+                <BaseModal
+                    modalName='Смена Пароля'
+                    open={activeModal === 'changePass'}
+                    closeModal={closeModal}
+                    openModal={openModal}
+                    openModalType='userMenu'
+                >
                     <ChangePassForm setActiveModal={setActiveModal} />
                 </BaseModal>
             </div>
