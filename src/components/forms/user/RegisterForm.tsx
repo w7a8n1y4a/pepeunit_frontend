@@ -22,12 +22,15 @@ export default function RegisterForm({ openModalSignIn, setActiveModal }: Regist
         password: true,
         confirmPassword: true
     });
+    const [isLoaderActive, setIsLoaderActive] = useState(false)
     const [errorQuery, setErrorQuery] = useState<null | string>(null)
-    
+
     const [createUserMutation] = useCreateUserMutation();
     const [getToken] = useGetTokenLazyQuery();
     
     const handleRegister = () => {
+        setIsLoaderActive(true)
+        setErrorQuery(null)
 
         localStorage.removeItem('token');
         createUserMutation({
@@ -36,9 +39,6 @@ export default function RegisterForm({ openModalSignIn, setActiveModal }: Regist
                 password: password
             }
         }).then(createUserData => {
-            if (createUserData.errors){
-                console.log(createUserData.errors)
-            }
             if (createUserData.data) {
                 console.log('Пользователь создан:', createUserData.data);
 
@@ -53,12 +53,12 @@ export default function RegisterForm({ openModalSignIn, setActiveModal }: Regist
                         localStorage.setItem('user', JSON.stringify(createUserData.data?.createUser));
 
                         setActiveModal(null)
-                    } else {
-                        console.error('Ошибка получения токена:', tokenData.error);
+                        setIsLoaderActive(false)
                     }
                 })
             }
         }).catch(error => {
+            setIsLoaderActive(false)
             setErrorQuery(error.graphQLErrors[0].message)
         })
     };
@@ -73,7 +73,9 @@ export default function RegisterForm({ openModalSignIn, setActiveModal }: Regist
 
     return (
         <>
-            <Spinner/>
+            {
+                isLoaderActive ? (<Spinner/>) : (<></>)
+            }
             <form>
                 <DefaultInput
                     id="login_reg"
@@ -84,7 +86,7 @@ export default function RegisterForm({ openModalSignIn, setActiveModal }: Regist
                     onChange={setLogin}
                     validateFunc={isValidLogin}
                     setIsErrorExist={(hasError) => updateErrorState('login', hasError)}
-                    
+                    errorQuery={setErrorQuery}
                 />
                 <DefaultInput
                     id="password_reg"
@@ -95,6 +97,7 @@ export default function RegisterForm({ openModalSignIn, setActiveModal }: Regist
                     onChange={setPassword}
                     validateFunc={isValidPassword}
                     setIsErrorExist={(hasError) => updateErrorState('password', hasError)}
+                    errorQuery={setErrorQuery}
                 />
                 <DefaultInput
                     id="confirm_password_reg"
@@ -105,10 +108,11 @@ export default function RegisterForm({ openModalSignIn, setActiveModal }: Regist
                     onChange={setConfirmPassword}
                     validateFunc={isValidMatchPassword}
                     setIsErrorExist={(hasError) => updateErrorState('confirmPassword', hasError)}
+                    errorQuery={setErrorQuery}
                 />
             </form>
             <button className="button_main_action" onClick={handleRegister} disabled={Object.values(errorState).some(isError => isError)}>
-                Войти
+                Создать
             </button>
             <button className="button_open_alter" onClick={openModalSignIn}>
                 Авторизация
