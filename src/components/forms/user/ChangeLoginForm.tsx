@@ -1,24 +1,20 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ResultType } from '../../../types/resultEnum'
 import { useUpdateUserMutation } from '../../../types/composition-functions';
 import DefaultInput from '../primitives/DefaultInput'
 import Spinner from '../primitives/Spinner'
-import ResultQuery from '../primitives/ResultQuery'
 import isValidLogin from '../../../utils/isValidLogin'
 import '../form.css'
 
 interface ChangeLoginFormProps {
+    currentLogin: string
     setActiveModal: (show: string | null) => void;
 }
 
-export default function ChangeLoginForm({ setActiveModal }: ChangeLoginFormProps) {
-    const user = localStorage.getItem('user');
-    const loginStorage = user ? JSON.parse(user).login : '';
-
-    const [login, setLogin] = useState(loginStorage);
+export default function ChangeLoginForm({ setActiveModal, currentLogin }: ChangeLoginFormProps) {
+    const [login, setLogin] = useState(currentLogin);
     const [errorState, setErrorState] = useState({
-        login: true,
-        password: true,
+        login: false,
     });
     const [isLoaderActive, setIsLoaderActive] = useState(false)
     const [resultData, setResultData] = useState<{ type: ResultType; message: string | null }>({
@@ -26,6 +22,10 @@ export default function ChangeLoginForm({ setActiveModal }: ChangeLoginFormProps
         message: null
     });
     
+    useEffect(() => {
+        setLogin(currentLogin)
+    }, [currentLogin]);
+
     const updateErrorState = (field: keyof typeof errorState, hasError: boolean) => {
         setErrorState(prevState => ({
             ...prevState,
@@ -51,7 +51,6 @@ export default function ChangeLoginForm({ setActiveModal }: ChangeLoginFormProps
             if (updateUserData.data) { 
                 localStorage.setItem('user', JSON.stringify(updateUserData.data.updateUser));
                 
-                setResultData({ type: ResultType.Happy, message: "Логин успешно обновлён"})
                 setIsLoaderActive(false)
                 setActiveModal(null)
             }
@@ -79,12 +78,9 @@ export default function ChangeLoginForm({ setActiveModal }: ChangeLoginFormProps
                     />
                 </form>
             </div>
-            <button className="button_main_action" onClick={handleChangeLogin}>
+            <button className="button_main_action" onClick={handleChangeLogin} disabled={Object.values(errorState).some(isError => isError)}>
                 Изменить
             </button>
-            <ResultQuery
-                resultData={resultData}
-            />
         </>
     );
 }

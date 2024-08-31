@@ -13,7 +13,6 @@ export default function ChangePassForm() {
     const [confirmPassword, setConfirmPassword] = useState('');
 
     const [errorState, setErrorState] = useState({
-        login: true,
         password: true,
         confirmPassword: true
     });
@@ -84,7 +83,7 @@ export default function ChangePassForm() {
                     />
                 </form>
             </div>
-            <button className="button_main_action" onClick={handleChangeLogin}>
+            <button className="button_main_action" onClick={handleChangeLogin} disabled={Object.values(errorState).some(isError => isError)}>
                 Изменить
             </button>
             <ResultQuery
