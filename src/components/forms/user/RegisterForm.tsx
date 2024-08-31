@@ -24,15 +24,20 @@ export default function RegisterForm({ openModalSignIn, setActiveModal }: Regist
         confirmPassword: true
     });
     const [isLoaderActive, setIsLoaderActive] = useState(false)
-    const [resultMessage, setResultMessage] = useState<null | string>(null)
-    const [resultType, setResultType] = useState<ResultType>(ResultType.Happy)
+    const [resultData, setResultData] = useState<{ type: ResultType; message: string | null }>({
+        type: ResultType.Happy,
+        message: null
+    });
 
     const [createUserMutation] = useCreateUserMutation();
     const [getToken] = useGetTokenLazyQuery();
     
     const handleRegister = () => {
         setIsLoaderActive(true)
-        setResultMessage(null)
+        setResultData({
+            ...resultData,
+            message: null
+        })
 
         localStorage.removeItem('token');
         createUserMutation({
@@ -61,9 +66,7 @@ export default function RegisterForm({ openModalSignIn, setActiveModal }: Regist
             }
         }).catch(error => {
             setIsLoaderActive(false)
-
-            setResultType(ResultType.Angry)
-            setResultMessage(error.graphQLErrors[0].message.slice(4))
+            setResultData({ type: ResultType.Angry, message: error.graphQLErrors[0].message.slice(4)})
         })
     };
 
@@ -78,7 +81,7 @@ export default function RegisterForm({ openModalSignIn, setActiveModal }: Regist
     return (
         <>
             {
-                isLoaderActive ? (<Spinner/>) : (<></>)
+                isLoaderActive && (<Spinner/>)
             }
             <form>
                 <DefaultInput
@@ -90,7 +93,7 @@ export default function RegisterForm({ openModalSignIn, setActiveModal }: Regist
                     onChange={setLogin}
                     validateFunc={isValidLogin}
                     setIsErrorExist={(hasError) => updateErrorState('login', hasError)}
-                    errorQuery={setResultMessage}
+                    setResultData={setResultData}
                 />
                 <DefaultInput
                     id="password_reg"
@@ -101,7 +104,7 @@ export default function RegisterForm({ openModalSignIn, setActiveModal }: Regist
                     onChange={setPassword}
                     validateFunc={isValidPassword}
                     setIsErrorExist={(hasError) => updateErrorState('password', hasError)}
-                    errorQuery={setResultMessage}
+                    setResultData={setResultData}
                 />
                 <DefaultInput
                     id="confirm_password_reg"
@@ -112,7 +115,7 @@ export default function RegisterForm({ openModalSignIn, setActiveModal }: Regist
                     onChange={setConfirmPassword}
                     validateFunc={isValidMatchPassword}
                     setIsErrorExist={(hasError) => updateErrorState('confirmPassword', hasError)}
-                    errorQuery={setResultMessage}
+                    setResultData={setResultData}
                 />
             </form>
             <button className="button_main_action" onClick={handleRegister} disabled={Object.values(errorState).some(isError => isError)}>
@@ -122,8 +125,7 @@ export default function RegisterForm({ openModalSignIn, setActiveModal }: Regist
                 Авторизация
             </button>
             <ResultQuery
-                resultType={resultType}
-                resultMessage={resultMessage}
+                resultData={resultData}
             />
         </>
     );
