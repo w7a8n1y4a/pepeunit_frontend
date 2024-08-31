@@ -9,11 +9,20 @@ dialog {
     font-size: 22px;
 }
 
+.back_modal,
 .close_modal {
     position: absolute;
     top: 15px;
-    right: 15px;
     background: transparent;
     border: none;
     cursor: pointer;
+}
+
+.close_modal {
+    right: 15px;
+}
+
+.back_modal {
+    top: 12px;
+    right: 40px;
 }
