@@ -77,7 +77,6 @@ export default function RegisterForm({ openModalSignIn, setActiveModal }: Regist
         }));
     };
 
-
     return (
         <>
             {

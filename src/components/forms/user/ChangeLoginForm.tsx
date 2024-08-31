@@ -1,5 +1,9 @@
 import { useState } from 'react';
+import { ResultType } from '../../../types/resultEnum'
 import { useUpdateUserMutation } from '../../../types/composition-functions';
+import DefaultInput from '../primitives/DefaultInput'
+import Spinner from '../primitives/Spinner'
+import ResultQuery from '../primitives/ResultQuery'
 import isValidLogin from '../../../utils/isValidLogin'
 import '../form.css'
 
@@ -8,15 +12,36 @@ interface ChangeLoginFormProps {
 }
 
 export default function ChangeLoginForm({ setActiveModal }: ChangeLoginFormProps) {
-    const [login, setLogin] = useState('');
+    const user = localStorage.getItem('user');
+    const loginStorage = user ? JSON.parse(user).login : '';
+
+    const [login, setLogin] = useState(loginStorage);
+    const [errorState, setErrorState] = useState({
+        login: true,
+        password: true,
+    });
+    const [isLoaderActive, setIsLoaderActive] = useState(false)
+    const [resultData, setResultData] = useState<{ type: ResultType; message: string | null }>({
+        type: ResultType.Happy,
+        message: null
+    });
     
+    const updateErrorState = (field: keyof typeof errorState, hasError: boolean) => {
+        setErrorState(prevState => ({
+            ...prevState,
+            [field]: hasError
+        }));
+    };
+
     const [updateUserMutation] = useUpdateUserMutation();
 
     const handleChangeLogin = () => {
-        if (!isValidLogin(login)) {
-            alert("Неверный формат логина!");
-            return;
-        }
+        setIsLoaderActive(true)
+        setResultData({
+            ...resultData,
+            message: null
+        })
+
 
         updateUserMutation({
             variables: {
@@ -25,9 +50,10 @@ export default function ChangeLoginForm({ setActiveModal }: ChangeLoginFormProps
         }).then(updateUserData => {
             if (updateUserData.data) { 
                 localStorage.setItem('user', JSON.stringify(updateUserData.data.updateUser));
+                
+                setResultData({ type: ResultType.Happy, message: "Логин успешно обновлён"})
+                setIsLoaderActive(false)
                 setActiveModal(null)
-            } else {
-                console.error('Ошибка обновления логина:', updateUserData.errors);
             }
         })
 
@@ -35,20 +61,30 @@ export default function ChangeLoginForm({ setActiveModal }: ChangeLoginFormProps
 
     return (
         <>
+            {
+                isLoaderActive && (<Spinner/>)
+            }
             <div>
                 <form>
-                    <input
-                        id='login_change'
-                        type='text'
-                        placeholder='New Login'
+                    <DefaultInput
+                        id="login_change"
+                        type="text"
+                        placeholder="New Login"
                         value={login}
-                        onChange={(e) => setLogin(e.target.value)}
+                        validateState={login}
+                        onChange={setLogin}
+                        validateFunc={isValidLogin}
+                        setIsErrorExist={(hasError) => updateErrorState('login', hasError)}
+                        setResultData={setResultData}
                     />
                 </form>
             </div>
             <button className="button_main_action" onClick={handleChangeLogin}>
                 Изменить
             </button>
+            <ResultQuery
+                resultData={resultData}
+            />
         </>
     );
 }
