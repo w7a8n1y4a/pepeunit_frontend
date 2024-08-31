@@ -11,8 +11,12 @@ import RightMenu from '../RightMenu/RightMenu';
 import './Header.css'
 import { useState, useCallback, useReducer, useEffect } from 'react';
 
-export default function Header(){
-    const [activeModal, setActiveModal] = useState<string | null>(null);
+interface HeaderProps {
+    activeModal: string | null
+    setActiveModal: (show: string | null) => void;
+  }
+
+export default function Header({activeModal, setActiveModal}: HeaderProps){
     const [, forceUpdate] = useReducer(x => x + 1, 0);
 
     const user = localStorage.getItem('user');

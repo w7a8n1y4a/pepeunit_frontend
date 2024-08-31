@@ -7,8 +7,12 @@ import { RepoType } from '../../types/composition-functions'
 import SpriteText from 'three-spritetext';
 import { useState, useMemo, useCallback, useEffect } from 'react';
 
-export default function MainContent(){
-  const [activeModal, setActiveModal] = useState<string | null>(null);
+interface MainContentProps {
+  activeModal: string | null
+  setActiveModal: (show: string | null) => void;
+}
+
+export default function MainContent({activeModal, setActiveModal}: MainContentProps){
   const [reposData, setReposData] = useState(Array);
   const [currentRepoData, setCurrentRepoData] = useState<RepoType | null>(null)
   const [displayWidth, setDisplayWidth] = useState(window.innerWidth);
