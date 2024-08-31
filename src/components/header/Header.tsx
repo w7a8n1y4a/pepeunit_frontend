@@ -123,7 +123,7 @@ export default function Header(){
                     openModal={openModal}
                     openModalType='userMenu'
                 >
-                    <ChangePassForm setActiveModal={setActiveModal} />
+                    <ChangePassForm />
                 </BaseModal>
             </div>
         </header>

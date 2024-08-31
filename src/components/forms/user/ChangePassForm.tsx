@@ -8,11 +8,7 @@ import Spinner from '../primitives/Spinner'
 import ResultQuery from '../primitives/ResultQuery'
 import '../form.css'
 
-interface ChangePassFormProps {
-    setActiveModal: (show: string | null) => void;
-}
-
-export default function ChangePassForm({ setActiveModal }: ChangePassFormProps) {
+export default function ChangePassForm() {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
 
