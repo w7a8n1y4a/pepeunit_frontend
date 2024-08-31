@@ -1,11 +1,12 @@
 import { useState } from 'react';
+import { ResultType } from '../../../types/resultEnum'
 import { useCreateUserMutation, useGetTokenLazyQuery } from '../../../types/composition-functions';
-import angry_img from '/images/pepe/angry.svg'
 import isValidPassword from '../../../utils/isValidPassword'
 import isValidLogin from '../../../utils/isValidLogin'
 import isValidMatchPassword from '../../../utils/isValidMatchPassword'
 import DefaultInput from '../primitives/DefaultInput'
 import Spinner from '../primitives/Spinner'
+import ResultQuery from '../primitives/ResultQuery'
 import '../form.css'
 
 interface RegisterFormProps {
@@ -23,14 +24,15 @@ export default function RegisterForm({ openModalSignIn, setActiveModal }: Regist
         confirmPassword: true
     });
     const [isLoaderActive, setIsLoaderActive] = useState(false)
-    const [errorQuery, setErrorQuery] = useState<null | string>(null)
+    const [resultMessage, setResultMessage] = useState<null | string>(null)
+    const [resultType, setResultType] = useState<ResultType>(ResultType.Happy)
 
     const [createUserMutation] = useCreateUserMutation();
     const [getToken] = useGetTokenLazyQuery();
     
     const handleRegister = () => {
         setIsLoaderActive(true)
-        setErrorQuery(null)
+        setResultMessage(null)
 
         localStorage.removeItem('token');
         createUserMutation({
@@ -59,7 +61,9 @@ export default function RegisterForm({ openModalSignIn, setActiveModal }: Regist
             }
         }).catch(error => {
             setIsLoaderActive(false)
-            setErrorQuery(error.graphQLErrors[0].message)
+
+            setResultType(ResultType.Angry)
+            setResultMessage(error.graphQLErrors[0].message.slice(4))
         })
     };
 
@@ -86,7 +90,7 @@ export default function RegisterForm({ openModalSignIn, setActiveModal }: Regist
                     onChange={setLogin}
                     validateFunc={isValidLogin}
                     setIsErrorExist={(hasError) => updateErrorState('login', hasError)}
-                    errorQuery={setErrorQuery}
+                    errorQuery={setResultMessage}
                 />
                 <DefaultInput
                     id="password_reg"
@@ -97,7 +101,7 @@ export default function RegisterForm({ openModalSignIn, setActiveModal }: Regist
                     onChange={setPassword}
                     validateFunc={isValidPassword}
                     setIsErrorExist={(hasError) => updateErrorState('password', hasError)}
-                    errorQuery={setErrorQuery}
+                    errorQuery={setResultMessage}
                 />
                 <DefaultInput
                     id="confirm_password_reg"
@@ -108,7 +112,7 @@ export default function RegisterForm({ openModalSignIn, setActiveModal }: Regist
                     onChange={setConfirmPassword}
                     validateFunc={isValidMatchPassword}
                     setIsErrorExist={(hasError) => updateErrorState('confirmPassword', hasError)}
-                    errorQuery={setErrorQuery}
+                    errorQuery={setResultMessage}
                 />
             </form>
             <button className="button_main_action" onClick={handleRegister} disabled={Object.values(errorState).some(isError => isError)}>
@@ -117,16 +121,10 @@ export default function RegisterForm({ openModalSignIn, setActiveModal }: Regist
             <button className="button_open_alter" onClick={openModalSignIn}>
                 Авторизация
             </button>
-            {
-                errorQuery !== null ? (
-                    <div className="info_error_message">
-                        <img src={angry_img} width="36" height="36" alt="signout" />
-                        <div className="info_error_message_text">
-                            {errorQuery}
-                        </div>
-                    </div>
-                ) : (<></>)
-            }
+            <ResultQuery
+                resultType={resultType}
+                resultMessage={resultMessage}
+            />
         </>
     );
 }
