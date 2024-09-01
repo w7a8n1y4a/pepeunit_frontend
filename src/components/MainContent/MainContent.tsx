@@ -105,9 +105,13 @@ export default function MainContent({activeModal, setActiveModal}: MainContentPr
           <button className="button_open_alter" onClick={() => openModal('updateRepo')}>
             Параметры
           </button>
-          <button className="button_open_alter" onClick={() => openModal('changeCredentials')}>
-            Авторизация GIT
-          </button>
+          {
+            currentRepoData && !currentRepoData.isPublicRepository && (
+              <button className="button_open_alter" onClick={() => openModal('changeCredentials')}>
+                Авторизация GIT
+              </button>
+            )
+          }
         </div>
       </BaseModal>
       <BaseModal
@@ -132,7 +136,13 @@ export default function MainContent({activeModal, setActiveModal}: MainContentPr
         openModal={openModal} 
         openModalType='repoSettingsMenu'
       >
-        <UpdateRepoCredentialsForm/>
+        {
+          currentRepoData && (
+            <UpdateRepoCredentialsForm
+              currentRepoData={currentRepoData}
+            />
+          )
+        }
       </BaseModal>
     </>
   )

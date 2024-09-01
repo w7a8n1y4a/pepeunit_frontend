@@ -136,7 +136,7 @@ export default function CreateRepoForm({ setActiveModal }:CreateRepoFormProps) {
                             <span className="slider"></span>
                         </label>
                         <div className="toggle_text">
-                            Требуется авторизация?
+                            Приватный ?
                         </div>
                     </div>
                     {
