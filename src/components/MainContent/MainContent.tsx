@@ -1,5 +1,5 @@
 import { ResultType } from '../../types/resultEnum'
-import { useGetReposLazyQuery, useUpdateLocalRepoMutation, useUpdateUnitsFirmwareMutation } from '../../types/composition-functions'
+import { useGetReposLazyQuery, useUpdateLocalRepoMutation, useUpdateUnitsFirmwareMutation, useDeleteRepoMutation } from '../../types/composition-functions'
 import BaseModal from '../modal/BaseModal'
 import { ForceGraph3D } from 'react-force-graph';
 import UpdateRepoForm from '../forms/repo/UpdateRepoForm';
@@ -31,6 +31,7 @@ export default function MainContent({activeModal, setActiveModal, currentRepoDat
   const [getRepos] = useGetReposLazyQuery();
   const [updateLocalRepo] = useUpdateLocalRepoMutation();
   const [updateUnitsFirmware] = useUpdateUnitsFirmwareMutation()
+  const [deleteRepo] = useDeleteRepoMutation()
 
   const forceData = useMemo(() => test(), [reposData])
 
@@ -78,6 +79,32 @@ export default function MainContent({activeModal, setActiveModal, currentRepoDat
         if (result.data){
           setIsLoaderActive(false)
           setResultData({ type: ResultType.Happy, message: "Запрос обновления связанных Unit отправлен"})
+        }
+      }).catch(error => {
+        setIsLoaderActive(false)
+        setResultData({ type: ResultType.Angry, message: error.graphQLErrors[0].message.slice(4)})
+      })
+    }
+  };
+
+  const handleDeleteRepo = () => {
+    setIsLoaderActive(true)
+    setResultData({
+      ...resultData,
+      message: null
+    })
+
+    if (currentRepoData){
+      deleteRepo(
+        {
+          variables: {
+            uuid: currentRepoData.uuid
+          }
+        }
+      ).then(result => {
+        if (result.data){
+          setIsLoaderActive(false)
+          setActiveModal(null)
         }
       }).catch(error => {
         setIsLoaderActive(false)
@@ -172,6 +199,9 @@ export default function MainContent({activeModal, setActiveModal, currentRepoDat
         openModalType='repoMenu'
         >
         <div className="modal_menu_content">
+          {
+            isLoaderActive && (<Spinner/>)
+          }
           <button className="button_open_alter" onClick={() => openModal('updateRepo')}>
             Параметры
           </button>
@@ -182,6 +212,12 @@ export default function MainContent({activeModal, setActiveModal, currentRepoDat
               </button>
             )
           }
+          <button className="button_open_alter" onClick={handleDeleteRepo}>
+            Удалить
+          </button>
+          <ResultQuery
+            resultData={resultData}
+          />
         </div>
       </BaseModal>
       <BaseModal
