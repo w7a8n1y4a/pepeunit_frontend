@@ -90,5 +90,27 @@ gql`
             creatorUuid
         }
     }
-  
+    mutation updateLocalRepo(
+        $uuid: UUID!
+    ) {
+        updateLocalRepo (
+            uuid: $uuid
+        ){
+            isNone
+        }
+    }
+    mutation updateUnitsFirmware(
+        $uuid: UUID!
+    ) {
+        updateUnitsFirmware (
+            uuid: $uuid
+        ){
+            isNone
+        }
+    }
+    mutation bulkUpdate{
+        bulkUpdate{
+            isNone
+        }
+    }
 `
