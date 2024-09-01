@@ -37,6 +37,7 @@ form {
     margin: 1px;
     cursor: pointer;
     float: right;
+    width: 270px;
 }
 
 .info_error,
