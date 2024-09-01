@@ -1,5 +1,10 @@
+import { ResultType } from '../../../types/resultEnum'
 import { VisibilityLevel, RepoType, useGetBranchCommitsLazyQuery, useUpdateRepoMutation } from '../../../types/composition-functions'
 import { useState, useEffect } from 'react';
+import isValidLogin from '../../../utils/isValidLogin'
+import DefaultInput from '../primitives/DefaultInput'
+import Spinner from '../primitives/Spinner'
+import ResultQuery from '../primitives/ResultQuery'
 import '../form.css'
 
 interface CreateRepoFormProps {
@@ -15,6 +20,15 @@ export default function UpdateRepoForm({ currentRepoData }: CreateRepoFormProps)
         summary: string;
         tag?: string | null;
     }> | null>(null);
+
+    const [errorState, setErrorState] = useState({
+        name: false,
+    });
+    const [isLoaderActive, setIsLoaderActive] = useState(false)
+    const [resultData, setResultData] = useState<{ type: ResultType; message: string | null }>({
+        type: ResultType.Happy,
+        message: null
+    });
 
     const [getBranchCommits] = useGetBranchCommitsLazyQuery();
     const [updateRepoMutation] = useUpdateRepoMutation();
@@ -50,16 +64,24 @@ export default function UpdateRepoForm({ currentRepoData }: CreateRepoFormProps)
     }, [currentRepoState.defaultBranch, currentRepoState.isAutoUpdateRepo]);
 
     const handleUpdateRepo = () => {
-        console.log(currentRepoState)
+        setIsLoaderActive(true)
+        setResultData({
+            ...resultData,
+            message: null
+        })
+
         updateRepoMutation({
             variables: currentRepoState
         }).then(UpdateRepoData =>{
             if (UpdateRepoData.data){
-                console.log('Repo обновлён', UpdateRepoData.data)
+                setIsLoaderActive(false)
+                setResultData({ type: ResultType.Happy, message: "Repo успешно обновлён"})
             }
+        }).catch(error => {
+            setIsLoaderActive(false)
+            setResultData({ type: ResultType.Angry, message: error.graphQLErrors[0].message.slice(4)})
         })
     };
-  
 
     function getCommitSummary(tag: undefined | null | string, commit: string, summary: string){
         let tagName = tag === null || tag === undefined ? '' : tag
@@ -71,20 +93,34 @@ export default function UpdateRepoForm({ currentRepoData }: CreateRepoFormProps)
         return tagName + commit.slice(0, 7) + ': ' + name 
     }
 
+    const updateErrorState = (field: keyof typeof errorState, hasError: boolean) => {
+        setErrorState(prevState => ({
+            ...prevState,
+            [field]: hasError
+        }));
+    };
+
     return (
-        <>
+        <>  
+            {
+                isLoaderActive && (<Spinner/>)
+            }
             <div>
                 <form>
-                    <input
-                        id='name_change'
-                        type='text'
-                        placeholder='Name'
+                    <DefaultInput
+                        id="name_set"
+                        type="text"
+                        placeholder="Name"
                         value={currentRepoState.name}
+                        validateState={currentRepoState.name}
                         onChange={(e) => setCurrentRepoState({
                                 ...currentRepoState,
-                                name: e.target.value
+                                name: e
                             }
                         )}
+                        validateFunc={isValidLogin}
+                        setIsErrorExist={(hasError) => updateErrorState('name', hasError)}
+                        setResultData={setResultData}
                     />
                     <select id='base_enum' value={currentRepoState.visibilityLevel} onChange={(e) => 
                             setCurrentRepoState({
@@ -179,9 +215,12 @@ export default function UpdateRepoForm({ currentRepoData }: CreateRepoFormProps)
                     }
                 </form>
             </div>
-            <button className="button_main_action" onClick={handleUpdateRepo}>
+            <button className="button_main_action" onClick={handleUpdateRepo} disabled={Object.values(errorState).some(isError => isError)}>
                 Обновить
             </button>
+            <ResultQuery
+                resultData={resultData}
+            />
         </>
     );
 }

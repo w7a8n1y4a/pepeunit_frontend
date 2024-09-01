@@ -549,6 +549,31 @@ export type UpdateRepoMutation = {
   };
 };
 
+export type UpdateRepoCredentialsMutationVariables = Exact<{
+  uuid: Scalars["UUID"]["input"];
+  data: CredentialsInput;
+}>;
+
+export type UpdateRepoCredentialsMutation = {
+  __typename?: "Mutation";
+  updateRepoCredentials: {
+    __typename?: "RepoType";
+    uuid: string;
+    visibilityLevel: VisibilityLevel;
+    name: string;
+    createDatetime: string;
+    repoUrl: string;
+    isPublicRepository: boolean;
+    defaultBranch?: string | null;
+    isAutoUpdateRepo: boolean;
+    defaultCommit?: string | null;
+    isOnlyTagUpdate: boolean;
+    lastUpdateDatetime: string;
+    branches: Array<string>;
+    creatorUuid: string;
+  };
+};
+
 export type CreateUserMutationVariables = Exact<{
   login: Scalars["String"]["input"];
   password: Scalars["String"]["input"];
@@ -828,6 +853,69 @@ export type UpdateRepoMutationResult =
 export type UpdateRepoMutationOptions = Apollo.BaseMutationOptions<
   UpdateRepoMutation,
   UpdateRepoMutationVariables
+>;
+export const UpdateRepoCredentialsDocument = gql`
+  mutation updateRepoCredentials($uuid: UUID!, $data: CredentialsInput!) {
+    updateRepoCredentials(uuid: $uuid, data: $data) {
+      uuid
+      visibilityLevel
+      name
+      createDatetime
+      repoUrl
+      isPublicRepository
+      defaultBranch
+      isAutoUpdateRepo
+      defaultCommit
+      isOnlyTagUpdate
+      lastUpdateDatetime
+      branches
+      creatorUuid
+    }
+  }
+`;
+export type UpdateRepoCredentialsMutationFn = Apollo.MutationFunction<
+  UpdateRepoCredentialsMutation,
+  UpdateRepoCredentialsMutationVariables
+>;
+
+/**
+ * __useUpdateRepoCredentialsMutation__
+ *
+ * To run a mutation, you first call `useUpdateRepoCredentialsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateRepoCredentialsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateRepoCredentialsMutation, { data, loading, error }] = useUpdateRepoCredentialsMutation({
+ *   variables: {
+ *      uuid: // value for 'uuid'
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useUpdateRepoCredentialsMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpdateRepoCredentialsMutation,
+    UpdateRepoCredentialsMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    UpdateRepoCredentialsMutation,
+    UpdateRepoCredentialsMutationVariables
+  >(UpdateRepoCredentialsDocument, options);
+}
+export type UpdateRepoCredentialsMutationHookResult = ReturnType<
+  typeof useUpdateRepoCredentialsMutation
+>;
+export type UpdateRepoCredentialsMutationResult =
+  Apollo.MutationResult<UpdateRepoCredentialsMutation>;
+export type UpdateRepoCredentialsMutationOptions = Apollo.BaseMutationOptions<
+  UpdateRepoCredentialsMutation,
+  UpdateRepoCredentialsMutationVariables
 >;
 export const CreateUserDocument = gql`
   mutation createUser($login: String!, $password: String!) {

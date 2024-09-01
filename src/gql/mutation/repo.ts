@@ -67,5 +67,28 @@ gql`
             creatorUuid
         }
     }
+    mutation updateRepoCredentials(
+        $uuid: UUID!
+        $data: CredentialsInput!
+    ) {
+        updateRepoCredentials (
+            uuid: $uuid
+            data: $data
+        ){
+            uuid
+            visibilityLevel
+            name
+            createDatetime
+            repoUrl
+            isPublicRepository
+            defaultBranch
+            isAutoUpdateRepo
+            defaultCommit
+            isOnlyTagUpdate
+            lastUpdateDatetime
+            branches
+            creatorUuid
+        }
+    }
   
 `
