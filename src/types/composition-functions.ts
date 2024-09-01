@@ -593,6 +593,15 @@ export type UpdateUnitsFirmwareMutation = {
   updateUnitsFirmware: { __typename?: "NoneType"; isNone: boolean };
 };
 
+export type DeleteRepoMutationVariables = Exact<{
+  uuid: Scalars["UUID"]["input"];
+}>;
+
+export type DeleteRepoMutation = {
+  __typename?: "Mutation";
+  deleteRepo: { __typename?: "NoneType"; isNone: boolean };
+};
+
 export type BulkUpdateMutationVariables = Exact<{ [key: string]: never }>;
 
 export type BulkUpdateMutation = {
@@ -1042,6 +1051,56 @@ export type UpdateUnitsFirmwareMutationResult =
 export type UpdateUnitsFirmwareMutationOptions = Apollo.BaseMutationOptions<
   UpdateUnitsFirmwareMutation,
   UpdateUnitsFirmwareMutationVariables
+>;
+export const DeleteRepoDocument = gql`
+  mutation deleteRepo($uuid: UUID!) {
+    deleteRepo(uuid: $uuid) {
+      isNone
+    }
+  }
+`;
+export type DeleteRepoMutationFn = Apollo.MutationFunction<
+  DeleteRepoMutation,
+  DeleteRepoMutationVariables
+>;
+
+/**
+ * __useDeleteRepoMutation__
+ *
+ * To run a mutation, you first call `useDeleteRepoMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteRepoMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteRepoMutation, { data, loading, error }] = useDeleteRepoMutation({
+ *   variables: {
+ *      uuid: // value for 'uuid'
+ *   },
+ * });
+ */
+export function useDeleteRepoMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    DeleteRepoMutation,
+    DeleteRepoMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<DeleteRepoMutation, DeleteRepoMutationVariables>(
+    DeleteRepoDocument,
+    options,
+  );
+}
+export type DeleteRepoMutationHookResult = ReturnType<
+  typeof useDeleteRepoMutation
+>;
+export type DeleteRepoMutationResult =
+  Apollo.MutationResult<DeleteRepoMutation>;
+export type DeleteRepoMutationOptions = Apollo.BaseMutationOptions<
+  DeleteRepoMutation,
+  DeleteRepoMutationVariables
 >;
 export const BulkUpdateDocument = gql`
   mutation bulkUpdate {

@@ -108,6 +108,15 @@ gql`
             isNone
         }
     }
+    mutation deleteRepo(
+        $uuid: UUID!
+    ) {
+        deleteRepo (
+            uuid: $uuid
+        ){
+            isNone
+        }
+    }
     mutation bulkUpdate{
         bulkUpdate{
             isNone
