@@ -120,7 +120,7 @@ export default function RegisterForm({ openModalSignIn, setActiveModal }: Regist
             <button className="button_main_action" onClick={handleRegister} disabled={Object.values(errorState).some(isError => isError)}>
                 Создать
             </button>
-            <button className="button_open_alter" onClick={openModalSignIn}>
+            <button className="button_open_alter_auth" onClick={openModalSignIn}>
                 Авторизация
             </button>
             <ResultQuery

@@ -105,7 +105,7 @@ export default function SignInForm({openModalRegister, setActiveModal }: SignInF
             <button className="button_main_action" onClick={handleLogin} disabled={Object.values(errorState).some(isError => isError)}>
                 Войти
             </button>
-            <button className="button_open_alter" onClick={openModalRegister}>
+            <button className="button_open_alter_auth" onClick={openModalRegister}>
                 Регистрация
             </button>
             <ResultQuery

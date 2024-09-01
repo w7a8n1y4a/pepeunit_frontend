@@ -26,6 +26,7 @@ form {
     cursor: pointer;
 }
 
+.button_open_alter_auth,
 .button_open_alter {
     background-color: transparent;
     border-radius: 4px;
@@ -37,6 +38,9 @@ form {
     margin: 1px;
     cursor: pointer;
     float: right;
+}
+
+.button_open_alter {
     width: 270px;
 }
 
