@@ -9,11 +9,11 @@ import '../form.css'
 
 interface CreateRepoFormProps {
     currentRepoData: RepoType;
+    setCurrentRepoData: (repo: RepoType | null) => void;
 }
 
-export default function UpdateRepoForm({ currentRepoData }: CreateRepoFormProps) {
+export default function UpdateRepoForm({ currentRepoData, setCurrentRepoData }: CreateRepoFormProps) {
 
-    const [currentRepoState, setCurrentRepoState] = useState(currentRepoData)
     const [repoAvailableCommits, setRepoAvailableCommits] = useState<Array<{
         __typename?: "CommitType";
         commit: string;
@@ -33,22 +33,13 @@ export default function UpdateRepoForm({ currentRepoData }: CreateRepoFormProps)
     const [getBranchCommits] = useGetBranchCommitsLazyQuery();
     const [updateRepoMutation] = useUpdateRepoMutation();
 
-    useEffect(
-        () => {
-            setCurrentRepoState({
-                ...currentRepoData,
-                defaultBranch: currentRepoData.defaultBranch === null ? currentRepoData.branches[0] : currentRepoData.defaultBranch
-            })
-        }, [currentRepoData]
-    )
-
     useEffect(() => {
-        console.log(currentRepoState)
-        if (currentRepoState.defaultBranch){
+        console.log(currentRepoData)
+        if (currentRepoData.defaultBranch){
             getBranchCommits({
                 variables: {
-                    uuid: currentRepoState.uuid,
-                    repoBranch: currentRepoState.defaultBranch,
+                    uuid: currentRepoData.uuid,
+                    repoBranch: currentRepoData.defaultBranch,
                     onlyTag: false,
                     limit: 100,
                     offset: 0
@@ -61,7 +52,7 @@ export default function UpdateRepoForm({ currentRepoData }: CreateRepoFormProps)
                 }
             )
         }
-    }, [currentRepoState.defaultBranch, currentRepoState.isAutoUpdateRepo]);
+    }, [currentRepoData.defaultBranch, currentRepoData.isAutoUpdateRepo]);
 
     const handleUpdateRepo = () => {
         setIsLoaderActive(true)
@@ -71,7 +62,7 @@ export default function UpdateRepoForm({ currentRepoData }: CreateRepoFormProps)
         })
 
         updateRepoMutation({
-            variables: currentRepoState
+            variables: currentRepoData
         }).then(UpdateRepoData =>{
             if (UpdateRepoData.data){
                 setIsLoaderActive(false)
@@ -111,10 +102,10 @@ export default function UpdateRepoForm({ currentRepoData }: CreateRepoFormProps)
                         id="name_set"
                         type="text"
                         placeholder="Name"
-                        value={currentRepoState.name}
-                        validateState={currentRepoState.name}
-                        onChange={(e) => setCurrentRepoState({
-                                ...currentRepoState,
+                        value={currentRepoData.name}
+                        validateState={currentRepoData.name}
+                        onChange={(e) => setCurrentRepoData({
+                                ...currentRepoData,
                                 name: e
                             }
                         )}
@@ -122,9 +113,9 @@ export default function UpdateRepoForm({ currentRepoData }: CreateRepoFormProps)
                         setIsErrorExist={(hasError) => updateErrorState('name', hasError)}
                         setResultData={setResultData}
                     />
-                    <select id='base_enum' value={currentRepoState.visibilityLevel} onChange={(e) => 
-                            setCurrentRepoState({
-                                ...currentRepoState,
+                    <select id='base_enum' value={currentRepoData.visibilityLevel} onChange={(e) => 
+                            setCurrentRepoData({
+                                ...currentRepoData,
                                 visibilityLevel: e.target.value as VisibilityLevel
                             })
                         }
@@ -134,17 +125,18 @@ export default function UpdateRepoForm({ currentRepoData }: CreateRepoFormProps)
                         <option value={VisibilityLevel.Private}>Private</option>
                     </select>
 
-                    <select id='base_enum' value={currentRepoState.defaultBranch === null ? currentRepoState.branches[0] : currentRepoState.defaultBranch} onChange={(e) => {
-                            setCurrentRepoState(
+                    <select id='base_enum' value={currentRepoData.defaultBranch === null ? '' : currentRepoData.defaultBranch} onChange={(e) => {
+                            setCurrentRepoData(
                                 {
-                                    ...currentRepoState,
+                                    ...currentRepoData,
                                     defaultBranch: e.target.value
                                 }
                             )
                         }}
                     >
+                        <option value="" disabled selected>Выберите ветку</option>
                         {   
-                            currentRepoState.branches.map(
+                            currentRepoData.branches.map(
                                 item => (
                                     <option value={item}>
                                         {item}
@@ -157,11 +149,11 @@ export default function UpdateRepoForm({ currentRepoData }: CreateRepoFormProps)
                         <label className="toggle">
                             <input 
                                 type="checkbox" 
-                                checked={currentRepoState.isAutoUpdateRepo}
-                                onChange={(e) => setCurrentRepoState({
-                                            ...currentRepoState,
+                                checked={currentRepoData.isAutoUpdateRepo}
+                                onChange={(e) => setCurrentRepoData({
+                                            ...currentRepoData,
                                             isAutoUpdateRepo: e.target.checked,
-                                            isOnlyTagUpdate:  e.target.checked === false ? e.target.checked : currentRepoState.isOnlyTagUpdate
+                                            isOnlyTagUpdate:  e.target.checked === false ? e.target.checked : currentRepoData.isOnlyTagUpdate
                                         }
                                     )
                                 } 
@@ -173,14 +165,14 @@ export default function UpdateRepoForm({ currentRepoData }: CreateRepoFormProps)
                         </div>
                     </div>
                     {
-                        currentRepoState.isAutoUpdateRepo ? (
+                        currentRepoData.isAutoUpdateRepo ? (
                             <div className='toggle_container'>
                             <label className="toggle">
                                 <input 
                                     type="checkbox" 
-                                    checked={currentRepoState.isOnlyTagUpdate}
-                                    onChange={(e) => setCurrentRepoState({
-                                                ...currentRepoState,
+                                    checked={currentRepoData.isOnlyTagUpdate}
+                                    onChange={(e) => setCurrentRepoData({
+                                                ...currentRepoData,
                                                 isOnlyTagUpdate: e.target.checked,
                                             }
                                         )
@@ -193,9 +185,9 @@ export default function UpdateRepoForm({ currentRepoData }: CreateRepoFormProps)
                             </div>
                         </div>
                         ) : (
-                            <select id='base_enum' value={currentRepoState.defaultCommit === null ? '' : currentRepoState.defaultCommit} onChange={(e) => {
-                                setCurrentRepoState({
-                                    ...currentRepoState,
+                            <select id='base_enum' value={currentRepoData.defaultCommit === null ? '' : currentRepoData.defaultCommit} onChange={(e) => {
+                                setCurrentRepoData({
+                                    ...currentRepoData,
                                     defaultCommit: e.target.value
                                 })
                             }}

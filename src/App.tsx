@@ -1,4 +1,5 @@
 import MainContent from './components/MainContent/MainContent'
+import { RepoType } from './types/composition-functions'
 import './App.css'
 import { onError } from '@apollo/client/link/error';
 import { setContext } from '@apollo/client/link/context';
@@ -69,6 +70,7 @@ const client = new ApolloClient({
 
 function App() {
   const [activeModal, setActiveModal] = useState<string | null>(null);
+  const [currentRepoData, setCurrentRepoData] = useState<RepoType | null>(null)
   
   return (
     <>
@@ -76,10 +78,13 @@ function App() {
         <Header
           activeModal={activeModal}
           setActiveModal={setActiveModal}
+          setCurrentRepoData={setCurrentRepoData}
         />
         <MainContent
           activeModal={activeModal}
           setActiveModal={setActiveModal}
+          currentRepoData={currentRepoData}
+          setCurrentRepoData={setCurrentRepoData}
         ></MainContent>
       </ApolloProvider>
     </>

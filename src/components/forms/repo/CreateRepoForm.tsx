@@ -1,5 +1,5 @@
 import { ResultType } from '../../../types/resultEnum'
-import { useCreateRepoMutation, VisibilityLevel, CreateRepoMutationVariables } from '../../../types/composition-functions'
+import { useCreateRepoMutation, VisibilityLevel, CreateRepoMutationVariables, RepoType } from '../../../types/composition-functions'
 import { useState } from 'react';
 import isValidLogin from '../../../utils/isValidLogin'
 import isValidString from '../../../utils/isValidString'
@@ -11,10 +11,11 @@ import '../form.css'
 
 
 interface CreateRepoFormProps {
-    setActiveModal: (show: string | null) => void;
+    setActiveModal: (show: string | null) => void
+    setCurrentRepoData: (repo: RepoType | null) => void;
 }
 
-export default function CreateRepoForm({ setActiveModal }:CreateRepoFormProps) {
+export default function CreateRepoForm({ setActiveModal, setCurrentRepoData }:CreateRepoFormProps) {
     const [repoName, setRepoName] = useState('');
     const [repoUrl, setRepoUrl] = useState('');
     const [repoVisibilityLevel, setRepoVisibilityLevel] = useState(VisibilityLevel.Public);
@@ -69,6 +70,7 @@ export default function CreateRepoForm({ setActiveModal }:CreateRepoFormProps) {
         }).then(CreateRepoData =>{
             if (CreateRepoData.data){
                 console.log('Repo создан', CreateRepoData.data)
+                setCurrentRepoData(CreateRepoData.data.createRepo)
                 setActiveModal('updateRepo')
                 setIsLoaderActive(false)
             }

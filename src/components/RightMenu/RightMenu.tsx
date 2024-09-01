@@ -1,4 +1,5 @@
 import add_repo_icon from '/images/add_repo_icon.svg'
+import { RepoType } from './../../types/composition-functions'
 import BaseModal from '../modal/BaseModal'
 import CreateRepoForm from '../forms/repo/CreateRepoForm'
 import './RightMenu.css'
@@ -8,9 +9,10 @@ interface RightMenuProps {
     setActiveModal: (show: string | null) => void
     openModal: (modalType: string) => void
     closeModal: () => void
+    setCurrentRepoData: (repo: RepoType | null) => void;
 }
 
-export default function RightMenu({activeModal, setActiveModal, openModal, closeModal}: RightMenuProps) {
+export default function RightMenu({activeModal, setActiveModal, openModal, closeModal, setCurrentRepoData}: RightMenuProps) {
     return (
         <div className='right_menu_base'>
             <button className="signin_button" onClick={() => openModal('createRepo')}>
@@ -19,6 +21,7 @@ export default function RightMenu({activeModal, setActiveModal, openModal, close
             <BaseModal modalName='Создание Repo' open={activeModal === 'createRepo'} closeModal={closeModal}>
                 <CreateRepoForm
                     setActiveModal={setActiveModal}
+                    setCurrentRepoData={setCurrentRepoData}
                 />
             </BaseModal>
         </div>
