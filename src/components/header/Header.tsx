@@ -1,4 +1,5 @@
 import BaseModal from '../modal/BaseModal'
+import { RepoType } from './../../types/composition-functions'
 import logo from '/images/logo_32_32.png'
 import signin_icon from '/images/signin.svg'
 import signout_icon from '/images/signout.svg'
@@ -13,10 +14,11 @@ import { useState, useCallback, useReducer, useEffect } from 'react';
 
 interface HeaderProps {
     activeModal: string | null
-    setActiveModal: (show: string | null) => void;
-  }
+    setActiveModal: (show: string | null) => void
+    setCurrentRepoData: (repo: RepoType | null) => void;
+}
 
-export default function Header({activeModal, setActiveModal}: HeaderProps){
+export default function Header({activeModal, setActiveModal, setCurrentRepoData}: HeaderProps){
     const [, forceUpdate] = useReducer(x => x + 1, 0);
 
     const user = localStorage.getItem('user');
@@ -71,6 +73,7 @@ export default function Header({activeModal, setActiveModal}: HeaderProps){
                             setActiveModal={setActiveModal}
                             openModal={openModal}
                             closeModal={closeModal}
+                            setCurrentRepoData={setCurrentRepoData}
                         />
                     </div>
                     

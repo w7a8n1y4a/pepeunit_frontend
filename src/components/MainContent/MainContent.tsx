@@ -13,11 +13,12 @@ import ResultQuery from '../forms/primitives/ResultQuery'
 interface MainContentProps {
   activeModal: string | null
   setActiveModal: (show: string | null) => void;
+  currentRepoData: RepoType | null
+  setCurrentRepoData: (repo: RepoType | null) => void;
 }
 
-export default function MainContent({activeModal, setActiveModal}: MainContentProps){
+export default function MainContent({activeModal, setActiveModal, currentRepoData, setCurrentRepoData}: MainContentProps){
   const [reposData, setReposData] = useState(Array);
-  const [currentRepoData, setCurrentRepoData] = useState<RepoType | null>(null)
   const [displayWidth, setDisplayWidth] = useState(window.innerWidth);
   const [displayHeight, setDisplayHeight] = useState(window.innerHeight);
 
@@ -130,8 +131,6 @@ export default function MainContent({activeModal, setActiveModal}: MainContentPr
           sprite.color = "#fff";
           sprite.textHeight = 6;
           sprite.position.y = 10;
-
-          console.log(sprite)
           return sprite;
         }}
         nodeThreeObjectExtend={true}
@@ -186,7 +185,7 @@ export default function MainContent({activeModal, setActiveModal}: MainContentPr
         </div>
       </BaseModal>
       <BaseModal
-        modalName='Параметры'
+        modalName='Параметры Repo'
         open={activeModal === 'updateRepo'}
         closeModal={closeModal}
         openModal={openModal} 
@@ -196,6 +195,7 @@ export default function MainContent({activeModal, setActiveModal}: MainContentPr
           currentRepoData && (
             <UpdateRepoForm
               currentRepoData={currentRepoData}
+              setCurrentRepoData={setCurrentRepoData}
             />
           )
         }
