@@ -62,6 +62,7 @@ export type CredentialsInput = {
 export type Mutation = {
   __typename?: "Mutation";
   blockUser: NoneType;
+  bulkUpdate: NoneType;
   createPermission: PermissionType;
   createRepo: RepoType;
   createUnit: UnitType;
@@ -574,6 +575,31 @@ export type UpdateRepoCredentialsMutation = {
   };
 };
 
+export type UpdateLocalRepoMutationVariables = Exact<{
+  uuid: Scalars["UUID"]["input"];
+}>;
+
+export type UpdateLocalRepoMutation = {
+  __typename?: "Mutation";
+  updateLocalRepo: { __typename?: "NoneType"; isNone: boolean };
+};
+
+export type UpdateUnitsFirmwareMutationVariables = Exact<{
+  uuid: Scalars["UUID"]["input"];
+}>;
+
+export type UpdateUnitsFirmwareMutation = {
+  __typename?: "Mutation";
+  updateUnitsFirmware: { __typename?: "NoneType"; isNone: boolean };
+};
+
+export type BulkUpdateMutationVariables = Exact<{ [key: string]: never }>;
+
+export type BulkUpdateMutation = {
+  __typename?: "Mutation";
+  bulkUpdate: { __typename?: "NoneType"; isNone: boolean };
+};
+
 export type CreateUserMutationVariables = Exact<{
   login: Scalars["String"]["input"];
   password: Scalars["String"]["input"];
@@ -916,6 +942,155 @@ export type UpdateRepoCredentialsMutationResult =
 export type UpdateRepoCredentialsMutationOptions = Apollo.BaseMutationOptions<
   UpdateRepoCredentialsMutation,
   UpdateRepoCredentialsMutationVariables
+>;
+export const UpdateLocalRepoDocument = gql`
+  mutation updateLocalRepo($uuid: UUID!) {
+    updateLocalRepo(uuid: $uuid) {
+      isNone
+    }
+  }
+`;
+export type UpdateLocalRepoMutationFn = Apollo.MutationFunction<
+  UpdateLocalRepoMutation,
+  UpdateLocalRepoMutationVariables
+>;
+
+/**
+ * __useUpdateLocalRepoMutation__
+ *
+ * To run a mutation, you first call `useUpdateLocalRepoMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateLocalRepoMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateLocalRepoMutation, { data, loading, error }] = useUpdateLocalRepoMutation({
+ *   variables: {
+ *      uuid: // value for 'uuid'
+ *   },
+ * });
+ */
+export function useUpdateLocalRepoMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpdateLocalRepoMutation,
+    UpdateLocalRepoMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    UpdateLocalRepoMutation,
+    UpdateLocalRepoMutationVariables
+  >(UpdateLocalRepoDocument, options);
+}
+export type UpdateLocalRepoMutationHookResult = ReturnType<
+  typeof useUpdateLocalRepoMutation
+>;
+export type UpdateLocalRepoMutationResult =
+  Apollo.MutationResult<UpdateLocalRepoMutation>;
+export type UpdateLocalRepoMutationOptions = Apollo.BaseMutationOptions<
+  UpdateLocalRepoMutation,
+  UpdateLocalRepoMutationVariables
+>;
+export const UpdateUnitsFirmwareDocument = gql`
+  mutation updateUnitsFirmware($uuid: UUID!) {
+    updateUnitsFirmware(uuid: $uuid) {
+      isNone
+    }
+  }
+`;
+export type UpdateUnitsFirmwareMutationFn = Apollo.MutationFunction<
+  UpdateUnitsFirmwareMutation,
+  UpdateUnitsFirmwareMutationVariables
+>;
+
+/**
+ * __useUpdateUnitsFirmwareMutation__
+ *
+ * To run a mutation, you first call `useUpdateUnitsFirmwareMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateUnitsFirmwareMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateUnitsFirmwareMutation, { data, loading, error }] = useUpdateUnitsFirmwareMutation({
+ *   variables: {
+ *      uuid: // value for 'uuid'
+ *   },
+ * });
+ */
+export function useUpdateUnitsFirmwareMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpdateUnitsFirmwareMutation,
+    UpdateUnitsFirmwareMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    UpdateUnitsFirmwareMutation,
+    UpdateUnitsFirmwareMutationVariables
+  >(UpdateUnitsFirmwareDocument, options);
+}
+export type UpdateUnitsFirmwareMutationHookResult = ReturnType<
+  typeof useUpdateUnitsFirmwareMutation
+>;
+export type UpdateUnitsFirmwareMutationResult =
+  Apollo.MutationResult<UpdateUnitsFirmwareMutation>;
+export type UpdateUnitsFirmwareMutationOptions = Apollo.BaseMutationOptions<
+  UpdateUnitsFirmwareMutation,
+  UpdateUnitsFirmwareMutationVariables
+>;
+export const BulkUpdateDocument = gql`
+  mutation bulkUpdate {
+    bulkUpdate {
+      isNone
+    }
+  }
+`;
+export type BulkUpdateMutationFn = Apollo.MutationFunction<
+  BulkUpdateMutation,
+  BulkUpdateMutationVariables
+>;
+
+/**
+ * __useBulkUpdateMutation__
+ *
+ * To run a mutation, you first call `useBulkUpdateMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useBulkUpdateMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [bulkUpdateMutation, { data, loading, error }] = useBulkUpdateMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useBulkUpdateMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    BulkUpdateMutation,
+    BulkUpdateMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<BulkUpdateMutation, BulkUpdateMutationVariables>(
+    BulkUpdateDocument,
+    options,
+  );
+}
+export type BulkUpdateMutationHookResult = ReturnType<
+  typeof useBulkUpdateMutation
+>;
+export type BulkUpdateMutationResult =
+  Apollo.MutationResult<BulkUpdateMutation>;
+export type BulkUpdateMutationOptions = Apollo.BaseMutationOptions<
+  BulkUpdateMutation,
+  BulkUpdateMutationVariables
 >;
 export const CreateUserDocument = gql`
   mutation createUser($login: String!, $password: String!) {
