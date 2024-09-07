@@ -1,5 +1,5 @@
 import MainContent from './components/MainContent/MainContent'
-import { RepoType } from './types/composition-functions'
+import { RepoType, UnitType } from './types/composition-functions'
 import './App.css'
 import { onError } from '@apollo/client/link/error';
 import { setContext } from '@apollo/client/link/context';
@@ -71,7 +71,8 @@ const client = new ApolloClient({
 function App() {
   const [activeModal, setActiveModal] = useState<string | null>(null);
   const [currentRepoData, setCurrentRepoData] = useState<RepoType | null>(null)
-  
+  const [currentUnitData, setCurrentUnitData] = useState<UnitType | null>(null)
+
   return (
     <>
       <ApolloProvider client={client}>
@@ -85,6 +86,8 @@ function App() {
           setActiveModal={setActiveModal}
           currentRepoData={currentRepoData}
           setCurrentRepoData={setCurrentRepoData}
+          currentUnitData={currentUnitData}
+          setCurrentUnitData={setCurrentUnitData}
         ></MainContent>
       </ApolloProvider>
     </>
