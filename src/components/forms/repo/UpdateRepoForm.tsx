@@ -96,6 +96,16 @@ export default function UpdateRepoForm({ currentRepoData, setCurrentRepoData }: 
             {
                 isLoaderActive && (<Spinner/>)
             }
+            {
+                currentRepoData.defaultBranch === null && (
+                    <ResultQuery
+                        resultData={{
+                            type: ResultType.Angry,
+                            message: 'Заполните ветку по умолчанию'
+                        }}
+                    />
+                )
+            }
             <div>
                 <form>
                     <DefaultInput

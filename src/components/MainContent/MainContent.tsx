@@ -2,9 +2,10 @@ import { ResultType } from '../../types/resultEnum'
 import { useGetReposLazyQuery, useUpdateLocalRepoMutation, useUpdateUnitsFirmwareMutation, useDeleteRepoMutation } from '../../types/composition-functions'
 import BaseModal from '../modal/BaseModal'
 import { ForceGraph3D } from 'react-force-graph';
+import CreateUnitForm from '../forms/unit/CreateUnitForm';
 import UpdateRepoForm from '../forms/repo/UpdateRepoForm';
 import UpdateRepoCredentialsForm from '../forms/repo/UpdateRepoCredentialsForm'
-import { RepoType } from '../../types/composition-functions'
+import { RepoType, UnitType } from '../../types/composition-functions'
 import SpriteText from 'three-spritetext';
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import Spinner from '../forms/primitives/Spinner'
@@ -15,9 +16,11 @@ interface MainContentProps {
   setActiveModal: (show: string | null) => void;
   currentRepoData: RepoType | null
   setCurrentRepoData: (repo: RepoType | null) => void;
+  currentUnitData: UnitType | null
+  setCurrentUnitData: (repo: UnitType | null) => void;
 }
 
-export default function MainContent({activeModal, setActiveModal, currentRepoData, setCurrentRepoData}: MainContentProps){
+export default function MainContent({activeModal, setActiveModal, currentRepoData, setCurrentRepoData, currentUnitData, setCurrentUnitData}: MainContentProps){
   const [reposData, setReposData] = useState(Array);
   const [displayWidth, setDisplayWidth] = useState(window.innerWidth);
   const [displayHeight, setDisplayHeight] = useState(window.innerHeight);
@@ -145,6 +148,7 @@ export default function MainContent({activeModal, setActiveModal, currentRepoDat
       links: []
     }
   }
+  console.log(currentUnitData)
 
   return (
     <>
@@ -190,6 +194,17 @@ export default function MainContent({activeModal, setActiveModal, currentRepoDat
           />
         </div>
 
+      </BaseModal>
+      <BaseModal modalName='Создание Unit' open={activeModal === 'createUnit'} closeModal={closeModal} openModal={openModal} openModalType='repoMenu'>
+        {
+          currentRepoData && (
+            <CreateUnitForm
+              setActiveModal={setActiveModal}
+              currentRepoData={currentRepoData}
+              setCurrentUnitData={setCurrentUnitData}
+            />
+          )
+        }
       </BaseModal>
       <BaseModal
         modalName='Настройки'

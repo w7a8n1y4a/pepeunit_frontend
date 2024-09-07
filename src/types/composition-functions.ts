@@ -609,6 +609,34 @@ export type BulkUpdateMutation = {
   bulkUpdate: { __typename?: "NoneType"; isNone: boolean };
 };
 
+export type CreateUnitMutationVariables = Exact<{
+  repoUuid: Scalars["UUID"]["input"];
+  visibilityLevel: VisibilityLevel;
+  name: Scalars["String"]["input"];
+  isAutoUpdateFromRepoUnit: Scalars["Boolean"]["input"];
+  repoBranch?: InputMaybe<Scalars["String"]["input"]>;
+  repoCommit?: InputMaybe<Scalars["String"]["input"]>;
+}>;
+
+export type CreateUnitMutation = {
+  __typename?: "Mutation";
+  createUnit: {
+    __typename?: "UnitType";
+    uuid: string;
+    visibilityLevel: VisibilityLevel;
+    name: string;
+    createDatetime: string;
+    isAutoUpdateFromRepoUnit: boolean;
+    repoBranch?: string | null;
+    repoCommit?: string | null;
+    unitStateDict?: string | null;
+    currentCommitVersion?: string | null;
+    lastUpdateDatetime: string;
+    creatorUuid: string;
+    repoUuid: string;
+  };
+};
+
 export type CreateUserMutationVariables = Exact<{
   login: Scalars["String"]["input"];
   password: Scalars["String"]["input"];
@@ -1150,6 +1178,88 @@ export type BulkUpdateMutationResult =
 export type BulkUpdateMutationOptions = Apollo.BaseMutationOptions<
   BulkUpdateMutation,
   BulkUpdateMutationVariables
+>;
+export const CreateUnitDocument = gql`
+  mutation createUnit(
+    $repoUuid: UUID!
+    $visibilityLevel: VisibilityLevel!
+    $name: String!
+    $isAutoUpdateFromRepoUnit: Boolean!
+    $repoBranch: String
+    $repoCommit: String
+  ) {
+    createUnit(
+      unit: {
+        repoUuid: $repoUuid
+        visibilityLevel: $visibilityLevel
+        name: $name
+        isAutoUpdateFromRepoUnit: $isAutoUpdateFromRepoUnit
+        repoBranch: $repoBranch
+        repoCommit: $repoCommit
+      }
+    ) {
+      uuid
+      visibilityLevel
+      name
+      createDatetime
+      isAutoUpdateFromRepoUnit
+      repoBranch
+      repoCommit
+      unitStateDict
+      currentCommitVersion
+      lastUpdateDatetime
+      creatorUuid
+      repoUuid
+    }
+  }
+`;
+export type CreateUnitMutationFn = Apollo.MutationFunction<
+  CreateUnitMutation,
+  CreateUnitMutationVariables
+>;
+
+/**
+ * __useCreateUnitMutation__
+ *
+ * To run a mutation, you first call `useCreateUnitMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateUnitMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createUnitMutation, { data, loading, error }] = useCreateUnitMutation({
+ *   variables: {
+ *      repoUuid: // value for 'repoUuid'
+ *      visibilityLevel: // value for 'visibilityLevel'
+ *      name: // value for 'name'
+ *      isAutoUpdateFromRepoUnit: // value for 'isAutoUpdateFromRepoUnit'
+ *      repoBranch: // value for 'repoBranch'
+ *      repoCommit: // value for 'repoCommit'
+ *   },
+ * });
+ */
+export function useCreateUnitMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CreateUnitMutation,
+    CreateUnitMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<CreateUnitMutation, CreateUnitMutationVariables>(
+    CreateUnitDocument,
+    options,
+  );
+}
+export type CreateUnitMutationHookResult = ReturnType<
+  typeof useCreateUnitMutation
+>;
+export type CreateUnitMutationResult =
+  Apollo.MutationResult<CreateUnitMutation>;
+export type CreateUnitMutationOptions = Apollo.BaseMutationOptions<
+  CreateUnitMutation,
+  CreateUnitMutationVariables
 >;
 export const CreateUserDocument = gql`
   mutation createUser($login: String!, $password: String!) {

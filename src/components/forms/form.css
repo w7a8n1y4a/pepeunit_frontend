@@ -119,10 +119,11 @@ form {
 }
 
 #base_enum {
+    width: 100%;
     padding: 8px;
     border: solid 3px;
     padding: 10px;
-    margin: 5px 0;
+    margin: 5px 0px;
     border-color: #282828;
     background-color: #101010;
     color: #777;
