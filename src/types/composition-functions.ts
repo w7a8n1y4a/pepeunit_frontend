@@ -37,6 +37,7 @@ export type BaseMetricsType = {
   repoCount: Scalars["Int"]["output"];
   unitCount: Scalars["Int"]["output"];
   unitNodeCount: Scalars["Int"]["output"];
+  unitNodeEdgeCount: Scalars["Int"]["output"];
   userCount: Scalars["Int"]["output"];
 };
 
@@ -668,6 +669,20 @@ export type UpdateUserMutation = {
     status: UserStatus;
     login: string;
     createDatetime: string;
+  };
+};
+
+export type GetBaseMetricsQueryVariables = Exact<{ [key: string]: never }>;
+
+export type GetBaseMetricsQuery = {
+  __typename?: "Query";
+  getBaseMetrics: {
+    __typename?: "BaseMetricsType";
+    userCount: number;
+    repoCount: number;
+    unitCount: number;
+    unitNodeCount: number;
+    unitNodeEdgeCount: number;
   };
 };
 
@@ -1401,6 +1416,82 @@ export type UpdateUserMutationResult =
 export type UpdateUserMutationOptions = Apollo.BaseMutationOptions<
   UpdateUserMutation,
   UpdateUserMutationVariables
+>;
+export const GetBaseMetricsDocument = gql`
+  query getBaseMetrics {
+    getBaseMetrics {
+      userCount
+      repoCount
+      unitCount
+      unitNodeCount
+      unitNodeEdgeCount
+    }
+  }
+`;
+
+/**
+ * __useGetBaseMetricsQuery__
+ *
+ * To run a query within a React component, call `useGetBaseMetricsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetBaseMetricsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetBaseMetricsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetBaseMetricsQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetBaseMetricsQuery,
+    GetBaseMetricsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetBaseMetricsQuery, GetBaseMetricsQueryVariables>(
+    GetBaseMetricsDocument,
+    options,
+  );
+}
+export function useGetBaseMetricsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetBaseMetricsQuery,
+    GetBaseMetricsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetBaseMetricsQuery, GetBaseMetricsQueryVariables>(
+    GetBaseMetricsDocument,
+    options,
+  );
+}
+export function useGetBaseMetricsSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    GetBaseMetricsQuery,
+    GetBaseMetricsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<
+    GetBaseMetricsQuery,
+    GetBaseMetricsQueryVariables
+  >(GetBaseMetricsDocument, options);
+}
+export type GetBaseMetricsQueryHookResult = ReturnType<
+  typeof useGetBaseMetricsQuery
+>;
+export type GetBaseMetricsLazyQueryHookResult = ReturnType<
+  typeof useGetBaseMetricsLazyQuery
+>;
+export type GetBaseMetricsSuspenseQueryHookResult = ReturnType<
+  typeof useGetBaseMetricsSuspenseQuery
+>;
+export type GetBaseMetricsQueryResult = Apollo.QueryResult<
+  GetBaseMetricsQuery,
+  GetBaseMetricsQueryVariables
 >;
 export const GetReposDocument = gql`
   query getRepos(
