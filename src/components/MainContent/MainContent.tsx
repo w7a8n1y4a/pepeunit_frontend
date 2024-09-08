@@ -1,4 +1,6 @@
 import { ResultType } from '../../types/resultEnum'
+import { NodeType } from '../../types/nodeTypeEnum'
+import { getNodeColor } from '../../utils/getNodeColor'
 import { useGetReposLazyQuery, useUpdateLocalRepoMutation, useUpdateUnitsFirmwareMutation, useDeleteRepoMutation } from '../../types/composition-functions'
 import BaseModal from '../modal/BaseModal'
 import { ForceGraph3D } from 'react-force-graph';
@@ -21,7 +23,6 @@ interface MainContentProps {
 }
 
 export default function MainContent({activeModal, setActiveModal, currentRepoData, setCurrentRepoData, currentUnitData, setCurrentUnitData}: MainContentProps){
-  const [reposData, setReposData] = useState(Array);
   const [displayWidth, setDisplayWidth] = useState(window.innerWidth);
   const [displayHeight, setDisplayHeight] = useState(window.innerHeight);
 
@@ -29,14 +30,82 @@ export default function MainContent({activeModal, setActiveModal, currentRepoDat
   const [resultData, setResultData] = useState<{ type: ResultType; message: string | null }>({
     type: ResultType.Happy,
     message: null
-});
+  });
   
+  type GraphDataType = {
+    nodes: Array<{
+      id: string | number;
+      type: string;
+      color: string; 
+      data: any | RepoType; 
+    }>,
+    links: Array<{
+      source: string;
+      target: string; 
+    }>
+  }; 
+  const [graphData, setGraphData] = useState<GraphDataType>(
+    {
+      nodes: [
+        {
+          id: import.meta.env.VITE_BACKEND_URI,
+          type: NodeType.Domain,
+          color: getNodeColor(NodeType.Domain),
+          data: {
+            name: import.meta.env.VITE_BACKEND_URI
+          }
+        }
+      ],
+      links: []
+    }
+  )
+
+  const forceData = useMemo(() => test(), [graphData])
+
+  useEffect(() => {
+    getRepos().then(reposData => {
+      if (reposData.data?.getRepos){
+        
+        setGraphData({
+            nodes: [
+              ...graphData.nodes,
+              ...reposData.data.getRepos.map((repo) => ({
+                id: repo.uuid,
+                type: NodeType.Repo,
+                color: getNodeColor(NodeType.Repo),
+                data: repo
+              }
+            ))],
+            links: [
+              ...graphData.links,
+              ...reposData.data.getRepos.map((all) => ({source: import.meta.env.VITE_BACKEND_URI, target: all.uuid}))
+            ]
+          }
+        )
+      }
+    })
+  }, []);
+
+  // function test() {
+  //   console.log(graphData)
+  //   return {
+  //     nodes: [{id: 0, data: {name: 'kek'}}, {id: 1, data: {name: 'kekb'}}],
+  //     links: [{source: 0, target: 1}]
+  //   }
+  // }
+
+  function test() {
+    console.log(graphData)
+    return {
+      nodes: graphData.nodes,
+      links: graphData.links
+    }
+  }
+
   const [getRepos] = useGetReposLazyQuery();
   const [updateLocalRepo] = useUpdateLocalRepoMutation();
   const [updateUnitsFirmware] = useUpdateUnitsFirmwareMutation()
   const [deleteRepo] = useDeleteRepoMutation()
-
-  const forceData = useMemo(() => test(), [reposData])
 
   const handleUpdateLocalRepo = () => {
     setIsLoaderActive(true)
@@ -80,6 +149,7 @@ export default function MainContent({activeModal, setActiveModal, currentRepoDat
         }
       ).then(result => {
         if (result.data){
+          console.log(currentUnitData)
           setIsLoaderActive(false)
           setResultData({ type: ResultType.Happy, message: "Запрос обновления связанных Unit отправлен"})
         }
@@ -134,33 +204,18 @@ export default function MainContent({activeModal, setActiveModal, currentRepoDat
     setDisplayHeight(window.innerHeight);
   });
 
-  useEffect(() => {
-    getRepos().then(reposData => {
-      if (reposData.data?.getRepos){
-        setReposData(reposData.data.getRepos)
-      }
-    })
-  }, []);
-  
-  function test() {
-    return {
-      nodes: reposData !== null ? reposData.map((all, i) => ({id:i, data: all})) : [],
-      links: []
-    }
-  }
-  console.log(currentUnitData)
-
   return (
     <>
       <ForceGraph3D
-        backgroundColor='rgba(10,10,10, 1)'
+        backgroundColor='rgba(10,10,10, 20)'
         width={displayWidth}
         height={displayHeight}
         graphData={forceData}
+        enableNodeDrag={false}
         nodeThreeObject={(node: any) => {
           const sprite = new SpriteText(node.data.name) as any;
           sprite.color = "#fff";
-          sprite.textHeight = 6;
+          sprite.textHeight = 3;
           sprite.position.y = 10;
           return sprite;
         }}
