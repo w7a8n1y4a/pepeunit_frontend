@@ -39,4 +39,11 @@ gql`
             repoUuid
         }
     }
+    query getUnitEnv(
+        $uuid: UUID!
+    ) {
+        getUnitEnv (
+            uuid: $uuid
+        )
+    }
 `

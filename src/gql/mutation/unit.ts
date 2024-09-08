@@ -74,4 +74,15 @@ gql`
             isNone
         }
     }
+    mutation updateUnitEnv(
+        $uuid: UUID!
+        $envJsonStr: String!
+    ) {
+        updateUnitEnv (
+            uuid: $uuid
+            envJsonStr: $envJsonStr
+        ){
+            isNone
+        }
+    }
 `
