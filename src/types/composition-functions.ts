@@ -721,6 +721,37 @@ export type GetBranchCommitsQuery = {
   }>;
 };
 
+export type GetUnitsQueryVariables = Exact<{
+  creatorUuid?: InputMaybe<Scalars["UUID"]["input"]>;
+  repoUuid?: InputMaybe<Scalars["UUID"]["input"]>;
+  searchString?: InputMaybe<Scalars["String"]["input"]>;
+  isAutoUpdateFromRepoUnit?: InputMaybe<Scalars["Boolean"]["input"]>;
+  visibilityLevel?: InputMaybe<Array<VisibilityLevel> | VisibilityLevel>;
+  orderByCreateDate?: InputMaybe<OrderByDate>;
+  orderByLastUpdate?: InputMaybe<OrderByDate>;
+  offset?: InputMaybe<Scalars["Int"]["input"]>;
+  limit?: InputMaybe<Scalars["Int"]["input"]>;
+}>;
+
+export type GetUnitsQuery = {
+  __typename?: "Query";
+  getUnits: Array<{
+    __typename?: "UnitType";
+    uuid: string;
+    visibilityLevel: VisibilityLevel;
+    name: string;
+    createDatetime: string;
+    isAutoUpdateFromRepoUnit: boolean;
+    repoBranch?: string | null;
+    repoCommit?: string | null;
+    unitStateDict?: string | null;
+    currentCommitVersion?: string | null;
+    lastUpdateDatetime: string;
+    creatorUuid: string;
+    repoUuid: string;
+  }>;
+};
+
 export type GetTokenQueryVariables = Exact<{
   credentials: Scalars["String"]["input"];
   password: Scalars["String"]["input"];
@@ -1577,6 +1608,115 @@ export type GetBranchCommitsSuspenseQueryHookResult = ReturnType<
 export type GetBranchCommitsQueryResult = Apollo.QueryResult<
   GetBranchCommitsQuery,
   GetBranchCommitsQueryVariables
+>;
+export const GetUnitsDocument = gql`
+  query getUnits(
+    $creatorUuid: UUID
+    $repoUuid: UUID
+    $searchString: String
+    $isAutoUpdateFromRepoUnit: Boolean
+    $visibilityLevel: [VisibilityLevel!]
+    $orderByCreateDate: OrderByDate
+    $orderByLastUpdate: OrderByDate
+    $offset: Int
+    $limit: Int
+  ) {
+    getUnits(
+      filters: {
+        creatorUuid: $creatorUuid
+        repoUuid: $repoUuid
+        searchString: $searchString
+        isAutoUpdateFromRepoUnit: $isAutoUpdateFromRepoUnit
+        visibilityLevel: $visibilityLevel
+        orderByCreateDate: $orderByCreateDate
+        orderByLastUpdate: $orderByLastUpdate
+        offset: $offset
+        limit: $limit
+      }
+    ) {
+      uuid
+      visibilityLevel
+      name
+      createDatetime
+      isAutoUpdateFromRepoUnit
+      repoBranch
+      repoCommit
+      unitStateDict
+      currentCommitVersion
+      lastUpdateDatetime
+      creatorUuid
+      repoUuid
+    }
+  }
+`;
+
+/**
+ * __useGetUnitsQuery__
+ *
+ * To run a query within a React component, call `useGetUnitsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUnitsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUnitsQuery({
+ *   variables: {
+ *      creatorUuid: // value for 'creatorUuid'
+ *      repoUuid: // value for 'repoUuid'
+ *      searchString: // value for 'searchString'
+ *      isAutoUpdateFromRepoUnit: // value for 'isAutoUpdateFromRepoUnit'
+ *      visibilityLevel: // value for 'visibilityLevel'
+ *      orderByCreateDate: // value for 'orderByCreateDate'
+ *      orderByLastUpdate: // value for 'orderByLastUpdate'
+ *      offset: // value for 'offset'
+ *      limit: // value for 'limit'
+ *   },
+ * });
+ */
+export function useGetUnitsQuery(
+  baseOptions?: Apollo.QueryHookOptions<GetUnitsQuery, GetUnitsQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetUnitsQuery, GetUnitsQueryVariables>(
+    GetUnitsDocument,
+    options,
+  );
+}
+export function useGetUnitsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetUnitsQuery,
+    GetUnitsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetUnitsQuery, GetUnitsQueryVariables>(
+    GetUnitsDocument,
+    options,
+  );
+}
+export function useGetUnitsSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    GetUnitsQuery,
+    GetUnitsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<GetUnitsQuery, GetUnitsQueryVariables>(
+    GetUnitsDocument,
+    options,
+  );
+}
+export type GetUnitsQueryHookResult = ReturnType<typeof useGetUnitsQuery>;
+export type GetUnitsLazyQueryHookResult = ReturnType<
+  typeof useGetUnitsLazyQuery
+>;
+export type GetUnitsSuspenseQueryHookResult = ReturnType<
+  typeof useGetUnitsSuspenseQuery
+>;
+export type GetUnitsQueryResult = Apollo.QueryResult<
+  GetUnitsQuery,
+  GetUnitsQueryVariables
 >;
 export const GetTokenDocument = gql`
   query getToken($credentials: String!, $password: String!) {
