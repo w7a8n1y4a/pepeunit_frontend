@@ -1,7 +1,7 @@
 import { ResultType } from '../../types/resultEnum'
 import { NodeType } from '../../types/nodeTypeEnum'
 import { getNodeColor } from '../../utils/getNodeColor'
-import { useGetReposLazyQuery, useUpdateLocalRepoMutation, useUpdateUnitsFirmwareMutation, useDeleteRepoMutation } from '../../types/composition-functions'
+import { useGetReposLazyQuery, useGetUnitsLazyQuery, useUpdateLocalRepoMutation, useUpdateUnitsFirmwareMutation, useDeleteRepoMutation } from '../../types/composition-functions'
 import BaseModal from '../modal/BaseModal'
 import { ForceGraph3D } from 'react-force-graph';
 import CreateUnitForm from '../forms/unit/CreateUnitForm';
@@ -65,23 +65,34 @@ export default function MainContent({activeModal, setActiveModal, currentRepoDat
   useEffect(() => {
     getRepos().then(reposData => {
       if (reposData.data?.getRepos){
-        
-        setGraphData({
-            nodes: [
-              ...graphData.nodes,
-              ...reposData.data.getRepos.map((repo) => ({
-                id: repo.uuid,
-                type: NodeType.Repo,
-                color: getNodeColor(NodeType.Repo),
-                data: repo
+        getUnits().then(unitsData => {
+          if (unitsData.data?.getUnits && reposData.data?.getRepos){
+            setGraphData({
+                nodes: [
+                  ...graphData.nodes,
+                  ...reposData.data.getRepos.map((repo) => ({
+                    id: repo.uuid,
+                    type: NodeType.Repo,
+                    color: getNodeColor(NodeType.Repo),
+                    data: repo
+                  }
+                )),
+                  ...unitsData.data.getUnits.map((unit) => ({
+                    id: unit.uuid,
+                    type: NodeType.Unit,
+                    color: getNodeColor(NodeType.Unit),
+                    data: unit
+                  }
+                ))],
+                links: [
+                  ...graphData.links,
+                  ...reposData.data.getRepos.map((all) => ({source: import.meta.env.VITE_BACKEND_URI, target: all.uuid})),
+                  ...unitsData.data.getUnits.map((all) => ({source: all.repoUuid, target: all.uuid}))
+                ]
               }
-            ))],
-            links: [
-              ...graphData.links,
-              ...reposData.data.getRepos.map((all) => ({source: import.meta.env.VITE_BACKEND_URI, target: all.uuid}))
-            ]
+            )
           }
-        )
+        })
       }
     })
   }, []);
@@ -103,6 +114,7 @@ export default function MainContent({activeModal, setActiveModal, currentRepoDat
   }
 
   const [getRepos] = useGetReposLazyQuery();
+  const [getUnits] = useGetUnitsLazyQuery();
   const [updateLocalRepo] = useUpdateLocalRepoMutation();
   const [updateUnitsFirmware] = useUpdateUnitsFirmwareMutation()
   const [deleteRepo] = useDeleteRepoMutation()
@@ -215,7 +227,7 @@ export default function MainContent({activeModal, setActiveModal, currentRepoDat
         nodeThreeObject={(node: any) => {
           const sprite = new SpriteText(node.data.name) as any;
           sprite.color = "#fff";
-          sprite.textHeight = 3;
+          sprite.textHeight = 4;
           sprite.position.y = 10;
           return sprite;
         }}
