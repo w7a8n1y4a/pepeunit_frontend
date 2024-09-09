@@ -34,6 +34,12 @@ export default function UnitContent({
   const [deleteUnit] = useDeleteUnitMutation()
 
   const fileUpload = (type: string) => {
+    setIsLoaderActive(true)
+    setResultData({
+      ...resultData,
+      message: null
+    })
+
     let url = import.meta.env.VITE_BACKEND_URI.replace('graphql', '') + 'api/v1/units/firmware/' + type + '/' + currentUnitData?.uuid
     let token = localStorage.getItem('token')
 
@@ -46,9 +52,11 @@ export default function UnitContent({
               'accept': 'application/json',
               'x-auth-token': token,
             }
-          )
+          ),
+          mode: 'cors'
         }
-      ).then(resp => resp.blob()).then(blob => {
+      ).then(resp => resp.ok ? resp.blob() : Promise.reject(resp)).then(blob => {
+        setIsLoaderActive(false)
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
@@ -59,7 +67,11 @@ export default function UnitContent({
         document.body.appendChild(link);
         link.click();
       }).catch((error) => {
-        console.error("Error fetching the file:", error);
+        error.json().then( function (data: any) {
+            setIsLoaderActive(false)
+            setResultData({ type: ResultType.Angry, message: data.detail})
+          }
+        )
       });
     }
   }
