@@ -1,11 +1,12 @@
 import { ResultType } from '../../types/resultEnum'
-import { useDeleteUnitMutation} from '../../types/composition-functions'
+import { useDeleteUnitMutation } from '../../types/composition-functions'
 import BaseModal from '../modal/BaseModal'
 import { RepoType, UnitType } from '../../types/composition-functions'
 import { useState, useCallback } from 'react';
 import Spinner from '../forms/primitives/Spinner'
 import ResultQuery from '../forms/primitives/ResultQuery'
 import UpdateUnitForm from '../forms/unit/UpdateUnitForm';
+import UpdateUnitEnvForm from '../forms/unit/UpdateUnitEnvForm'
 
 interface UnitContentProps {
   activeModal: string | null
@@ -178,6 +179,21 @@ export default function UnitContent({
               setCurrentRepoData={setCurrentRepoData}
               currentUnitData={currentUnitData}
               setCurrentUnitData={setCurrentUnitData}
+            />
+          )
+        }
+      </BaseModal>
+      <BaseModal
+        modalName='Env Unit'
+        open={activeModal === 'unitSetEnv'}
+        closeModal={closeModal}
+        openModal={openModal} 
+        openModalType='unitSettingsMenu'
+      >
+        {
+          currentUnitData && (
+            <UpdateUnitEnvForm
+              currentUnitData={currentUnitData}
             />
           )
         }

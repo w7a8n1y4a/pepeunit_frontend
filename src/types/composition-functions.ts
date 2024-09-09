@@ -675,6 +675,16 @@ export type DeleteUnitMutation = {
   deleteUnit: { __typename?: "NoneType"; isNone: boolean };
 };
 
+export type UpdateUnitEnvMutationVariables = Exact<{
+  uuid: Scalars["UUID"]["input"];
+  envJsonStr: Scalars["String"]["input"];
+}>;
+
+export type UpdateUnitEnvMutation = {
+  __typename?: "Mutation";
+  updateUnitEnv: { __typename?: "NoneType"; isNone: boolean };
+};
+
 export type CreateUserMutationVariables = Exact<{
   login: Scalars["String"]["input"];
   password: Scalars["String"]["input"];
@@ -827,6 +837,12 @@ export type GetUnitsQuery = {
     repoUuid: string;
   }>;
 };
+
+export type GetUnitEnvQueryVariables = Exact<{
+  uuid: Scalars["UUID"]["input"];
+}>;
+
+export type GetUnitEnvQuery = { __typename?: "Query"; getUnitEnv: string };
 
 export type GetTokenQueryVariables = Exact<{
   credentials: Scalars["String"]["input"];
@@ -1500,6 +1516,57 @@ export type DeleteUnitMutationOptions = Apollo.BaseMutationOptions<
   DeleteUnitMutation,
   DeleteUnitMutationVariables
 >;
+export const UpdateUnitEnvDocument = gql`
+  mutation updateUnitEnv($uuid: UUID!, $envJsonStr: String!) {
+    updateUnitEnv(uuid: $uuid, envJsonStr: $envJsonStr) {
+      isNone
+    }
+  }
+`;
+export type UpdateUnitEnvMutationFn = Apollo.MutationFunction<
+  UpdateUnitEnvMutation,
+  UpdateUnitEnvMutationVariables
+>;
+
+/**
+ * __useUpdateUnitEnvMutation__
+ *
+ * To run a mutation, you first call `useUpdateUnitEnvMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateUnitEnvMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateUnitEnvMutation, { data, loading, error }] = useUpdateUnitEnvMutation({
+ *   variables: {
+ *      uuid: // value for 'uuid'
+ *      envJsonStr: // value for 'envJsonStr'
+ *   },
+ * });
+ */
+export function useUpdateUnitEnvMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpdateUnitEnvMutation,
+    UpdateUnitEnvMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    UpdateUnitEnvMutation,
+    UpdateUnitEnvMutationVariables
+  >(UpdateUnitEnvDocument, options);
+}
+export type UpdateUnitEnvMutationHookResult = ReturnType<
+  typeof useUpdateUnitEnvMutation
+>;
+export type UpdateUnitEnvMutationResult =
+  Apollo.MutationResult<UpdateUnitEnvMutation>;
+export type UpdateUnitEnvMutationOptions = Apollo.BaseMutationOptions<
+  UpdateUnitEnvMutation,
+  UpdateUnitEnvMutationVariables
+>;
 export const CreateUserDocument = gql`
   mutation createUser($login: String!, $password: String!) {
     createUser(user: { login: $login, password: $password }) {
@@ -2080,6 +2147,79 @@ export type GetUnitsSuspenseQueryHookResult = ReturnType<
 export type GetUnitsQueryResult = Apollo.QueryResult<
   GetUnitsQuery,
   GetUnitsQueryVariables
+>;
+export const GetUnitEnvDocument = gql`
+  query getUnitEnv($uuid: UUID!) {
+    getUnitEnv(uuid: $uuid)
+  }
+`;
+
+/**
+ * __useGetUnitEnvQuery__
+ *
+ * To run a query within a React component, call `useGetUnitEnvQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUnitEnvQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUnitEnvQuery({
+ *   variables: {
+ *      uuid: // value for 'uuid'
+ *   },
+ * });
+ */
+export function useGetUnitEnvQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GetUnitEnvQuery,
+    GetUnitEnvQueryVariables
+  > &
+    (
+      | { variables: GetUnitEnvQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetUnitEnvQuery, GetUnitEnvQueryVariables>(
+    GetUnitEnvDocument,
+    options,
+  );
+}
+export function useGetUnitEnvLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetUnitEnvQuery,
+    GetUnitEnvQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetUnitEnvQuery, GetUnitEnvQueryVariables>(
+    GetUnitEnvDocument,
+    options,
+  );
+}
+export function useGetUnitEnvSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    GetUnitEnvQuery,
+    GetUnitEnvQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<GetUnitEnvQuery, GetUnitEnvQueryVariables>(
+    GetUnitEnvDocument,
+    options,
+  );
+}
+export type GetUnitEnvQueryHookResult = ReturnType<typeof useGetUnitEnvQuery>;
+export type GetUnitEnvLazyQueryHookResult = ReturnType<
+  typeof useGetUnitEnvLazyQuery
+>;
+export type GetUnitEnvSuspenseQueryHookResult = ReturnType<
+  typeof useGetUnitEnvSuspenseQuery
+>;
+export type GetUnitEnvQueryResult = Apollo.QueryResult<
+  GetUnitEnvQuery,
+  GetUnitEnvQueryVariables
 >;
 export const GetTokenDocument = gql`
   query getToken($credentials: String!, $password: String!) {
