@@ -105,7 +105,7 @@ export default function UpdateUnitEnvForm({ currentUnitData }:CreateUnitFormProp
                 </div>
             </div>
             <button className="button_main_action" onClick={handleCreateUnit}>
-                Создать
+                Обновить
             </button>
             <ResultQuery
                 resultData={resultData}
