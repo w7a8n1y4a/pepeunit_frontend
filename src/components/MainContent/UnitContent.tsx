@@ -33,6 +33,37 @@ export default function UnitContent({
 
   const [deleteUnit] = useDeleteUnitMutation()
 
+  const fileUpload = (type: string) => {
+    let url = import.meta.env.VITE_BACKEND_URI.replace('graphql', '') + 'api/v1/units/firmware/' + type + '/' + currentUnitData?.uuid
+    let token = localStorage.getItem('token')
+
+    if (token){
+      fetch(url, 
+        {
+          method: 'GET',
+          headers: new Headers(
+            {
+              'accept': 'application/json',
+              'x-auth-token': token,
+            }
+          )
+        }
+      ).then(resp => resp.blob()).then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute(
+          'download',
+          currentUnitData?.name + '.' + type,
+        );
+        document.body.appendChild(link);
+        link.click();
+      }).catch((error) => {
+        console.error("Error fetching the file:", error);
+      });
+    }
+  }
+
   const handleDeleteUnit = () => {
     setIsLoaderActive(true)
     setResultData({
@@ -78,13 +109,13 @@ export default function UnitContent({
           {
             isLoaderActive && (<Spinner/>)
           }
-          <button className="button_open_alter">
+          <button className="button_open_alter" onClick={() => fileUpload("tar")}>
             Скачать tar
           </button>
-          <button className="button_open_alter">
+          <button className="button_open_alter" onClick={() => fileUpload("tgz")}>
             Скачать tgz
           </button>
-          <button className="button_open_alter">
+          <button className="button_open_alter" onClick={() => fileUpload("zip")}>
             Скачать zip
           </button>
           <button className="button_open_alter" onClick={() => openModal('unitSettingsMenu')}>
