@@ -7,6 +7,7 @@ import SpriteText from 'three-spritetext';
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import DomainContent from './DomainContent'
 import RepoContent from './RepoContent'
+import UnitContent from './UnitContent';
 
 interface GraphContentProps {
   activeModal: string | null
@@ -150,6 +151,15 @@ export default function GraphContent({activeModal, setActiveModal, currentRepoDa
       />
 
       <RepoContent
+        activeModal={activeModal}
+        setActiveModal={setActiveModal}
+        currentRepoData={currentRepoData}
+        setCurrentRepoData={setCurrentRepoData}
+        currentUnitData={currentUnitData}
+        setCurrentUnitData={setCurrentUnitData}
+      />
+
+      <UnitContent
         activeModal={activeModal}
         setActiveModal={setActiveModal}
         currentRepoData={currentRepoData}

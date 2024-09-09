@@ -1,18 +1,19 @@
 import { ResultType } from '../../../types/resultEnum'
 import { VisibilityLevel, RepoType, useGetBranchCommitsLazyQuery, useUpdateRepoMutation } from '../../../types/composition-functions'
 import { useState, useEffect } from 'react';
+import { getCommitSummary } from '../../../utils/getCommitSummary';
 import isValidLogin from '../../../utils/isValidLogin'
 import DefaultInput from '../primitives/DefaultInput'
 import Spinner from '../primitives/Spinner'
 import ResultQuery from '../primitives/ResultQuery'
 import '../form.css'
 
-interface CreateRepoFormProps {
+interface UpdateRepoFormProps {
     currentRepoData: RepoType;
     setCurrentRepoData: (repo: RepoType | null) => void;
 }
 
-export default function UpdateRepoForm({ currentRepoData, setCurrentRepoData }: CreateRepoFormProps) {
+export default function UpdateRepoForm({ currentRepoData, setCurrentRepoData }: UpdateRepoFormProps) {
 
     const [repoAvailableCommits, setRepoAvailableCommits] = useState<Array<{
         __typename?: "CommitType";
@@ -73,16 +74,6 @@ export default function UpdateRepoForm({ currentRepoData, setCurrentRepoData }: 
             setResultData({ type: ResultType.Angry, message: error.graphQLErrors[0].message.slice(4)})
         })
     };
-
-    function getCommitSummary(tag: undefined | null | string, commit: string, summary: string){
-        let tagName = tag === null || tag === undefined ? '' : tag
-        if (tagName.length != 0){
-            tagName += ' - '
-        }
-        const length = 29 - tagName.length
-        const name = summary.length <= length ? summary : summary.slice(0, length) + '...' 
-        return tagName + commit.slice(0, 7) + ': ' + name 
-    }
 
     const updateErrorState = (field: keyof typeof errorState, hasError: boolean) => {
         setErrorState(prevState => ({
