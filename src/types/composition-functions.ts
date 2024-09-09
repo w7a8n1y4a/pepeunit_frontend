@@ -638,6 +638,43 @@ export type CreateUnitMutation = {
   };
 };
 
+export type UpdateUnitMutationVariables = Exact<{
+  uuid: Scalars["UUID"]["input"];
+  visibilityLevel?: InputMaybe<VisibilityLevel>;
+  name?: InputMaybe<Scalars["String"]["input"]>;
+  isAutoUpdateFromRepoUnit?: InputMaybe<Scalars["Boolean"]["input"]>;
+  repoBranch?: InputMaybe<Scalars["String"]["input"]>;
+  repoCommit?: InputMaybe<Scalars["String"]["input"]>;
+}>;
+
+export type UpdateUnitMutation = {
+  __typename?: "Mutation";
+  updateUnit: {
+    __typename?: "UnitType";
+    uuid: string;
+    visibilityLevel: VisibilityLevel;
+    name: string;
+    createDatetime: string;
+    isAutoUpdateFromRepoUnit: boolean;
+    repoBranch?: string | null;
+    repoCommit?: string | null;
+    unitStateDict?: string | null;
+    currentCommitVersion?: string | null;
+    lastUpdateDatetime: string;
+    creatorUuid: string;
+    repoUuid: string;
+  };
+};
+
+export type DeleteUnitMutationVariables = Exact<{
+  uuid: Scalars["UUID"]["input"];
+}>;
+
+export type DeleteUnitMutation = {
+  __typename?: "Mutation";
+  deleteUnit: { __typename?: "NoneType"; isNone: boolean };
+};
+
 export type CreateUserMutationVariables = Exact<{
   login: Scalars["String"]["input"];
   password: Scalars["String"]["input"];
@@ -683,6 +720,30 @@ export type GetBaseMetricsQuery = {
     unitCount: number;
     unitNodeCount: number;
     unitNodeEdgeCount: number;
+  };
+};
+
+export type GetRepoQueryVariables = Exact<{
+  uuid: Scalars["UUID"]["input"];
+}>;
+
+export type GetRepoQuery = {
+  __typename?: "Query";
+  getRepo: {
+    __typename?: "RepoType";
+    uuid: string;
+    visibilityLevel: VisibilityLevel;
+    name: string;
+    createDatetime: string;
+    repoUrl: string;
+    isPublicRepository: boolean;
+    defaultBranch?: string | null;
+    isAutoUpdateRepo: boolean;
+    defaultCommit?: string | null;
+    isOnlyTagUpdate: boolean;
+    lastUpdateDatetime: string;
+    branches: Array<string>;
+    creatorUuid: string;
   };
 };
 
@@ -1307,6 +1368,138 @@ export type CreateUnitMutationOptions = Apollo.BaseMutationOptions<
   CreateUnitMutation,
   CreateUnitMutationVariables
 >;
+export const UpdateUnitDocument = gql`
+  mutation updateUnit(
+    $uuid: UUID!
+    $visibilityLevel: VisibilityLevel
+    $name: String
+    $isAutoUpdateFromRepoUnit: Boolean
+    $repoBranch: String
+    $repoCommit: String
+  ) {
+    updateUnit(
+      uuid: $uuid
+      unit: {
+        visibilityLevel: $visibilityLevel
+        name: $name
+        isAutoUpdateFromRepoUnit: $isAutoUpdateFromRepoUnit
+        repoBranch: $repoBranch
+        repoCommit: $repoCommit
+      }
+    ) {
+      uuid
+      visibilityLevel
+      name
+      createDatetime
+      isAutoUpdateFromRepoUnit
+      repoBranch
+      repoCommit
+      unitStateDict
+      currentCommitVersion
+      lastUpdateDatetime
+      creatorUuid
+      repoUuid
+    }
+  }
+`;
+export type UpdateUnitMutationFn = Apollo.MutationFunction<
+  UpdateUnitMutation,
+  UpdateUnitMutationVariables
+>;
+
+/**
+ * __useUpdateUnitMutation__
+ *
+ * To run a mutation, you first call `useUpdateUnitMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateUnitMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateUnitMutation, { data, loading, error }] = useUpdateUnitMutation({
+ *   variables: {
+ *      uuid: // value for 'uuid'
+ *      visibilityLevel: // value for 'visibilityLevel'
+ *      name: // value for 'name'
+ *      isAutoUpdateFromRepoUnit: // value for 'isAutoUpdateFromRepoUnit'
+ *      repoBranch: // value for 'repoBranch'
+ *      repoCommit: // value for 'repoCommit'
+ *   },
+ * });
+ */
+export function useUpdateUnitMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpdateUnitMutation,
+    UpdateUnitMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<UpdateUnitMutation, UpdateUnitMutationVariables>(
+    UpdateUnitDocument,
+    options,
+  );
+}
+export type UpdateUnitMutationHookResult = ReturnType<
+  typeof useUpdateUnitMutation
+>;
+export type UpdateUnitMutationResult =
+  Apollo.MutationResult<UpdateUnitMutation>;
+export type UpdateUnitMutationOptions = Apollo.BaseMutationOptions<
+  UpdateUnitMutation,
+  UpdateUnitMutationVariables
+>;
+export const DeleteUnitDocument = gql`
+  mutation deleteUnit($uuid: UUID!) {
+    deleteUnit(uuid: $uuid) {
+      isNone
+    }
+  }
+`;
+export type DeleteUnitMutationFn = Apollo.MutationFunction<
+  DeleteUnitMutation,
+  DeleteUnitMutationVariables
+>;
+
+/**
+ * __useDeleteUnitMutation__
+ *
+ * To run a mutation, you first call `useDeleteUnitMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteUnitMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteUnitMutation, { data, loading, error }] = useDeleteUnitMutation({
+ *   variables: {
+ *      uuid: // value for 'uuid'
+ *   },
+ * });
+ */
+export function useDeleteUnitMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    DeleteUnitMutation,
+    DeleteUnitMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<DeleteUnitMutation, DeleteUnitMutationVariables>(
+    DeleteUnitDocument,
+    options,
+  );
+}
+export type DeleteUnitMutationHookResult = ReturnType<
+  typeof useDeleteUnitMutation
+>;
+export type DeleteUnitMutationResult =
+  Apollo.MutationResult<DeleteUnitMutation>;
+export type DeleteUnitMutationOptions = Apollo.BaseMutationOptions<
+  DeleteUnitMutation,
+  DeleteUnitMutationVariables
+>;
 export const CreateUserDocument = gql`
   mutation createUser($login: String!, $password: String!) {
     createUser(user: { login: $login, password: $password }) {
@@ -1492,6 +1685,85 @@ export type GetBaseMetricsSuspenseQueryHookResult = ReturnType<
 export type GetBaseMetricsQueryResult = Apollo.QueryResult<
   GetBaseMetricsQuery,
   GetBaseMetricsQueryVariables
+>;
+export const GetRepoDocument = gql`
+  query getRepo($uuid: UUID!) {
+    getRepo(uuid: $uuid) {
+      uuid
+      visibilityLevel
+      name
+      createDatetime
+      repoUrl
+      isPublicRepository
+      defaultBranch
+      isAutoUpdateRepo
+      defaultCommit
+      isOnlyTagUpdate
+      lastUpdateDatetime
+      branches
+      creatorUuid
+    }
+  }
+`;
+
+/**
+ * __useGetRepoQuery__
+ *
+ * To run a query within a React component, call `useGetRepoQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetRepoQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetRepoQuery({
+ *   variables: {
+ *      uuid: // value for 'uuid'
+ *   },
+ * });
+ */
+export function useGetRepoQuery(
+  baseOptions: Apollo.QueryHookOptions<GetRepoQuery, GetRepoQueryVariables> &
+    ({ variables: GetRepoQueryVariables; skip?: boolean } | { skip: boolean }),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetRepoQuery, GetRepoQueryVariables>(
+    GetRepoDocument,
+    options,
+  );
+}
+export function useGetRepoLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetRepoQuery,
+    GetRepoQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetRepoQuery, GetRepoQueryVariables>(
+    GetRepoDocument,
+    options,
+  );
+}
+export function useGetRepoSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    GetRepoQuery,
+    GetRepoQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<GetRepoQuery, GetRepoQueryVariables>(
+    GetRepoDocument,
+    options,
+  );
+}
+export type GetRepoQueryHookResult = ReturnType<typeof useGetRepoQuery>;
+export type GetRepoLazyQueryHookResult = ReturnType<typeof useGetRepoLazyQuery>;
+export type GetRepoSuspenseQueryHookResult = ReturnType<
+  typeof useGetRepoSuspenseQuery
+>;
+export type GetRepoQueryResult = Apollo.QueryResult<
+  GetRepoQuery,
+  GetRepoQueryVariables
 >;
 export const GetReposDocument = gql`
   query getRepos(

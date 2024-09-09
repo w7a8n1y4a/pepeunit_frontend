@@ -1,6 +1,7 @@
 import { ResultType } from '../../../types/resultEnum'
 import { useCreateUnitMutation, useGetBranchCommitsLazyQuery, VisibilityLevel, CreateUnitMutationVariables, RepoType, UnitType } from '../../../types/composition-functions'
 import { useState, useEffect } from 'react';
+import { getCommitSummary } from '../../../utils/getCommitSummary';
 import isValidLogin from '../../../utils/isValidLogin'
 import DefaultInput from '../primitives/DefaultInput'
 import Spinner from '../primitives/Spinner'
@@ -101,16 +102,6 @@ export default function CreateRepoForm({ setActiveModal, currentRepoData, setCur
             )
         }
     }, [repoBranch, isAutoUpdateFromRepoUnit]);
-
-    function getCommitSummary(tag: undefined | null | string, commit: string, summary: string){
-        let tagName = tag === null || tag === undefined ? '' : tag
-        if (tagName.length != 0){
-            tagName += ' - '
-        }
-        const length = 29 - tagName.length
-        const name = summary.length <= length ? summary : summary.slice(0, length) + '...' 
-        return tagName + commit.slice(0, 7) + ': ' + name 
-    }
 
     return (
         <>  

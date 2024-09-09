@@ -1,6 +1,27 @@
 import { gql } from 'graphql-tag';
 
 gql`
+    query getRepo(
+        $uuid: UUID!
+    ) {
+        getRepo(
+            uuid: $uuid
+        ) {
+            uuid
+            visibilityLevel
+            name
+            createDatetime
+            repoUrl
+            isPublicRepository
+            defaultBranch
+            isAutoUpdateRepo
+            defaultCommit
+            isOnlyTagUpdate
+            lastUpdateDatetime
+            branches
+            creatorUuid
+        }
+    }
     query getRepos(
         $creatorUuid: UUID
         $searchString: String
