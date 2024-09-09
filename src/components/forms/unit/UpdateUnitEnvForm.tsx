@@ -12,7 +12,7 @@ interface CreateUnitFormProps {
 
 export default function UpdateUnitEnvForm({ currentUnitData }:CreateUnitFormProps) {
 
-    const [currentUnitEnv, setCurrentUnitEnv] = useState<Record<string, string> | null>(null)
+    const [currentUnitEnv, setCurrentUnitEnv] = useState<Record<string, string | number> | null>(null)
 
     const [isLoaderActive, setIsLoaderActive] = useState(false)
     const [resultData, setResultData] = useState<{ type: ResultType; message: string | null }>({
@@ -74,10 +74,12 @@ export default function UpdateUnitEnvForm({ currentUnitData }:CreateUnitFormProp
     }, [currentUnitData]);
 
     const handleInputChange = (key: string, value: string) => {
+        const parsedValue = isNaN(Number(value)) ? value : Number(value);
+
         if (currentUnitEnv) {
             setCurrentUnitEnv({
                 ...currentUnitEnv,
-                [key]: value,
+                [key]: parsedValue,
             });
         }
     };
