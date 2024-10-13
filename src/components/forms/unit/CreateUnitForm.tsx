@@ -1,4 +1,6 @@
 import { ResultType } from '../../../types/resultEnum'
+import { NodeType } from '../../../types/nodeTypeEnum'
+import { getNodeColor } from '../../../utils/getNodeColor'
 import { useCreateUnitMutation, useGetBranchCommitsLazyQuery, VisibilityLevel, CreateUnitMutationVariables, RepoType, UnitType } from '../../../types/composition-functions'
 import { useState, useEffect } from 'react';
 import { getCommitSummary } from '../../../utils/getCommitSummary';
@@ -7,6 +9,8 @@ import DefaultInput from '../primitives/DefaultInput'
 import Spinner from '../primitives/Spinner'
 import ResultQuery from '../primitives/ResultQuery'
 import '../form.css'
+
+import { useGraphStore } from '../../graphStore';
 
 
 interface CreateUnitFormProps {
@@ -39,6 +43,8 @@ export default function CreateRepoForm({ setActiveModal, currentRepoData, setCur
         type: ResultType.Happy,
         message: null
     });
+
+    const { graphData, setGraphData } = useGraphStore();
     
     const updateErrorState = (field: keyof typeof errorState, hasError: boolean) => {
         setErrorState(prevState => ({
@@ -74,6 +80,25 @@ export default function CreateRepoForm({ setActiveModal, currentRepoData, setCur
         }).then(CreateUnitData =>{
             if (CreateUnitData.data){
                 console.log('Unit создан', CreateUnitData.data)
+
+                let newUnit = CreateUnitData.data.createUnit
+
+                const newNode = {
+                    id: newUnit.uuid,
+                    type: NodeType.Unit,
+                    color: getNodeColor(NodeType.Unit),
+                    data: newUnit
+                  };
+              
+                  const newLink = {
+                    source: newUnit.repoUuid,
+                    target: newUnit.uuid,
+                  };
+
+                setGraphData({
+                    nodes: [...graphData.nodes, newNode],
+                    links: [...graphData.links, newLink],
+                  });
                 setCurrentUnitData(CreateUnitData.data.createUnit)
                 setIsLoaderActive(false)
                 setActiveModal(null)

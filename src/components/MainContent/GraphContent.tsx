@@ -9,6 +9,8 @@ import DomainContent from './DomainContent'
 import RepoContent from './RepoContent'
 import UnitContent from './UnitContent';
 
+import { useGraphStore } from '../graphStore';
+
 interface GraphContentProps {
   activeModal: string | null
   setActiveModal: (show: string | null) => void;
@@ -20,38 +22,17 @@ export default function GraphContent({activeModal, setActiveModal, currentRepoDa
   const [displayWidth, setDisplayWidth] = useState(window.innerWidth);
   const [displayHeight, setDisplayHeight] = useState(window.innerHeight);
 
+  const { graphData, setGraphData } = useGraphStore();
+
   const [currentUnitData, setCurrentUnitData] = useState<UnitType | null>(null)
   const [currentDomainData, setCurrentDomainData] = useState<UnitType | null>(null)
-  
-  type GraphDataType = {
-    nodes: Array<{
-      id: string | number;
-      type: string;
-      color: string; 
-      data: any | RepoType; 
-    }>,
-    links: Array<{
-      source: string;
-      target: string; 
-    }>
-  }; 
-  const [graphData, setGraphData] = useState<GraphDataType>(
-    {
-      nodes: [
-        {
-          id: import.meta.env.VITE_INSTANCE_NAME,
-          type: NodeType.Domain,
-          color: getNodeColor(NodeType.Domain),
-          data: {
-            name: import.meta.env.VITE_INSTANCE_NAME
-          }
-        }
-      ],
-      links: []
-    }
-  )
 
-  const forceData = useMemo(() => test(), [graphData])
+  const processedData = useMemo(() => {
+    return {
+      nodes: graphData.nodes,
+      links: graphData.links,
+    };
+  }, [graphData]);
 
   useEffect(() => {
     getRepos().then(reposData => {
@@ -77,8 +58,8 @@ export default function GraphContent({activeModal, setActiveModal, currentRepoDa
                 ))],
                 links: [
                   ...graphData.links,
-                  ...reposData.data.getRepos.map((all) => ({source: import.meta.env.VITE_INSTANCE_NAME, target: all.uuid})),
-                  ...unitsData.data.getUnits.map((all) => ({source: all.repoUuid, target: all.uuid}))
+                  ...reposData.data.getRepos.map((repo) => ({source: import.meta.env.VITE_INSTANCE_NAME, target: repo.uuid})),
+                  ...unitsData.data.getUnits.map((unit) => ({source: unit.repoUuid, target: unit.uuid}))
                 ]
               }
             )
@@ -87,14 +68,6 @@ export default function GraphContent({activeModal, setActiveModal, currentRepoDa
       }
     })
   }, []);
-
-  function test() {
-    console.log(graphData)
-    return {
-      nodes: graphData.nodes,
-      links: graphData.links
-    }
-  }
 
   const [getRepos] = useGetReposLazyQuery();
   const [getUnits] = useGetUnitsLazyQuery();
@@ -130,7 +103,7 @@ export default function GraphContent({activeModal, setActiveModal, currentRepoDa
         backgroundColor='rgba(10,10,10, 20)'
         width={displayWidth}
         height={displayHeight}
-        graphData={forceData}
+        graphData={processedData}
         enableNodeDrag={false}
         nodeThreeObject={(node: any) => {
           const sprite = new SpriteText(node.data.name) as any;
