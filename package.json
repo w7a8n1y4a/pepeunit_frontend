@@ -36,7 +36,8 @@
     "stylelint-config-standard": "^26.0.0",
     "stylelint-order": "^5.0.0",
     "stylelint-prettier": "^2.0.0",
-    "three-spritetext": "^1.8.2"
+    "three-spritetext": "^1.8.2",
+    "zustand": "^5.0.0-rc.2"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^5.0.2",

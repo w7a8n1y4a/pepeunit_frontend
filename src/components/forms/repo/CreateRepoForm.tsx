@@ -1,4 +1,6 @@
 import { ResultType } from '../../../types/resultEnum'
+import { NodeType } from '../../../types/nodeTypeEnum'
+import { getNodeColor } from '../../../utils/getNodeColor'
 import { useCreateRepoMutation, VisibilityLevel, CreateRepoMutationVariables, RepoType } from '../../../types/composition-functions'
 import { useState } from 'react';
 import isValidLogin from '../../../utils/isValidLogin'
@@ -8,6 +10,8 @@ import DefaultInput from '../primitives/DefaultInput'
 import Spinner from '../primitives/Spinner'
 import ResultQuery from '../primitives/ResultQuery'
 import '../form.css'
+
+import { useGraphStore } from '../../graphStore';
 
 
 interface CreateRepoFormProps {
@@ -22,6 +26,8 @@ export default function CreateRepoForm({ setActiveModal, setCurrentRepoData }:Cr
     const [isPrivateRepository, setIsPrivateRepository] = useState(false);
     const [repoUsername, setRepoUsername] = useState('');
     const [repoPatToken, setPatToken] = useState('');
+
+    const { graphData, setGraphData } = useGraphStore();
 
     const [errorState, setErrorState] = useState({
         name: true,
@@ -70,7 +76,26 @@ export default function CreateRepoForm({ setActiveModal, setCurrentRepoData }:Cr
         }).then(CreateRepoData =>{
             if (CreateRepoData.data){
                 console.log('Repo создан', CreateRepoData.data)
-                setCurrentRepoData(CreateRepoData.data.createRepo)
+                
+                let newRepo = CreateRepoData.data.createRepo
+
+                const newNode = {
+                    id: newRepo.uuid,
+                    type: NodeType.Repo,
+                    color: getNodeColor(NodeType.Repo),
+                    data: newRepo
+                  };
+              
+                  const newLink = {
+                    source: import.meta.env.VITE_INSTANCE_NAME,
+                    target: newRepo.uuid,
+                  };
+
+                setGraphData({
+                    nodes: [...graphData.nodes, newNode],
+                    links: [...graphData.links, newLink],
+                  });
+                setCurrentRepoData(newRepo)
                 setActiveModal('updateRepo')
                 setIsLoaderActive(false)
             }
