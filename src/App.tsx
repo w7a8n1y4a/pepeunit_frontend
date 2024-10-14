@@ -1,5 +1,5 @@
 import GraphContent from './components/MainContent/GraphContent'
-import { RepoType } from './types/composition-functions'
+import { RepoType } from '@rootTypes/composition-functions'
 import './App.css'
 import { onError } from '@apollo/client/link/error';
 import { setContext } from '@apollo/client/link/context';
@@ -69,20 +69,15 @@ const client = new ApolloClient({
 });
 
 function App() {
-  const [activeModal, setActiveModal] = useState<string | null>(null);
   const [currentRepoData, setCurrentRepoData] = useState<RepoType | null>(null)
 
   return (
     <>
       <ApolloProvider client={client}>
         <Header
-          activeModal={activeModal}
-          setActiveModal={setActiveModal}
           setCurrentRepoData={setCurrentRepoData}
         />
         <GraphContent
-          activeModal={activeModal}
-          setActiveModal={setActiveModal}
           currentRepoData={currentRepoData}
           setCurrentRepoData={setCurrentRepoData}
         />

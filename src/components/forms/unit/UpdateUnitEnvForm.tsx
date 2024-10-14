@@ -1,5 +1,5 @@
-import { ResultType } from '../../../types/resultEnum'
-import { UnitType, useGetUnitEnvLazyQuery, useUpdateUnitEnvMutation } from '../../../types/composition-functions'
+import { ResultType } from '@rootTypes/resultEnum'
+import { UnitType, useGetUnitEnvLazyQuery, useUpdateUnitEnvMutation } from '@rootTypes/composition-functions'
 import { useState, useEffect } from 'react';
 import Spinner from '../primitives/Spinner'
 import ResultQuery from '../primitives/ResultQuery'

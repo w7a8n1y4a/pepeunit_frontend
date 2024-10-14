@@ -1,17 +1,20 @@
 import { useState, useEffect } from 'react';
-import { ResultType } from '../../../types/resultEnum'
-import { useUpdateUserMutation } from '../../../types/composition-functions';
+import { ResultType } from '@rootTypes/resultEnum'
+import { useUpdateUserMutation } from '@rootTypes/composition-functions';
 import DefaultInput from '../primitives/DefaultInput'
 import Spinner from '../primitives/Spinner'
-import isValidLogin from '../../../utils/isValidLogin'
+import isValidLogin from '@utils/isValidLogin'
 import '../form.css'
+
+import { useModalStore } from '@stores/baseStore';
 
 interface ChangeLoginFormProps {
     currentLogin: string
-    setActiveModal: (show: string | null) => void;
 }
 
-export default function ChangeLoginForm({ setActiveModal, currentLogin }: ChangeLoginFormProps) {
+export default function ChangeLoginForm({ currentLogin }: ChangeLoginFormProps) {
+    const { setActiveModal } = useModalStore();
+
     const [login, setLogin] = useState(currentLogin);
     const [errorState, setErrorState] = useState({
         login: false,

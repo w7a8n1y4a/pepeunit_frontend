@@ -1,17 +1,19 @@
-import { ResultType } from '../../types/resultEnum'
-import { useBulkUpdateMutation, useGetBaseMetricsLazyQuery, BaseMetricsType, UnitType } from '../../types/composition-functions'
+import { ResultType } from '@rootTypes/resultEnum'
+import { useBulkUpdateMutation, useGetBaseMetricsLazyQuery, BaseMetricsType, UnitType } from '@rootTypes/composition-functions'
 import BaseModal from '../modal/BaseModal'
 import { useState, useCallback, useEffect } from 'react';
 import Spinner from '../forms/primitives/Spinner'
 import ResultQuery from '../forms/primitives/ResultQuery'
 
+import { useModalStore } from '@stores/baseStore';
+
 interface DomainContentProps {
-  activeModal: string | null
-  setActiveModal: (show: string | null) => void;
   currentDomainData: UnitType | null
 }
 
-export default function DomainContent({activeModal, setActiveModal, currentDomainData}: DomainContentProps){
+export default function DomainContent({currentDomainData}: DomainContentProps){
+  const { activeModal, setActiveModal } = useModalStore();
+
   const [baseMetrics, setBaseMetrics] = useState<BaseMetricsType | null>(null)
   const [isLoaderActive, setIsLoaderActive] = useState(false)
   const [resultData, setResultData] = useState<{ type: ResultType; message: string | null }>({

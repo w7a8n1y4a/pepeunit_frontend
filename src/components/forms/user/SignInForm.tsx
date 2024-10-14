@@ -1,20 +1,23 @@
 import { useState } from 'react';
-import { ResultType } from '../../../types/resultEnum'
-import { useGetTokenLazyQuery, useGetUserLazyQuery } from '../../../types/composition-functions';
-import { getUserUuidByToken } from '../../../utils/getUserUuidByToken';
-import isValidPassword from '../../../utils/isValidPassword'
-import isValidLogin from '../../../utils/isValidLogin'
+import { ResultType } from '@rootTypes/resultEnum'
+import { useGetTokenLazyQuery, useGetUserLazyQuery } from '@rootTypes/composition-functions';
+import { getUserUuidByToken } from '@utils/getUserUuidByToken';
+import isValidPassword from '@utils/isValidPassword'
+import isValidLogin from '@utils/isValidLogin'
 import DefaultInput from '../primitives/DefaultInput'
 import Spinner from '../primitives/Spinner'
 import ResultQuery from '../primitives/ResultQuery'
 import '../form.css'
 
+import { useModalStore } from '@stores/baseStore';
+
 interface SignInFormProps {
     openModalRegister: () => void;
-    setActiveModal: (show: string | null) => void;
 }
 
-export default function SignInForm({openModalRegister, setActiveModal }: SignInFormProps) {
+export default function SignInForm({openModalRegister}: SignInFormProps) {
+    const { setActiveModal } = useModalStore();
+
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
     const [errorState, setErrorState] = useState({

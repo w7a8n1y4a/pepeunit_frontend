@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import { NodeType } from '../types/nodeTypeEnum'
-import { getNodeColor } from '../utils/getNodeColor'
+import { NodeType } from '@rootTypes/nodeTypeEnum'
+import { getNodeColor } from '@utils/getNodeColor'
 
 type NodeTypeStorage = {
   id: string | number;

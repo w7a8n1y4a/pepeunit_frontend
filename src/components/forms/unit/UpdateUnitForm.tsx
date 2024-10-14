@@ -1,8 +1,8 @@
-import { ResultType } from '../../../types/resultEnum'
-import { VisibilityLevel, RepoType, UnitType, useGetBranchCommitsLazyQuery, useUpdateUnitMutation, useGetRepoLazyQuery } from '../../../types/composition-functions'
+import { ResultType } from '@rootTypes/resultEnum'
+import { VisibilityLevel, RepoType, UnitType, useGetBranchCommitsLazyQuery, useUpdateUnitMutation, useGetRepoLazyQuery } from '@rootTypes/composition-functions'
 import { useState, useEffect } from 'react';
-import { getCommitSummary } from '../../../utils/getCommitSummary';
-import isValidLogin from '../../../utils/isValidLogin'
+import { getCommitSummary } from '@utils/getCommitSummary';
+import isValidLogin from '@utils/isValidLogin'
 import DefaultInput from '../primitives/DefaultInput'
 import Spinner from '../primitives/Spinner'
 import ResultQuery from '../primitives/ResultQuery'

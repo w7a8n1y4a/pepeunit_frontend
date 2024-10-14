@@ -1,25 +1,27 @@
-import { ResultType } from '../../../types/resultEnum'
-import { NodeType } from '../../../types/nodeTypeEnum'
-import { getNodeColor } from '../../../utils/getNodeColor'
-import { useCreateRepoMutation, VisibilityLevel, CreateRepoMutationVariables, RepoType } from '../../../types/composition-functions'
+import { ResultType } from '@rootTypes/resultEnum'
+import { NodeType } from '@rootTypes/nodeTypeEnum'
+import { getNodeColor } from '@utils/getNodeColor'
+import { useCreateRepoMutation, VisibilityLevel, CreateRepoMutationVariables, RepoType } from '@rootTypes/composition-functions'
 import { useState } from 'react';
-import isValidLogin from '../../../utils/isValidLogin'
-import isValidString from '../../../utils/isValidString'
-import isValidRepoUrl from '../../../utils/isValidRepoUrl'
+import isValidLogin from '@utils/isValidLogin'
+import isValidString from '@utils/isValidString'
+import isValidRepoUrl from '@utils/isValidRepoUrl'
 import DefaultInput from '../primitives/DefaultInput'
 import Spinner from '../primitives/Spinner'
 import ResultQuery from '../primitives/ResultQuery'
 import '../form.css'
 
-import { useGraphStore } from '../../graphStore';
-
+import { useGraphStore } from '@stores/graphStore';
+import { useModalStore } from '@stores/baseStore';
 
 interface CreateRepoFormProps {
-    setActiveModal: (show: string | null) => void
     setCurrentRepoData: (repo: RepoType | null) => void;
 }
 
-export default function CreateRepoForm({ setActiveModal, setCurrentRepoData }:CreateRepoFormProps) {
+export default function CreateRepoForm({ setCurrentRepoData }:CreateRepoFormProps) {
+
+    const { setActiveModal } = useModalStore();
+    
     const [repoName, setRepoName] = useState('');
     const [repoUrl, setRepoUrl] = useState('');
     const [repoVisibilityLevel, setRepoVisibilityLevel] = useState(VisibilityLevel.Public);

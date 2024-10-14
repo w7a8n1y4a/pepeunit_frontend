@@ -1,16 +1,16 @@
-import { ResultType } from '../../types/resultEnum'
-import { useDeleteUnitMutation } from '../../types/composition-functions'
+import { ResultType } from '@rootTypes/resultEnum'
+import { useDeleteUnitMutation } from '@rootTypes/composition-functions'
 import BaseModal from '../modal/BaseModal'
-import { RepoType, UnitType } from '../../types/composition-functions'
+import { RepoType, UnitType } from '@rootTypes/composition-functions'
 import { useState, useCallback } from 'react';
 import Spinner from '../forms/primitives/Spinner'
 import ResultQuery from '../forms/primitives/ResultQuery'
 import UpdateUnitForm from '../forms/unit/UpdateUnitForm';
 import UpdateUnitEnvForm from '../forms/unit/UpdateUnitEnvForm'
 
+import { useModalStore } from '@stores/baseStore';
+
 interface UnitContentProps {
-  activeModal: string | null
-  setActiveModal: (show: string | null) => void;
   currentRepoData: RepoType | null;
   setCurrentRepoData: (repo: RepoType | null) => void;
   currentUnitData: UnitType | null;
@@ -18,13 +18,12 @@ interface UnitContentProps {
 }
 
 export default function UnitContent({
-    activeModal,
-    setActiveModal,
     currentRepoData,
     setCurrentRepoData,
     currentUnitData,
     setCurrentUnitData
 }: UnitContentProps){
+  const { activeModal, setActiveModal } = useModalStore();
     
   const [isLoaderActive, setIsLoaderActive] = useState(false)
   const [resultData, setResultData] = useState<{ type: ResultType; message: string | null }>({

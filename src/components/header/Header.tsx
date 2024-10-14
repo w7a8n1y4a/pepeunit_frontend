@@ -1,5 +1,5 @@
 import BaseModal from '../modal/BaseModal'
-import { RepoType } from './../../types/composition-functions'
+import { RepoType } from '@rootTypes/composition-functions'
 import logo from '/images/logo_32_32.png'
 import signin_icon from '/images/signin.svg'
 import signout_icon from '/images/signout.svg'
@@ -12,13 +12,15 @@ import RightMenu from '../RightMenu/RightMenu';
 import './Header.css'
 import { useState, useCallback, useReducer, useEffect } from 'react';
 
+import { useModalStore } from '@stores/baseStore';
+
 interface HeaderProps {
-    activeModal: string | null
-    setActiveModal: (show: string | null) => void
     setCurrentRepoData: (repo: RepoType | null) => void;
 }
 
-export default function Header({activeModal, setActiveModal, setCurrentRepoData}: HeaderProps){
+export default function Header({setCurrentRepoData}: HeaderProps){
+    const { activeModal, setActiveModal } = useModalStore();
+
     const [, forceUpdate] = useReducer(x => x + 1, 0);
 
     const user = localStorage.getItem('user');
@@ -69,8 +71,6 @@ export default function Header({activeModal, setActiveModal, setCurrentRepoData}
                             <img src={signout_icon} width="32" height="32" alt="signout" />
                         </button>
                         <RightMenu
-                            activeModal={activeModal}
-                            setActiveModal={setActiveModal}
                             openModal={openModal}
                             closeModal={closeModal}
                             setCurrentRepoData={setCurrentRepoData}
@@ -88,13 +88,11 @@ export default function Header({activeModal, setActiveModal, setCurrentRepoData}
                 <BaseModal modalName='Авторизация' open={activeModal === 'signin'} closeModal={closeModal}>
                     <SignInForm
                         openModalRegister={() => openModal('register')}
-                        setActiveModal={setActiveModal}
                     />
                 </BaseModal>
                 <BaseModal modalName='Регистрация' open={activeModal === 'register'} closeModal={closeModal}>
                     <RegisterForm
                         openModalSignIn={() => openModal('signin')}
-                        setActiveModal={setActiveModal}
                     />
                 </BaseModal>
                 <BaseModal modalName='Меню' open={activeModal === 'userMenu'} closeModal={closeModal}>
@@ -126,7 +124,7 @@ export default function Header({activeModal, setActiveModal, setCurrentRepoData}
                     openModal={openModal}
                     openModalType='userMenu'
                 >
-                    <ChangeLoginForm setActiveModal={setActiveModal} currentLogin={login}/>
+                    <ChangeLoginForm currentLogin={login}/>
                 </BaseModal>
                 <BaseModal
                     modalName='Смена Пароля'
