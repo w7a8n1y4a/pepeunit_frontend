@@ -1,24 +1,25 @@
-import { NodeType } from '../../types/nodeTypeEnum'
-import { getNodeColor } from '../../utils/getNodeColor'
-import { useGetReposLazyQuery, useGetUnitsLazyQuery} from '../../types/composition-functions'
+import { NodeType } from '@rootTypes/nodeTypeEnum'
+import { getNodeColor } from '@utils/getNodeColor'
+import { useGetReposLazyQuery, useGetUnitsLazyQuery} from '@rootTypes/composition-functions'
 import { ForceGraph3D } from 'react-force-graph';
-import { RepoType, UnitType } from '../../types/composition-functions'
+import { RepoType, UnitType } from '@rootTypes/composition-functions'
 import SpriteText from 'three-spritetext';
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import DomainContent from './DomainContent'
 import RepoContent from './RepoContent'
 import UnitContent from './UnitContent';
 
-import { useGraphStore } from '../graphStore';
+import { useGraphStore } from '@stores/graphStore';
+import { useModalStore } from '@stores/baseStore';
 
 interface GraphContentProps {
-  activeModal: string | null
-  setActiveModal: (show: string | null) => void;
   currentRepoData: RepoType | null
   setCurrentRepoData: (repo: RepoType | null) => void;
 }
 
-export default function GraphContent({activeModal, setActiveModal, currentRepoData, setCurrentRepoData}: GraphContentProps){
+export default function GraphContent({currentRepoData, setCurrentRepoData}: GraphContentProps){
+  const { setActiveModal } = useModalStore();
+  
   const [displayWidth, setDisplayWidth] = useState(window.innerWidth);
   const [displayHeight, setDisplayHeight] = useState(window.innerHeight);
 
@@ -76,7 +77,7 @@ export default function GraphContent({activeModal, setActiveModal, currentRepoDa
     setActiveModal(modalType);
   }, []);
 
-  function kek(node: any){
+  function pickMenu(node: any){
     if (node.type == NodeType.Domain) {
       openModal("domainMenu")
       setCurrentDomainData(node.data)
@@ -114,18 +115,14 @@ export default function GraphContent({activeModal, setActiveModal, currentRepoDa
         }}
         nodeThreeObjectExtend={true}
         showNavInfo={false}
-        onNodeClick={(node) => kek(node)}
+        onNodeClick={(node) => pickMenu(node)}
       />
       
       <DomainContent
-        activeModal={activeModal}
-        setActiveModal={setActiveModal}
         currentDomainData={currentDomainData}
       />
 
       <RepoContent
-        activeModal={activeModal}
-        setActiveModal={setActiveModal}
         currentRepoData={currentRepoData}
         setCurrentRepoData={setCurrentRepoData}
         currentUnitData={currentUnitData}
@@ -133,8 +130,6 @@ export default function GraphContent({activeModal, setActiveModal, currentRepoDa
       />
 
       <UnitContent
-        activeModal={activeModal}
-        setActiveModal={setActiveModal}
         currentRepoData={currentRepoData}
         setCurrentRepoData={setCurrentRepoData}
         currentUnitData={currentUnitData}

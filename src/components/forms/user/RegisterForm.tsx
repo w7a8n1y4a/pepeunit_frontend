@@ -1,20 +1,23 @@
 import { useState } from 'react';
-import { ResultType } from '../../../types/resultEnum'
-import { useCreateUserMutation, useGetTokenLazyQuery } from '../../../types/composition-functions';
-import isValidPassword from '../../../utils/isValidPassword'
-import isValidLogin from '../../../utils/isValidLogin'
-import isValidMatchPassword from '../../../utils/isValidMatchPassword'
+import { ResultType } from '@rootTypes/resultEnum'
+import { useCreateUserMutation, useGetTokenLazyQuery } from '@rootTypes/composition-functions';
+import isValidPassword from '@utils/isValidPassword'
+import isValidLogin from '@utils/isValidLogin'
+import isValidMatchPassword from '@utils/isValidMatchPassword'
 import DefaultInput from '../primitives/DefaultInput'
 import Spinner from '../primitives/Spinner'
 import ResultQuery from '../primitives/ResultQuery'
 import '../form.css'
 
+import { useModalStore } from '@stores/baseStore';
+
 interface RegisterFormProps {
     openModalSignIn: () => void;
-    setActiveModal: (show: string | null) => void;
 }
 
-export default function RegisterForm({ openModalSignIn, setActiveModal }: RegisterFormProps) {
+export default function RegisterForm({ openModalSignIn }: RegisterFormProps) {
+    const { setActiveModal } = useModalStore();
+
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');

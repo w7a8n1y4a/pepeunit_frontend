@@ -1,7 +1,7 @@
 import '../form.css';
 import attention_img from '/images/attention.svg'
 import { useState, useEffect, useRef } from 'react';
-import { ResultType } from '../../../types/resultEnum'
+import { ResultType } from '@rootTypes/resultEnum'
 
 interface DefaultInputProps {
     id: string;

@@ -1,4 +1,4 @@
-import { NodeType } from '../types/nodeTypeEnum'
+import { NodeType } from '@rootTypes/nodeTypeEnum'
 
 export function getNodeColor(type: NodeType){
     switch (type) {

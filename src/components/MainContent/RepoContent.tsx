@@ -1,17 +1,16 @@
-import { ResultType } from '../../types/resultEnum'
-import { useUpdateLocalRepoMutation, useUpdateUnitsFirmwareMutation, useDeleteRepoMutation} from '../../types/composition-functions'
+import { ResultType } from '@rootTypes/resultEnum'
+import { useUpdateLocalRepoMutation, useUpdateUnitsFirmwareMutation, useDeleteRepoMutation, RepoType, UnitType} from '@rootTypes/composition-functions'
 import BaseModal from '../modal/BaseModal'
 import CreateUnitForm from '../forms/unit/CreateUnitForm';
 import UpdateRepoForm from '../forms/repo/UpdateRepoForm';
 import UpdateRepoCredentialsForm from '../forms/repo/UpdateRepoCredentialsForm'
-import { RepoType, UnitType } from '../../types/composition-functions'
 import { useState, useCallback } from 'react';
 import Spinner from '../forms/primitives/Spinner'
 import ResultQuery from '../forms/primitives/ResultQuery'
 
+import { useModalStore } from '@stores/baseStore';
+
 interface RepoContentProps {
-  activeModal: string | null
-  setActiveModal: (show: string | null) => void;
   currentRepoData: RepoType | null
   setCurrentRepoData: (repo: RepoType | null) => void;
   currentUnitData: UnitType | null
@@ -19,14 +18,14 @@ interface RepoContentProps {
 }
 
 export default function RepoContent({
-    activeModal,
-    setActiveModal,
     currentRepoData,
     setCurrentRepoData,
     currentUnitData,
     setCurrentUnitData
 }: RepoContentProps){
     
+  const { activeModal, setActiveModal } = useModalStore();
+
   const [isLoaderActive, setIsLoaderActive] = useState(false)
   const [resultData, setResultData] = useState<{ type: ResultType; message: string | null }>({
     type: ResultType.Happy,
@@ -156,7 +155,6 @@ export default function RepoContent({
         {
           currentRepoData && (
             <CreateUnitForm
-              setActiveModal={setActiveModal}
               currentRepoData={currentRepoData}
               setCurrentUnitData={setCurrentUnitData}
             />

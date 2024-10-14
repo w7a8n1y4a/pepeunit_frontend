@@ -1,4 +1,4 @@
-import { ResultType } from '../../../types/resultEnum'
+import { ResultType } from '@rootTypes/resultEnum'
 import angry_img from '/images/pepe/angry.svg'
 import happy_img from '/images/pepe/happy.svg'
 import default_img from '/images/pepe/default.svg'

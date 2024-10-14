@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { ResultType } from '../../../types/resultEnum'
-import { useUpdateRepoCredentialsMutation, RepoType } from '../../../types/composition-functions'
-import isValidString from '../../../utils/isValidString'
+import { ResultType } from '@rootTypes/resultEnum'
+import { useUpdateRepoCredentialsMutation, RepoType } from '@rootTypes/composition-functions'
+import isValidString from '@utils/isValidString'
 import DefaultInput from '../primitives/DefaultInput'
 import Spinner from '../primitives/Spinner'
 import ResultQuery from '../primitives/ResultQuery'

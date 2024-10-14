@@ -1,25 +1,26 @@
-import { ResultType } from '../../../types/resultEnum'
-import { NodeType } from '../../../types/nodeTypeEnum'
-import { getNodeColor } from '../../../utils/getNodeColor'
-import { useCreateUnitMutation, useGetBranchCommitsLazyQuery, VisibilityLevel, CreateUnitMutationVariables, RepoType, UnitType } from '../../../types/composition-functions'
+import { ResultType } from '@rootTypes/resultEnum'
+import { NodeType } from '@rootTypes/nodeTypeEnum'
+import { getNodeColor } from '@utils/getNodeColor'
+import { useCreateUnitMutation, useGetBranchCommitsLazyQuery, VisibilityLevel, CreateUnitMutationVariables, RepoType, UnitType } from '@rootTypes/composition-functions'
 import { useState, useEffect } from 'react';
-import { getCommitSummary } from '../../../utils/getCommitSummary';
-import isValidLogin from '../../../utils/isValidLogin'
+import { getCommitSummary } from '@utils/getCommitSummary';
+import isValidLogin from '@utils/isValidLogin'
 import DefaultInput from '../primitives/DefaultInput'
 import Spinner from '../primitives/Spinner'
 import ResultQuery from '../primitives/ResultQuery'
 import '../form.css'
 
-import { useGraphStore } from '../../graphStore';
-
+import { useGraphStore } from '@stores/graphStore';
+import { useModalStore } from '@stores/baseStore';
 
 interface CreateUnitFormProps {
-    setActiveModal: (show: string | null) => void
     currentRepoData: RepoType;
     setCurrentUnitData: (unit: UnitType | null) => void;
 }
 
-export default function CreateRepoForm({ setActiveModal, currentRepoData, setCurrentUnitData }:CreateUnitFormProps) {
+export default function CreateRepoForm({ currentRepoData, setCurrentUnitData }:CreateUnitFormProps) {
+    const { setActiveModal } = useModalStore();
+
     const [repoAvailableCommits, setRepoAvailableCommits] = useState<Array<{
         __typename?: "CommitType";
         commit: string;

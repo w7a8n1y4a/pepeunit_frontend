@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useGetVerificationUserLazyQuery } from '../../../types/composition-functions';
+import { useGetVerificationUserLazyQuery } from '@rootTypes/composition-functions';
 import Spinner from '../primitives/Spinner'
 import '../form.css'
 

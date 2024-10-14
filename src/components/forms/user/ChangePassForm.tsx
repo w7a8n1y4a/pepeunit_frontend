@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { ResultType } from '../../../types/resultEnum'
-import { useUpdateUserMutation } from '../../../types/composition-functions';
-import isValidPassword from '../../../utils/isValidPassword'
-import isValidMatchPassword from '../../../utils/isValidMatchPassword'
+import { ResultType } from '@rootTypes/resultEnum'
+import { useUpdateUserMutation } from '@rootTypes/composition-functions';
+import isValidPassword from '@utils/isValidPassword'
+import isValidMatchPassword from '@utils/isValidMatchPassword'
 import DefaultInput from '../primitives/DefaultInput'
 import Spinner from '../primitives/Spinner'
 import ResultQuery from '../primitives/ResultQuery'
