@@ -10,17 +10,16 @@ import RepoContent from './RepoContent'
 import UnitContent from './UnitContent';
 
 import { useGraphStore } from '@stores/graphStore';
-import { useRepoStore, useUnitStore } from '@stores/baseStore';
+import { useRepoStore, useUnitStore, useDomainStore } from '@stores/baseStore';
 import useModalHandlers from '@handlers/useModalHandlers';
 
 export default function GraphContent(){
   const { openModal } = useModalHandlers();
   const { setCurrentRepoData } = useRepoStore();
   const { setCurrentUnitData } = useUnitStore();
+  const { setCurrentDomainData } = useDomainStore();
   const { graphData, setGraphData } = useGraphStore();
 
-  const [currentDomainData, setCurrentDomainData] = useState<UnitType | null>(null)
-  
   const [displayWidth, setDisplayWidth] = useState(window.innerWidth);
   const [displayHeight, setDisplayHeight] = useState(window.innerHeight);
 
@@ -110,9 +109,7 @@ export default function GraphContent(){
         onNodeClick={(node) => pickMenu(node)}
       />
       
-      <DomainContent
-        currentDomainData={currentDomainData}
-      />
+      <DomainContent/>
       <RepoContent/>
       <UnitContent/>
     </>

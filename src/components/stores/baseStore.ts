@@ -30,3 +30,13 @@ export const useUnitStore = create<UnitStore>((set) => ({
     currentUnitData: null as UnitType | null,
     setCurrentUnitData: (unit: UnitType | null) => set({ currentUnitData: unit }),
 }));
+
+export interface DomainStore {
+    currentDomainData: UnitType | null,
+    setCurrentDomainData: (unit: UnitType | null) => void,
+}
+
+export const useDomainStore = create<DomainStore>((set) => ({
+    currentDomainData: null as UnitType | null,
+    setCurrentDomainData: (unit: UnitType | null) => set({ currentDomainData: unit }),
+}));
