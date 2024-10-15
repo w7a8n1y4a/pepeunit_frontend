@@ -7,6 +7,7 @@ import ResultQuery from '@primitives/resultQuery'
 import UpdateUnitForm from '../forms/unit/updateUnitForm';
 import UpdateUnitEnvForm from '../forms/unit/updateUnitEnvForm'
 
+import { useGraphStore } from '@stores/graphStore';
 import { useModalStore, useUnitStore } from '@stores/baseStore';
 import useModalHandlers from '@handlers/useModalHandlers';
 
@@ -14,6 +15,7 @@ import useModalHandlers from '@handlers/useModalHandlers';
 export default function UnitContent(){
   const { activeModal, setActiveModal } = useModalStore();
   const { currentUnitData, setCurrentUnitData } = useUnitStore();
+  const { removeNodesAndLinks } = useGraphStore();
   const { openModal } = useModalHandlers();
     
   const [isLoaderActive, setIsLoaderActive] = useState(false)
@@ -85,6 +87,7 @@ export default function UnitContent(){
         if (result.data){
           setIsLoaderActive(false)
           setActiveModal(null)
+          removeNodesAndLinks(currentUnitData.uuid)
         }
       }).catch(error => {
         setIsLoaderActive(false)
