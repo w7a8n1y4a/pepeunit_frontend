@@ -8,12 +8,14 @@ import { useState } from 'react';
 import Spinner from '@primitives/spinner'
 import ResultQuery from '@primitives/resultQuery'
 
+import { useGraphStore } from '@stores/graphStore';
 import { useModalStore, useRepoStore } from '@stores/baseStore';
 import useModalHandlers from '@handlers/useModalHandlers';
 
 export default function RepoContent(){
   const { activeModal, setActiveModal } = useModalStore();
   const { currentRepoData, setCurrentRepoData } = useRepoStore();
+  const { removeNodesAndLinks } = useGraphStore();
   const { openModal } = useModalHandlers();
 
   const [isLoaderActive, setIsLoaderActive] = useState(false)
@@ -96,6 +98,7 @@ export default function RepoContent(){
         if (result.data){
           setIsLoaderActive(false)
           setActiveModal(null)
+          removeNodesAndLinks(currentRepoData.uuid)
         }
       }).catch(error => {
         setIsLoaderActive(false)
