@@ -1,13 +1,13 @@
 import { ResultType } from '@rootTypes/resultEnum'
 import { NodeType } from '@rootTypes/nodeTypeEnum'
 import { getNodeColor } from '@utils/getNodeColor'
-import { useCreateUnitMutation, useGetBranchCommitsLazyQuery, VisibilityLevel, CreateUnitMutationVariables, RepoType } from '@rootTypes/composition-functions'
+import { useCreateUnitMutation, useGetBranchCommitsLazyQuery, VisibilityLevel, CreateUnitMutationVariables, RepoType } from '@rootTypes/compositionFunctions'
 import { useState, useEffect } from 'react';
 import { getCommitSummary } from '@utils/getCommitSummary';
 import isValidLogin from '@utils/isValidLogin'
-import DefaultInput from '../primitives/DefaultInput'
-import Spinner from '../primitives/Spinner'
-import ResultQuery from '../primitives/ResultQuery'
+import DefaultInput from '@primitives/defaultInput'
+import Spinner from '@primitives/spinner'
+import ResultQuery from '@primitives/resultQuery'
 import '../form.css'
 
 import { useGraphStore } from '@stores/graphStore';

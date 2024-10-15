@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import close_img from '/images/close.svg'
 import back_img from '/images/back.svg'
-import './BaseModal.css'
+import './baseModal.css'
 
 import useModalHandlers from '@handlers/useModalHandlers';
 

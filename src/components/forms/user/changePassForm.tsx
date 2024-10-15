@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { ResultType } from '@rootTypes/resultEnum'
-import { useUpdateUserMutation } from '@rootTypes/composition-functions';
+import { useUpdateUserMutation } from '@rootTypes/compositionFunctions';
 import isValidPassword from '@utils/isValidPassword'
 import isValidMatchPassword from '@utils/isValidMatchPassword'
-import DefaultInput from '../primitives/DefaultInput'
-import Spinner from '../primitives/Spinner'
-import ResultQuery from '../primitives/ResultQuery'
+import DefaultInput from '@primitives/defaultInput'
+import Spinner from '@primitives/spinner'
+import ResultQuery from '@primitives/resultQuery'
 import '../form.css'
 
 export default function ChangePassForm() {

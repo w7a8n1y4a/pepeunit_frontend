@@ -13,6 +13,7 @@ export default defineConfig({
       '@rootTypes': path.resolve(__dirname, './src/rootTypes'),
       '@stores': path.resolve(__dirname, './src/components/stores'),
       '@handlers': path.resolve(__dirname, './src/handlers'),
+      '@primitives': path.resolve(__dirname, './src/components/forms/primitives'),
     }
   }
 })

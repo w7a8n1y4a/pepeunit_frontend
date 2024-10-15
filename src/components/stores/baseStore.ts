@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { RepoType, UnitType } from '@rootTypes/composition-functions';
+import { RepoType, UnitType } from '@rootTypes/compositionFunctions';
 
 export interface ModalStore {
     activeModal: string | null;

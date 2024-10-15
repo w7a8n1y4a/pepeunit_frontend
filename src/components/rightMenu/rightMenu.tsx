@@ -1,7 +1,7 @@
 import add_repo_icon from '/images/add_repo_icon.svg'
-import BaseModal from '../modal/BaseModal'
-import CreateRepoForm from '../forms/repo/CreateRepoForm'
-import './RightMenu.css'
+import BaseModal from '../modal/baseModal'
+import CreateRepoForm from '../forms/repo/createRepoForm'
+import './rightMenu.css'
 
 import { useModalStore } from '@stores/baseStore';
 import useModalHandlers from '@handlers/useModalHandlers';

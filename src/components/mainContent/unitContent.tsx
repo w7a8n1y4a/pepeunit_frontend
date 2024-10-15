@@ -1,11 +1,11 @@
 import { ResultType } from '@rootTypes/resultEnum'
-import { useDeleteUnitMutation } from '@rootTypes/composition-functions'
-import BaseModal from '../modal/BaseModal'
+import { useDeleteUnitMutation } from '@rootTypes/compositionFunctions'
+import BaseModal from '../modal/baseModal'
 import { useState } from 'react';
-import Spinner from '../forms/primitives/Spinner'
-import ResultQuery from '../forms/primitives/ResultQuery'
-import UpdateUnitForm from '../forms/unit/UpdateUnitForm';
-import UpdateUnitEnvForm from '../forms/unit/UpdateUnitEnvForm'
+import Spinner from '@primitives/spinner'
+import ResultQuery from '@primitives/resultQuery'
+import UpdateUnitForm from '../forms/unit/updateUnitForm';
+import UpdateUnitEnvForm from '../forms/unit/updateUnitEnvForm'
 
 import { useModalStore, useUnitStore } from '@stores/baseStore';
 import useModalHandlers from '@handlers/useModalHandlers';

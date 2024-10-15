@@ -1,12 +1,12 @@
 import { ResultType } from '@rootTypes/resultEnum'
-import { useUpdateLocalRepoMutation, useUpdateUnitsFirmwareMutation, useDeleteRepoMutation } from '@rootTypes/composition-functions'
-import BaseModal from '../modal/BaseModal'
-import CreateUnitForm from '../forms/unit/CreateUnitForm';
-import UpdateRepoForm from '../forms/repo/UpdateRepoForm';
-import UpdateRepoCredentialsForm from '../forms/repo/UpdateRepoCredentialsForm'
+import { useUpdateLocalRepoMutation, useUpdateUnitsFirmwareMutation, useDeleteRepoMutation } from '@rootTypes/compositionFunctions'
+import BaseModal from '../modal/baseModal'
+import CreateUnitForm from '../forms/unit/createUnitForm';
+import UpdateRepoForm from '../forms/repo/updateRepoForm';
+import UpdateRepoCredentialsForm from '../forms/repo/updateRepoCredentialsForm'
 import { useState } from 'react';
-import Spinner from '../forms/primitives/Spinner'
-import ResultQuery from '../forms/primitives/ResultQuery'
+import Spinner from '@primitives/spinner'
+import ResultQuery from '@primitives/resultQuery'
 
 import { useModalStore, useRepoStore } from '@stores/baseStore';
 import useModalHandlers from '@handlers/useModalHandlers';
