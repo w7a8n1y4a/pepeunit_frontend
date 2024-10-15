@@ -1,30 +1,19 @@
 import { ResultType } from '@rootTypes/resultEnum'
 import { useDeleteUnitMutation } from '@rootTypes/composition-functions'
 import BaseModal from '../modal/BaseModal'
-import { RepoType, UnitType } from '@rootTypes/composition-functions'
 import { useState } from 'react';
 import Spinner from '../forms/primitives/Spinner'
 import ResultQuery from '../forms/primitives/ResultQuery'
 import UpdateUnitForm from '../forms/unit/UpdateUnitForm';
 import UpdateUnitEnvForm from '../forms/unit/UpdateUnitEnvForm'
 
-import { useModalStore } from '@stores/baseStore';
+import { useModalStore, useUnitStore } from '@stores/baseStore';
 import useModalHandlers from '@handlers/useModalHandlers';
 
-interface UnitContentProps {
-  currentRepoData: RepoType | null;
-  setCurrentRepoData: (repo: RepoType | null) => void;
-  currentUnitData: UnitType | null;
-  setCurrentUnitData: (repo: UnitType | null) => void;
-}
 
-export default function UnitContent({
-    currentRepoData,
-    setCurrentRepoData,
-    currentUnitData,
-    setCurrentUnitData
-}: UnitContentProps){
+export default function UnitContent(){
   const { activeModal, setActiveModal } = useModalStore();
+  const { currentUnitData, setCurrentUnitData } = useUnitStore();
   const { openModal } = useModalHandlers();
     
   const [isLoaderActive, setIsLoaderActive] = useState(false)
@@ -163,8 +152,6 @@ export default function UnitContent({
         {
           currentUnitData && (
             <UpdateUnitForm
-              currentRepoData={currentRepoData}
-              setCurrentRepoData={setCurrentRepoData}
               currentUnitData={currentUnitData}
               setCurrentUnitData={setCurrentUnitData}
             />

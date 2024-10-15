@@ -1,5 +1,5 @@
 import { ResultType } from '@rootTypes/resultEnum'
-import { VisibilityLevel, RepoType, UnitType, useGetBranchCommitsLazyQuery, useUpdateUnitMutation, useGetRepoLazyQuery } from '@rootTypes/composition-functions'
+import { VisibilityLevel, UnitType, useGetBranchCommitsLazyQuery, useUpdateUnitMutation, useGetRepoLazyQuery } from '@rootTypes/composition-functions'
 import { useState, useEffect } from 'react';
 import { getCommitSummary } from '@utils/getCommitSummary';
 import isValidLogin from '@utils/isValidLogin'
@@ -8,14 +8,15 @@ import Spinner from '../primitives/Spinner'
 import ResultQuery from '../primitives/ResultQuery'
 import '../form.css'
 
+import { useRepoStore } from '@stores/baseStore';
+
 interface UpdateUnitFormProps {
-    currentRepoData: RepoType | null;
-    setCurrentRepoData: (repo: RepoType | null) => void;
     currentUnitData: UnitType;
     setCurrentUnitData: (repo: UnitType | null) => void;
 }
 
-export default function UpdateUnitForm({ currentRepoData, setCurrentRepoData, currentUnitData, setCurrentUnitData }: UpdateUnitFormProps) {
+export default function UpdateUnitForm({ currentUnitData, setCurrentUnitData }: UpdateUnitFormProps) {
+    const { currentRepoData, setCurrentRepoData } = useRepoStore();
 
     const [repoAvailableCommits, setRepoAvailableCommits] = useState<Array<{
         __typename?: "CommitType";

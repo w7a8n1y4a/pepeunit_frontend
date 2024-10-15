@@ -1,5 +1,5 @@
 import { ResultType } from '@rootTypes/resultEnum'
-import { useUpdateLocalRepoMutation, useUpdateUnitsFirmwareMutation, useDeleteRepoMutation, RepoType, UnitType} from '@rootTypes/composition-functions'
+import { useUpdateLocalRepoMutation, useUpdateUnitsFirmwareMutation, useDeleteRepoMutation } from '@rootTypes/composition-functions'
 import BaseModal from '../modal/BaseModal'
 import CreateUnitForm from '../forms/unit/CreateUnitForm';
 import UpdateRepoForm from '../forms/repo/UpdateRepoForm';
@@ -8,23 +8,12 @@ import { useState } from 'react';
 import Spinner from '../forms/primitives/Spinner'
 import ResultQuery from '../forms/primitives/ResultQuery'
 
-import { useModalStore } from '@stores/baseStore';
+import { useModalStore, useRepoStore } from '@stores/baseStore';
 import useModalHandlers from '@handlers/useModalHandlers';
 
-interface RepoContentProps {
-  currentRepoData: RepoType | null
-  setCurrentRepoData: (repo: RepoType | null) => void;
-  currentUnitData: UnitType | null
-  setCurrentUnitData: (repo: UnitType | null) => void;
-}
-
-export default function RepoContent({
-    currentRepoData,
-    setCurrentRepoData,
-    currentUnitData,
-    setCurrentUnitData
-}: RepoContentProps){
+export default function RepoContent(){
   const { activeModal, setActiveModal } = useModalStore();
+  const { currentRepoData, setCurrentRepoData } = useRepoStore();
   const { openModal } = useModalHandlers();
 
   const [isLoaderActive, setIsLoaderActive] = useState(false)
@@ -79,7 +68,6 @@ export default function RepoContent({
         }
       ).then(result => {
         if (result.data){
-          console.log(currentUnitData)
           setIsLoaderActive(false)
           setResultData({ type: ResultType.Happy, message: "Запрос обновления связанных Unit отправлен"})
         }
@@ -148,7 +136,6 @@ export default function RepoContent({
           currentRepoData && (
             <CreateUnitForm
               currentRepoData={currentRepoData}
-              setCurrentUnitData={setCurrentUnitData}
             />
           )
         }

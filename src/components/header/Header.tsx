@@ -1,5 +1,4 @@
 import BaseModal from '../modal/BaseModal'
-import { RepoType } from '@rootTypes/composition-functions'
 import logo from '/images/logo_32_32.png'
 import signin_icon from '/images/signin.svg'
 import signout_icon from '/images/signout.svg'
@@ -15,11 +14,7 @@ import { useState, useCallback, useReducer, useEffect } from 'react';
 import { useModalStore } from '@stores/baseStore';
 import useModalHandlers from '@handlers/useModalHandlers';
 
-interface HeaderProps {
-    setCurrentRepoData: (repo: RepoType | null) => void;
-}
-
-export default function Header({setCurrentRepoData}: HeaderProps){
+export default function Header(){
     const { activeModal } = useModalStore();
     const { openModal, closeModal } = useModalHandlers();
 
@@ -64,9 +59,7 @@ export default function Header({setCurrentRepoData}: HeaderProps){
                         <button className="signout_button" onClick={signout}>
                             <img src={signout_icon} width="32" height="32" alt="signout" />
                         </button>
-                        <RightMenu
-                            setCurrentRepoData={setCurrentRepoData}
-                        />
+                        <RightMenu/>
                     </div>
                     
                 ) : (

@@ -1,12 +1,10 @@
 import GraphContent from './components/MainContent/GraphContent'
-import { RepoType } from '@rootTypes/composition-functions'
 import './App.css'
 import { onError } from '@apollo/client/link/error';
 import { setContext } from '@apollo/client/link/context';
 import { createUploadLink } from 'apollo-upload-client';
 import { ApolloClient, InMemoryCache, ApolloProvider, from } from '@apollo/client';
 import { isAuthTokenExpired } from './utils/isAuthTokenExpired';
-import { useState } from 'react';
 import Header from './components/header/Header';
 
 const authLink = setContext((_, { headers }) => {
@@ -69,18 +67,11 @@ const client = new ApolloClient({
 });
 
 function App() {
-  const [currentRepoData, setCurrentRepoData] = useState<RepoType | null>(null)
-
   return (
     <>
       <ApolloProvider client={client}>
-        <Header
-          setCurrentRepoData={setCurrentRepoData}
-        />
-        <GraphContent
-          currentRepoData={currentRepoData}
-          setCurrentRepoData={setCurrentRepoData}
-        />
+        <Header/>
+        <GraphContent/>
       </ApolloProvider>
     </>
   )

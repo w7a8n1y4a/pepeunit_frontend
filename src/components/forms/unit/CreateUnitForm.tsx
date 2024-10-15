@@ -1,7 +1,7 @@
 import { ResultType } from '@rootTypes/resultEnum'
 import { NodeType } from '@rootTypes/nodeTypeEnum'
 import { getNodeColor } from '@utils/getNodeColor'
-import { useCreateUnitMutation, useGetBranchCommitsLazyQuery, VisibilityLevel, CreateUnitMutationVariables, RepoType, UnitType } from '@rootTypes/composition-functions'
+import { useCreateUnitMutation, useGetBranchCommitsLazyQuery, VisibilityLevel, CreateUnitMutationVariables, RepoType } from '@rootTypes/composition-functions'
 import { useState, useEffect } from 'react';
 import { getCommitSummary } from '@utils/getCommitSummary';
 import isValidLogin from '@utils/isValidLogin'
@@ -11,15 +11,15 @@ import ResultQuery from '../primitives/ResultQuery'
 import '../form.css'
 
 import { useGraphStore } from '@stores/graphStore';
-import { useModalStore } from '@stores/baseStore';
+import { useModalStore, useUnitStore } from '@stores/baseStore';
 
-interface CreateUnitFormProps {
+interface CreateRepoFormProps {
     currentRepoData: RepoType;
-    setCurrentUnitData: (unit: UnitType | null) => void;
 }
 
-export default function CreateRepoForm({ currentRepoData, setCurrentUnitData }:CreateUnitFormProps) {
+export default function CreateRepoForm({ currentRepoData }:CreateRepoFormProps) {
     const { setActiveModal } = useModalStore();
+    const { setCurrentUnitData } = useUnitStore();
 
     const [repoAvailableCommits, setRepoAvailableCommits] = useState<Array<{
         __typename?: "CommitType";
