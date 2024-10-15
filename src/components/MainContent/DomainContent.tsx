@@ -5,15 +5,12 @@ import { useState, useEffect } from 'react';
 import Spinner from '../forms/primitives/Spinner'
 import ResultQuery from '../forms/primitives/ResultQuery'
 
-import { useModalStore } from '@stores/baseStore';
+import { useModalStore, useDomainStore } from '@stores/baseStore';
 import useModalHandlers from '@handlers/useModalHandlers';
 
-interface DomainContentProps {
-  currentDomainData: UnitType | null
-}
-
-export default function DomainContent({currentDomainData}: DomainContentProps){
+export default function DomainContent(){
   const { activeModal } = useModalStore();
+  const { currentDomainData } = useDomainStore();
   const { openModal } = useModalHandlers();
 
   const [baseMetrics, setBaseMetrics] = useState<BaseMetricsType | null>(null)
