@@ -1,18 +1,20 @@
 import { ResultType } from '@rootTypes/resultEnum'
 import { useBulkUpdateMutation, useGetBaseMetricsLazyQuery, BaseMetricsType, UnitType } from '@rootTypes/composition-functions'
 import BaseModal from '../modal/BaseModal'
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Spinner from '../forms/primitives/Spinner'
 import ResultQuery from '../forms/primitives/ResultQuery'
 
 import { useModalStore } from '@stores/baseStore';
+import useModalHandlers from '@handlers/useModalHandlers';
 
 interface DomainContentProps {
   currentDomainData: UnitType | null
 }
 
 export default function DomainContent({currentDomainData}: DomainContentProps){
-  const { activeModal, setActiveModal } = useModalStore();
+  const { activeModal } = useModalStore();
+  const { openModal } = useModalHandlers();
 
   const [baseMetrics, setBaseMetrics] = useState<BaseMetricsType | null>(null)
   const [isLoaderActive, setIsLoaderActive] = useState(false)
@@ -50,20 +52,11 @@ export default function DomainContent({currentDomainData}: DomainContentProps){
     })
   };
 
-  const openModal = useCallback((modalType: string) => {
-    setActiveModal(modalType);
-  }, []);
-
-  const closeModal = useCallback(() => {
-      setActiveModal(null);
-  }, []);
-
   return (
     <>
       <BaseModal
         modalName={'' + currentDomainData?.name}
         open={activeModal === 'domainMenu'}
-        closeModal={closeModal}
       >
         <div className="modal_menu_content">
           {
@@ -80,7 +73,7 @@ export default function DomainContent({currentDomainData}: DomainContentProps){
           />
         </div>
       </BaseModal>
-      <BaseModal modalName='Метрики' open={activeModal === 'statistics'} closeModal={closeModal} openModal={openModal} openModalType='domainMenu'>
+      <BaseModal modalName='Метрики' open={activeModal === 'statistics'} openModalType='domainMenu'>
           <div>
             <div>
               Число User: {baseMetrics?.userCount}

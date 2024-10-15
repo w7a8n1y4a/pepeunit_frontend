@@ -4,16 +4,18 @@ import close_img from '/images/close.svg'
 import back_img from '/images/back.svg'
 import './BaseModal.css'
 
+import useModalHandlers from '@handlers/useModalHandlers';
+
 interface ModalProps {
     modalName: string
     children: React.ReactNode
     open: boolean
-    closeModal: () => void
-    openModal?: (modalType: string) => void
     openModalType?: string
 }
 
-export default function BaseModal({modalName, children, open, closeModal, openModal, openModalType}: ModalProps) {
+export default function BaseModal({modalName, children, open, openModalType}: ModalProps) {
+    const { openModal, closeModal } = useModalHandlers();
+    
     return ReactDOM.createPortal(
         <dialog open={open}>
             <div className="modal_name">

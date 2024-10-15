@@ -13,13 +13,15 @@ import './Header.css'
 import { useState, useCallback, useReducer, useEffect } from 'react';
 
 import { useModalStore } from '@stores/baseStore';
+import useModalHandlers from '@handlers/useModalHandlers';
 
 interface HeaderProps {
     setCurrentRepoData: (repo: RepoType | null) => void;
 }
 
 export default function Header({setCurrentRepoData}: HeaderProps){
-    const { activeModal, setActiveModal } = useModalStore();
+    const { activeModal } = useModalStore();
+    const { openModal, closeModal } = useModalHandlers();
 
     const [, forceUpdate] = useReducer(x => x + 1, 0);
 
@@ -30,14 +32,6 @@ export default function Header({setCurrentRepoData}: HeaderProps){
     useEffect(() => {
         setLogin(loginStorage)
     }, [loginStorage]);
-
-    const openModal = useCallback((modalType: string) => {
-        setActiveModal(modalType);
-    }, []);
-
-    const closeModal = useCallback(() => {
-        setActiveModal(null);
-    }, []);
 
     const signout = useCallback(() => {
         localStorage.removeItem('token');
@@ -71,8 +65,6 @@ export default function Header({setCurrentRepoData}: HeaderProps){
                             <img src={signout_icon} width="32" height="32" alt="signout" />
                         </button>
                         <RightMenu
-                            openModal={openModal}
-                            closeModal={closeModal}
                             setCurrentRepoData={setCurrentRepoData}
                         />
                     </div>
@@ -85,17 +77,17 @@ export default function Header({setCurrentRepoData}: HeaderProps){
                 )}
             </div>
             <div>
-                <BaseModal modalName='Авторизация' open={activeModal === 'signin'} closeModal={closeModal}>
+                <BaseModal modalName='Авторизация' open={activeModal === 'signin'}>
                     <SignInForm
                         openModalRegister={() => openModal('register')}
                     />
                 </BaseModal>
-                <BaseModal modalName='Регистрация' open={activeModal === 'register'} closeModal={closeModal}>
+                <BaseModal modalName='Регистрация' open={activeModal === 'register'}>
                     <RegisterForm
                         openModalSignIn={() => openModal('signin')}
                     />
                 </BaseModal>
-                <BaseModal modalName='Меню' open={activeModal === 'userMenu'} closeModal={closeModal}>
+                <BaseModal modalName='Меню' open={activeModal === 'userMenu'}>
                     <div className="modal_menu_content">
                         <button className="button_open_alter" onClick={() => openModal('verification')}>
                             Верификация в Telegram
@@ -111,8 +103,6 @@ export default function Header({setCurrentRepoData}: HeaderProps){
                 <BaseModal
                     modalName='Верификация'
                     open={activeModal === 'verification'}
-                    closeModal={closeModal}
-                    openModal={openModal} 
                     openModalType='userMenu'
                 >
                     <VerificationForm />
@@ -120,8 +110,6 @@ export default function Header({setCurrentRepoData}: HeaderProps){
                 <BaseModal
                     modalName='Смена Логина'
                     open={activeModal === 'changeLogin'}
-                    closeModal={closeModal}
-                    openModal={openModal}
                     openModalType='userMenu'
                 >
                     <ChangeLoginForm currentLogin={login}/>
@@ -129,8 +117,6 @@ export default function Header({setCurrentRepoData}: HeaderProps){
                 <BaseModal
                     modalName='Смена Пароля'
                     open={activeModal === 'changePass'}
-                    closeModal={closeModal}
-                    openModal={openModal}
                     openModalType='userMenu'
                 >
                     <ChangePassForm />
