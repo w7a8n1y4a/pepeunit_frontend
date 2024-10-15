@@ -4,11 +4,12 @@ import BaseModal from '../modal/BaseModal'
 import CreateUnitForm from '../forms/unit/CreateUnitForm';
 import UpdateRepoForm from '../forms/repo/UpdateRepoForm';
 import UpdateRepoCredentialsForm from '../forms/repo/UpdateRepoCredentialsForm'
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import Spinner from '../forms/primitives/Spinner'
 import ResultQuery from '../forms/primitives/ResultQuery'
 
 import { useModalStore } from '@stores/baseStore';
+import useModalHandlers from '@handlers/useModalHandlers';
 
 interface RepoContentProps {
   currentRepoData: RepoType | null
@@ -23,8 +24,8 @@ export default function RepoContent({
     currentUnitData,
     setCurrentUnitData
 }: RepoContentProps){
-    
   const { activeModal, setActiveModal } = useModalStore();
+  const { openModal } = useModalHandlers();
 
   const [isLoaderActive, setIsLoaderActive] = useState(false)
   const [resultData, setResultData] = useState<{ type: ResultType; message: string | null }>({
@@ -115,20 +116,11 @@ export default function RepoContent({
     }
   };
 
-  const openModal = useCallback((modalType: string) => {
-    setActiveModal(modalType);
-  }, []);
-
-  const closeModal = useCallback(() => {
-      setActiveModal(null);
-  }, []);
-
   return (
     <>
       <BaseModal
         modalName={'Repo ' + currentRepoData?.name}
         open={activeModal === 'repoMenu'}
-        closeModal={closeModal}
       >
         <div className="modal_menu_content">
           {
@@ -151,7 +143,7 @@ export default function RepoContent({
           />
         </div>
       </BaseModal>
-      <BaseModal modalName='Создание Unit' open={activeModal === 'createUnit'} closeModal={closeModal} openModal={openModal} openModalType='repoMenu'>
+      <BaseModal modalName='Создание Unit' open={activeModal === 'createUnit'} openModalType='repoMenu'>
         {
           currentRepoData && (
             <CreateUnitForm
@@ -164,8 +156,6 @@ export default function RepoContent({
       <BaseModal
         modalName='Настройки'
         open={activeModal === 'repoSettingsMenu'}
-        closeModal={closeModal}
-        openModal={openModal} 
         openModalType='repoMenu'
         >
         <div className="modal_menu_content">
@@ -193,8 +183,6 @@ export default function RepoContent({
       <BaseModal
         modalName='Параметры Repo'
         open={activeModal === 'updateRepo'}
-        closeModal={closeModal}
-        openModal={openModal} 
         openModalType='repoSettingsMenu'  
       >
         {
@@ -209,8 +197,6 @@ export default function RepoContent({
       <BaseModal
         modalName='Авторизация GIT'
         open={activeModal === 'changeCredentials'}
-        closeModal={closeModal}
-        openModal={openModal} 
         openModalType='repoSettingsMenu'
       >
         {

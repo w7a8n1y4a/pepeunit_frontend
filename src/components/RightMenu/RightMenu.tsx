@@ -5,15 +5,14 @@ import CreateRepoForm from '../forms/repo/CreateRepoForm'
 import './RightMenu.css'
 
 import { useModalStore } from '@stores/baseStore';
+import useModalHandlers from '@handlers/useModalHandlers';
 
 interface RightMenuProps {
-    openModal: (modalType: string) => void
-    closeModal: () => void
     setCurrentRepoData: (repo: RepoType | null) => void;
 }
 
-export default function RightMenu({openModal, closeModal, setCurrentRepoData}: RightMenuProps) {
-
+export default function RightMenu({setCurrentRepoData}: RightMenuProps) {
+    const { openModal } = useModalHandlers();
     const { activeModal } = useModalStore();
 
     return (
@@ -21,7 +20,7 @@ export default function RightMenu({openModal, closeModal, setCurrentRepoData}: R
             <button className="signin_button" onClick={() => openModal('createRepo')}>
                 <img src={add_repo_icon} width="32" height="32" alt="AddRepoImg" />
             </button>
-            <BaseModal modalName='Создание Repo' open={activeModal === 'createRepo'} closeModal={closeModal}>
+            <BaseModal modalName='Создание Repo' open={activeModal === 'createRepo'}>
                 <CreateRepoForm
                     setCurrentRepoData={setCurrentRepoData}
                 />

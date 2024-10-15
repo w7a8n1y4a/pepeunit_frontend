@@ -2,13 +2,14 @@ import { ResultType } from '@rootTypes/resultEnum'
 import { useDeleteUnitMutation } from '@rootTypes/composition-functions'
 import BaseModal from '../modal/BaseModal'
 import { RepoType, UnitType } from '@rootTypes/composition-functions'
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import Spinner from '../forms/primitives/Spinner'
 import ResultQuery from '../forms/primitives/ResultQuery'
 import UpdateUnitForm from '../forms/unit/UpdateUnitForm';
 import UpdateUnitEnvForm from '../forms/unit/UpdateUnitEnvForm'
 
 import { useModalStore } from '@stores/baseStore';
+import useModalHandlers from '@handlers/useModalHandlers';
 
 interface UnitContentProps {
   currentRepoData: RepoType | null;
@@ -24,6 +25,7 @@ export default function UnitContent({
     setCurrentUnitData
 }: UnitContentProps){
   const { activeModal, setActiveModal } = useModalStore();
+  const { openModal } = useModalHandlers();
     
   const [isLoaderActive, setIsLoaderActive] = useState(false)
   const [resultData, setResultData] = useState<{ type: ResultType; message: string | null }>({
@@ -102,20 +104,11 @@ export default function UnitContent({
     }
   };
 
-  const openModal = useCallback((modalType: string) => {
-    setActiveModal(modalType);
-  }, []);
-
-  const closeModal = useCallback(() => {
-      setActiveModal(null);
-  }, []);
-
   return (
     <>
       <BaseModal
         modalName={'Unit ' + currentUnitData?.name}
         open={activeModal === 'unitMenu'}
-        closeModal={closeModal}
       >
         <div className="modal_menu_content">
           {
@@ -142,8 +135,6 @@ export default function UnitContent({
       <BaseModal
         modalName='Настройки'
         open={activeModal === 'unitSettingsMenu'}
-        closeModal={closeModal}
-        openModal={openModal} 
         openModalType='unitMenu'
         >
         <div className="modal_menu_content">
@@ -167,8 +158,6 @@ export default function UnitContent({
       <BaseModal
         modalName='Параметры Unit'
         open={activeModal === 'updateUnit'}
-        closeModal={closeModal}
-        openModal={openModal} 
         openModalType='unitSettingsMenu'
       >
         {
@@ -185,8 +174,6 @@ export default function UnitContent({
       <BaseModal
         modalName='Env Unit'
         open={activeModal === 'unitSetEnv'}
-        closeModal={closeModal}
-        openModal={openModal} 
         openModalType='unitSettingsMenu'
       >
         {

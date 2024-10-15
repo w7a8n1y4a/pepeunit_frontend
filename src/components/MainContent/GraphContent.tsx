@@ -4,13 +4,13 @@ import { useGetReposLazyQuery, useGetUnitsLazyQuery} from '@rootTypes/compositio
 import { ForceGraph3D } from 'react-force-graph';
 import { RepoType, UnitType } from '@rootTypes/composition-functions'
 import SpriteText from 'three-spritetext';
-import { useState, useMemo, useCallback, useEffect } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import DomainContent from './DomainContent'
 import RepoContent from './RepoContent'
 import UnitContent from './UnitContent';
 
 import { useGraphStore } from '@stores/graphStore';
-import { useModalStore } from '@stores/baseStore';
+import useModalHandlers from '@handlers/useModalHandlers';
 
 interface GraphContentProps {
   currentRepoData: RepoType | null
@@ -18,7 +18,7 @@ interface GraphContentProps {
 }
 
 export default function GraphContent({currentRepoData, setCurrentRepoData}: GraphContentProps){
-  const { setActiveModal } = useModalStore();
+  const { openModal } = useModalHandlers();
   
   const [displayWidth, setDisplayWidth] = useState(window.innerWidth);
   const [displayHeight, setDisplayHeight] = useState(window.innerHeight);
@@ -72,10 +72,6 @@ export default function GraphContent({currentRepoData, setCurrentRepoData}: Grap
 
   const [getRepos] = useGetReposLazyQuery();
   const [getUnits] = useGetUnitsLazyQuery();
-
-  const openModal = useCallback((modalType: string) => {
-    setActiveModal(modalType);
-  }, []);
 
   function pickMenu(node: any){
     if (node.type == NodeType.Domain) {
