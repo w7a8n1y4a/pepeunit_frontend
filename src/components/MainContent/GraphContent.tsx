@@ -2,7 +2,7 @@ import { NodeType } from '@rootTypes/nodeTypeEnum'
 import { getNodeColor } from '@utils/getNodeColor'
 import { useGetReposLazyQuery, useGetUnitsLazyQuery} from '@rootTypes/composition-functions'
 import { ForceGraph3D } from 'react-force-graph';
-import { RepoType, UnitType } from '@rootTypes/composition-functions'
+import { UnitType } from '@rootTypes/composition-functions'
 import SpriteText from 'three-spritetext';
 import { useState, useMemo, useEffect } from 'react';
 import DomainContent from './DomainContent'
@@ -10,23 +10,19 @@ import RepoContent from './RepoContent'
 import UnitContent from './UnitContent';
 
 import { useGraphStore } from '@stores/graphStore';
+import { useRepoStore, useUnitStore } from '@stores/baseStore';
 import useModalHandlers from '@handlers/useModalHandlers';
 
-interface GraphContentProps {
-  currentRepoData: RepoType | null
-  setCurrentRepoData: (repo: RepoType | null) => void;
-}
-
-export default function GraphContent({currentRepoData, setCurrentRepoData}: GraphContentProps){
+export default function GraphContent(){
   const { openModal } = useModalHandlers();
+  const { setCurrentRepoData } = useRepoStore();
+  const { setCurrentUnitData } = useUnitStore();
+  const { graphData, setGraphData } = useGraphStore();
+
+  const [currentDomainData, setCurrentDomainData] = useState<UnitType | null>(null)
   
   const [displayWidth, setDisplayWidth] = useState(window.innerWidth);
   const [displayHeight, setDisplayHeight] = useState(window.innerHeight);
-
-  const { graphData, setGraphData } = useGraphStore();
-
-  const [currentUnitData, setCurrentUnitData] = useState<UnitType | null>(null)
-  const [currentDomainData, setCurrentDomainData] = useState<UnitType | null>(null)
 
   const processedData = useMemo(() => {
     return {
@@ -117,20 +113,8 @@ export default function GraphContent({currentRepoData, setCurrentRepoData}: Grap
       <DomainContent
         currentDomainData={currentDomainData}
       />
-
-      <RepoContent
-        currentRepoData={currentRepoData}
-        setCurrentRepoData={setCurrentRepoData}
-        currentUnitData={currentUnitData}
-        setCurrentUnitData={setCurrentUnitData}
-      />
-
-      <UnitContent
-        currentRepoData={currentRepoData}
-        setCurrentRepoData={setCurrentRepoData}
-        currentUnitData={currentUnitData}
-        setCurrentUnitData={setCurrentUnitData}
-      />
+      <RepoContent/>
+      <UnitContent/>
     </>
   )
 }

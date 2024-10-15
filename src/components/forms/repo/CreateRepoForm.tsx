@@ -1,7 +1,7 @@
 import { ResultType } from '@rootTypes/resultEnum'
 import { NodeType } from '@rootTypes/nodeTypeEnum'
 import { getNodeColor } from '@utils/getNodeColor'
-import { useCreateRepoMutation, VisibilityLevel, CreateRepoMutationVariables, RepoType } from '@rootTypes/composition-functions'
+import { useCreateRepoMutation, VisibilityLevel, CreateRepoMutationVariables } from '@rootTypes/composition-functions'
 import { useState } from 'react';
 import isValidLogin from '@utils/isValidLogin'
 import isValidString from '@utils/isValidString'
@@ -12,15 +12,12 @@ import ResultQuery from '../primitives/ResultQuery'
 import '../form.css'
 
 import { useGraphStore } from '@stores/graphStore';
-import { useModalStore } from '@stores/baseStore';
+import { useModalStore, useRepoStore } from '@stores/baseStore';
 
-interface CreateRepoFormProps {
-    setCurrentRepoData: (repo: RepoType | null) => void;
-}
-
-export default function CreateRepoForm({ setCurrentRepoData }:CreateRepoFormProps) {
+export default function CreateRepoForm() {
 
     const { setActiveModal } = useModalStore();
+    const { setCurrentRepoData } = useRepoStore();
     
     const [repoName, setRepoName] = useState('');
     const [repoUrl, setRepoUrl] = useState('');

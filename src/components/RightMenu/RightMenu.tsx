@@ -1,5 +1,4 @@
 import add_repo_icon from '/images/add_repo_icon.svg'
-import { RepoType } from '@rootTypes/composition-functions'
 import BaseModal from '../modal/BaseModal'
 import CreateRepoForm from '../forms/repo/CreateRepoForm'
 import './RightMenu.css'
@@ -7,11 +6,7 @@ import './RightMenu.css'
 import { useModalStore } from '@stores/baseStore';
 import useModalHandlers from '@handlers/useModalHandlers';
 
-interface RightMenuProps {
-    setCurrentRepoData: (repo: RepoType | null) => void;
-}
-
-export default function RightMenu({setCurrentRepoData}: RightMenuProps) {
+export default function RightMenu() {
     const { openModal } = useModalHandlers();
     const { activeModal } = useModalStore();
 
@@ -21,9 +16,7 @@ export default function RightMenu({setCurrentRepoData}: RightMenuProps) {
                 <img src={add_repo_icon} width="32" height="32" alt="AddRepoImg" />
             </button>
             <BaseModal modalName='Создание Repo' open={activeModal === 'createRepo'}>
-                <CreateRepoForm
-                    setCurrentRepoData={setCurrentRepoData}
-                />
+                <CreateRepoForm/>
             </BaseModal>
         </div>
     )
