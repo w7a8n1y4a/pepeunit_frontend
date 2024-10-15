@@ -1,14 +1,14 @@
-import BaseModal from '../modal/BaseModal'
+import BaseModal from '../modal/baseModal'
 import logo from '/images/logo_32_32.png'
 import signin_icon from '/images/signin.svg'
 import signout_icon from '/images/signout.svg'
-import SignInForm from '../forms/user/SignInForm';
-import RegisterForm from '../forms/user/RegisterForm';
-import VerificationForm from '../forms/user/VerificationForm';
-import ChangeLoginForm from '../forms/user/ChangeLoginForm';
-import ChangePassForm from '../forms/user/ChangePassForm';
-import RightMenu from '../RightMenu/RightMenu';
-import './Header.css'
+import SignInForm from '../forms/user/signInForm';
+import RegisterForm from '../forms/user/registerForm';
+import VerificationForm from '../forms/user/verificationForm';
+import ChangeLoginForm from '../forms/user/changeLoginForm';
+import ChangePassForm from '../forms/user/changePassForm';
+import RightMenu from '../rightMenu/rightMenu';
+import './header.css'
 import { useState, useCallback, useReducer, useEffect } from 'react';
 
 import { useModalStore } from '@stores/baseStore';

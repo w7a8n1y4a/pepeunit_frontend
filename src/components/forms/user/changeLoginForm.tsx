@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { ResultType } from '@rootTypes/resultEnum'
-import { useUpdateUserMutation } from '@rootTypes/composition-functions';
-import DefaultInput from '../primitives/DefaultInput'
-import Spinner from '../primitives/Spinner'
+import { useUpdateUserMutation } from '@rootTypes/compositionFunctions';
+import DefaultInput from '@primitives/defaultInput'
+import Spinner from '@primitives/spinner'
 import isValidLogin from '@utils/isValidLogin'
 import '../form.css'
 

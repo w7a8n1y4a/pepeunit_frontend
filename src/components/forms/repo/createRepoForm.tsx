@@ -1,14 +1,14 @@
 import { ResultType } from '@rootTypes/resultEnum'
 import { NodeType } from '@rootTypes/nodeTypeEnum'
 import { getNodeColor } from '@utils/getNodeColor'
-import { useCreateRepoMutation, VisibilityLevel, CreateRepoMutationVariables } from '@rootTypes/composition-functions'
+import { useCreateRepoMutation, VisibilityLevel, CreateRepoMutationVariables } from '@rootTypes/compositionFunctions'
 import { useState } from 'react';
 import isValidLogin from '@utils/isValidLogin'
 import isValidString from '@utils/isValidString'
 import isValidRepoUrl from '@utils/isValidRepoUrl'
-import DefaultInput from '../primitives/DefaultInput'
-import Spinner from '../primitives/Spinner'
-import ResultQuery from '../primitives/ResultQuery'
+import DefaultInput from '@primitives/defaultInput'
+import Spinner from '@primitives/spinner'
+import ResultQuery from '@primitives/resultQuery'
 import '../form.css'
 
 import { useGraphStore } from '@stores/graphStore';

@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { ResultType } from '@rootTypes/resultEnum'
-import { useUpdateRepoCredentialsMutation, RepoType } from '@rootTypes/composition-functions'
+import { useUpdateRepoCredentialsMutation, RepoType } from '@rootTypes/compositionFunctions'
 import isValidString from '@utils/isValidString'
-import DefaultInput from '../primitives/DefaultInput'
-import Spinner from '../primitives/Spinner'
-import ResultQuery from '../primitives/ResultQuery'
+import DefaultInput from '@primitives/defaultInput'
+import Spinner from '@primitives/spinner'
+import ResultQuery from '@primitives/resultQuery'
 import '../form.css'
 
 interface UpdateRepoCredentialsFormProps {

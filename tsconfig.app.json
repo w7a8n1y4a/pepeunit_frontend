@@ -32,6 +32,7 @@
       "@rootTypes/*": ["src/rootTypes/*"],
       "@stores/*": ["src/components/stores/*"],
       "@handlers/*": ["src/handlers/*"],
+      "@primitives/*": ["src/components/forms/primitives/*"],
     }
   },
   "include": ["src"]

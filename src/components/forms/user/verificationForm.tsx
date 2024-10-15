@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { useGetVerificationUserLazyQuery } from '@rootTypes/composition-functions';
-import Spinner from '../primitives/Spinner'
+import { useGetVerificationUserLazyQuery } from '@rootTypes/compositionFunctions';
+import Spinner from '@primitives/spinner'
 import '../form.css'
 
 export default function VerificationForm() {

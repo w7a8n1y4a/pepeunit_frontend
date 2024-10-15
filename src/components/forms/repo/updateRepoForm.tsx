@@ -1,11 +1,11 @@
 import { ResultType } from '@rootTypes/resultEnum'
-import { VisibilityLevel, RepoType, useGetBranchCommitsLazyQuery, useUpdateRepoMutation } from '@rootTypes/composition-functions'
+import { VisibilityLevel, RepoType, useGetBranchCommitsLazyQuery, useUpdateRepoMutation } from '@rootTypes/compositionFunctions'
 import { useState, useEffect } from 'react';
 import { getCommitSummary } from '@utils/getCommitSummary';
 import isValidLogin from '@utils/isValidLogin'
-import DefaultInput from '../primitives/DefaultInput'
-import Spinner from '../primitives/Spinner'
-import ResultQuery from '../primitives/ResultQuery'
+import DefaultInput from '@primitives/defaultInput'
+import Spinner from '@primitives/spinner'
+import ResultQuery from '@primitives/resultQuery'
 import '../form.css'
 
 interface UpdateRepoFormProps {

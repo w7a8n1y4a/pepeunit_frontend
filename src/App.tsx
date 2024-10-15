@@ -1,11 +1,11 @@
-import GraphContent from './components/MainContent/GraphContent'
+import GraphContent from './components/mainContent/graphContent'
 import './App.css'
 import { onError } from '@apollo/client/link/error';
 import { setContext } from '@apollo/client/link/context';
 import { createUploadLink } from 'apollo-upload-client';
 import { ApolloClient, InMemoryCache, ApolloProvider, from } from '@apollo/client';
 import { isAuthTokenExpired } from './utils/isAuthTokenExpired';
-import Header from './components/header/Header';
+import Header from './components/header/header';
 
 const authLink = setContext((_, { headers }) => {
   const token = localStorage.getItem('token');

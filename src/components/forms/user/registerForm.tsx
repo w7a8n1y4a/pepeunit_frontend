@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { ResultType } from '@rootTypes/resultEnum'
-import { useCreateUserMutation, useGetTokenLazyQuery } from '@rootTypes/composition-functions';
+import { useCreateUserMutation, useGetTokenLazyQuery } from '@rootTypes/compositionFunctions';
 import isValidPassword from '@utils/isValidPassword'
 import isValidLogin from '@utils/isValidLogin'
 import isValidMatchPassword from '@utils/isValidMatchPassword'
-import DefaultInput from '../primitives/DefaultInput'
-import Spinner from '../primitives/Spinner'
-import ResultQuery from '../primitives/ResultQuery'
+import DefaultInput from '@primitives/defaultInput'
+import Spinner from '@primitives/spinner'
+import ResultQuery from '@primitives/resultQuery'
 import '../form.css'
 
 import { useModalStore } from '@stores/baseStore';

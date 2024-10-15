@@ -1,12 +1,12 @@
 import { NodeType } from '@rootTypes/nodeTypeEnum'
 import { getNodeColor } from '@utils/getNodeColor'
-import { useGetReposLazyQuery, useGetUnitsLazyQuery} from '@rootTypes/composition-functions'
+import { useGetReposLazyQuery, useGetUnitsLazyQuery} from '@rootTypes/compositionFunctions'
 import { ForceGraph3D } from 'react-force-graph';
 import SpriteText from 'three-spritetext';
 import { useState, useMemo, useEffect } from 'react';
-import DomainContent from './DomainContent'
-import RepoContent from './RepoContent'
-import UnitContent from './UnitContent';
+import DomainContent from './domainContent'
+import RepoContent from './repoContent'
+import UnitContent from './unitContent';
 
 import { useGraphStore } from '@stores/graphStore';
 import { useRepoStore, useUnitStore, useDomainStore } from '@stores/baseStore';

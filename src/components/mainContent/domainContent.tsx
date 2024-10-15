@@ -1,9 +1,9 @@
 import { ResultType } from '@rootTypes/resultEnum'
-import { useBulkUpdateMutation, useGetBaseMetricsLazyQuery, BaseMetricsType } from '@rootTypes/composition-functions'
-import BaseModal from '../modal/BaseModal'
+import { useBulkUpdateMutation, useGetBaseMetricsLazyQuery, BaseMetricsType } from '@rootTypes/compositionFunctions'
+import BaseModal from '../modal/baseModal'
 import { useState, useEffect } from 'react';
-import Spinner from '../forms/primitives/Spinner'
-import ResultQuery from '../forms/primitives/ResultQuery'
+import Spinner from '@primitives/spinner'
+import ResultQuery from '@primitives/resultQuery'
 
 import { useModalStore, useDomainStore } from '@stores/baseStore';
 import useModalHandlers from '@handlers/useModalHandlers';
