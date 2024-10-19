@@ -2,7 +2,7 @@ overwrite: true
 schema: 'https://devunit.pepeunit.com/pepeunit/graphql'
 documents: 'src/gql/**/**.ts'
 generates:
-    src/types/compositionFunctions.ts:
+    src/rootTypes/compositionFunctions.ts:
         plugins:
             - typescript
             - typescript-operations
