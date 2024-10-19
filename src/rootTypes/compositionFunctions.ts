@@ -782,6 +782,24 @@ export type UpdateUserMutation = {
   };
 };
 
+export type BlockUserMutationVariables = Exact<{
+  uuid: Scalars["UUID"]["input"];
+}>;
+
+export type BlockUserMutation = {
+  __typename?: "Mutation";
+  blockUser: { __typename?: "NoneType"; isNone: boolean };
+};
+
+export type UnblockUserMutationVariables = Exact<{
+  uuid: Scalars["UUID"]["input"];
+}>;
+
+export type UnblockUserMutation = {
+  __typename?: "Mutation";
+  unblockUser: { __typename?: "NoneType"; isNone: boolean };
+};
+
 export type GetBaseMetricsQueryVariables = Exact<{ [key: string]: never }>;
 
 export type GetBaseMetricsQuery = {
@@ -868,6 +886,47 @@ export type GetBranchCommitsQuery = {
     summary: string;
     tag?: string | null;
   }>;
+};
+
+export type GetVersionsQueryVariables = Exact<{
+  uuid: Scalars["UUID"]["input"];
+}>;
+
+export type GetVersionsQuery = {
+  __typename?: "Query";
+  getVersions: {
+    __typename?: "RepoVersionsType";
+    unitCount: number;
+    versions: Array<{
+      __typename?: "RepoVersionType";
+      commit: string;
+      unitCount: number;
+      tag?: string | null;
+    }>;
+  };
+};
+
+export type GetUnitQueryVariables = Exact<{
+  uuid: Scalars["UUID"]["input"];
+}>;
+
+export type GetUnitQuery = {
+  __typename?: "Query";
+  getUnit: {
+    __typename?: "UnitType";
+    uuid: string;
+    visibilityLevel: VisibilityLevel;
+    name: string;
+    createDatetime: string;
+    isAutoUpdateFromRepoUnit: boolean;
+    repoBranch?: string | null;
+    repoCommit?: string | null;
+    unitStateDict?: string | null;
+    currentCommitVersion?: string | null;
+    lastUpdateDatetime: string;
+    creatorUuid: string;
+    repoUuid: string;
+  };
 };
 
 export type GetUnitsQueryVariables = Exact<{
@@ -970,6 +1029,27 @@ export type GetUserQuery = {
     login: string;
     createDatetime: string;
   };
+};
+
+export type GetUsersQueryVariables = Exact<{
+  searchString?: InputMaybe<Scalars["String"]["input"]>;
+  role?: InputMaybe<Array<UserRole> | UserRole>;
+  status?: InputMaybe<Array<UserStatus> | UserStatus>;
+  orderByCreateDate?: InputMaybe<OrderByDate>;
+  offset?: InputMaybe<Scalars["Int"]["input"]>;
+  limit?: InputMaybe<Scalars["Int"]["input"]>;
+}>;
+
+export type GetUsersQuery = {
+  __typename?: "Query";
+  getUsers: Array<{
+    __typename?: "UserType";
+    uuid: string;
+    role: UserRole;
+    status: UserStatus;
+    login: string;
+    createDatetime: string;
+  }>;
 };
 
 export type GetVerificationUserQueryVariables = Exact<{ [key: string]: never }>;
@@ -2015,6 +2095,105 @@ export type UpdateUserMutationOptions = Apollo.BaseMutationOptions<
   UpdateUserMutation,
   UpdateUserMutationVariables
 >;
+export const BlockUserDocument = gql`
+  mutation blockUser($uuid: UUID!) {
+    blockUser(uuid: $uuid) {
+      isNone
+    }
+  }
+`;
+export type BlockUserMutationFn = Apollo.MutationFunction<
+  BlockUserMutation,
+  BlockUserMutationVariables
+>;
+
+/**
+ * __useBlockUserMutation__
+ *
+ * To run a mutation, you first call `useBlockUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useBlockUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [blockUserMutation, { data, loading, error }] = useBlockUserMutation({
+ *   variables: {
+ *      uuid: // value for 'uuid'
+ *   },
+ * });
+ */
+export function useBlockUserMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    BlockUserMutation,
+    BlockUserMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<BlockUserMutation, BlockUserMutationVariables>(
+    BlockUserDocument,
+    options,
+  );
+}
+export type BlockUserMutationHookResult = ReturnType<
+  typeof useBlockUserMutation
+>;
+export type BlockUserMutationResult = Apollo.MutationResult<BlockUserMutation>;
+export type BlockUserMutationOptions = Apollo.BaseMutationOptions<
+  BlockUserMutation,
+  BlockUserMutationVariables
+>;
+export const UnblockUserDocument = gql`
+  mutation unblockUser($uuid: UUID!) {
+    unblockUser(uuid: $uuid) {
+      isNone
+    }
+  }
+`;
+export type UnblockUserMutationFn = Apollo.MutationFunction<
+  UnblockUserMutation,
+  UnblockUserMutationVariables
+>;
+
+/**
+ * __useUnblockUserMutation__
+ *
+ * To run a mutation, you first call `useUnblockUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUnblockUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [unblockUserMutation, { data, loading, error }] = useUnblockUserMutation({
+ *   variables: {
+ *      uuid: // value for 'uuid'
+ *   },
+ * });
+ */
+export function useUnblockUserMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UnblockUserMutation,
+    UnblockUserMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<UnblockUserMutation, UnblockUserMutationVariables>(
+    UnblockUserDocument,
+    options,
+  );
+}
+export type UnblockUserMutationHookResult = ReturnType<
+  typeof useUnblockUserMutation
+>;
+export type UnblockUserMutationResult =
+  Apollo.MutationResult<UnblockUserMutation>;
+export type UnblockUserMutationOptions = Apollo.BaseMutationOptions<
+  UnblockUserMutation,
+  UnblockUserMutationVariables
+>;
 export const GetBaseMetricsDocument = gql`
   query getBaseMetrics {
     getBaseMetrics {
@@ -2376,6 +2555,164 @@ export type GetBranchCommitsSuspenseQueryHookResult = ReturnType<
 export type GetBranchCommitsQueryResult = Apollo.QueryResult<
   GetBranchCommitsQuery,
   GetBranchCommitsQueryVariables
+>;
+export const GetVersionsDocument = gql`
+  query getVersions($uuid: UUID!) {
+    getVersions(uuid: $uuid) {
+      unitCount
+      versions {
+        commit
+        unitCount
+        tag
+      }
+    }
+  }
+`;
+
+/**
+ * __useGetVersionsQuery__
+ *
+ * To run a query within a React component, call `useGetVersionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetVersionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetVersionsQuery({
+ *   variables: {
+ *      uuid: // value for 'uuid'
+ *   },
+ * });
+ */
+export function useGetVersionsQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GetVersionsQuery,
+    GetVersionsQueryVariables
+  > &
+    (
+      | { variables: GetVersionsQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetVersionsQuery, GetVersionsQueryVariables>(
+    GetVersionsDocument,
+    options,
+  );
+}
+export function useGetVersionsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetVersionsQuery,
+    GetVersionsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetVersionsQuery, GetVersionsQueryVariables>(
+    GetVersionsDocument,
+    options,
+  );
+}
+export function useGetVersionsSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    GetVersionsQuery,
+    GetVersionsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<GetVersionsQuery, GetVersionsQueryVariables>(
+    GetVersionsDocument,
+    options,
+  );
+}
+export type GetVersionsQueryHookResult = ReturnType<typeof useGetVersionsQuery>;
+export type GetVersionsLazyQueryHookResult = ReturnType<
+  typeof useGetVersionsLazyQuery
+>;
+export type GetVersionsSuspenseQueryHookResult = ReturnType<
+  typeof useGetVersionsSuspenseQuery
+>;
+export type GetVersionsQueryResult = Apollo.QueryResult<
+  GetVersionsQuery,
+  GetVersionsQueryVariables
+>;
+export const GetUnitDocument = gql`
+  query getUnit($uuid: UUID!) {
+    getUnit(uuid: $uuid) {
+      uuid
+      visibilityLevel
+      name
+      createDatetime
+      isAutoUpdateFromRepoUnit
+      repoBranch
+      repoCommit
+      unitStateDict
+      currentCommitVersion
+      lastUpdateDatetime
+      creatorUuid
+      repoUuid
+    }
+  }
+`;
+
+/**
+ * __useGetUnitQuery__
+ *
+ * To run a query within a React component, call `useGetUnitQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUnitQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUnitQuery({
+ *   variables: {
+ *      uuid: // value for 'uuid'
+ *   },
+ * });
+ */
+export function useGetUnitQuery(
+  baseOptions: Apollo.QueryHookOptions<GetUnitQuery, GetUnitQueryVariables> &
+    ({ variables: GetUnitQueryVariables; skip?: boolean } | { skip: boolean }),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetUnitQuery, GetUnitQueryVariables>(
+    GetUnitDocument,
+    options,
+  );
+}
+export function useGetUnitLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetUnitQuery,
+    GetUnitQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetUnitQuery, GetUnitQueryVariables>(
+    GetUnitDocument,
+    options,
+  );
+}
+export function useGetUnitSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    GetUnitQuery,
+    GetUnitQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<GetUnitQuery, GetUnitQueryVariables>(
+    GetUnitDocument,
+    options,
+  );
+}
+export type GetUnitQueryHookResult = ReturnType<typeof useGetUnitQuery>;
+export type GetUnitLazyQueryHookResult = ReturnType<typeof useGetUnitLazyQuery>;
+export type GetUnitSuspenseQueryHookResult = ReturnType<
+  typeof useGetUnitSuspenseQuery
+>;
+export type GetUnitQueryResult = Apollo.QueryResult<
+  GetUnitQuery,
+  GetUnitQueryVariables
 >;
 export const GetUnitsDocument = gql`
   query getUnits(
@@ -2881,6 +3218,99 @@ export type GetUserSuspenseQueryHookResult = ReturnType<
 export type GetUserQueryResult = Apollo.QueryResult<
   GetUserQuery,
   GetUserQueryVariables
+>;
+export const GetUsersDocument = gql`
+  query getUsers(
+    $searchString: String
+    $role: [UserRole!]
+    $status: [UserStatus!]
+    $orderByCreateDate: OrderByDate
+    $offset: Int
+    $limit: Int
+  ) {
+    getUsers(
+      filters: {
+        searchString: $searchString
+        role: $role
+        status: $status
+        orderByCreateDate: $orderByCreateDate
+        offset: $offset
+        limit: $limit
+      }
+    ) {
+      uuid
+      role
+      status
+      login
+      createDatetime
+    }
+  }
+`;
+
+/**
+ * __useGetUsersQuery__
+ *
+ * To run a query within a React component, call `useGetUsersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUsersQuery({
+ *   variables: {
+ *      searchString: // value for 'searchString'
+ *      role: // value for 'role'
+ *      status: // value for 'status'
+ *      orderByCreateDate: // value for 'orderByCreateDate'
+ *      offset: // value for 'offset'
+ *      limit: // value for 'limit'
+ *   },
+ * });
+ */
+export function useGetUsersQuery(
+  baseOptions?: Apollo.QueryHookOptions<GetUsersQuery, GetUsersQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetUsersQuery, GetUsersQueryVariables>(
+    GetUsersDocument,
+    options,
+  );
+}
+export function useGetUsersLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetUsersQuery,
+    GetUsersQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetUsersQuery, GetUsersQueryVariables>(
+    GetUsersDocument,
+    options,
+  );
+}
+export function useGetUsersSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    GetUsersQuery,
+    GetUsersQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<GetUsersQuery, GetUsersQueryVariables>(
+    GetUsersDocument,
+    options,
+  );
+}
+export type GetUsersQueryHookResult = ReturnType<typeof useGetUsersQuery>;
+export type GetUsersLazyQueryHookResult = ReturnType<
+  typeof useGetUsersLazyQuery
+>;
+export type GetUsersSuspenseQueryHookResult = ReturnType<
+  typeof useGetUsersSuspenseQuery
+>;
+export type GetUsersQueryResult = Apollo.QueryResult<
+  GetUsersQuery,
+  GetUsersQueryVariables
 >;
 export const GetVerificationUserDocument = gql`
   query getVerificationUser {

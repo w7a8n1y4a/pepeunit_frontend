@@ -20,6 +20,32 @@ gql`
         }
     }
 
+    query getUsers(
+        $searchString: String
+        $role: [UserRole!]
+        $status: [UserStatus!]
+        $orderByCreateDate: OrderByDate
+        $offset: Int
+        $limit: Int
+    ) {
+        getUsers (
+            filters: {
+                searchString: $searchString
+                role: $role
+                status: $status
+                orderByCreateDate: $orderByCreateDate
+                offset: $offset
+                limit: $limit
+            }        
+        ){
+            uuid
+            role
+            status
+            login
+            createDatetime
+        }
+    }
+
     query getVerificationUser{
         getVerificationUser
     }

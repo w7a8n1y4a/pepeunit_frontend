@@ -25,4 +25,24 @@ gql`
             createDatetime
         }
     }
+
+    mutation blockUser(
+        $uuid: UUID!
+    ) {
+        blockUser (
+            uuid: $uuid
+        ){
+            isNone
+        }
+    }
+
+    mutation unblockUser(
+        $uuid: UUID!
+    ) {
+        unblockUser (
+            uuid: $uuid
+        ){
+            isNone
+        }
+    }
 `

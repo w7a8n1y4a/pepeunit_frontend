@@ -1,6 +1,26 @@
 import { gql } from 'graphql-tag';
 
 gql`
+    query getUnit(
+        $uuid: UUID!
+    ) {
+        getUnit(
+            uuid: $uuid
+        ) {
+            uuid
+            visibilityLevel
+            name
+            createDatetime
+            isAutoUpdateFromRepoUnit
+            repoBranch
+            repoCommit
+            unitStateDict
+            currentCommitVersion
+            lastUpdateDatetime
+            creatorUuid
+            repoUuid
+        }
+    }
     query getUnits(
         $creatorUuid: UUID
         $repoUuid: UUID
