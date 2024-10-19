@@ -4,7 +4,7 @@ import { getNodeColor } from '@utils/getNodeColor'
 
 type NodeTypeStorage = {
   id: string | number;
-  type: string;
+  type: NodeType;
   color: string;
   data: any; // Или RepoType, если тип известен
 };

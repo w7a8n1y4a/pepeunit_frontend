@@ -1,6 +1,6 @@
 import { NodeType } from '@rootTypes/nodeTypeEnum'
 import { getNodeColor } from '@utils/getNodeColor'
-import { useGetReposLazyQuery, useGetUnitsLazyQuery} from '@rootTypes/compositionFunctions'
+import { useGetReposLazyQuery, useGetUnitsLazyQuery, useGetUnitNodesLazyQuery, UnitNodeTypeEnum} from '@rootTypes/compositionFunctions'
 import { ForceGraph3D } from 'react-force-graph';
 import SpriteText from 'three-spritetext';
 import { useState, useMemo, useEffect } from 'react';
@@ -66,6 +66,41 @@ export default function GraphContent(){
 
   const [getRepos] = useGetReposLazyQuery();
   const [getUnits] = useGetUnitsLazyQuery();
+  const [getUnitNodes] = useGetUnitNodesLazyQuery();
+
+  function handleNodeRightClick(node: any) {
+    if (node.type == NodeType.Unit) {
+      print
+      getUnitNodes(
+        {
+          variables: {
+            unitUuid: node.id
+          }
+        }
+      )
+      .then((unitNodesData) => {
+        if (unitNodesData.data?.getUnitNodes){
+          console.log(unitNodesData.data?.getUnitNodes)
+          setGraphData({
+              nodes: [
+                ...graphData.nodes,
+                ...unitNodesData.data.getUnitNodes.map((unitNode) => ({
+                  id: unitNode.uuid,
+                  type: unitNode.type == UnitNodeTypeEnum.Input ? NodeType.Input : NodeType.Output,
+                  color: getNodeColor(unitNode.type == UnitNodeTypeEnum.Input ? NodeType.Input : NodeType.Output),
+                  data: {...unitNode, name: unitNode.topicName}
+                }
+              ))],
+              links: [
+                ...graphData.links,
+                ...unitNodesData.data.getUnitNodes.map((unitNode) => ({source: unitNode.unitUuid, target: unitNode.uuid})),
+              ]
+            }
+          )
+        }
+      });
+    }
+  }
 
   function pickMenu(node: any){
     if (node.type == NodeType.Domain) {
@@ -73,13 +108,18 @@ export default function GraphContent(){
       setCurrentDomainData(node.data)
     }
     if (node.type == NodeType.Repo) {
-      console
       openModal("repoMenu")
       setCurrentRepoData(node.data)
     }
     if (node.type == NodeType.Unit) {
       openModal("unitMenu")
       setCurrentUnitData(node.data)
+    }
+    if (node.type == NodeType.Output) {
+      openModal("unitNodeOutput")
+    }
+    if (node.type == NodeType.Output) {
+      openModal("unitNodeOutput")
     }
   }
 
@@ -106,7 +146,7 @@ export default function GraphContent(){
         nodeThreeObjectExtend={true}
         showNavInfo={false}
         onNodeClick={(node) => pickMenu(node)}
-        onNodeRightClick={(node) => pickMenu(node)}
+        onNodeRightClick={(node) => handleNodeRightClick(node)}
       />
       
       <DomainContent/>
