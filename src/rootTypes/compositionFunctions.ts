@@ -493,6 +493,34 @@ export enum VisibilityLevel {
   Public = "PUBLIC",
 }
 
+export type CreatePermissionMutationVariables = Exact<{
+  agentUuid: Scalars["UUID"]["input"];
+  agentType: PermissionEntities;
+  resourceUuid: Scalars["UUID"]["input"];
+  resourceType: PermissionEntities;
+}>;
+
+export type CreatePermissionMutation = {
+  __typename?: "Mutation";
+  createPermission: {
+    __typename?: "PermissionType";
+    uuid: string;
+    agentUuid: string;
+    agentType: PermissionEntities;
+    resourceUuid: string;
+    resourceType: PermissionEntities;
+  };
+};
+
+export type DeletePermissionMutationVariables = Exact<{
+  uuid: Scalars["UUID"]["input"];
+}>;
+
+export type DeletePermissionMutation = {
+  __typename?: "Mutation";
+  deletePermission: { __typename?: "NoneType"; isNone: boolean };
+};
+
 export type CreateRepoMutationVariables = Exact<{
   visibilityLevel: VisibilityLevel;
   name: Scalars["String"]["input"];
@@ -814,6 +842,23 @@ export type GetBaseMetricsQuery = {
   };
 };
 
+export type GetResourceAgentsQueryVariables = Exact<{
+  resourceUuid: Scalars["UUID"]["input"];
+  resourceType: PermissionEntities;
+}>;
+
+export type GetResourceAgentsQuery = {
+  __typename?: "Query";
+  getResourceAgents: Array<{
+    __typename?: "PermissionType";
+    uuid: string;
+    agentUuid: string;
+    agentType: PermissionEntities;
+    resourceUuid: string;
+    resourceType: PermissionEntities;
+  }>;
+};
+
 export type GetRepoQueryVariables = Exact<{
   uuid: Scalars["UUID"]["input"];
 }>;
@@ -1059,6 +1104,125 @@ export type GetVerificationUserQuery = {
   getVerificationUser: string;
 };
 
+export const CreatePermissionDocument = gql`
+  mutation createPermission(
+    $agentUuid: UUID!
+    $agentType: PermissionEntities!
+    $resourceUuid: UUID!
+    $resourceType: PermissionEntities!
+  ) {
+    createPermission(
+      permission: {
+        agentUuid: $agentUuid
+        agentType: $agentType
+        resourceUuid: $resourceUuid
+        resourceType: $resourceType
+      }
+    ) {
+      uuid
+      agentUuid
+      agentType
+      resourceUuid
+      resourceType
+    }
+  }
+`;
+export type CreatePermissionMutationFn = Apollo.MutationFunction<
+  CreatePermissionMutation,
+  CreatePermissionMutationVariables
+>;
+
+/**
+ * __useCreatePermissionMutation__
+ *
+ * To run a mutation, you first call `useCreatePermissionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreatePermissionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createPermissionMutation, { data, loading, error }] = useCreatePermissionMutation({
+ *   variables: {
+ *      agentUuid: // value for 'agentUuid'
+ *      agentType: // value for 'agentType'
+ *      resourceUuid: // value for 'resourceUuid'
+ *      resourceType: // value for 'resourceType'
+ *   },
+ * });
+ */
+export function useCreatePermissionMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CreatePermissionMutation,
+    CreatePermissionMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    CreatePermissionMutation,
+    CreatePermissionMutationVariables
+  >(CreatePermissionDocument, options);
+}
+export type CreatePermissionMutationHookResult = ReturnType<
+  typeof useCreatePermissionMutation
+>;
+export type CreatePermissionMutationResult =
+  Apollo.MutationResult<CreatePermissionMutation>;
+export type CreatePermissionMutationOptions = Apollo.BaseMutationOptions<
+  CreatePermissionMutation,
+  CreatePermissionMutationVariables
+>;
+export const DeletePermissionDocument = gql`
+  mutation deletePermission($uuid: UUID!) {
+    deletePermission(uuid: $uuid) {
+      isNone
+    }
+  }
+`;
+export type DeletePermissionMutationFn = Apollo.MutationFunction<
+  DeletePermissionMutation,
+  DeletePermissionMutationVariables
+>;
+
+/**
+ * __useDeletePermissionMutation__
+ *
+ * To run a mutation, you first call `useDeletePermissionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeletePermissionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deletePermissionMutation, { data, loading, error }] = useDeletePermissionMutation({
+ *   variables: {
+ *      uuid: // value for 'uuid'
+ *   },
+ * });
+ */
+export function useDeletePermissionMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    DeletePermissionMutation,
+    DeletePermissionMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    DeletePermissionMutation,
+    DeletePermissionMutationVariables
+  >(DeletePermissionDocument, options);
+}
+export type DeletePermissionMutationHookResult = ReturnType<
+  typeof useDeletePermissionMutation
+>;
+export type DeletePermissionMutationResult =
+  Apollo.MutationResult<DeletePermissionMutation>;
+export type DeletePermissionMutationOptions = Apollo.BaseMutationOptions<
+  DeletePermissionMutation,
+  DeletePermissionMutationVariables
+>;
 export const CreateRepoDocument = gql`
   mutation createRepo(
     $visibilityLevel: VisibilityLevel!
@@ -2269,6 +2433,93 @@ export type GetBaseMetricsSuspenseQueryHookResult = ReturnType<
 export type GetBaseMetricsQueryResult = Apollo.QueryResult<
   GetBaseMetricsQuery,
   GetBaseMetricsQueryVariables
+>;
+export const GetResourceAgentsDocument = gql`
+  query getResourceAgents(
+    $resourceUuid: UUID!
+    $resourceType: PermissionEntities!
+  ) {
+    getResourceAgents(
+      data: { resourceUuid: $resourceUuid, resourceType: $resourceType }
+    ) {
+      uuid
+      agentUuid
+      agentType
+      resourceUuid
+      resourceType
+    }
+  }
+`;
+
+/**
+ * __useGetResourceAgentsQuery__
+ *
+ * To run a query within a React component, call `useGetResourceAgentsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetResourceAgentsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetResourceAgentsQuery({
+ *   variables: {
+ *      resourceUuid: // value for 'resourceUuid'
+ *      resourceType: // value for 'resourceType'
+ *   },
+ * });
+ */
+export function useGetResourceAgentsQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GetResourceAgentsQuery,
+    GetResourceAgentsQueryVariables
+  > &
+    (
+      | { variables: GetResourceAgentsQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    GetResourceAgentsQuery,
+    GetResourceAgentsQueryVariables
+  >(GetResourceAgentsDocument, options);
+}
+export function useGetResourceAgentsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetResourceAgentsQuery,
+    GetResourceAgentsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    GetResourceAgentsQuery,
+    GetResourceAgentsQueryVariables
+  >(GetResourceAgentsDocument, options);
+}
+export function useGetResourceAgentsSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    GetResourceAgentsQuery,
+    GetResourceAgentsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<
+    GetResourceAgentsQuery,
+    GetResourceAgentsQueryVariables
+  >(GetResourceAgentsDocument, options);
+}
+export type GetResourceAgentsQueryHookResult = ReturnType<
+  typeof useGetResourceAgentsQuery
+>;
+export type GetResourceAgentsLazyQueryHookResult = ReturnType<
+  typeof useGetResourceAgentsLazyQuery
+>;
+export type GetResourceAgentsSuspenseQueryHookResult = ReturnType<
+  typeof useGetResourceAgentsSuspenseQuery
+>;
+export type GetResourceAgentsQueryResult = Apollo.QueryResult<
+  GetResourceAgentsQuery,
+  GetResourceAgentsQueryVariables
 >;
 export const GetRepoDocument = gql`
   query getRepo($uuid: UUID!) {
