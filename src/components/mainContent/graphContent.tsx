@@ -17,7 +17,7 @@ export default function GraphContent(){
   const { setCurrentRepoData } = useRepoStore();
   const { setCurrentUnitData } = useUnitStore();
   const { setCurrentDomainData } = useDomainStore();
-  const { graphData, setGraphData } = useGraphStore();
+  const { graphData, setGraphData, removeNodesAndLinks } = useGraphStore();
 
   const [displayWidth, setDisplayWidth] = useState(window.innerWidth);
   const [displayHeight, setDisplayHeight] = useState(window.innerHeight);
@@ -70,35 +70,43 @@ export default function GraphContent(){
 
   function handleNodeRightClick(node: any) {
     if (node.type == NodeType.Unit) {
-      print
-      getUnitNodes(
-        {
-          variables: {
-            unitUuid: node.id
-          }
-        }
-      )
-      .then((unitNodesData) => {
-        if (unitNodesData.data?.getUnitNodes){
-          console.log(unitNodesData.data?.getUnitNodes)
-          setGraphData({
-              nodes: [
-                ...graphData.nodes,
-                ...unitNodesData.data.getUnitNodes.map((unitNode) => ({
-                  id: unitNode.uuid,
-                  type: unitNode.type == UnitNodeTypeEnum.Input ? NodeType.Input : NodeType.Output,
-                  color: getNodeColor(unitNode.type == UnitNodeTypeEnum.Input ? NodeType.Input : NodeType.Output),
-                  data: {...unitNode, name: unitNode.topicName}
-                }
-              ))],
-              links: [
-                ...graphData.links,
-                ...unitNodesData.data.getUnitNodes.map((unitNode) => ({source: unitNode.unitUuid, target: unitNode.uuid})),
-              ]
+      const relatedNodes = graphData.links.filter(
+        (link) =>  (typeof link.source === 'object' ? link.source.id : link.source) === node.id
+      ).map(
+        (fLink) => (typeof fLink.target === 'object' ? String(fLink.target.id) : fLink.target)
+      );
+
+      if (relatedNodes.length > 0) {
+        removeNodesAndLinks(relatedNodes)
+      } else {
+        getUnitNodes(
+          {
+            variables: {
+              unitUuid: node.id
             }
-          )
-        }
-      });
+          }
+        )
+        .then((unitNodesData) => {
+          if (unitNodesData.data?.getUnitNodes){
+            setGraphData({
+                nodes: [
+                  ...graphData.nodes,
+                  ...unitNodesData.data.getUnitNodes.map((unitNode) => ({
+                    id: unitNode.uuid,
+                    type: unitNode.type == UnitNodeTypeEnum.Input ? NodeType.Input : NodeType.Output,
+                    color: getNodeColor(unitNode.type == UnitNodeTypeEnum.Input ? NodeType.Input : NodeType.Output),
+                    data: {...unitNode, name: unitNode.topicName}
+                  }
+                ))],
+                links: [
+                  ...graphData.links,
+                  ...unitNodesData.data.getUnitNodes.map((unitNode) => ({source: unitNode.unitUuid, target: unitNode.uuid})),
+                ]
+              }
+            )
+          }
+        });
+      }
     }
   }
 
