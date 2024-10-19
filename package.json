@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "stylelint": "stylelint ./src/**/*.{ts,tsx} --fix --config=./stylelint.config.cjs",
-    "generate-api-types": "graphql-codegen --config codegen.yml && prettier src/types/compositionFunctions.ts  --write",
+    "generate-api-types": "graphql-codegen --config codegen.yml && prettier src/rootTypes/compositionFunctions.ts  --write",
     "preview": "vite preview"
   },
   "dependencies": {

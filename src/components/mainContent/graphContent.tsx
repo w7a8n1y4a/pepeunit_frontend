@@ -106,6 +106,7 @@ export default function GraphContent(){
         nodeThreeObjectExtend={true}
         showNavInfo={false}
         onNodeClick={(node) => pickMenu(node)}
+        onNodeRightClick={(node) => pickMenu(node)}
       />
       
       <DomainContent/>

@@ -303,7 +303,7 @@ export type RepoFilterInput = {
   orderByCreateDate?: InputMaybe<OrderByDate>;
   orderByLastUpdate?: InputMaybe<OrderByDate>;
   searchString?: InputMaybe<Scalars["String"]["input"]>;
-  visibilityLevel?: Array<VisibilityLevel>;
+  visibilityLevel?: InputMaybe<Array<VisibilityLevel>>;
 };
 
 export type RepoType = {
@@ -368,7 +368,7 @@ export type UnitFilterInput = {
   orderByLastUpdate?: InputMaybe<OrderByDate>;
   repoUuid?: InputMaybe<Scalars["UUID"]["input"]>;
   searchString?: InputMaybe<Scalars["String"]["input"]>;
-  visibilityLevel?: Array<VisibilityLevel>;
+  visibilityLevel?: InputMaybe<Array<VisibilityLevel>>;
 };
 
 export type UnitNodeEdgeCreateInput = {
@@ -388,9 +388,9 @@ export type UnitNodeFilterInput = {
   offset?: InputMaybe<Scalars["Int"]["input"]>;
   orderByCreateDate?: InputMaybe<OrderByDate>;
   searchString?: InputMaybe<Scalars["String"]["input"]>;
-  type?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  type?: InputMaybe<Array<UnitNodeTypeEnum>>;
   unitUuid?: InputMaybe<Scalars["UUID"]["input"]>;
-  visibilityLevel?: Array<VisibilityLevel>;
+  visibilityLevel?: InputMaybe<Array<VisibilityLevel>>;
 };
 
 export type UnitNodeSetStateInput = {
@@ -456,9 +456,9 @@ export type UserFilterInput = {
   limit?: InputMaybe<Scalars["Int"]["input"]>;
   offset?: InputMaybe<Scalars["Int"]["input"]>;
   orderByCreateDate?: InputMaybe<OrderByDate>;
-  role?: Array<UserRole>;
+  role?: InputMaybe<Array<UserRole>>;
   searchString?: InputMaybe<Scalars["String"]["input"]>;
-  status?: Array<UserStatus>;
+  status?: InputMaybe<Array<UserStatus>>;
 };
 
 export enum UserRole {
@@ -685,6 +685,69 @@ export type UpdateUnitEnvMutation = {
   updateUnitEnv: { __typename?: "NoneType"; isNone: boolean };
 };
 
+export type UpdateUnitNodeMutationVariables = Exact<{
+  uuid: Scalars["UUID"]["input"];
+  visibilityLevel?: InputMaybe<VisibilityLevel>;
+  isRewritableInput?: InputMaybe<Scalars["Boolean"]["input"]>;
+}>;
+
+export type UpdateUnitNodeMutation = {
+  __typename?: "Mutation";
+  updateUnitNode: {
+    __typename?: "UnitNodeType";
+    uuid: string;
+    type: UnitNodeTypeEnum;
+    visibilityLevel: VisibilityLevel;
+    isRewritableInput: boolean;
+    topicName: string;
+    state?: string | null;
+    unitUuid: string;
+  };
+};
+
+export type SetStateUnitNodeInputMutationVariables = Exact<{
+  uuid: Scalars["UUID"]["input"];
+  state: Scalars["String"]["input"];
+}>;
+
+export type SetStateUnitNodeInputMutation = {
+  __typename?: "Mutation";
+  setStateUnitNodeInput: {
+    __typename?: "UnitNodeType";
+    uuid: string;
+    type: UnitNodeTypeEnum;
+    visibilityLevel: VisibilityLevel;
+    isRewritableInput: boolean;
+    topicName: string;
+    state?: string | null;
+    unitUuid: string;
+  };
+};
+
+export type CreateUnitNodeEdgeMutationVariables = Exact<{
+  nodeOutputUuid: Scalars["UUID"]["input"];
+  nodeInputUuid: Scalars["UUID"]["input"];
+}>;
+
+export type CreateUnitNodeEdgeMutation = {
+  __typename?: "Mutation";
+  createUnitNodeEdge: {
+    __typename?: "UnitNodeEdgeType";
+    uuid: string;
+    nodeOutputUuid: string;
+    nodeInputUuid: string;
+  };
+};
+
+export type DeleteUnitNodeEdgeMutationVariables = Exact<{
+  uuid: Scalars["UUID"]["input"];
+}>;
+
+export type DeleteUnitNodeEdgeMutation = {
+  __typename?: "Mutation";
+  deleteUnitNodeEdge: { __typename?: "NoneType"; isNone: boolean };
+};
+
 export type CreateUserMutationVariables = Exact<{
   login: Scalars["String"]["input"];
   password: Scalars["String"]["input"];
@@ -843,6 +906,48 @@ export type GetUnitEnvQueryVariables = Exact<{
 }>;
 
 export type GetUnitEnvQuery = { __typename?: "Query"; getUnitEnv: string };
+
+export type GetUnitNodeQueryVariables = Exact<{
+  uuid: Scalars["UUID"]["input"];
+}>;
+
+export type GetUnitNodeQuery = {
+  __typename?: "Query";
+  getUnitNode: {
+    __typename?: "UnitNodeType";
+    uuid: string;
+    type: UnitNodeTypeEnum;
+    visibilityLevel: VisibilityLevel;
+    isRewritableInput: boolean;
+    topicName: string;
+    state?: string | null;
+    unitUuid: string;
+  };
+};
+
+export type GetUnitNodesQueryVariables = Exact<{
+  unitUuid?: InputMaybe<Scalars["UUID"]["input"]>;
+  searchString?: InputMaybe<Scalars["String"]["input"]>;
+  type?: InputMaybe<Array<UnitNodeTypeEnum> | UnitNodeTypeEnum>;
+  visibilityLevel?: InputMaybe<Array<VisibilityLevel> | VisibilityLevel>;
+  orderByCreateDate?: InputMaybe<OrderByDate>;
+  offset?: InputMaybe<Scalars["Int"]["input"]>;
+  limit?: InputMaybe<Scalars["Int"]["input"]>;
+}>;
+
+export type GetUnitNodesQuery = {
+  __typename?: "Query";
+  getUnitNodes: Array<{
+    __typename?: "UnitNodeType";
+    uuid: string;
+    type: UnitNodeTypeEnum;
+    visibilityLevel: VisibilityLevel;
+    isRewritableInput: boolean;
+    topicName: string;
+    state?: string | null;
+    unitUuid: string;
+  }>;
+};
 
 export type GetTokenQueryVariables = Exact<{
   credentials: Scalars["String"]["input"];
@@ -1567,6 +1672,239 @@ export type UpdateUnitEnvMutationOptions = Apollo.BaseMutationOptions<
   UpdateUnitEnvMutation,
   UpdateUnitEnvMutationVariables
 >;
+export const UpdateUnitNodeDocument = gql`
+  mutation updateUnitNode(
+    $uuid: UUID!
+    $visibilityLevel: VisibilityLevel
+    $isRewritableInput: Boolean
+  ) {
+    updateUnitNode(
+      uuid: $uuid
+      unitNode: {
+        visibilityLevel: $visibilityLevel
+        isRewritableInput: $isRewritableInput
+      }
+    ) {
+      uuid
+      type
+      visibilityLevel
+      isRewritableInput
+      topicName
+      state
+      unitUuid
+    }
+  }
+`;
+export type UpdateUnitNodeMutationFn = Apollo.MutationFunction<
+  UpdateUnitNodeMutation,
+  UpdateUnitNodeMutationVariables
+>;
+
+/**
+ * __useUpdateUnitNodeMutation__
+ *
+ * To run a mutation, you first call `useUpdateUnitNodeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateUnitNodeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateUnitNodeMutation, { data, loading, error }] = useUpdateUnitNodeMutation({
+ *   variables: {
+ *      uuid: // value for 'uuid'
+ *      visibilityLevel: // value for 'visibilityLevel'
+ *      isRewritableInput: // value for 'isRewritableInput'
+ *   },
+ * });
+ */
+export function useUpdateUnitNodeMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpdateUnitNodeMutation,
+    UpdateUnitNodeMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    UpdateUnitNodeMutation,
+    UpdateUnitNodeMutationVariables
+  >(UpdateUnitNodeDocument, options);
+}
+export type UpdateUnitNodeMutationHookResult = ReturnType<
+  typeof useUpdateUnitNodeMutation
+>;
+export type UpdateUnitNodeMutationResult =
+  Apollo.MutationResult<UpdateUnitNodeMutation>;
+export type UpdateUnitNodeMutationOptions = Apollo.BaseMutationOptions<
+  UpdateUnitNodeMutation,
+  UpdateUnitNodeMutationVariables
+>;
+export const SetStateUnitNodeInputDocument = gql`
+  mutation setStateUnitNodeInput($uuid: UUID!, $state: String!) {
+    setStateUnitNodeInput(uuid: $uuid, unitNode: { state: $state }) {
+      uuid
+      type
+      visibilityLevel
+      isRewritableInput
+      topicName
+      state
+      unitUuid
+    }
+  }
+`;
+export type SetStateUnitNodeInputMutationFn = Apollo.MutationFunction<
+  SetStateUnitNodeInputMutation,
+  SetStateUnitNodeInputMutationVariables
+>;
+
+/**
+ * __useSetStateUnitNodeInputMutation__
+ *
+ * To run a mutation, you first call `useSetStateUnitNodeInputMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSetStateUnitNodeInputMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [setStateUnitNodeInputMutation, { data, loading, error }] = useSetStateUnitNodeInputMutation({
+ *   variables: {
+ *      uuid: // value for 'uuid'
+ *      state: // value for 'state'
+ *   },
+ * });
+ */
+export function useSetStateUnitNodeInputMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    SetStateUnitNodeInputMutation,
+    SetStateUnitNodeInputMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    SetStateUnitNodeInputMutation,
+    SetStateUnitNodeInputMutationVariables
+  >(SetStateUnitNodeInputDocument, options);
+}
+export type SetStateUnitNodeInputMutationHookResult = ReturnType<
+  typeof useSetStateUnitNodeInputMutation
+>;
+export type SetStateUnitNodeInputMutationResult =
+  Apollo.MutationResult<SetStateUnitNodeInputMutation>;
+export type SetStateUnitNodeInputMutationOptions = Apollo.BaseMutationOptions<
+  SetStateUnitNodeInputMutation,
+  SetStateUnitNodeInputMutationVariables
+>;
+export const CreateUnitNodeEdgeDocument = gql`
+  mutation createUnitNodeEdge($nodeOutputUuid: UUID!, $nodeInputUuid: UUID!) {
+    createUnitNodeEdge(
+      unitNodeEdge: {
+        nodeOutputUuid: $nodeOutputUuid
+        nodeInputUuid: $nodeInputUuid
+      }
+    ) {
+      uuid
+      nodeOutputUuid
+      nodeInputUuid
+    }
+  }
+`;
+export type CreateUnitNodeEdgeMutationFn = Apollo.MutationFunction<
+  CreateUnitNodeEdgeMutation,
+  CreateUnitNodeEdgeMutationVariables
+>;
+
+/**
+ * __useCreateUnitNodeEdgeMutation__
+ *
+ * To run a mutation, you first call `useCreateUnitNodeEdgeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateUnitNodeEdgeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createUnitNodeEdgeMutation, { data, loading, error }] = useCreateUnitNodeEdgeMutation({
+ *   variables: {
+ *      nodeOutputUuid: // value for 'nodeOutputUuid'
+ *      nodeInputUuid: // value for 'nodeInputUuid'
+ *   },
+ * });
+ */
+export function useCreateUnitNodeEdgeMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CreateUnitNodeEdgeMutation,
+    CreateUnitNodeEdgeMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    CreateUnitNodeEdgeMutation,
+    CreateUnitNodeEdgeMutationVariables
+  >(CreateUnitNodeEdgeDocument, options);
+}
+export type CreateUnitNodeEdgeMutationHookResult = ReturnType<
+  typeof useCreateUnitNodeEdgeMutation
+>;
+export type CreateUnitNodeEdgeMutationResult =
+  Apollo.MutationResult<CreateUnitNodeEdgeMutation>;
+export type CreateUnitNodeEdgeMutationOptions = Apollo.BaseMutationOptions<
+  CreateUnitNodeEdgeMutation,
+  CreateUnitNodeEdgeMutationVariables
+>;
+export const DeleteUnitNodeEdgeDocument = gql`
+  mutation deleteUnitNodeEdge($uuid: UUID!) {
+    deleteUnitNodeEdge(uuid: $uuid) {
+      isNone
+    }
+  }
+`;
+export type DeleteUnitNodeEdgeMutationFn = Apollo.MutationFunction<
+  DeleteUnitNodeEdgeMutation,
+  DeleteUnitNodeEdgeMutationVariables
+>;
+
+/**
+ * __useDeleteUnitNodeEdgeMutation__
+ *
+ * To run a mutation, you first call `useDeleteUnitNodeEdgeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteUnitNodeEdgeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteUnitNodeEdgeMutation, { data, loading, error }] = useDeleteUnitNodeEdgeMutation({
+ *   variables: {
+ *      uuid: // value for 'uuid'
+ *   },
+ * });
+ */
+export function useDeleteUnitNodeEdgeMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    DeleteUnitNodeEdgeMutation,
+    DeleteUnitNodeEdgeMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    DeleteUnitNodeEdgeMutation,
+    DeleteUnitNodeEdgeMutationVariables
+  >(DeleteUnitNodeEdgeDocument, options);
+}
+export type DeleteUnitNodeEdgeMutationHookResult = ReturnType<
+  typeof useDeleteUnitNodeEdgeMutation
+>;
+export type DeleteUnitNodeEdgeMutationResult =
+  Apollo.MutationResult<DeleteUnitNodeEdgeMutation>;
+export type DeleteUnitNodeEdgeMutationOptions = Apollo.BaseMutationOptions<
+  DeleteUnitNodeEdgeMutation,
+  DeleteUnitNodeEdgeMutationVariables
+>;
 export const CreateUserDocument = gql`
   mutation createUser($login: String!, $password: String!) {
     createUser(user: { login: $login, password: $password }) {
@@ -2220,6 +2558,190 @@ export type GetUnitEnvSuspenseQueryHookResult = ReturnType<
 export type GetUnitEnvQueryResult = Apollo.QueryResult<
   GetUnitEnvQuery,
   GetUnitEnvQueryVariables
+>;
+export const GetUnitNodeDocument = gql`
+  query getUnitNode($uuid: UUID!) {
+    getUnitNode(uuid: $uuid) {
+      uuid
+      type
+      visibilityLevel
+      isRewritableInput
+      topicName
+      state
+      unitUuid
+    }
+  }
+`;
+
+/**
+ * __useGetUnitNodeQuery__
+ *
+ * To run a query within a React component, call `useGetUnitNodeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUnitNodeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUnitNodeQuery({
+ *   variables: {
+ *      uuid: // value for 'uuid'
+ *   },
+ * });
+ */
+export function useGetUnitNodeQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GetUnitNodeQuery,
+    GetUnitNodeQueryVariables
+  > &
+    (
+      | { variables: GetUnitNodeQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetUnitNodeQuery, GetUnitNodeQueryVariables>(
+    GetUnitNodeDocument,
+    options,
+  );
+}
+export function useGetUnitNodeLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetUnitNodeQuery,
+    GetUnitNodeQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetUnitNodeQuery, GetUnitNodeQueryVariables>(
+    GetUnitNodeDocument,
+    options,
+  );
+}
+export function useGetUnitNodeSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    GetUnitNodeQuery,
+    GetUnitNodeQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<GetUnitNodeQuery, GetUnitNodeQueryVariables>(
+    GetUnitNodeDocument,
+    options,
+  );
+}
+export type GetUnitNodeQueryHookResult = ReturnType<typeof useGetUnitNodeQuery>;
+export type GetUnitNodeLazyQueryHookResult = ReturnType<
+  typeof useGetUnitNodeLazyQuery
+>;
+export type GetUnitNodeSuspenseQueryHookResult = ReturnType<
+  typeof useGetUnitNodeSuspenseQuery
+>;
+export type GetUnitNodeQueryResult = Apollo.QueryResult<
+  GetUnitNodeQuery,
+  GetUnitNodeQueryVariables
+>;
+export const GetUnitNodesDocument = gql`
+  query getUnitNodes(
+    $unitUuid: UUID
+    $searchString: String
+    $type: [UnitNodeTypeEnum!]
+    $visibilityLevel: [VisibilityLevel!]
+    $orderByCreateDate: OrderByDate
+    $offset: Int
+    $limit: Int
+  ) {
+    getUnitNodes(
+      filters: {
+        unitUuid: $unitUuid
+        searchString: $searchString
+        type: $type
+        visibilityLevel: $visibilityLevel
+        orderByCreateDate: $orderByCreateDate
+        offset: $offset
+        limit: $limit
+      }
+    ) {
+      uuid
+      type
+      visibilityLevel
+      isRewritableInput
+      topicName
+      state
+      unitUuid
+    }
+  }
+`;
+
+/**
+ * __useGetUnitNodesQuery__
+ *
+ * To run a query within a React component, call `useGetUnitNodesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUnitNodesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUnitNodesQuery({
+ *   variables: {
+ *      unitUuid: // value for 'unitUuid'
+ *      searchString: // value for 'searchString'
+ *      type: // value for 'type'
+ *      visibilityLevel: // value for 'visibilityLevel'
+ *      orderByCreateDate: // value for 'orderByCreateDate'
+ *      offset: // value for 'offset'
+ *      limit: // value for 'limit'
+ *   },
+ * });
+ */
+export function useGetUnitNodesQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetUnitNodesQuery,
+    GetUnitNodesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetUnitNodesQuery, GetUnitNodesQueryVariables>(
+    GetUnitNodesDocument,
+    options,
+  );
+}
+export function useGetUnitNodesLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetUnitNodesQuery,
+    GetUnitNodesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetUnitNodesQuery, GetUnitNodesQueryVariables>(
+    GetUnitNodesDocument,
+    options,
+  );
+}
+export function useGetUnitNodesSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    GetUnitNodesQuery,
+    GetUnitNodesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<GetUnitNodesQuery, GetUnitNodesQueryVariables>(
+    GetUnitNodesDocument,
+    options,
+  );
+}
+export type GetUnitNodesQueryHookResult = ReturnType<
+  typeof useGetUnitNodesQuery
+>;
+export type GetUnitNodesLazyQueryHookResult = ReturnType<
+  typeof useGetUnitNodesLazyQuery
+>;
+export type GetUnitNodesSuspenseQueryHookResult = ReturnType<
+  typeof useGetUnitNodesSuspenseQuery
+>;
+export type GetUnitNodesQueryResult = Apollo.QueryResult<
+  GetUnitNodesQuery,
+  GetUnitNodesQueryVariables
 >;
 export const GetTokenDocument = gql`
   query getToken($credentials: String!, $password: String!) {
