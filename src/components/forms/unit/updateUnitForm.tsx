@@ -1,5 +1,5 @@
 import { ResultType } from '@rootTypes/resultEnum'
-import { VisibilityLevel, UnitType, useGetBranchCommitsLazyQuery, useUpdateUnitMutation, useGetRepoLazyQuery } from '@rootTypes/compositionFunctions'
+import { VisibilityLevel, UnitType, useGetBranchCommitsLazyQuery, useUpdateUnitMutation, useGetRepoLazyQuery, RepoType } from '@rootTypes/compositionFunctions'
 import { useState, useEffect } from 'react';
 import { getCommitSummary } from '@utils/getCommitSummary';
 import isValidLogin from '@utils/isValidLogin'
@@ -8,15 +8,14 @@ import Spinner from '@primitives/spinner'
 import ResultQuery from '@primitives/resultQuery'
 import '../form.css'
 
-import { useRepoStore } from '@stores/baseStore';
 
 interface UpdateUnitFormProps {
-    currentUnitData: UnitType;
-    setCurrentUnitData: (repo: UnitType | null) => void;
+    currentNodeData: UnitType;
+    setCurrentNodeData: (repo: UnitType | null) => void;
 }
 
-export default function UpdateUnitForm({ currentUnitData, setCurrentUnitData }: UpdateUnitFormProps) {
-    const { currentRepoData, setCurrentRepoData } = useRepoStore();
+export default function UpdateUnitForm({ currentNodeData, setCurrentNodeData }: UpdateUnitFormProps) {
+    const [currentRepoData, setCurrentRepoData] = useState<RepoType | null>(null);
 
     const [repoAvailableCommits, setRepoAvailableCommits] = useState<Array<{
         __typename?: "CommitType";
@@ -39,12 +38,12 @@ export default function UpdateUnitForm({ currentUnitData, setCurrentUnitData }: 
     const [getRepo] = useGetRepoLazyQuery();
 
     useEffect(() => {
-        console.log(currentUnitData)
-        if (currentUnitData.repoBranch){
+        console.log(currentNodeData)
+        if (currentNodeData.repoBranch){
             getBranchCommits({
                 variables: {
-                    uuid: currentUnitData.repoUuid,
-                    repoBranch: currentUnitData.repoBranch,
+                    uuid: currentNodeData.repoUuid,
+                    repoBranch: currentNodeData.repoBranch,
                     onlyTag: false,
                     limit: 100,
                     offset: 0
@@ -57,13 +56,13 @@ export default function UpdateUnitForm({ currentUnitData, setCurrentUnitData }: 
                 }
             )
         }
-    }, [currentUnitData.repoBranch, currentUnitData.isAutoUpdateFromRepoUnit]);
+    }, [currentNodeData.repoBranch, currentNodeData.isAutoUpdateFromRepoUnit]);
 
     useEffect(() => {
         getRepo(
             {
                 variables: {
-                    uuid: currentUnitData.repoUuid
+                    uuid: currentNodeData.repoUuid
                 }
             }
         ).then(repoData => {
@@ -73,7 +72,7 @@ export default function UpdateUnitForm({ currentUnitData, setCurrentUnitData }: 
                 }
             }
         )
-    }, []);
+    }, [currentNodeData]);
 
     const handleUpdateUnit = () => {
         setIsLoaderActive(true)
@@ -83,7 +82,7 @@ export default function UpdateUnitForm({ currentUnitData, setCurrentUnitData }: 
         })
 
         updateUnitMutation({
-            variables: currentUnitData
+            variables: currentNodeData
         }).then(UpdateUnitData =>{
             if (UpdateUnitData.data){
                 setIsLoaderActive(false)
@@ -113,10 +112,10 @@ export default function UpdateUnitForm({ currentUnitData, setCurrentUnitData }: 
                         id="name_set"
                         type="text"
                         placeholder="Name"
-                        value={currentUnitData.name}
-                        validateState={currentUnitData.name}
-                        onChange={(e) => setCurrentUnitData({
-                            ...currentUnitData,
+                        value={currentNodeData.name}
+                        validateState={currentNodeData.name}
+                        onChange={(e) => setCurrentNodeData({
+                            ...currentNodeData,
                             name: e
                         }
                     )}
@@ -124,9 +123,9 @@ export default function UpdateUnitForm({ currentUnitData, setCurrentUnitData }: 
                         setIsErrorExist={(hasError) => updateErrorState('name', hasError)}
                         setResultData={setResultData}
                     />
-                    <select id='base_enum' value={currentUnitData.visibilityLevel} onChange={(e) => 
-                            setCurrentUnitData({
-                                ...currentUnitData,
+                    <select id='base_enum' value={currentNodeData.visibilityLevel} onChange={(e) => 
+                            setCurrentNodeData({
+                                ...currentNodeData,
                                 visibilityLevel: e.target.value as VisibilityLevel
                             })
                         }
@@ -139,13 +138,13 @@ export default function UpdateUnitForm({ currentUnitData, setCurrentUnitData }: 
                         <label className="toggle">
                             <input 
                                 type="checkbox" 
-                                checked={currentUnitData.isAutoUpdateFromRepoUnit}
+                                checked={currentNodeData.isAutoUpdateFromRepoUnit}
                                 onChange={(e) => {
-                                        setCurrentUnitData({
-                                                ...currentUnitData,
+                                        setCurrentNodeData({
+                                                ...currentNodeData,
                                                 isAutoUpdateFromRepoUnit: e.target.checked,
-                                                repoBranch: e.target.checked === false ? null : currentUnitData.repoBranch,
-                                                repoCommit: e.target.checked === false ? null : currentUnitData.repoCommit,
+                                                repoBranch: e.target.checked === false ? null : currentNodeData.repoBranch,
+                                                repoCommit: e.target.checked === false ? null : currentNodeData.repoCommit,
                                             }
                                         )
                                     }
@@ -158,14 +157,14 @@ export default function UpdateUnitForm({ currentUnitData, setCurrentUnitData }: 
                         </div>
                     </div>
                     {
-                        !currentUnitData.isAutoUpdateFromRepoUnit && (
+                        !currentNodeData.isAutoUpdateFromRepoUnit && (
                             <div>
                                 <select
                                     id='base_enum'
-                                    value={currentUnitData.repoBranch === null ? '' : currentUnitData.repoBranch}
+                                    value={currentNodeData.repoBranch === null ? '' : currentNodeData.repoBranch}
                                     onChange={(e) => {
-                                        setCurrentUnitData({
-                                                ...currentUnitData,
+                                        setCurrentNodeData({
+                                                ...currentNodeData,
                                                 repoBranch: e.target.value,
                                             }
                                         )
@@ -184,10 +183,10 @@ export default function UpdateUnitForm({ currentUnitData, setCurrentUnitData }: 
                                 </select>
                                 <select
                                     id='base_enum'
-                                    value={currentUnitData.repoCommit === null ? '' : currentUnitData.repoCommit}
+                                    value={currentNodeData.repoCommit === null ? '' : currentNodeData.repoCommit}
                                     onChange={(e) => {
-                                        setCurrentUnitData({
-                                                ...currentUnitData,
+                                        setCurrentNodeData({
+                                                ...currentNodeData,
                                                 repoCommit: e.target.value,
                                             }
                                         )

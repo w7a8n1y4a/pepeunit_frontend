@@ -12,12 +12,12 @@ import ResultQuery from '@primitives/resultQuery'
 import '../form.css'
 
 import { useGraphStore } from '@stores/graphStore';
-import { useModalStore, useRepoStore } from '@stores/baseStore';
+import { useModalStore, useNodeStore } from '@stores/baseStore';
 
 export default function CreateRepoForm() {
 
     const { setActiveModal } = useModalStore();
-    const { setCurrentRepoData } = useRepoStore();
+    const { setCurrentNodeData } = useNodeStore();
     
     const [repoName, setRepoName] = useState('');
     const [repoUrl, setRepoUrl] = useState('');
@@ -94,7 +94,7 @@ export default function CreateRepoForm() {
                     nodes: [...graphData.nodes, newNode],
                     links: [...graphData.links, newLink],
                   });
-                setCurrentRepoData(newRepo)
+                setCurrentNodeData(newRepo)
                 setActiveModal('updateRepo')
                 setIsLoaderActive(false)
             }

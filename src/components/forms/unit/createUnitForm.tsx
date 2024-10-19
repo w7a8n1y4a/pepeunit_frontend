@@ -11,15 +11,15 @@ import ResultQuery from '@primitives/resultQuery'
 import '../form.css'
 
 import { useGraphStore } from '@stores/graphStore';
-import { useModalStore, useUnitStore } from '@stores/baseStore';
+import { useModalStore, useNodeStore } from '@stores/baseStore';
 
 interface CreateRepoFormProps {
-    currentRepoData: RepoType;
+    currentNodeData: RepoType;
 }
 
-export default function CreateRepoForm({ currentRepoData }:CreateRepoFormProps) {
+export default function CreateRepoForm({ currentNodeData }:CreateRepoFormProps) {
     const { setActiveModal } = useModalStore();
-    const { setCurrentUnitData } = useUnitStore();
+    const { setCurrentNodeData } = useNodeStore();
 
     const [repoAvailableCommits, setRepoAvailableCommits] = useState<Array<{
         __typename?: "CommitType";
@@ -65,7 +65,7 @@ export default function CreateRepoForm({ currentRepoData }:CreateRepoFormProps) 
         })
 
         let unitVariables: CreateUnitMutationVariables = {
-            repoUuid: currentRepoData.uuid,
+            repoUuid: currentNodeData.uuid,
             visibilityLevel: unitVisibilityLevel,
             name: repoName,
             isAutoUpdateFromRepoUnit: isAutoUpdateFromRepoUnit
@@ -100,7 +100,7 @@ export default function CreateRepoForm({ currentRepoData }:CreateRepoFormProps) 
                     nodes: [...graphData.nodes, newNode],
                     links: [...graphData.links, newLink],
                   });
-                setCurrentUnitData(CreateUnitData.data.createUnit)
+                setCurrentNodeData(CreateUnitData.data.createUnit)
                 setIsLoaderActive(false)
                 setActiveModal(null)
             }
@@ -114,7 +114,7 @@ export default function CreateRepoForm({ currentRepoData }:CreateRepoFormProps) 
         if (repoBranch && !isAutoUpdateFromRepoUnit){
             getBranchCommits({
                 variables: {
-                    uuid: currentRepoData.uuid,
+                    uuid: currentNodeData.uuid,
                     repoBranch: repoBranch,
                     onlyTag: false,
                     limit: 100,
@@ -135,7 +135,7 @@ export default function CreateRepoForm({ currentRepoData }:CreateRepoFormProps) 
                 isLoaderActive && (<Spinner/>)
             }
             {
-                isAutoUpdateFromRepoUnit && currentRepoData && currentRepoData.defaultBranch === null && (
+                isAutoUpdateFromRepoUnit && currentNodeData && currentNodeData.defaultBranch === null && (
                     <ResultQuery
                         resultData={{
                             type: ResultType.Angry,
@@ -201,7 +201,7 @@ export default function CreateRepoForm({ currentRepoData }:CreateRepoFormProps) 
                                 >
                                     <option value="" disabled selected>Выберите ветку</option>
                                     {   
-                                        currentRepoData.branches.map(
+                                        currentNodeData.branches.map(
                                             item => (
                                                 <option value={item}>
                                                     {item}

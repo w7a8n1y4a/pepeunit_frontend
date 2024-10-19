@@ -7,10 +7,10 @@ import '../form.css'
 
 
 interface CreateUnitFormProps {
-    currentUnitData: UnitType;
+    currentNodeData: UnitType;
 }
 
-export default function UpdateUnitEnvForm({ currentUnitData }:CreateUnitFormProps) {
+export default function UpdateUnitEnvForm({ currentNodeData }:CreateUnitFormProps) {
 
     const [currentUnitEnv, setCurrentUnitEnv] = useState<Record<string, string | number> | null>(null)
 
@@ -33,7 +33,7 @@ export default function UpdateUnitEnvForm({ currentUnitData }:CreateUnitFormProp
         updateUnitEnv(
             {
                 variables: {
-                    uuid: currentUnitData.uuid,
+                    uuid: currentNodeData.uuid,
                     envJsonStr: JSON.stringify(currentUnitEnv)
                 }
             }
@@ -44,7 +44,7 @@ export default function UpdateUnitEnvForm({ currentUnitData }:CreateUnitFormProp
 
                 getUnitEnv({
                     variables: {
-                        uuid: currentUnitData.uuid,
+                        uuid: currentNodeData.uuid,
                     }
                 }).then(resultUnitEnv => {
                         if (resultUnitEnv.data?.getUnitEnv){
@@ -62,7 +62,7 @@ export default function UpdateUnitEnvForm({ currentUnitData }:CreateUnitFormProp
     useEffect(() => {
         getUnitEnv({
             variables: {
-                uuid: currentUnitData.uuid,
+                uuid: currentNodeData.uuid,
             }
         }).then(resultUnitEnv => {
                 if (resultUnitEnv.data?.getUnitEnv){
@@ -71,7 +71,7 @@ export default function UpdateUnitEnvForm({ currentUnitData }:CreateUnitFormProp
                 }
             }
         )
-    }, [currentUnitData]);
+    }, [currentNodeData]);
 
     const handleInputChange = (key: string, value: string) => {
         const parsedValue = isNaN(Number(value)) ? value : Number(value);

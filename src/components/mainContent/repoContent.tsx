@@ -9,12 +9,12 @@ import Spinner from '@primitives/spinner'
 import ResultQuery from '@primitives/resultQuery'
 
 import { useGraphStore } from '@stores/graphStore';
-import { useModalStore, useRepoStore } from '@stores/baseStore';
+import { useModalStore, useNodeStore } from '@stores/baseStore';
 import useModalHandlers from '@handlers/useModalHandlers';
 
 export default function RepoContent(){
   const { activeModal, setActiveModal } = useModalStore();
-  const { currentRepoData, setCurrentRepoData } = useRepoStore();
+  const { currentNodeData, setCurrentNodeData } = useNodeStore();
   const { removeNodesAndLinks } = useGraphStore();
   const { openModal } = useModalHandlers();
 
@@ -35,11 +35,11 @@ export default function RepoContent(){
       message: null
     })
 
-    if (currentRepoData){
+    if (currentNodeData){
       updateLocalRepo(
         {
           variables: {
-            uuid: currentRepoData.uuid
+            uuid: currentNodeData.uuid
           }
         }
       ).then(result => {
@@ -61,11 +61,11 @@ export default function RepoContent(){
       message: null
     })
 
-    if (currentRepoData){
+    if (currentNodeData){
       updateUnitsFirmware(
         {
           variables: {
-            uuid: currentRepoData.uuid
+            uuid: currentNodeData.uuid
           }
         }
       ).then(result => {
@@ -87,18 +87,18 @@ export default function RepoContent(){
       message: null
     })
 
-    if (currentRepoData){
+    if (currentNodeData){
       deleteRepo(
         {
           variables: {
-            uuid: currentRepoData.uuid
+            uuid: currentNodeData.uuid
           }
         }
       ).then(result => {
         if (result.data){
           setIsLoaderActive(false)
           setActiveModal(null)
-          removeNodesAndLinks(currentRepoData.uuid)
+          removeNodesAndLinks(currentNodeData.uuid)
         }
       }).catch(error => {
         setIsLoaderActive(false)
@@ -110,7 +110,7 @@ export default function RepoContent(){
   return (
     <>
       <BaseModal
-        modalName={'Repo ' + currentRepoData?.name}
+        modalName={'Repo ' + currentNodeData?.name}
         open={activeModal === 'repoMenu'}
       >
         <div className="modal_menu_content">
@@ -136,9 +136,9 @@ export default function RepoContent(){
       </BaseModal>
       <BaseModal modalName='Создание Unit' open={activeModal === 'createUnit'} openModalType='repoMenu'>
         {
-          currentRepoData && (
+          currentNodeData && (
             <CreateUnitForm
-              currentRepoData={currentRepoData}
+              currentNodeData={currentNodeData}
             />
           )
         }
@@ -156,7 +156,7 @@ export default function RepoContent(){
             Параметры
           </button>
           {
-            currentRepoData && !currentRepoData.isPublicRepository && (
+            currentNodeData && !currentNodeData.isPublicRepository && (
               <button className="button_open_alter" onClick={() => openModal('changeCredentials')}>
                 Авторизация GIT
               </button>
@@ -176,10 +176,10 @@ export default function RepoContent(){
         openModalType='repoSettingsMenu'  
       >
         {
-          currentRepoData && (
+          currentNodeData && (
             <UpdateRepoForm
-              currentRepoData={currentRepoData}
-              setCurrentRepoData={setCurrentRepoData}
+              currentNodeData={currentNodeData}
+              setCurrentNodeData={setCurrentNodeData}
             />
           )
         }
@@ -190,9 +190,9 @@ export default function RepoContent(){
         openModalType='repoSettingsMenu'
       >
         {
-          currentRepoData && (
+          currentNodeData && (
             <UpdateRepoCredentialsForm
-              currentRepoData={currentRepoData}
+              currentNodeData={currentNodeData}
             />
           )
         }
