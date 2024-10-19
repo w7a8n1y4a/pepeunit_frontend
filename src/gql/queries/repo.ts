@@ -83,4 +83,19 @@ gql`
             tag
         }
     }
+
+    query getVersions(
+        $uuid: UUID!
+    ) {
+        getVersions (
+            uuid: $uuid
+        ) {
+            unitCount
+            versions {
+                commit
+                unitCount
+                tag
+            }
+        }
+    }
 `
