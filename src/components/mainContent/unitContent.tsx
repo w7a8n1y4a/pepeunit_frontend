@@ -8,13 +8,13 @@ import UpdateUnitForm from '../forms/unit/updateUnitForm';
 import UpdateUnitEnvForm from '../forms/unit/updateUnitEnvForm'
 
 import { useGraphStore } from '@stores/graphStore';
-import { useModalStore, useUnitStore } from '@stores/baseStore';
+import { useModalStore, useNodeStore } from '@stores/baseStore';
 import useModalHandlers from '@handlers/useModalHandlers';
 
 
 export default function UnitContent(){
   const { activeModal, setActiveModal } = useModalStore();
-  const { currentUnitData, setCurrentUnitData } = useUnitStore();
+  const { currentNodeData, setCurrentNodeData } = useNodeStore();
   const { removeNodesAndLinks } = useGraphStore();
   const { openModal } = useModalHandlers();
     
@@ -33,7 +33,7 @@ export default function UnitContent(){
       message: null
     })
 
-    let url = import.meta.env.VITE_BACKEND_URI.replace('graphql', '') + 'api/v1/units/firmware/' + type + '/' + currentUnitData?.uuid
+    let url = import.meta.env.VITE_BACKEND_URI.replace('graphql', '') + 'api/v1/units/firmware/' + type + '/' + currentNodeData?.uuid
     let token = localStorage.getItem('token')
 
     if (token){
@@ -55,7 +55,7 @@ export default function UnitContent(){
         link.href = url;
         link.setAttribute(
           'download',
-          currentUnitData?.name + '.' + type,
+          currentNodeData?.name + '.' + type,
         );
         document.body.appendChild(link);
         link.click();
@@ -76,18 +76,18 @@ export default function UnitContent(){
       message: null
     })
 
-    if (currentUnitData){
+    if (currentNodeData){
       deleteUnit(
         {
           variables: {
-            uuid: currentUnitData.uuid
+            uuid: currentNodeData.uuid
           }
         }
       ).then(result => {
         if (result.data){
           setIsLoaderActive(false)
           setActiveModal(null)
-          removeNodesAndLinks(currentUnitData.uuid)
+          removeNodesAndLinks(currentNodeData.uuid)
         }
       }).catch(error => {
         setIsLoaderActive(false)
@@ -99,7 +99,7 @@ export default function UnitContent(){
   return (
     <>
       <BaseModal
-        modalName={'Unit ' + currentUnitData?.name}
+        modalName={'Unit ' + currentNodeData?.name}
         open={activeModal === 'unitMenu'}
       >
         <div className="modal_menu_content">
@@ -153,10 +153,10 @@ export default function UnitContent(){
         openModalType='unitSettingsMenu'
       >
         {
-          currentUnitData && (
+          currentNodeData && (
             <UpdateUnitForm
-              currentUnitData={currentUnitData}
-              setCurrentUnitData={setCurrentUnitData}
+              currentNodeData={currentNodeData}
+              setCurrentNodeData={setCurrentNodeData}
             />
           )
         }
@@ -167,9 +167,9 @@ export default function UnitContent(){
         openModalType='unitSettingsMenu'
       >
         {
-          currentUnitData && (
+          currentNodeData && (
             <UpdateUnitEnvForm
-              currentUnitData={currentUnitData}
+              currentNodeData={currentNodeData}
             />
           )
         }

@@ -5,12 +5,12 @@ import { useState, useEffect } from 'react';
 import Spinner from '@primitives/spinner'
 import ResultQuery from '@primitives/resultQuery'
 
-import { useModalStore, useDomainStore } from '@stores/baseStore';
+import { useModalStore, useNodeStore } from '@stores/baseStore';
 import useModalHandlers from '@handlers/useModalHandlers';
 
 export default function DomainContent(){
   const { activeModal } = useModalStore();
-  const { currentDomainData } = useDomainStore();
+  const { currentNodeData } = useNodeStore();
   const { openModal } = useModalHandlers();
 
   const [baseMetrics, setBaseMetrics] = useState<BaseMetricsType | null>(null)
@@ -52,7 +52,7 @@ export default function DomainContent(){
   return (
     <>
       <BaseModal
-        modalName={'' + currentDomainData?.name}
+        modalName={'' + currentNodeData?.name}
         open={activeModal === 'domainMenu'}
       >
         <div className="modal_menu_content">

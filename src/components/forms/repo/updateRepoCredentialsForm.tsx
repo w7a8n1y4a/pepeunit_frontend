@@ -8,10 +8,10 @@ import ResultQuery from '@primitives/resultQuery'
 import '../form.css'
 
 interface UpdateRepoCredentialsFormProps {
-    currentRepoData: RepoType;
+    currentNodeData: RepoType;
 }
 
-export default function UpdateRepoCredentialsForm({ currentRepoData }: UpdateRepoCredentialsFormProps) {
+export default function UpdateRepoCredentialsForm({ currentNodeData }: UpdateRepoCredentialsFormProps) {
     const [repoUsername, setRepoUsername] = useState('');
     const [repoPatToken, setPatToken] = useState('');
 
@@ -44,7 +44,7 @@ export default function UpdateRepoCredentialsForm({ currentRepoData }: UpdateRep
 
         updateRepoCredentialsMutation({
             variables: {
-                uuid: currentRepoData.uuid,
+                uuid: currentNodeData.uuid,
                 data: {
                     username: repoUsername,
                     patToken: repoPatToken

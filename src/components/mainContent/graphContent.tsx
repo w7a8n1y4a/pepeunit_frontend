@@ -9,14 +9,12 @@ import RepoContent from './repoContent'
 import UnitContent from './unitContent';
 
 import { useGraphStore } from '@stores/graphStore';
-import { useRepoStore, useUnitStore, useDomainStore } from '@stores/baseStore';
+import { useNodeStore } from '@stores/baseStore';
 import useModalHandlers from '@handlers/useModalHandlers';
 
 export default function GraphContent(){
   const { openModal } = useModalHandlers();
-  const { setCurrentRepoData } = useRepoStore();
-  const { setCurrentUnitData } = useUnitStore();
-  const { setCurrentDomainData } = useDomainStore();
+  const { setCurrentNodeData } = useNodeStore();
   const { graphData, setGraphData, removeNodesAndLinks } = useGraphStore();
 
   const [displayWidth, setDisplayWidth] = useState(window.innerWidth);
@@ -111,24 +109,8 @@ export default function GraphContent(){
   }
 
   function pickMenu(node: any){
-    if (node.type == NodeType.Domain) {
-      openModal("domainMenu")
-      setCurrentDomainData(node.data)
-    }
-    if (node.type == NodeType.Repo) {
-      openModal("repoMenu")
-      setCurrentRepoData(node.data)
-    }
-    if (node.type == NodeType.Unit) {
-      openModal("unitMenu")
-      setCurrentUnitData(node.data)
-    }
-    if (node.type == NodeType.Output) {
-      openModal("unitNodeOutput")
-    }
-    if (node.type == NodeType.Output) {
-      openModal("unitNodeOutput")
-    }
+    openModal(node.type + "Menu")
+    setCurrentNodeData(node.data)
   }
 
   window.addEventListener('resize', () => {
