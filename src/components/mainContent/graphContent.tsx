@@ -7,6 +7,7 @@ import { useState, useMemo, useEffect } from 'react';
 import DomainContent from './domainContent'
 import RepoContent from './repoContent'
 import UnitContent from './unitContent';
+import UnitNodeContent from './unitNodeContent';
 
 import { useGraphStore } from '@stores/graphStore';
 import { useNodeStore } from '@stores/baseStore';
@@ -142,6 +143,7 @@ export default function GraphContent(){
       <DomainContent/>
       <RepoContent/>
       <UnitContent/>
+      <UnitNodeContent/>
     </>
   )
 }
