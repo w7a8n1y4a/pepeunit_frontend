@@ -157,6 +157,8 @@ export default function GraphContent(){
         linkDirectionalParticles="value"
         linkDirectionalParticleSpeed={d => d.value * 0.0005}
         linkDirectionalParticleWidth={1}
+        cooldownTicks={100}
+        onEngineStop={() => fgRef.current.zoomToFit(500)}
       />
       
       <DomainContent/>
