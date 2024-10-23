@@ -145,7 +145,7 @@ export default function GraphContent(){
         nodeThreeObject={(node: any) => {
           const sprite = new SpriteText(node.data.name) as any;
           sprite.color = "#fff";
-          sprite.textHeight = 5.5;
+          sprite.textHeight = 4;
           sprite.position.y = 10;
           return sprite;
         }}
