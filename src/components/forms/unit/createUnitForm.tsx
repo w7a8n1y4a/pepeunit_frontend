@@ -94,6 +94,7 @@ export default function CreateRepoForm({ currentNodeData }:CreateRepoFormProps) 
                   const newLink = {
                     source: newUnit.repoUuid,
                     target: newUnit.uuid,
+                    value: 1
                   };
 
                 setGraphData({

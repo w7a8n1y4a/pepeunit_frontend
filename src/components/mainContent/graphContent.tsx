@@ -3,7 +3,7 @@ import { getNodeColor } from '@utils/getNodeColor'
 import { useGetReposLazyQuery, useGetUnitsLazyQuery, useGetUnitNodesLazyQuery, UnitNodeTypeEnum} from '@rootTypes/compositionFunctions'
 import { ForceGraph3D } from 'react-force-graph';
 import SpriteText from 'three-spritetext';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import DomainContent from './domainContent'
 import RepoContent from './repoContent'
 import UnitContent from './unitContent';
@@ -12,6 +12,8 @@ import UnitNodeContent from './unitNodeContent';
 import { useGraphStore } from '@stores/graphStore';
 import { useNodeStore } from '@stores/baseStore';
 import useModalHandlers from '@handlers/useModalHandlers';
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
+import { Vector2 } from 'three'; 
 
 export default function GraphContent(){
   const { openModal } = useModalHandlers();
@@ -52,8 +54,8 @@ export default function GraphContent(){
                 ))],
                 links: [
                   ...graphData.links,
-                  ...reposData.data.getRepos.map((repo) => ({source: import.meta.env.VITE_INSTANCE_NAME, target: repo.uuid})),
-                  ...unitsData.data.getUnits.map((unit) => ({source: unit.repoUuid, target: unit.uuid}))
+                  ...reposData.data.getRepos.map((repo) => ({source: import.meta.env.VITE_INSTANCE_NAME, target: repo.uuid, value: 1})),
+                  ...unitsData.data.getUnits.map((unit) => ({source: unit.repoUuid, target: unit.uuid, value: 1}))
                 ]
               }
             )
@@ -99,7 +101,7 @@ export default function GraphContent(){
                 ))],
                 links: [
                   ...graphData.links,
-                  ...unitNodesData.data.getUnitNodes.map((unitNode) => ({source: unitNode.unitUuid, target: unitNode.uuid})),
+                  ...unitNodesData.data.getUnitNodes.map((unitNode) => ({source: unitNode.unitUuid, target: unitNode.uuid, value: 1})),
                 ]
               }
             )
@@ -119,10 +121,23 @@ export default function GraphContent(){
     setDisplayHeight(window.innerHeight);
   });
 
+  const fgRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (fgRef.current) {
+      const bloomPass = new UnrealBloomPass(new Vector2(window.innerWidth, window.innerHeight), 4, 1, 0);
+      const composer = fgRef.current.postProcessingComposer();
+      if (composer) {
+        composer.addPass(bloomPass);
+      }
+    }
+  }, []);
+
   return (
     <>
       <ForceGraph3D
-        backgroundColor='rgba(10,10,10, 20)'
+        ref={fgRef}
+        backgroundColor='rgba(10,10,10, 15)'
         width={displayWidth}
         height={displayHeight}
         graphData={processedData}
@@ -130,7 +145,7 @@ export default function GraphContent(){
         nodeThreeObject={(node: any) => {
           const sprite = new SpriteText(node.data.name) as any;
           sprite.color = "#fff";
-          sprite.textHeight = 4;
+          sprite.textHeight = 5.5;
           sprite.position.y = 10;
           return sprite;
         }}
@@ -138,6 +153,10 @@ export default function GraphContent(){
         showNavInfo={false}
         onNodeClick={(node) => pickMenu(node)}
         onNodeRightClick={(node) => handleNodeRightClick(node)}
+        nodeResolution={15}
+        linkDirectionalParticles="value"
+        linkDirectionalParticleSpeed={d => d.value * 0.0005}
+        linkDirectionalParticleWidth={1}
       />
       
       <DomainContent/>

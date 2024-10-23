@@ -88,6 +88,7 @@ export default function CreateRepoForm() {
                   const newLink = {
                     source: import.meta.env.VITE_INSTANCE_NAME,
                     target: newRepo.uuid,
+                    value: 1
                   };
 
                 setGraphData({
