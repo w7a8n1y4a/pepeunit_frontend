@@ -155,7 +155,7 @@ export default function GraphContent(){
         onNodeRightClick={(node) => handleNodeRightClick(node)}
         nodeResolution={15}
         linkDirectionalParticles="value"
-        linkDirectionalParticleSpeed={d => d.value * 0.0005}
+        linkDirectionalParticleSpeed={d => d.value * 0.001}
         linkDirectionalParticleWidth={1}
         cooldownTicks={100}
         onEngineStop={() => fgRef.current.zoomToFit(500)}
