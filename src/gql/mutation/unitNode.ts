@@ -57,10 +57,12 @@ gql`
         }
     }
     mutation deleteUnitNodeEdge(
-        $uuid: UUID!
+        $inputUuid: UUID!
+        $outputUuid: UUID!
     ) {
         deleteUnitNodeEdge (
-            uuid: $uuid
+            inputUuid: $inputUuid
+            outputUuid: $outputUuid
         ){
             isNone
         }

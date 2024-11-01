@@ -123,7 +123,8 @@ export type MutationDeleteUnitArgs = {
 };
 
 export type MutationDeleteUnitNodeEdgeArgs = {
-  uuid: Scalars["UUID"]["input"];
+  inputUuid: Scalars["UUID"]["input"];
+  outputUuid: Scalars["UUID"]["input"];
 };
 
 export type MutationSetStateUnitNodeInputArgs = {
@@ -186,6 +187,11 @@ export enum OrderByDate {
   Desc = "desc",
 }
 
+export enum OrderByText {
+  Asc = "asc",
+  Desc = "desc",
+}
+
 export type PermissionCreateInput = {
   agentType: PermissionEntities;
   agentUuid: Scalars["UUID"]["input"];
@@ -213,6 +219,7 @@ export type Query = {
   __typename?: "Query";
   getBaseMetrics: BaseMetricsType;
   getBranchCommits: Array<CommitType>;
+  getOutputUnitNodes: Array<UnitNodeOutputType>;
   getRepo: RepoType;
   getRepos: Array<RepoType>;
   getResourceAgents: Array<PermissionType>;
@@ -232,6 +239,10 @@ export type Query = {
 export type QueryGetBranchCommitsArgs = {
   filters: CommitFilterInput;
   uuid: Scalars["UUID"]["input"];
+};
+
+export type QueryGetOutputUnitNodesArgs = {
+  filters: UnitNodeEdgeOutputFilterInput;
 };
 
 export type QueryGetRepoArgs = {
@@ -376,6 +387,17 @@ export type UnitNodeEdgeCreateInput = {
   nodeOutputUuid: Scalars["UUID"]["input"];
 };
 
+export type UnitNodeEdgeOutputFilterInput = {
+  creatorUuid?: InputMaybe<Scalars["UUID"]["input"]>;
+  limit?: InputMaybe<Scalars["Int"]["input"]>;
+  offset?: InputMaybe<Scalars["Int"]["input"]>;
+  orderByCreateDate?: InputMaybe<OrderByDate>;
+  orderByUnitName?: InputMaybe<OrderByText>;
+  searchString?: InputMaybe<Scalars["String"]["input"]>;
+  unitNodeInputUuid: Scalars["UUID"]["input"];
+  visibilityLevel?: InputMaybe<Array<VisibilityLevel>>;
+};
+
 export type UnitNodeEdgeType = {
   __typename?: "UnitNodeEdgeType";
   nodeInputUuid: Scalars["UUID"]["output"];
@@ -393,12 +415,20 @@ export type UnitNodeFilterInput = {
   visibilityLevel?: InputMaybe<Array<VisibilityLevel>>;
 };
 
+export type UnitNodeOutputType = {
+  __typename?: "UnitNodeOutputType";
+  unit: UnitType;
+  unitOutputNodes: Array<UnitNodeType>;
+};
+
 export type UnitNodeSetStateInput = {
   state?: InputMaybe<Scalars["String"]["input"]>;
 };
 
 export type UnitNodeType = {
   __typename?: "UnitNodeType";
+  createDatetime: Scalars["DateTime"]["output"];
+  creatorUuid: Scalars["UUID"]["output"];
   isRewritableInput: Scalars["Boolean"]["output"];
   state?: Maybe<Scalars["String"]["output"]>;
   topicName: Scalars["String"]["output"];
@@ -426,6 +456,7 @@ export type UnitType = {
   isAutoUpdateFromRepoUnit: Scalars["Boolean"]["output"];
   lastUpdateDatetime: Scalars["DateTime"]["output"];
   name: Scalars["String"]["output"];
+  outputUnitNodes: Array<UnitNodeType>;
   repoBranch?: Maybe<Scalars["String"]["output"]>;
   repoCommit?: Maybe<Scalars["String"]["output"]>;
   repoUuid: Scalars["UUID"]["output"];
@@ -768,7 +799,8 @@ export type CreateUnitNodeEdgeMutation = {
 };
 
 export type DeleteUnitNodeEdgeMutationVariables = Exact<{
-  uuid: Scalars["UUID"]["input"];
+  inputUuid: Scalars["UUID"]["input"];
+  outputUuid: Scalars["UUID"]["input"];
 }>;
 
 export type DeleteUnitNodeEdgeMutation = {
@@ -1005,6 +1037,49 @@ export type GetUnitsQuery = {
   }>;
 };
 
+export type GetUnitsWithOutputQueryVariables = Exact<{
+  creatorUuid?: InputMaybe<Scalars["UUID"]["input"]>;
+  repoUuid?: InputMaybe<Scalars["UUID"]["input"]>;
+  searchString?: InputMaybe<Scalars["String"]["input"]>;
+  isAutoUpdateFromRepoUnit?: InputMaybe<Scalars["Boolean"]["input"]>;
+  visibilityLevel?: InputMaybe<Array<VisibilityLevel> | VisibilityLevel>;
+  orderByCreateDate?: InputMaybe<OrderByDate>;
+  orderByLastUpdate?: InputMaybe<OrderByDate>;
+  offset?: InputMaybe<Scalars["Int"]["input"]>;
+  limit?: InputMaybe<Scalars["Int"]["input"]>;
+}>;
+
+export type GetUnitsWithOutputQuery = {
+  __typename?: "Query";
+  getUnits: Array<{
+    __typename?: "UnitType";
+    uuid: string;
+    visibilityLevel: VisibilityLevel;
+    name: string;
+    createDatetime: string;
+    isAutoUpdateFromRepoUnit: boolean;
+    repoBranch?: string | null;
+    repoCommit?: string | null;
+    unitStateDict?: string | null;
+    currentCommitVersion?: string | null;
+    lastUpdateDatetime: string;
+    creatorUuid: string;
+    repoUuid: string;
+    outputUnitNodes: Array<{
+      __typename?: "UnitNodeType";
+      uuid: string;
+      type: UnitNodeTypeEnum;
+      visibilityLevel: VisibilityLevel;
+      isRewritableInput: boolean;
+      topicName: string;
+      createDatetime: string;
+      state?: string | null;
+      unitUuid: string;
+      creatorUuid: string;
+    }>;
+  }>;
+};
+
 export type GetUnitEnvQueryVariables = Exact<{
   uuid: Scalars["UUID"]["input"];
 }>;
@@ -1050,6 +1125,48 @@ export type GetUnitNodesQuery = {
     topicName: string;
     state?: string | null;
     unitUuid: string;
+  }>;
+};
+
+export type GetOutputUnitNodesQueryVariables = Exact<{
+  unitNodeInputUuid: Scalars["UUID"]["input"];
+  searchString?: InputMaybe<Scalars["String"]["input"]>;
+  visibilityLevel?: InputMaybe<Array<VisibilityLevel> | VisibilityLevel>;
+  orderByUnitName?: InputMaybe<OrderByText>;
+  orderByCreateDate?: InputMaybe<OrderByDate>;
+  offset?: InputMaybe<Scalars["Int"]["input"]>;
+  limit?: InputMaybe<Scalars["Int"]["input"]>;
+}>;
+
+export type GetOutputUnitNodesQuery = {
+  __typename?: "Query";
+  getOutputUnitNodes: Array<{
+    __typename?: "UnitNodeOutputType";
+    unit: {
+      __typename?: "UnitType";
+      uuid: string;
+      visibilityLevel: VisibilityLevel;
+      name: string;
+      createDatetime: string;
+      isAutoUpdateFromRepoUnit: boolean;
+      repoBranch?: string | null;
+      repoCommit?: string | null;
+      unitStateDict?: string | null;
+      currentCommitVersion?: string | null;
+      lastUpdateDatetime: string;
+      creatorUuid: string;
+      repoUuid: string;
+    };
+    unitOutputNodes: Array<{
+      __typename?: "UnitNodeType";
+      uuid: string;
+      type: UnitNodeTypeEnum;
+      visibilityLevel: VisibilityLevel;
+      isRewritableInput: boolean;
+      topicName: string;
+      state?: string | null;
+      unitUuid: string;
+    }>;
   }>;
 };
 
@@ -2100,8 +2217,8 @@ export type CreateUnitNodeEdgeMutationOptions = Apollo.BaseMutationOptions<
   CreateUnitNodeEdgeMutationVariables
 >;
 export const DeleteUnitNodeEdgeDocument = gql`
-  mutation deleteUnitNodeEdge($uuid: UUID!) {
-    deleteUnitNodeEdge(uuid: $uuid) {
+  mutation deleteUnitNodeEdge($inputUuid: UUID!, $outputUuid: UUID!) {
+    deleteUnitNodeEdge(inputUuid: $inputUuid, outputUuid: $outputUuid) {
       isNone
     }
   }
@@ -2124,7 +2241,8 @@ export type DeleteUnitNodeEdgeMutationFn = Apollo.MutationFunction<
  * @example
  * const [deleteUnitNodeEdgeMutation, { data, loading, error }] = useDeleteUnitNodeEdgeMutation({
  *   variables: {
- *      uuid: // value for 'uuid'
+ *      inputUuid: // value for 'inputUuid'
+ *      outputUuid: // value for 'outputUuid'
  *   },
  * });
  */
@@ -3074,6 +3192,131 @@ export type GetUnitsQueryResult = Apollo.QueryResult<
   GetUnitsQuery,
   GetUnitsQueryVariables
 >;
+export const GetUnitsWithOutputDocument = gql`
+  query getUnitsWithOutput(
+    $creatorUuid: UUID
+    $repoUuid: UUID
+    $searchString: String
+    $isAutoUpdateFromRepoUnit: Boolean
+    $visibilityLevel: [VisibilityLevel!]
+    $orderByCreateDate: OrderByDate
+    $orderByLastUpdate: OrderByDate
+    $offset: Int
+    $limit: Int
+  ) {
+    getUnits(
+      filters: {
+        creatorUuid: $creatorUuid
+        repoUuid: $repoUuid
+        searchString: $searchString
+        isAutoUpdateFromRepoUnit: $isAutoUpdateFromRepoUnit
+        visibilityLevel: $visibilityLevel
+        orderByCreateDate: $orderByCreateDate
+        orderByLastUpdate: $orderByLastUpdate
+        offset: $offset
+        limit: $limit
+      }
+    ) {
+      uuid
+      visibilityLevel
+      name
+      createDatetime
+      isAutoUpdateFromRepoUnit
+      repoBranch
+      repoCommit
+      unitStateDict
+      currentCommitVersion
+      lastUpdateDatetime
+      creatorUuid
+      repoUuid
+      outputUnitNodes {
+        uuid
+        type
+        visibilityLevel
+        isRewritableInput
+        topicName
+        createDatetime
+        state
+        unitUuid
+        creatorUuid
+      }
+    }
+  }
+`;
+
+/**
+ * __useGetUnitsWithOutputQuery__
+ *
+ * To run a query within a React component, call `useGetUnitsWithOutputQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUnitsWithOutputQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUnitsWithOutputQuery({
+ *   variables: {
+ *      creatorUuid: // value for 'creatorUuid'
+ *      repoUuid: // value for 'repoUuid'
+ *      searchString: // value for 'searchString'
+ *      isAutoUpdateFromRepoUnit: // value for 'isAutoUpdateFromRepoUnit'
+ *      visibilityLevel: // value for 'visibilityLevel'
+ *      orderByCreateDate: // value for 'orderByCreateDate'
+ *      orderByLastUpdate: // value for 'orderByLastUpdate'
+ *      offset: // value for 'offset'
+ *      limit: // value for 'limit'
+ *   },
+ * });
+ */
+export function useGetUnitsWithOutputQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetUnitsWithOutputQuery,
+    GetUnitsWithOutputQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    GetUnitsWithOutputQuery,
+    GetUnitsWithOutputQueryVariables
+  >(GetUnitsWithOutputDocument, options);
+}
+export function useGetUnitsWithOutputLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetUnitsWithOutputQuery,
+    GetUnitsWithOutputQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    GetUnitsWithOutputQuery,
+    GetUnitsWithOutputQueryVariables
+  >(GetUnitsWithOutputDocument, options);
+}
+export function useGetUnitsWithOutputSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    GetUnitsWithOutputQuery,
+    GetUnitsWithOutputQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<
+    GetUnitsWithOutputQuery,
+    GetUnitsWithOutputQueryVariables
+  >(GetUnitsWithOutputDocument, options);
+}
+export type GetUnitsWithOutputQueryHookResult = ReturnType<
+  typeof useGetUnitsWithOutputQuery
+>;
+export type GetUnitsWithOutputLazyQueryHookResult = ReturnType<
+  typeof useGetUnitsWithOutputLazyQuery
+>;
+export type GetUnitsWithOutputSuspenseQueryHookResult = ReturnType<
+  typeof useGetUnitsWithOutputSuspenseQuery
+>;
+export type GetUnitsWithOutputQueryResult = Apollo.QueryResult<
+  GetUnitsWithOutputQuery,
+  GetUnitsWithOutputQueryVariables
+>;
 export const GetUnitEnvDocument = gql`
   query getUnitEnv($uuid: UUID!) {
     getUnitEnv(uuid: $uuid)
@@ -3330,6 +3573,129 @@ export type GetUnitNodesSuspenseQueryHookResult = ReturnType<
 export type GetUnitNodesQueryResult = Apollo.QueryResult<
   GetUnitNodesQuery,
   GetUnitNodesQueryVariables
+>;
+export const GetOutputUnitNodesDocument = gql`
+  query getOutputUnitNodes(
+    $unitNodeInputUuid: UUID!
+    $searchString: String
+    $visibilityLevel: [VisibilityLevel!]
+    $orderByUnitName: OrderByText
+    $orderByCreateDate: OrderByDate
+    $offset: Int
+    $limit: Int
+  ) {
+    getOutputUnitNodes(
+      filters: {
+        unitNodeInputUuid: $unitNodeInputUuid
+        searchString: $searchString
+        visibilityLevel: $visibilityLevel
+        orderByUnitName: $orderByUnitName
+        orderByCreateDate: $orderByCreateDate
+        offset: $offset
+        limit: $limit
+      }
+    ) {
+      unit {
+        uuid
+        visibilityLevel
+        name
+        createDatetime
+        isAutoUpdateFromRepoUnit
+        repoBranch
+        repoCommit
+        unitStateDict
+        currentCommitVersion
+        lastUpdateDatetime
+        creatorUuid
+        repoUuid
+      }
+      unitOutputNodes {
+        uuid
+        type
+        visibilityLevel
+        isRewritableInput
+        topicName
+        state
+        unitUuid
+      }
+    }
+  }
+`;
+
+/**
+ * __useGetOutputUnitNodesQuery__
+ *
+ * To run a query within a React component, call `useGetOutputUnitNodesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetOutputUnitNodesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetOutputUnitNodesQuery({
+ *   variables: {
+ *      unitNodeInputUuid: // value for 'unitNodeInputUuid'
+ *      searchString: // value for 'searchString'
+ *      visibilityLevel: // value for 'visibilityLevel'
+ *      orderByUnitName: // value for 'orderByUnitName'
+ *      orderByCreateDate: // value for 'orderByCreateDate'
+ *      offset: // value for 'offset'
+ *      limit: // value for 'limit'
+ *   },
+ * });
+ */
+export function useGetOutputUnitNodesQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GetOutputUnitNodesQuery,
+    GetOutputUnitNodesQueryVariables
+  > &
+    (
+      | { variables: GetOutputUnitNodesQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    GetOutputUnitNodesQuery,
+    GetOutputUnitNodesQueryVariables
+  >(GetOutputUnitNodesDocument, options);
+}
+export function useGetOutputUnitNodesLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetOutputUnitNodesQuery,
+    GetOutputUnitNodesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    GetOutputUnitNodesQuery,
+    GetOutputUnitNodesQueryVariables
+  >(GetOutputUnitNodesDocument, options);
+}
+export function useGetOutputUnitNodesSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    GetOutputUnitNodesQuery,
+    GetOutputUnitNodesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<
+    GetOutputUnitNodesQuery,
+    GetOutputUnitNodesQueryVariables
+  >(GetOutputUnitNodesDocument, options);
+}
+export type GetOutputUnitNodesQueryHookResult = ReturnType<
+  typeof useGetOutputUnitNodesQuery
+>;
+export type GetOutputUnitNodesLazyQueryHookResult = ReturnType<
+  typeof useGetOutputUnitNodesLazyQuery
+>;
+export type GetOutputUnitNodesSuspenseQueryHookResult = ReturnType<
+  typeof useGetOutputUnitNodesSuspenseQuery
+>;
+export type GetOutputUnitNodesQueryResult = Apollo.QueryResult<
+  GetOutputUnitNodesQuery,
+  GetOutputUnitNodesQueryVariables
 >;
 export const GetTokenDocument = gql`
   query getToken($credentials: String!, $password: String!) {
