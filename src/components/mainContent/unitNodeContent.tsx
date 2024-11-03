@@ -4,6 +4,7 @@ import { UnitNodeTypeEnum } from '@rootTypes/compositionFunctions'
 import { useModalStore, useNodeStore } from '@stores/baseStore';
 import UpdateUnitNodeForm from '../forms/unitNode/updateUnitNodeForm';
 import UnitNodeSetStateForm from '../forms/unitNode/unitNodeSetStateForm';
+import UnitNodeEdgeForm from '../forms/unitNode/unitNodeEdgeForm'
 import useModalHandlers from '@handlers/useModalHandlers';
 
 
@@ -25,15 +26,34 @@ export default function UnitNodeContent(){
 
           {
             currentNodeData?.type == UnitNodeTypeEnum.Input ? (
+              <>
                 <button className="button_open_alter" onClick={() => openModal('unitNodeSetState')}>
-                    Установить значение
+                  Установить значение
                 </button>
+                <button className="button_open_alter" onClick={() => openModal('unitNodeAddOutputToInput')}>
+                  Связи
+                </button>
+              </>
             ) : (<></>)
           }
           <button className="button_open_alter" onClick={() => openModal('unitNodeUpdate')}>
             Настройки
           </button>
         </div>
+      </BaseModal>
+
+      <BaseModal
+        modalName={'Подключенные выходы'}
+        open={activeModal === 'unitNodeAddOutputToInput'}
+        openModalType={"outputMenu"} 
+      >
+        {
+          currentNodeData && (
+            <UnitNodeEdgeForm
+              currentNodeData={currentNodeData}
+            />
+          )
+        }
       </BaseModal>
 
       <BaseModal
