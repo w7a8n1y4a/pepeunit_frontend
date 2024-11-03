@@ -21,10 +21,10 @@ export default function UnitNodeEdgeCreateForm({ currentNodeData }: UnitNodeEdge
         message: null
     });
 
-    const [collapsedUnits, setCollapsedUnits] = useState<{ [key: string]: boolean }>({});
+    const [ collapsedUnits, setCollapsedUnits ] = useState<{ [key: string]: boolean }>({});
 
-    const [ searchString, setSearchString] = useState('');
-    const [ data, setData] = useState<any>(null);
+    const [ searchString, setSearchString ] = useState('');
+    const [ data, setData ] = useState<any>(null);
 
     const [ getUnitsWithOutput ] = useGetUnitsWithOutputLazyQuery();
     const [ createUnitNodeEdgeMutation ] = useCreateUnitNodeEdgeMutation();
