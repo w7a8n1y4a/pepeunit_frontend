@@ -45,49 +45,4 @@ gql`
             unitUuid
         }
     }
-    query getOutputUnitNodes(
-        $unitNodeInputUuid: UUID!
-        $searchString: String
-        $visibilityLevel: [VisibilityLevel!]
-        $orderByUnitName: OrderByText
-        $orderByCreateDate: OrderByDate
-        $offset: Int
-        $limit: Int
-    ) {
-        getOutputUnitNodes(
-            filters: {
-                unitNodeInputUuid: $unitNodeInputUuid
-                searchString: $searchString
-                visibilityLevel: $visibilityLevel
-                orderByUnitName: $orderByUnitName
-                orderByCreateDate: $orderByCreateDate
-                offset: $offset
-                limit: $limit
-            }
-        ) {
-            unit {
-                uuid
-                visibilityLevel
-                name
-                createDatetime
-                isAutoUpdateFromRepoUnit
-                repoBranch
-                repoCommit
-                unitStateDict
-                currentCommitVersion
-                lastUpdateDatetime
-                creatorUuid
-                repoUuid
-            }
-            unitOutputNodes {
-                uuid
-                type
-                visibilityLevel
-                isRewritableInput
-                topicName
-                state
-                unitUuid
-            }
-        }
-    }
 `
