@@ -1078,14 +1078,11 @@ export type GetUnitsWithAllOutputQuery = {
 
 export type GetUnitsOutputByInputQueryVariables = Exact<{
   creatorUuid?: InputMaybe<Scalars["UUID"]["input"]>;
-  repoUuid?: InputMaybe<Scalars["UUID"]["input"]>;
   unitNodeInputUuid?: InputMaybe<Scalars["UUID"]["input"]>;
   searchString?: InputMaybe<Scalars["String"]["input"]>;
-  isAutoUpdateFromRepoUnit?: InputMaybe<Scalars["Boolean"]["input"]>;
   visibilityLevel?: InputMaybe<Array<VisibilityLevel> | VisibilityLevel>;
   orderByUnitName?: InputMaybe<OrderByText>;
   orderByCreateDate?: InputMaybe<OrderByDate>;
-  orderByLastUpdate?: InputMaybe<OrderByDate>;
   offset?: InputMaybe<Scalars["Int"]["input"]>;
   limit?: InputMaybe<Scalars["Int"]["input"]>;
 }>;
@@ -3335,28 +3332,22 @@ export type GetUnitsWithAllOutputQueryResult = Apollo.QueryResult<
 export const GetUnitsOutputByInputDocument = gql`
   query getUnitsOutputByInput(
     $creatorUuid: UUID
-    $repoUuid: UUID
     $unitNodeInputUuid: UUID
     $searchString: String
-    $isAutoUpdateFromRepoUnit: Boolean
     $visibilityLevel: [VisibilityLevel!]
     $orderByUnitName: OrderByText
     $orderByCreateDate: OrderByDate
-    $orderByLastUpdate: OrderByDate
     $offset: Int
     $limit: Int
   ) {
     getUnits(
       filters: {
         creatorUuid: $creatorUuid
-        repoUuid: $repoUuid
         unitNodeInputUuid: $unitNodeInputUuid
         searchString: $searchString
-        isAutoUpdateFromRepoUnit: $isAutoUpdateFromRepoUnit
         visibilityLevel: $visibilityLevel
         orderByUnitName: $orderByUnitName
         orderByCreateDate: $orderByCreateDate
-        orderByLastUpdate: $orderByLastUpdate
         offset: $offset
         limit: $limit
       }
@@ -3404,14 +3395,11 @@ export const GetUnitsOutputByInputDocument = gql`
  * const { data, loading, error } = useGetUnitsOutputByInputQuery({
  *   variables: {
  *      creatorUuid: // value for 'creatorUuid'
- *      repoUuid: // value for 'repoUuid'
  *      unitNodeInputUuid: // value for 'unitNodeInputUuid'
  *      searchString: // value for 'searchString'
- *      isAutoUpdateFromRepoUnit: // value for 'isAutoUpdateFromRepoUnit'
  *      visibilityLevel: // value for 'visibilityLevel'
  *      orderByUnitName: // value for 'orderByUnitName'
  *      orderByCreateDate: // value for 'orderByCreateDate'
- *      orderByLastUpdate: // value for 'orderByLastUpdate'
  *      offset: // value for 'offset'
  *      limit: // value for 'limit'
  *   },

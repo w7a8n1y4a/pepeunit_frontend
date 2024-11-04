@@ -45,7 +45,7 @@ export default function GraphContent(){
                     data: repo
                   }
                 )),
-                  ...unitsData.data.getUnits.map((unit) => ({
+                  ...unitsData.data.getUnits.units.map((unit) => ({
                     id: unit.uuid,
                     type: NodeType.Unit,
                     color: getNodeColor(NodeType.Unit),
@@ -55,7 +55,7 @@ export default function GraphContent(){
                 links: [
                   ...graphData.links,
                   ...reposData.data.getRepos.map((repo) => ({source: import.meta.env.VITE_INSTANCE_NAME, target: repo.uuid, value: 1})),
-                  ...unitsData.data.getUnits.map((unit) => ({source: unit.repoUuid, target: unit.uuid, value: 1}))
+                  ...unitsData.data.getUnits.units.map((unit) => ({source: unit.repoUuid, target: unit.uuid, value: 1}))
                 ]
               }
             )

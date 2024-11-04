@@ -1,5 +1,5 @@
 import BaseModal from '../../modal/baseModal';
-import { useGetOutputUnitNodesLazyQuery, useDeleteUnitNodeEdgeMutation } from '@rootTypes/compositionFunctions';
+import { useGetUnitsOutputByInputLazyQuery, useDeleteUnitNodeEdgeMutation } from '@rootTypes/compositionFunctions';
 import { useState, useEffect } from 'react';
 import useModalHandlers from '@handlers/useModalHandlers';
 import { useModalStore } from '@stores/baseStore';
@@ -18,7 +18,7 @@ export default function UnitNodeEdgeForm({ currentNodeData }: UnitNodeEdgeFormPr
     const { openModal } = useModalHandlers();
     const { activeModal } = useModalStore();
     const [nodeOutputs, setNodeOutputs] = useState<Array<any> | null>(null);
-    const [getOutputUnitNodesQuery] = useGetOutputUnitNodesLazyQuery();
+    const [getUnitsOutputByInputQuery] = useGetUnitsOutputByInputLazyQuery();
     const [ deleteUnitNodeEdgeMutation ] = useDeleteUnitNodeEdgeMutation();
     const [collapsedUnits, setCollapsedUnits] = useState<{ [key: string]: boolean }>({});
 
@@ -29,19 +29,19 @@ export default function UnitNodeEdgeForm({ currentNodeData }: UnitNodeEdgeFormPr
     });
 
     useEffect(() => {
-        getOutputUnitNodesQuery({
+        getUnitsOutputByInputQuery({
             variables: {
                 unitNodeInputUuid: currentNodeData.uuid,
                 limit: 10,
                 offset: 0
             }
         }).then(resultOutputNodes => {
-            if (resultOutputNodes.data?.getOutputUnitNodes) {
-                console.log(resultOutputNodes.data.getOutputUnitNodes);
-                setNodeOutputs(resultOutputNodes.data.getOutputUnitNodes);
+            if (resultOutputNodes.data?.getUnits) {
+                console.log(resultOutputNodes.data.getUnits.units);
+                setNodeOutputs(resultOutputNodes.data.getUnits.units);
             }
         });
-    }, [getOutputUnitNodesQuery, currentNodeData.uuid]);
+    }, [currentNodeData]);
 
     const handleUnitToggle = (unitId: string) => {
         setCollapsedUnits(prev => ({
@@ -85,7 +85,12 @@ export default function UnitNodeEdgeForm({ currentNodeData }: UnitNodeEdgeFormPr
             <div className="unit-list">
                 {nodeOutputs ? (
                     nodeOutputs.map((unitOutput: any) => {
-                        const { unit, unitOutputNodes } = unitOutput;
+                        const { unit } = unitOutput;
+
+                        // Check if `unit` is defined before accessing `unit.name`
+                        if (!unit) {
+                            return null; // Skip rendering this item if `unit` is undefined
+                        }
 
                         return (
                             <div key={unit.uuid} className="unit-item">
@@ -93,12 +98,12 @@ export default function UnitNodeEdgeForm({ currentNodeData }: UnitNodeEdgeFormPr
                                     className="unit-header"
                                     onClick={() => handleUnitToggle(unit.uuid)}
                                 >
-                                    <h3>{`${unit.name} ${unit.visibilityLevel}`}</h3>
+                                    <h3>{unit.name} {unit.visibilityLevel}</h3>
                                 </button>
 
                                 {collapsedUnits[unit.uuid] && (
                                     <div className="unit-nodes">
-                                        {unitOutputNodes && unitOutputNodes.map((node: any) => (
+                                        {unit.outputUnitNodes && unit.outputUnitNodes.map((node: any) => (
                                             <>
                                                 <h4 key={node.uuid}>{node.topicName || 'Unnamed Topic'}</h4>
                                                 <button key={node.uuid} className="unit-node" onClick={() => handleDeleteRepo(node.uuid)}>
@@ -114,6 +119,7 @@ export default function UnitNodeEdgeForm({ currentNodeData }: UnitNodeEdgeFormPr
                 ) : (
                     <p>No output nodes available.</p>
                 )}
+
             </div>
 
             <BaseModal
