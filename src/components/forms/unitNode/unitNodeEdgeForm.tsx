@@ -32,12 +32,12 @@ export default function UnitNodeEdgeForm({ currentNodeData }: UnitNodeEdgeFormPr
         getUnitsOutputByInputQuery({
             variables: {
                 unitNodeInputUuid: currentNodeData.uuid,
-                limit: 10,
+                limit: 7,
                 offset: 0
             }
         }).then(resultOutputNodes => {
             if (resultOutputNodes.data?.getUnits) {
-                console.log(resultOutputNodes.data.getUnits.units);
+                console.log('Full nodeOutputs:', resultOutputNodes.data.getUnits.units);
                 setNodeOutputs(resultOutputNodes.data.getUnits.units);
             }
         });
@@ -77,39 +77,37 @@ export default function UnitNodeEdgeForm({ currentNodeData }: UnitNodeEdgeFormPr
       };
     
 
-    return (
+      return (
         <>  
-            {
-                isLoaderActive && (<Spinner/>)
-            }
+            {isLoaderActive && (<Spinner/>)}
             <div className="unit-list">
                 {nodeOutputs ? (
                     nodeOutputs.map((unitOutput: any) => {
-                        const { unit } = unitOutput;
-
-                        // Check if `unit` is defined before accessing `unit.name`
-                        if (!unit) {
-                            return null; // Skip rendering this item if `unit` is undefined
-                        }
-
+                        // Use the unitOutput directly since it has the properties you need
+                        const { uuid, visibilityLevel, name, outputUnitNodes } = unitOutput;
+                        console.log('unitOutput:', unitOutput); // Log the entire unitOutput for debugging
+    
+                        // You can return null if there's no name or uuid, depending on your logic
+                        if (!uuid || !name) return null;
+    
                         return (
-                            <div key={unit.uuid} className="unit-item">
+                            <div key={uuid} className="unit-item">
                                 <button
                                     className="unit-header"
-                                    onClick={() => handleUnitToggle(unit.uuid)}
+                                    onClick={() => handleUnitToggle(uuid)}
                                 >
-                                    <h3>{unit.name} {unit.visibilityLevel}</h3>
+                                    <h3>{name} {visibilityLevel}</h3>
                                 </button>
-
-                                {collapsedUnits[unit.uuid] && (
+    
+                                {collapsedUnits[uuid] && (
                                     <div className="unit-nodes">
-                                        {unit.outputUnitNodes && unit.outputUnitNodes.map((node: any) => (
-                                            <>
-                                                <h4 key={node.uuid}>{node.topicName || 'Unnamed Topic'}</h4>
-                                                <button key={node.uuid} className="unit-node" onClick={() => handleDeleteRepo(node.uuid)}>
+                                        {outputUnitNodes && outputUnitNodes.map((node: any) => (
+                                            <div key={node.uuid}>
+                                                <h4>{node.topicName || 'Unnamed Topic'}</h4>
+                                                <button className="unit-node" onClick={() => handleDeleteRepo(node.uuid)}>
                                                     delete
                                                 </button>
-                                            </>
+                                            </div>
                                         ))}
                                     </div>
                                 )}
@@ -119,9 +117,8 @@ export default function UnitNodeEdgeForm({ currentNodeData }: UnitNodeEdgeFormPr
                 ) : (
                     <p>No output nodes available.</p>
                 )}
-
             </div>
-
+    
             <BaseModal
                 modalName={'Поиск по Unit'}
                 open={activeModal === 'unitNodeEdgeCreate'}
@@ -133,11 +130,11 @@ export default function UnitNodeEdgeForm({ currentNodeData }: UnitNodeEdgeFormPr
                     />
                 )}
             </BaseModal>
-
+    
             <button className="button_open_alter" onClick={() => openModal('unitNodeEdgeCreate')}>
                 Добавить
             </button>
-
+    
             <ResultQuery
                 resultData={resultData}
             />
