@@ -115,14 +115,19 @@ export default function UnitNodeEdgeForm({ currentNodeData }: UnitNodeEdgeFormPr
                                                 </button>
                                             </div>
                                         ))}
+                                        
                                     </div>
                                 )}
+                                
                             </div>
                         );
                     })
                 ) : (
                     <p>No output nodes available.</p>
                 )}
+                <div className="unit-item" onClick={() => openModal('unitNodeEdgeCreate')}>
+                    <h3>Добавить новый Output</h3>
+                </div>
             </div>
 
             <PaginationControls
@@ -143,10 +148,6 @@ export default function UnitNodeEdgeForm({ currentNodeData }: UnitNodeEdgeFormPr
                     />
                 )}
             </BaseModal>
-
-            <button className="button_open_alter" onClick={() => openModal('unitNodeEdgeCreate')}>
-                Добавить
-            </button>
 
             <ResultQuery
                 resultData={resultData}

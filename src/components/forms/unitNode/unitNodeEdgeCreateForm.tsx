@@ -112,9 +112,13 @@ export default function UnitNodeEdgeCreateForm({ currentNodeData }: UnitNodeEdge
                         {collapsedUnits[unit.uuid] && (
                             <div className="unit-nodes">
                                 {unit.outputUnitNodes.map((node: any) => (
-                                    <button key={node.uuid} className="unit-node" onClick={() => handleCreateEdge(node.uuid)}>
-                                        <h4>{node.topicName}</h4>
-                                    </button>
+                                    <div className="unit-node" key={node.uuid}>
+                                        <h4>{node.topicName} {node.state}</h4>
+                                        <button key={node.uuid} className="unit-node-add-button" onClick={() => handleCreateEdge(node.uuid)}>
+                                            add
+                                        </button>
+
+                                    </div>
                                 ))}
                             </div>
                         )}
