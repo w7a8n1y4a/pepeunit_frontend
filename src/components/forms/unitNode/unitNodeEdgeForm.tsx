@@ -27,30 +27,33 @@ export default function UnitNodeEdgeForm({ currentNodeData }: UnitNodeEdgeFormPr
         message: null
     });
     
-    // Pagination state
     const [currentPage, setCurrentPage] = useState(0);
     const [totalCount, setTotalCount] = useState(0);
-    const itemsPerPage = 7; // Set your items per page
+    const itemsPerPage = 7;
+
+    const fetchNodeOutputs = () => {
+        setIsLoaderActive(true);
+        getUnitsOutputByInputQuery({
+            variables: {
+                unitNodeInputUuid: currentNodeData.uuid,
+                limit: itemsPerPage,
+                offset: currentPage * itemsPerPage
+            }
+        }).then(ResultData => {
+            if (ResultData.data) {
+                setNodeOutputs(ResultData.data.getUnits.units);
+                setTotalCount(ResultData.data.getUnits.count);
+                setIsLoaderActive(false);
+            }
+        }).catch(error => {
+            setIsLoaderActive(false);
+            setResultData({ type: ResultType.Angry, message: error.graphQLErrors[0].message.slice(4) });
+        });
+    };
 
     useEffect(() => {
-        const fetchUnits = async () => {
-            const { data } = await getUnitsOutputByInputQuery({
-                variables: {
-                    unitNodeInputUuid: currentNodeData.uuid,
-                    limit: itemsPerPage,
-                    offset: currentPage * itemsPerPage
-                }
-            });
-            
-            if (data?.getUnits) {
-                console.log('Full nodeOutputs:', data.getUnits.units);
-                setNodeOutputs(data.getUnits.units);
-                setTotalCount(data.getUnits.count); // Get the total count of records
-            }
-        };
-        
-        fetchUnits();
-    }, [currentNodeData, currentPage]);
+        fetchNodeOutputs();
+    }, [currentNodeData, currentPage, activeModal]);
 
     const handleUnitToggle = (unitId: string) => {
         setCollapsedUnits(prev => ({
@@ -72,6 +75,7 @@ export default function UnitNodeEdgeForm({ currentNodeData }: UnitNodeEdgeFormPr
             }).then(result => {
                 if (result.data) {
                     setIsLoaderActive(false);
+                    fetchNodeOutputs();
                 }
             }).catch(error => {
                 setIsLoaderActive(false);
@@ -80,7 +84,6 @@ export default function UnitNodeEdgeForm({ currentNodeData }: UnitNodeEdgeFormPr
         }
     };
 
-    // Pagination controls
     const totalPages = Math.ceil(totalCount / itemsPerPage);
     
     const goToNextPage = () => {
@@ -133,7 +136,6 @@ export default function UnitNodeEdgeForm({ currentNodeData }: UnitNodeEdgeFormPr
                 )}
             </div>
 
-            {/* Pagination controls */}
             <div className="pagination-controls">
                 <button onClick={goToPreviousPage} disabled={currentPage === 0}>
                     Previous
