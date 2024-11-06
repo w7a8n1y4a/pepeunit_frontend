@@ -6,6 +6,7 @@ import { useModalStore } from '@stores/baseStore';
 import { ResultType } from '@rootTypes/resultEnum';
 import Spinner from '@primitives/spinner';
 import ResultQuery from '@primitives/resultQuery';
+import PaginationControls from '@primitives/pagination';
 import UnitNodeEdgeCreateForm from '../../forms/unitNode/unitNodeEdgeCreateForm';
 import '../form.css';
 
@@ -85,18 +86,6 @@ export default function UnitNodeEdgeForm({ currentNodeData }: UnitNodeEdgeFormPr
     };
 
     const totalPages = Math.ceil(totalCount / itemsPerPage);
-    
-    const goToNextPage = () => {
-        if (currentPage < totalPages - 1) {
-            setCurrentPage(prev => prev + 1);
-        }
-    };
-
-    const goToPreviousPage = () => {
-        if (currentPage > 0) {
-            setCurrentPage(prev => prev - 1);
-        }
-    };
 
     return (
         <>
@@ -136,15 +125,12 @@ export default function UnitNodeEdgeForm({ currentNodeData }: UnitNodeEdgeFormPr
                 )}
             </div>
 
-            <div className="pagination-controls">
-                <button onClick={goToPreviousPage} disabled={currentPage === 0}>
-                    Previous
-                </button>
-                <span>Page {currentPage + 1} of {totalPages}</span>
-                <button onClick={goToNextPage} disabled={currentPage >= totalPages - 1}>
-                    Next
-                </button>
-            </div>
+            <PaginationControls
+                currentPage={currentPage}
+                totalPages={totalPages}
+                goToNextPage={() => setCurrentPage(prev => prev + 1)}
+                goToPreviousPage={() => setCurrentPage(prev => prev - 1)}
+            />
 
             <BaseModal
                 modalName={'Поиск по Unit'}
