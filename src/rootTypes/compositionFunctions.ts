@@ -220,17 +220,17 @@ export type Query = {
   getBaseMetrics: BaseMetricsType;
   getBranchCommits: Array<CommitType>;
   getRepo: RepoType;
-  getRepos: Array<RepoType>;
+  getRepos: ReposResultType;
   getResourceAgents: Array<PermissionType>;
   getToken: Scalars["String"]["output"];
   getUnit: UnitType;
   getUnitCurrentSchema: Scalars["String"]["output"];
   getUnitEnv: Scalars["String"]["output"];
   getUnitNode: UnitNodeType;
-  getUnitNodes: Array<UnitNodeType>;
-  getUnits: UnitsResult;
+  getUnitNodes: UnitNodesResultType;
+  getUnits: UnitsResultType;
   getUser: UserType;
-  getUsers: Array<UserType>;
+  getUsers: UsersResultType;
   getVerificationUser: Scalars["String"]["output"];
   getVersions: RepoVersionsType;
 };
@@ -351,6 +351,12 @@ export type RepoVersionsType = {
   versions: Array<RepoVersionType>;
 };
 
+export type ReposResultType = {
+  __typename?: "ReposResultType";
+  count: Scalars["Int"]["output"];
+  repos: Array<RepoType>;
+};
+
 export type ResourceInput = {
   resourceType: PermissionEntities;
   resourceUuid: Scalars["UUID"]["input"];
@@ -428,6 +434,12 @@ export type UnitNodeUpdateInput = {
   visibilityLevel?: InputMaybe<VisibilityLevel>;
 };
 
+export type UnitNodesResultType = {
+  __typename?: "UnitNodesResultType";
+  count: Scalars["Int"]["output"];
+  unitNodes: Array<UnitNodeType>;
+};
+
 export type UnitType = {
   __typename?: "UnitType";
   createDatetime: Scalars["DateTime"]["output"];
@@ -453,8 +465,8 @@ export type UnitUpdateInput = {
   visibilityLevel?: InputMaybe<VisibilityLevel>;
 };
 
-export type UnitsResult = {
-  __typename?: "UnitsResult";
+export type UnitsResultType = {
+  __typename?: "UnitsResultType";
   count: Scalars["Int"]["output"];
   units: Array<UnitType>;
 };
@@ -502,6 +514,12 @@ export type UserType = {
 export type UserUpdateInput = {
   login?: InputMaybe<Scalars["String"]["input"]>;
   password?: InputMaybe<Scalars["String"]["input"]>;
+};
+
+export type UsersResultType = {
+  __typename?: "UsersResultType";
+  count: Scalars["Int"]["output"];
+  users: Array<UserType>;
 };
 
 export enum VisibilityLevel {
@@ -915,22 +933,26 @@ export type GetReposQueryVariables = Exact<{
 
 export type GetReposQuery = {
   __typename?: "Query";
-  getRepos: Array<{
-    __typename?: "RepoType";
-    uuid: string;
-    visibilityLevel: VisibilityLevel;
-    name: string;
-    createDatetime: string;
-    repoUrl: string;
-    isPublicRepository: boolean;
-    defaultBranch?: string | null;
-    isAutoUpdateRepo: boolean;
-    defaultCommit?: string | null;
-    isOnlyTagUpdate: boolean;
-    lastUpdateDatetime: string;
-    branches: Array<string>;
-    creatorUuid: string;
-  }>;
+  getRepos: {
+    __typename?: "ReposResultType";
+    count: number;
+    repos: Array<{
+      __typename?: "RepoType";
+      uuid: string;
+      visibilityLevel: VisibilityLevel;
+      name: string;
+      createDatetime: string;
+      repoUrl: string;
+      isPublicRepository: boolean;
+      defaultBranch?: string | null;
+      isAutoUpdateRepo: boolean;
+      defaultCommit?: string | null;
+      isOnlyTagUpdate: boolean;
+      lastUpdateDatetime: string;
+      branches: Array<string>;
+      creatorUuid: string;
+    }>;
+  };
 };
 
 export type GetBranchCommitsQueryVariables = Exact<{
@@ -1008,7 +1030,7 @@ export type GetUnitsQueryVariables = Exact<{
 export type GetUnitsQuery = {
   __typename?: "Query";
   getUnits: {
-    __typename?: "UnitsResult";
+    __typename?: "UnitsResultType";
     count: number;
     units: Array<{
       __typename?: "UnitType";
@@ -1044,7 +1066,7 @@ export type GetUnitsWithAllOutputQueryVariables = Exact<{
 export type GetUnitsWithAllOutputQuery = {
   __typename?: "Query";
   getUnits: {
-    __typename?: "UnitsResult";
+    __typename?: "UnitsResultType";
     count: number;
     units: Array<{
       __typename?: "UnitType";
@@ -1090,7 +1112,7 @@ export type GetUnitsOutputByInputQueryVariables = Exact<{
 export type GetUnitsOutputByInputQuery = {
   __typename?: "Query";
   getUnits: {
-    __typename?: "UnitsResult";
+    __typename?: "UnitsResultType";
     count: number;
     units: Array<{
       __typename?: "UnitType";
@@ -1158,16 +1180,20 @@ export type GetUnitNodesQueryVariables = Exact<{
 
 export type GetUnitNodesQuery = {
   __typename?: "Query";
-  getUnitNodes: Array<{
-    __typename?: "UnitNodeType";
-    uuid: string;
-    type: UnitNodeTypeEnum;
-    visibilityLevel: VisibilityLevel;
-    isRewritableInput: boolean;
-    topicName: string;
-    state?: string | null;
-    unitUuid: string;
-  }>;
+  getUnitNodes: {
+    __typename?: "UnitNodesResultType";
+    count: number;
+    unitNodes: Array<{
+      __typename?: "UnitNodeType";
+      uuid: string;
+      type: UnitNodeTypeEnum;
+      visibilityLevel: VisibilityLevel;
+      isRewritableInput: boolean;
+      topicName: string;
+      state?: string | null;
+      unitUuid: string;
+    }>;
+  };
 };
 
 export type GetTokenQueryVariables = Exact<{
@@ -1204,14 +1230,18 @@ export type GetUsersQueryVariables = Exact<{
 
 export type GetUsersQuery = {
   __typename?: "Query";
-  getUsers: Array<{
-    __typename?: "UserType";
-    uuid: string;
-    role: UserRole;
-    status: UserStatus;
-    login: string;
-    createDatetime: string;
-  }>;
+  getUsers: {
+    __typename?: "UsersResultType";
+    count: number;
+    users: Array<{
+      __typename?: "UserType";
+      uuid: string;
+      role: UserRole;
+      status: UserStatus;
+      login: string;
+      createDatetime: string;
+    }>;
+  };
 };
 
 export type GetVerificationUserQueryVariables = Exact<{ [key: string]: never }>;
@@ -2743,19 +2773,22 @@ export const GetReposDocument = gql`
         limit: $limit
       }
     ) {
-      uuid
-      visibilityLevel
-      name
-      createDatetime
-      repoUrl
-      isPublicRepository
-      defaultBranch
-      isAutoUpdateRepo
-      defaultCommit
-      isOnlyTagUpdate
-      lastUpdateDatetime
-      branches
-      creatorUuid
+      count
+      repos {
+        uuid
+        visibilityLevel
+        name
+        createDatetime
+        repoUrl
+        isPublicRepository
+        defaultBranch
+        isAutoUpdateRepo
+        defaultCommit
+        isOnlyTagUpdate
+        lastUpdateDatetime
+        branches
+        creatorUuid
+      }
     }
   }
 `;
@@ -3629,13 +3662,16 @@ export const GetUnitNodesDocument = gql`
         limit: $limit
       }
     ) {
-      uuid
-      type
-      visibilityLevel
-      isRewritableInput
-      topicName
-      state
-      unitUuid
+      count
+      unitNodes {
+        uuid
+        type
+        visibilityLevel
+        isRewritableInput
+        topicName
+        state
+        unitUuid
+      }
     }
   }
 `;
@@ -3869,11 +3905,14 @@ export const GetUsersDocument = gql`
         limit: $limit
       }
     ) {
-      uuid
-      role
-      status
-      login
-      createDatetime
+      count
+      users {
+        uuid
+        role
+        status
+        login
+        createDatetime
+      }
     }
   }
 `;

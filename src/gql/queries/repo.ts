@@ -46,19 +46,22 @@ gql`
                 limit: $limit
             }
         ) {
-            uuid
-            visibilityLevel
-            name
-            createDatetime
-            repoUrl
-            isPublicRepository
-            defaultBranch
-            isAutoUpdateRepo
-            defaultCommit
-            isOnlyTagUpdate
-            lastUpdateDatetime
-            branches
-            creatorUuid
+            count
+            repos {
+                uuid
+                visibilityLevel
+                name
+                createDatetime
+                repoUrl
+                isPublicRepository
+                defaultBranch
+                isAutoUpdateRepo
+                defaultCommit
+                isOnlyTagUpdate
+                lastUpdateDatetime
+                branches
+                creatorUuid
+            }
         }
     }
 

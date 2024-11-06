@@ -38,7 +38,7 @@ export default function GraphContent(){
             setGraphData({
                 nodes: [
                   ...graphData.nodes,
-                  ...reposData.data.getRepos.map((repo) => ({
+                  ...reposData.data.getRepos.repos.map((repo) => ({
                     id: repo.uuid,
                     type: NodeType.Repo,
                     color: getNodeColor(NodeType.Repo),
@@ -54,7 +54,7 @@ export default function GraphContent(){
                 ))],
                 links: [
                   ...graphData.links,
-                  ...reposData.data.getRepos.map((repo) => ({source: import.meta.env.VITE_INSTANCE_NAME, target: repo.uuid, value: 1})),
+                  ...reposData.data.getRepos.repos.map((repo) => ({source: import.meta.env.VITE_INSTANCE_NAME, target: repo.uuid, value: 1})),
                   ...unitsData.data.getUnits.units.map((unit) => ({source: unit.repoUuid, target: unit.uuid, value: 1}))
                 ]
               }
@@ -92,7 +92,7 @@ export default function GraphContent(){
             setGraphData({
                 nodes: [
                   ...graphData.nodes,
-                  ...unitNodesData.data.getUnitNodes.map((unitNode) => ({
+                  ...unitNodesData.data.getUnitNodes.unitNodes.map((unitNode) => ({
                     id: unitNode.uuid,
                     type: unitNode.type == UnitNodeTypeEnum.Input ? NodeType.Input : NodeType.Output,
                     color: getNodeColor(unitNode.type == UnitNodeTypeEnum.Input ? NodeType.Input : NodeType.Output),
@@ -101,7 +101,7 @@ export default function GraphContent(){
                 ))],
                 links: [
                   ...graphData.links,
-                  ...unitNodesData.data.getUnitNodes.map((unitNode) => ({source: unitNode.unitUuid, target: unitNode.uuid, value: 1})),
+                  ...unitNodesData.data.getUnitNodes.unitNodes.map((unitNode) => ({source: unitNode.unitUuid, target: unitNode.uuid, value: 1})),
                 ]
               }
             )

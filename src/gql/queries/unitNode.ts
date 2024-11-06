@@ -36,13 +36,16 @@ gql`
                 limit: $limit
             }
         ) {
-            uuid
-            type
-            visibilityLevel
-            isRewritableInput
-            topicName
-            state
-            unitUuid
+            count
+            unitNodes {
+                uuid
+                type
+                visibilityLevel
+                isRewritableInput
+                topicName
+                state
+                unitUuid
+            }
         }
     }
 `
