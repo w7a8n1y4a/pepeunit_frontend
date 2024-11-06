@@ -30,7 +30,7 @@ export default function UnitNodeEdgeForm({ currentNodeData }: UnitNodeEdgeFormPr
     
     const [currentPage, setCurrentPage] = useState(0);
     const [totalCount, setTotalCount] = useState(0);
-    const itemsPerPage = 7;
+    const itemsPerPage = 6;
 
     const fetchNodeOutputs = () => {
         setIsLoaderActive(true);
@@ -108,9 +108,9 @@ export default function UnitNodeEdgeForm({ currentNodeData }: UnitNodeEdgeFormPr
                                 {collapsedUnits[uuid] && (
                                     <div className="unit-nodes">
                                         {outputUnitNodes && outputUnitNodes.map((node: any) => (
-                                            <div key={node.uuid}>
-                                                <h4>{node.topicName || 'Unnamed Topic'}</h4>
-                                                <button className="unit-node" onClick={() => handleDeleteRepo(node.uuid)}>
+                                            <div className="unit-node" key={node.uuid}>
+                                                <h4>{node.topicName || 'Unnamed Topic'} {node.state}</h4>
+                                                <button className="unit-node-del-button" onClick={() => handleDeleteRepo(node.uuid)}>
                                                     delete
                                                 </button>
                                             </div>

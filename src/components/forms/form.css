@@ -218,3 +218,112 @@ input:checked+.slider:before {
     display: flex;
     flex-direction: column;
 }
+
+.pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 10px 0;
+    gap: 10px;
+}
+
+.pagination-controls button {
+    background-color: #4CAF50;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.pagination-controls button:disabled {
+    background-color: #101010;
+    border: solid 3px;
+    border-color: #282828;
+    cursor: not-allowed;
+}
+
+.pagination-controls button:not(:disabled):hover {
+    background-color: #45a049;
+}
+
+.pagination-controls span {
+    font-size: 14px;
+    color: #777777;
+}
+
+
+
+.unit-item {
+    margin-bottom: 8px;
+    width: 400px;
+    border: 2px solid #282828;
+    border-radius: 4px;
+    background-color: #101010;
+    padding: 8px;
+}
+
+.unit-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: transparent;
+    border: none;
+    text-align: left;
+    width: 100%;
+    padding: 5px;
+    cursor: pointer;
+    color: #ffffff;
+}
+
+.unit-header h3 {
+    font-size: 16px;
+    color: #2196F3;
+    margin: 0;
+    display: flex;
+    align-items: center;
+}
+
+.unit-nodes {
+    display: flex;
+    flex-direction: column; /* Align children vertically */
+    gap: 5px; /* Adds 5px gap between each unit-nodes element */
+}
+
+.unit-node {
+    padding: 7px;
+    border: 2px solid #282828;
+    border-radius: 4px;
+    background-color: #101010;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.unit-node h4 {
+    font-size: 14px;
+    color: #F44336;
+    margin: 0;
+    margin-bottom: 3px;
+    margin-left: 5px;
+}
+
+.unit-node-del-button {
+    background-color: transparent;
+    border: solid 2px #ff3c00cc;
+    color: #ff3c00cc;
+    border-radius: 4px;
+    padding: 5px 10px;
+    font-size: 14px;
+    cursor: pointer;
+    margin-left: auto; /* Push button to the right */
+    text-align: center;
+}
+
+
+.unit-node-del-button:hover {
+    background-color: #ff3c00cc;
+    color: #ffffff;
+}
