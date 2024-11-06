@@ -38,11 +38,14 @@ gql`
                 limit: $limit
             }        
         ){
-            uuid
-            role
-            status
-            login
-            createDatetime
+            count
+            users {
+                uuid
+                role
+                status
+                login
+                createDatetime
+            }   
         }
     }
 
