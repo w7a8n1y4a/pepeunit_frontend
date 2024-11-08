@@ -16,12 +16,15 @@ export default function UnitNodeContent(){
   return (
     <>
       <BaseModal
-        modalName={currentNodeData?.type + ' ' + currentNodeData?.name}
+        modalName={currentNodeData?.type}
         open={activeModal === 'inputMenu' || activeModal === 'outputMenu'}
       >
         <div className="modal_menu_content">
           <div>
-            {currentNodeData?.state || "Данных нет"}
+            {currentNodeData?.name}
+          </div>
+          <div>
+            Состояние: {currentNodeData?.state || "Данных нет"}
           </div>
 
           {

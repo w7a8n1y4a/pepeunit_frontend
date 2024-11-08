@@ -4,6 +4,7 @@ import DefaultInput from '@primitives/defaultInput'
 import { ResultType } from '@rootTypes/resultEnum'
 import Spinner from '@primitives/spinner'
 import ResultQuery from '@primitives/resultQuery'
+import PaginationControls from '@primitives/pagination';
 import '../form.css'
 
 interface UnitNodeEdgeFormProps {
@@ -26,6 +27,10 @@ export default function UnitNodeEdgeCreateForm({ currentNodeData }: UnitNodeEdge
     const [ searchString, setSearchString ] = useState('');
     const [ data, setData ] = useState<any>(null);
 
+    const [currentPage, setCurrentPage] = useState(0);
+    const [totalCount, setTotalCount] = useState(0);
+    const itemsPerPage = 6;
+
     const [ getUnitsWithAllOutput ] = useGetUnitsWithAllOutputLazyQuery();
     const [ createUnitNodeEdgeMutation ] = useCreateUnitNodeEdgeMutation();
 
@@ -34,18 +39,19 @@ export default function UnitNodeEdgeCreateForm({ currentNodeData }: UnitNodeEdge
         getUnitsWithAllOutput({
             variables: {
                 searchString: searchString,
-                limit: 7,
-                offset: 0
+                limit: itemsPerPage,
+                offset: currentPage * itemsPerPage
             }
         }).then(resultUnitsWithOutput => {
                 if (resultUnitsWithOutput.data?.getUnits){
                     console.log(resultUnitsWithOutput.data.getUnits.units)
                     setIsLoaderActive(false)
+                    setTotalCount(resultUnitsWithOutput.data.getUnits.count);
                     setData(resultUnitsWithOutput.data.getUnits.units)
                 }
             }
         )
-    }, [searchString]);
+    }, [searchString, currentPage]);
 
     const updateErrorState = (field: keyof typeof errorState, hasError: boolean) => {
         setErrorState(prevState => ({
@@ -83,6 +89,8 @@ export default function UnitNodeEdgeCreateForm({ currentNodeData }: UnitNodeEdge
             setResultData({ type: ResultType.Angry, message: error.graphQLErrors[0].message.slice(4)})
         })
     };
+
+    const totalPages = Math.ceil(totalCount / itemsPerPage);
 
     return (
         <>  
@@ -125,9 +133,17 @@ export default function UnitNodeEdgeCreateForm({ currentNodeData }: UnitNodeEdge
                     </div>
                 ))}
             </div>
+            <PaginationControls
+                currentPage={currentPage}
+                totalPages={totalPages}
+                goToNextPage={() => setCurrentPage(prev => prev + 1)}
+                goToPreviousPage={() => setCurrentPage(prev => prev - 1)}
+            />
+
             <ResultQuery
                 resultData={resultData}
             />
+            
         </>
     );
 }
