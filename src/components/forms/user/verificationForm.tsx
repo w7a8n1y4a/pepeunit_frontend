@@ -30,20 +30,14 @@ export default function VerificationForm() {
                 isLoaderActive && (<Spinner/>)
             }
             <p>
-                1. Перейдите в бота <a style={{color: "#0077ff"}} href={import.meta.env.VITE_TG_BOT_URL} target="_blank">
-                {import.meta.env.VITE_TG_BOT_NAME}</a>
-            </p>
-            <p>
-                2. Введите команду <u>/verification</u>
-            </p>
-            <p>
-                3. Введите данный код:
+                1. Сгенерируйте уникальную ссылку
             </p>
             <div className='code_view'>
-                {verificationCode}
+                <a style={{color: "#0077ff"}} href={verificationCode} target="_blank">
+                {verificationCode}</a>
             </div>
             <button className="button_main_action" onClick={handleVerification}>
-                Сгенерировать одноразовый код
+                Сгенерировать
             </button>
         </>
     );
