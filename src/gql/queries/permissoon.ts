@@ -4,18 +4,27 @@ gql`
     query getResourceAgents(
         $resourceUuid: UUID!
         $resourceType: PermissionEntities!
+        $agentType: PermissionEntities
+        $offset: Int
+        $limit: Int
     ) {
         getResourceAgents (
-            data: {
+            filters: {
                 resourceUuid: $resourceUuid
                 resourceType: $resourceType
+                agentType: $agentType
+                offset: $offset
+                limit: $limit
             }
-        ) {
-            uuid
-            agentUuid
-            agentType
-            resourceUuid
-            resourceType
+        ) { 
+            count
+            permissions {
+                uuid
+                agentUuid
+                agentType
+                resourceUuid
+                resourceType
+            }
         }
     }
 `

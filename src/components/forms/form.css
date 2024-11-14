@@ -354,3 +354,28 @@ input:checked+.slider:before {
     background-color: #ff3c00cc;
     color: #ffffff;
 }
+
+.entity-type-selector {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.entity-button {
+    padding: 8px 16px;
+    border: 2px solid #282828;
+    border-radius: 4px;
+    background-color: #101010;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.entity-button.active {
+    background-color: #007bff;
+    color: #fff;
+    border-color: #007bff;
+}
+
+.entity-button:hover {
+    background-color: #282828;
+}

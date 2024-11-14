@@ -206,6 +206,14 @@ export enum PermissionEntities {
   User = "USER",
 }
 
+export type PermissionFilterInput = {
+  agentType?: InputMaybe<PermissionEntities>;
+  limit?: InputMaybe<Scalars["Int"]["input"]>;
+  offset?: InputMaybe<Scalars["Int"]["input"]>;
+  resourceType: PermissionEntities;
+  resourceUuid: Scalars["UUID"]["input"];
+};
+
 export type PermissionType = {
   __typename?: "PermissionType";
   agentType: PermissionEntities;
@@ -215,13 +223,19 @@ export type PermissionType = {
   uuid: Scalars["UUID"]["output"];
 };
 
+export type PermissionsType = {
+  __typename?: "PermissionsType";
+  count: Scalars["Int"]["output"];
+  permissions: Array<PermissionType>;
+};
+
 export type Query = {
   __typename?: "Query";
   getBaseMetrics: BaseMetricsType;
   getBranchCommits: Array<CommitType>;
   getRepo: RepoType;
   getRepos: ReposResultType;
-  getResourceAgents: Array<PermissionType>;
+  getResourceAgents: PermissionsType;
   getToken: Scalars["String"]["output"];
   getUnit: UnitType;
   getUnitCurrentSchema: Scalars["String"]["output"];
@@ -249,7 +263,7 @@ export type QueryGetReposArgs = {
 };
 
 export type QueryGetResourceAgentsArgs = {
-  data: ResourceInput;
+  filters: PermissionFilterInput;
 };
 
 export type QueryGetTokenArgs = {
@@ -355,11 +369,6 @@ export type ReposResultType = {
   __typename?: "ReposResultType";
   count: Scalars["Int"]["output"];
   repos: Array<RepoType>;
-};
-
-export type ResourceInput = {
-  resourceType: PermissionEntities;
-  resourceUuid: Scalars["UUID"]["input"];
 };
 
 export type UnitCreateInput = {
@@ -881,18 +890,25 @@ export type GetBaseMetricsQuery = {
 export type GetResourceAgentsQueryVariables = Exact<{
   resourceUuid: Scalars["UUID"]["input"];
   resourceType: PermissionEntities;
+  agentType?: InputMaybe<PermissionEntities>;
+  offset?: InputMaybe<Scalars["Int"]["input"]>;
+  limit?: InputMaybe<Scalars["Int"]["input"]>;
 }>;
 
 export type GetResourceAgentsQuery = {
   __typename?: "Query";
-  getResourceAgents: Array<{
-    __typename?: "PermissionType";
-    uuid: string;
-    agentUuid: string;
-    agentType: PermissionEntities;
-    resourceUuid: string;
-    resourceType: PermissionEntities;
-  }>;
+  getResourceAgents: {
+    __typename?: "PermissionsType";
+    count: number;
+    permissions: Array<{
+      __typename?: "PermissionType";
+      uuid: string;
+      agentUuid: string;
+      agentType: PermissionEntities;
+      resourceUuid: string;
+      resourceType: PermissionEntities;
+    }>;
+  };
 };
 
 export type GetRepoQueryVariables = Exact<{
@@ -2586,15 +2602,27 @@ export const GetResourceAgentsDocument = gql`
   query getResourceAgents(
     $resourceUuid: UUID!
     $resourceType: PermissionEntities!
+    $agentType: PermissionEntities
+    $offset: Int
+    $limit: Int
   ) {
     getResourceAgents(
-      data: { resourceUuid: $resourceUuid, resourceType: $resourceType }
+      filters: {
+        resourceUuid: $resourceUuid
+        resourceType: $resourceType
+        agentType: $agentType
+        offset: $offset
+        limit: $limit
+      }
     ) {
-      uuid
-      agentUuid
-      agentType
-      resourceUuid
-      resourceType
+      count
+      permissions {
+        uuid
+        agentUuid
+        agentType
+        resourceUuid
+        resourceType
+      }
     }
   }
 `;
@@ -2613,6 +2641,9 @@ export const GetResourceAgentsDocument = gql`
  *   variables: {
  *      resourceUuid: // value for 'resourceUuid'
  *      resourceType: // value for 'resourceType'
+ *      agentType: // value for 'agentType'
+ *      offset: // value for 'offset'
+ *      limit: // value for 'limit'
  *   },
  * });
  */
