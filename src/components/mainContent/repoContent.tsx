@@ -3,6 +3,7 @@ import { useUpdateLocalRepoMutation, useUpdateUnitsFirmwareMutation, useDeleteRe
 import BaseModal from '../modal/baseModal'
 import CreateUnitForm from '../forms/unit/createUnitForm';
 import UpdateRepoForm from '../forms/repo/updateRepoForm';
+import PermissionForm from '../forms/permission/permissionForm';
 import UpdateRepoCredentialsForm from '../forms/repo/updateRepoCredentialsForm'
 import { useState } from 'react';
 import Spinner from '@primitives/spinner'
@@ -117,6 +118,9 @@ export default function RepoContent(){
           {
             isLoaderActive && (<Spinner/>)
           }
+          <button className="button_open_alter" onClick={() => openModal('permissionMenu')}>
+            Доступы
+          </button>
           <button className="button_open_alter" onClick={() => openModal('createUnit')}>
             Создать Unit
           </button>
@@ -133,6 +137,15 @@ export default function RepoContent(){
             resultData={resultData}
           />
         </div>
+      </BaseModal>
+      <BaseModal modalName='Доступы' open={activeModal === 'permissionMenu'} openModalType='repoMenu'>
+        {
+          currentNodeData && (
+            <PermissionForm
+              currentNodeData={currentNodeData}
+            />
+          )
+        }
       </BaseModal>
       <BaseModal modalName='Создание Unit' open={activeModal === 'createUnit'} openModalType='repoMenu'>
         {
