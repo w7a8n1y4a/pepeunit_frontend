@@ -43,7 +43,6 @@ export default function PermissionCreateForm({ currentNodeData, currentNodeType 
         setIsLoaderActive(true)
         fetchEntitiesByFilter(searchString, selectedEntityType, itemsPerPage, currentPage * itemsPerPage)
             .then(result => {
-                console.log("Fetched entities:", result);
                 setIsLoaderActive(false);
 
                 if (result?.data) {
@@ -72,7 +71,6 @@ export default function PermissionCreateForm({ currentNodeData, currentNodeType 
                         count = result.data.getUnitNodes.count
                     }
                     
-                    console.log(formattedData)
                     setNodeOutputs(formattedData);
                     setTotalCount(count);
                 } else {
@@ -96,8 +94,6 @@ export default function PermissionCreateForm({ currentNodeData, currentNodeType 
             message: null
         })
 
-        console.log(entityUuid, currentNodeData.uuid)
-        
         createPermissionMutation({
             variables: {
                 agentUuid: entityUuid,
@@ -151,7 +147,6 @@ export default function PermissionCreateForm({ currentNodeData, currentNodeType 
             <div className="unit-list">
                 {nodeOutputs ? (
                     nodeOutputs.map((unitOutput: any) => {
-                        console.log('unitOutput:', unitOutput);
                         if ( unitOutput.length === 0) return null;
 
                         return (
