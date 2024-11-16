@@ -22,6 +22,7 @@ gql`
         }
     }
     query getUnits(
+        $uuids: [UUID!]
         $creatorUuid: UUID
         $repoUuid: UUID
         $searchString: String
@@ -35,6 +36,7 @@ gql`
     ) {
         getUnits(
             filters: {
+                uuids: $uuids
                 creatorUuid: $creatorUuid
                 repoUuid: $repoUuid
                 searchString: $searchString

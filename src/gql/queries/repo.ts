@@ -23,6 +23,7 @@ gql`
         }
     }
     query getRepos(
+        $uuids: [UUID!]
         $creatorUuid: UUID
         $searchString: String
         $isPublicRepository: Boolean
@@ -35,6 +36,7 @@ gql`
     ) {
         getRepos(
             filters: {
+                uuids: $uuids
                 creatorUuid: $creatorUuid
                 searchString: $searchString
                 isPublicRepository: $isPublicRepository

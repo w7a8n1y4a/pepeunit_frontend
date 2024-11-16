@@ -17,6 +17,7 @@ gql`
         }
     }
     query getUnitNodes(
+        $uuids: [UUID!]
         $unitUuid: UUID
         $searchString: String
         $type: [UnitNodeTypeEnum!]
@@ -27,6 +28,7 @@ gql`
     ) {
         getUnitNodes(
             filters: {
+                uuids: $uuids
                 unitUuid: $unitUuid
                 searchString: $searchString
                 type: $type
