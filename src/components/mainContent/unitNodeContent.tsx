@@ -1,10 +1,11 @@
 import BaseModal from '../modal/baseModal'
 
-import { UnitNodeTypeEnum } from '@rootTypes/compositionFunctions'
+import { UnitNodeTypeEnum, PermissionEntities } from '@rootTypes/compositionFunctions'
 import { useModalStore, useNodeStore } from '@stores/baseStore';
 import UpdateUnitNodeForm from '../forms/unitNode/updateUnitNodeForm';
 import UnitNodeSetStateForm from '../forms/unitNode/unitNodeSetStateForm';
 import UnitNodeEdgeForm from '../forms/unitNode/unitNodeEdgeForm'
+import PermissionForm from '../forms/permission/permissionForm';
 import useModalHandlers from '@handlers/useModalHandlers';
 
 
@@ -26,7 +27,9 @@ export default function UnitNodeContent(){
           <div>
             Состояние: {currentNodeData?.state || "Данных нет"}
           </div>
-
+          <button className="button_open_alter" onClick={() => openModal('permissionUnitNodeMenu')}>
+            Доступы
+          </button>
           {
             currentNodeData?.type == UnitNodeTypeEnum.Input ? (
               <>
@@ -43,6 +46,17 @@ export default function UnitNodeContent(){
             Настройки
           </button>
         </div>
+      </BaseModal>
+
+      <BaseModal modalName={'Доступы ' + currentNodeData?.name} open={activeModal === 'permissionUnitNodeMenu'} openModalType='inputMenu'>
+        {
+          currentNodeData && (
+            <PermissionForm
+              currentNodeData={currentNodeData}
+              currentNodeType={PermissionEntities.UnitNode}
+            />
+          )
+        }
       </BaseModal>
 
       <BaseModal

@@ -118,7 +118,7 @@ export default function RepoContent(){
           {
             isLoaderActive && (<Spinner/>)
           }
-          <button className="button_open_alter" onClick={() => openModal('permissionMenu')}>
+          <button className="button_open_alter" onClick={() => openModal('permissionRepoMenu')}>
             Доступы
           </button>
           <button className="button_open_alter" onClick={() => openModal('createUnit')}>
@@ -138,7 +138,7 @@ export default function RepoContent(){
           />
         </div>
       </BaseModal>
-      <BaseModal modalName='Доступы' open={activeModal === 'permissionMenu'} openModalType='repoMenu'>
+      <BaseModal modalName={'Доступы ' + currentNodeData?.name} open={activeModal === 'permissionRepoMenu'} openModalType='repoMenu'>
         {
           currentNodeData && (
             <PermissionForm

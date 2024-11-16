@@ -1,10 +1,11 @@
 import { ResultType } from '@rootTypes/resultEnum'
-import { useDeleteUnitMutation } from '@rootTypes/compositionFunctions'
+import { useDeleteUnitMutation, PermissionEntities } from '@rootTypes/compositionFunctions'
 import BaseModal from '../modal/baseModal'
 import { useState } from 'react';
 import Spinner from '@primitives/spinner'
 import ResultQuery from '@primitives/resultQuery'
 import UpdateUnitForm from '../forms/unit/updateUnitForm';
+import PermissionForm from '../forms/permission/permissionForm';
 import UpdateUnitEnvForm from '../forms/unit/updateUnitEnvForm'
 
 import { useGraphStore } from '@stores/graphStore';
@@ -106,6 +107,9 @@ export default function UnitContent(){
           {
             isLoaderActive && (<Spinner/>)
           }
+          <button className="button_open_alter" onClick={() => openModal('permissionUnitMenu')}>
+            Доступы
+          </button>
           <button className="button_open_alter" onClick={() => fileUpload("tar")}>
             Скачать tar
           </button>
@@ -123,7 +127,16 @@ export default function UnitContent(){
           />
         </div>
       </BaseModal>
-
+      <BaseModal modalName={'Доступы ' + currentNodeData?.name } open={activeModal === 'permissionUnitMenu'} openModalType='unitMenu'>
+        {
+          currentNodeData && (
+            <PermissionForm
+              currentNodeData={currentNodeData}
+              currentNodeType={PermissionEntities.Unit}
+            />
+          )
+        }
+      </BaseModal>
       <BaseModal
         modalName='Настройки'
         open={activeModal === 'unitSettingsMenu'}
