@@ -21,6 +21,7 @@ gql`
     }
 
     query getUsers(
+        $uuids: [UUID!]
         $searchString: String
         $role: [UserRole!]
         $status: [UserStatus!]
@@ -30,6 +31,7 @@ gql`
     ) {
         getUsers (
             filters: {
+                uuids: $uuids
                 searchString: $searchString
                 role: $role
                 status: $status

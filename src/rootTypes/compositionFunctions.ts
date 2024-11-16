@@ -323,6 +323,7 @@ export type RepoFilterInput = {
   orderByCreateDate?: InputMaybe<OrderByDate>;
   orderByLastUpdate?: InputMaybe<OrderByDate>;
   searchString?: InputMaybe<Scalars["String"]["input"]>;
+  uuids?: InputMaybe<Array<Scalars["UUID"]["input"]>>;
   visibilityLevel?: InputMaybe<Array<VisibilityLevel>>;
 };
 
@@ -391,6 +392,7 @@ export type UnitFilterInput = {
   repoUuid?: InputMaybe<Scalars["UUID"]["input"]>;
   searchString?: InputMaybe<Scalars["String"]["input"]>;
   unitNodeInputUuid?: InputMaybe<Scalars["UUID"]["input"]>;
+  uuids?: InputMaybe<Array<Scalars["UUID"]["input"]>>;
   visibilityLevel?: InputMaybe<Array<VisibilityLevel>>;
 };
 
@@ -413,6 +415,7 @@ export type UnitNodeFilterInput = {
   searchString?: InputMaybe<Scalars["String"]["input"]>;
   type?: InputMaybe<Array<UnitNodeTypeEnum>>;
   unitUuid?: InputMaybe<Scalars["UUID"]["input"]>;
+  uuids?: InputMaybe<Array<Scalars["UUID"]["input"]>>;
   visibilityLevel?: InputMaybe<Array<VisibilityLevel>>;
 };
 
@@ -497,6 +500,7 @@ export type UserFilterInput = {
   role?: InputMaybe<Array<UserRole>>;
   searchString?: InputMaybe<Scalars["String"]["input"]>;
   status?: InputMaybe<Array<UserStatus>>;
+  uuids?: InputMaybe<Array<Scalars["UUID"]["input"]>>;
 };
 
 export enum UserRole {
@@ -936,6 +940,9 @@ export type GetRepoQuery = {
 };
 
 export type GetReposQueryVariables = Exact<{
+  uuids?: InputMaybe<
+    Array<Scalars["UUID"]["input"]> | Scalars["UUID"]["input"]
+  >;
   creatorUuid?: InputMaybe<Scalars["UUID"]["input"]>;
   searchString?: InputMaybe<Scalars["String"]["input"]>;
   isPublicRepository?: InputMaybe<Scalars["Boolean"]["input"]>;
@@ -1031,6 +1038,9 @@ export type GetUnitQuery = {
 };
 
 export type GetUnitsQueryVariables = Exact<{
+  uuids?: InputMaybe<
+    Array<Scalars["UUID"]["input"]> | Scalars["UUID"]["input"]
+  >;
   creatorUuid?: InputMaybe<Scalars["UUID"]["input"]>;
   repoUuid?: InputMaybe<Scalars["UUID"]["input"]>;
   searchString?: InputMaybe<Scalars["String"]["input"]>;
@@ -1185,6 +1195,9 @@ export type GetUnitNodeQuery = {
 };
 
 export type GetUnitNodesQueryVariables = Exact<{
+  uuids?: InputMaybe<
+    Array<Scalars["UUID"]["input"]> | Scalars["UUID"]["input"]
+  >;
   unitUuid?: InputMaybe<Scalars["UUID"]["input"]>;
   searchString?: InputMaybe<Scalars["String"]["input"]>;
   type?: InputMaybe<Array<UnitNodeTypeEnum> | UnitNodeTypeEnum>;
@@ -1236,6 +1249,9 @@ export type GetUserQuery = {
 };
 
 export type GetUsersQueryVariables = Exact<{
+  uuids?: InputMaybe<
+    Array<Scalars["UUID"]["input"]> | Scalars["UUID"]["input"]
+  >;
   searchString?: InputMaybe<Scalars["String"]["input"]>;
   role?: InputMaybe<Array<UserRole> | UserRole>;
   status?: InputMaybe<Array<UserStatus> | UserStatus>;
@@ -2781,6 +2797,7 @@ export type GetRepoQueryResult = Apollo.QueryResult<
 >;
 export const GetReposDocument = gql`
   query getRepos(
+    $uuids: [UUID!]
     $creatorUuid: UUID
     $searchString: String
     $isPublicRepository: Boolean
@@ -2793,6 +2810,7 @@ export const GetReposDocument = gql`
   ) {
     getRepos(
       filters: {
+        uuids: $uuids
         creatorUuid: $creatorUuid
         searchString: $searchString
         isPublicRepository: $isPublicRepository
@@ -2836,6 +2854,7 @@ export const GetReposDocument = gql`
  * @example
  * const { data, loading, error } = useGetReposQuery({
  *   variables: {
+ *      uuids: // value for 'uuids'
  *      creatorUuid: // value for 'creatorUuid'
  *      searchString: // value for 'searchString'
  *      isPublicRepository: // value for 'isPublicRepository'
@@ -3149,6 +3168,7 @@ export type GetUnitQueryResult = Apollo.QueryResult<
 >;
 export const GetUnitsDocument = gql`
   query getUnits(
+    $uuids: [UUID!]
     $creatorUuid: UUID
     $repoUuid: UUID
     $searchString: String
@@ -3162,6 +3182,7 @@ export const GetUnitsDocument = gql`
   ) {
     getUnits(
       filters: {
+        uuids: $uuids
         creatorUuid: $creatorUuid
         repoUuid: $repoUuid
         searchString: $searchString
@@ -3205,6 +3226,7 @@ export const GetUnitsDocument = gql`
  * @example
  * const { data, loading, error } = useGetUnitsQuery({
  *   variables: {
+ *      uuids: // value for 'uuids'
  *      creatorUuid: // value for 'creatorUuid'
  *      repoUuid: // value for 'repoUuid'
  *      searchString: // value for 'searchString'
@@ -3674,6 +3696,7 @@ export type GetUnitNodeQueryResult = Apollo.QueryResult<
 >;
 export const GetUnitNodesDocument = gql`
   query getUnitNodes(
+    $uuids: [UUID!]
     $unitUuid: UUID
     $searchString: String
     $type: [UnitNodeTypeEnum!]
@@ -3684,6 +3707,7 @@ export const GetUnitNodesDocument = gql`
   ) {
     getUnitNodes(
       filters: {
+        uuids: $uuids
         unitUuid: $unitUuid
         searchString: $searchString
         type: $type
@@ -3719,6 +3743,7 @@ export const GetUnitNodesDocument = gql`
  * @example
  * const { data, loading, error } = useGetUnitNodesQuery({
  *   variables: {
+ *      uuids: // value for 'uuids'
  *      unitUuid: // value for 'unitUuid'
  *      searchString: // value for 'searchString'
  *      type: // value for 'type'
@@ -3919,6 +3944,7 @@ export type GetUserQueryResult = Apollo.QueryResult<
 >;
 export const GetUsersDocument = gql`
   query getUsers(
+    $uuids: [UUID!]
     $searchString: String
     $role: [UserRole!]
     $status: [UserStatus!]
@@ -3928,6 +3954,7 @@ export const GetUsersDocument = gql`
   ) {
     getUsers(
       filters: {
+        uuids: $uuids
         searchString: $searchString
         role: $role
         status: $status
@@ -3960,6 +3987,7 @@ export const GetUsersDocument = gql`
  * @example
  * const { data, loading, error } = useGetUsersQuery({
  *   variables: {
+ *      uuids: // value for 'uuids'
  *      searchString: // value for 'searchString'
  *      role: // value for 'role'
  *      status: // value for 'status'
