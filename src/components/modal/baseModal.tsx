@@ -18,6 +18,7 @@ export default function BaseModal({modalName, children, open, openModalType}: Mo
     
     return ReactDOM.createPortal(
         <dialog open={open}>
+            {}
             <div className="modal_name">
                 {modalName}
             </div>

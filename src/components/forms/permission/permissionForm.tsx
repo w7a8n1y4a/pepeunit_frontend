@@ -149,7 +149,7 @@ export default function PermissionForm({ currentNodeData, currentNodeType }: Per
                         );
                     })
                 ) : (<></>)}
-                <div className="unit-item" onClick={() => openModal('unitPermissionCreate')}>
+                <div className="unit-item" onClick={() => openModal('unitPermissionCreate' + currentNodeType)}>
                     <h3>Добавить доступ</h3>
                 </div>
             </div>
@@ -162,8 +162,8 @@ export default function PermissionForm({ currentNodeData, currentNodeType }: Per
             />
 
             <BaseModal
-                modalName={'Поиск сущностей'}
-                open={activeModal === 'unitPermissionCreate'}
+                modalName={'Поиск сущностей ' + currentNodeData?.name}
+                open={activeModal === 'unitPermissionCreate' + currentNodeType}
                 openModalType={"permissionMenu"} 
             >
                 {currentNodeData && (
