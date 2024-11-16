@@ -1,5 +1,5 @@
 import { ResultType } from '@rootTypes/resultEnum'
-import { useUpdateLocalRepoMutation, useUpdateUnitsFirmwareMutation, useDeleteRepoMutation } from '@rootTypes/compositionFunctions'
+import { useUpdateLocalRepoMutation, PermissionEntities, useUpdateUnitsFirmwareMutation, useDeleteRepoMutation } from '@rootTypes/compositionFunctions'
 import BaseModal from '../modal/baseModal'
 import CreateUnitForm from '../forms/unit/createUnitForm';
 import UpdateRepoForm from '../forms/repo/updateRepoForm';
@@ -143,6 +143,7 @@ export default function RepoContent(){
           currentNodeData && (
             <PermissionForm
               currentNodeData={currentNodeData}
+              currentNodeType={PermissionEntities.Repo}
             />
           )
         }
