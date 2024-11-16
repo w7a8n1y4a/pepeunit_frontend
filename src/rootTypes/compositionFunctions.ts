@@ -111,7 +111,8 @@ export type MutationCreateUserArgs = {
 };
 
 export type MutationDeletePermissionArgs = {
-  uuid: Scalars["UUID"]["input"];
+  agentUuid: Scalars["UUID"]["input"];
+  resourceUuid: Scalars["UUID"]["input"];
 };
 
 export type MutationDeleteRepoArgs = {
@@ -561,7 +562,8 @@ export type CreatePermissionMutation = {
 };
 
 export type DeletePermissionMutationVariables = Exact<{
-  uuid: Scalars["UUID"]["input"];
+  agentUuid: Scalars["UUID"]["input"];
+  resourceUuid: Scalars["UUID"]["input"];
 }>;
 
 export type DeletePermissionMutation = {
@@ -1353,8 +1355,8 @@ export type CreatePermissionMutationOptions = Apollo.BaseMutationOptions<
   CreatePermissionMutationVariables
 >;
 export const DeletePermissionDocument = gql`
-  mutation deletePermission($uuid: UUID!) {
-    deletePermission(uuid: $uuid) {
+  mutation deletePermission($agentUuid: UUID!, $resourceUuid: UUID!) {
+    deletePermission(agentUuid: $agentUuid, resourceUuid: $resourceUuid) {
       isNone
     }
   }
@@ -1377,7 +1379,8 @@ export type DeletePermissionMutationFn = Apollo.MutationFunction<
  * @example
  * const [deletePermissionMutation, { data, loading, error }] = useDeletePermissionMutation({
  *   variables: {
- *      uuid: // value for 'uuid'
+ *      agentUuid: // value for 'agentUuid'
+ *      resourceUuid: // value for 'resourceUuid'
  *   },
  * });
  */

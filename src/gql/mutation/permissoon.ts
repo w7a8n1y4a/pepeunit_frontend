@@ -23,10 +23,12 @@ gql`
         }
     }
     mutation deletePermission(
-        $uuid: UUID!
+        $agentUuid: UUID!
+        $resourceUuid: UUID!
     ) {
         deletePermission (
-            uuid: $uuid
+            agentUuid: $agentUuid
+            resourceUuid: $resourceUuid
         ){
             isNone
         }
