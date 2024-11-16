@@ -1,9 +1,7 @@
 import BaseModal from '../../modal/baseModal';
 import {
-    useGetUnitsOutputByInputLazyQuery,
     PermissionEntities,
     useDeletePermissionMutation
-
  } from '@rootTypes/compositionFunctions';
 import { useState, useEffect } from 'react';
 import useModalHandlers from '@handlers/useModalHandlers';
@@ -12,20 +10,20 @@ import { ResultType } from '@rootTypes/resultEnum';
 import Spinner from '@primitives/spinner';
 import ResultQuery from '@primitives/resultQuery';
 import PaginationControls from '@primitives/pagination';
-import UnitNodeEdgeCreateForm from '../../forms/unitNode/unitNodeEdgeCreateForm';
+import PermissionCreateForm from '../../forms/permission/permissionCreateFrom';
 import useFetchEntitiesByResourceAgents from './useFetchEntitiesByResourceAgents';
 import '../form.css';
 
 interface PermissionFormProps {
     currentNodeData: any;
+    currentNodeType: PermissionEntities;
 }
 
-export default function PermissionForm({ currentNodeData }: PermissionFormProps) {
+export default function PermissionForm({ currentNodeData, currentNodeType }: PermissionFormProps) {
     const { openModal } = useModalHandlers();
     const { activeModal } = useModalStore();
     const [nodeOutputs, setNodeOutputs] = useState<Array<any> | null>(null);
 
-    const [getUnitsOutputByInputQuery] = useGetUnitsOutputByInputLazyQuery();
     const [deletePermissionMutation] = useDeletePermissionMutation();
     const { fetchEntitiesByResourceAgents } = useFetchEntitiesByResourceAgents();
 
@@ -41,30 +39,6 @@ export default function PermissionForm({ currentNodeData }: PermissionFormProps)
     const [totalCount, setTotalCount] = useState(0);
     const itemsPerPage = 6;
 
-    const fetchNodeOutputs = () => {
-        setIsLoaderActive(true);
-        getUnitsOutputByInputQuery({
-            variables: {
-                unitNodeInputUuid: currentNodeData.uuid,
-                limit: itemsPerPage,
-                offset: currentPage * itemsPerPage
-            }
-        }).then(ResultData => {
-            if (ResultData.data) {
-                setNodeOutputs(ResultData.data.getUnits.units);
-                setTotalCount(ResultData.data.getUnits.count);
-                setIsLoaderActive(false);
-            }
-        }).catch(error => {
-            setIsLoaderActive(false);
-            setResultData({ type: ResultType.Angry, message: error.graphQLErrors[0].message.slice(4) });
-        });
-    };
-
-    useEffect(() => {
-        fetchNodeOutputs();
-    }, [currentNodeData, currentPage, activeModal]);
-
     const handleDeletePermission = (agentUuid: string, resourceUuid: string) => {
         setIsLoaderActive(true);
         setResultData({ ...resultData, message: null });
@@ -78,7 +52,7 @@ export default function PermissionForm({ currentNodeData }: PermissionFormProps)
             }).then(result => {
                 if (result.data) {
                     setIsLoaderActive(false);
-                    fetchNodeOutputs();
+                    setSelectedEntityType(selectedEntityType);
                 }
             }).catch(error => {
                 setIsLoaderActive(false);
@@ -87,35 +61,45 @@ export default function PermissionForm({ currentNodeData }: PermissionFormProps)
         }
     };
 
-    const handleGetResources = (permissionEntities: PermissionEntities) => {
+    useEffect(() => {
         setIsLoaderActive(true);
-        setSelectedEntityType(permissionEntities)
+        setSelectedEntityType(selectedEntityType)
         
         if (currentNodeData) {
-            fetchEntitiesByResourceAgents(currentNodeData.uuid, permissionEntities, PermissionEntities.Repo)
+            fetchEntitiesByResourceAgents(currentNodeData.uuid, selectedEntityType, currentNodeType, itemsPerPage, currentPage * itemsPerPage)
                 .then((result) => {
                     console.log("Fetched entities:", result);
                     setIsLoaderActive(false);
 
                     if (result?.data) {
                         let formattedData: Array<any> = [];
-        
+                        let count: number = 0;
+
                         if ('getRepos' in result.data && result.data.getRepos) {
                             formattedData = result.data.getRepos.repos;
+                            count = result.data.getRepos.count
                         } else if ('getUsers' in result.data && result.data.getUsers) {
                             formattedData = result.data.getUsers.users.map((user: any) => ({
                                 uuid: user.uuid,
                                 name: user.login,
                                 visibilityLevel: user.role + ' ' + user.status,
                             }));
+                            count = result.data.getUsers.count
                         } else if ('getUnits' in result.data && result.data.getUnits) {
                             formattedData = result.data.getUnits.units;
+                            count = result.data.getUnits.count
                         } else if ('getUnitNodes' in result.data && result.data.getUnitNodes) {
-                            formattedData = result.data.getUnitNodes.unitNodes;
+                            formattedData = result.data.getUnitNodes.unitNodes.map((unitNode: any) => ({
+                                uuid: unitNode.uuid,
+                                name: unitNode.topicName,
+                                visibilityLevel: unitNode.visibilityLevel + ' ' + unitNode.state,
+                            }));;
+                            count = result.data.getUnitNodes.count
                         }
                         
                         console.log(formattedData)
                         setNodeOutputs(formattedData);
+                        setTotalCount(count);
                     } else {
                         setNodeOutputs([]); // No data found, clear the output
                     }
@@ -126,7 +110,7 @@ export default function PermissionForm({ currentNodeData }: PermissionFormProps)
                     setResultData({ type: ResultType.Angry, message: error.message });
                 });
         }
-    };
+    }, [currentPage, selectedEntityType]);
 
     const totalPages = Math.ceil(totalCount / itemsPerPage);
 
@@ -139,7 +123,7 @@ export default function PermissionForm({ currentNodeData }: PermissionFormProps)
                     <button
                         key={entityType}
                         className={`entity-button ${selectedEntityType === entityType ? 'active' : ''}`}
-                        onClick={() => handleGetResources(entityType as PermissionEntities)}
+                        onClick={() => setSelectedEntityType(entityType as PermissionEntities)}
                     >
                         {entityType}
                     </button>
@@ -166,9 +150,7 @@ export default function PermissionForm({ currentNodeData }: PermissionFormProps)
                             </div>
                         );
                     })
-                ) : (
-                    <p>No output nodes available.</p>
-                )}
+                ) : (<></>)}
                 <div className="unit-item" onClick={() => openModal('unitPermissionCreate')}>
                     <h3>Добавить доступ</h3>
                 </div>
@@ -187,8 +169,9 @@ export default function PermissionForm({ currentNodeData }: PermissionFormProps)
                 openModalType={"permissionMenu"} 
             >
                 {currentNodeData && (
-                    <UnitNodeEdgeCreateForm
+                    <PermissionCreateForm
                         currentNodeData={currentNodeData}
+                        currentNodeType={currentNodeType}
                     />
                 )}
             </BaseModal>

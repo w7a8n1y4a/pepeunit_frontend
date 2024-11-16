@@ -15,7 +15,7 @@ export default function useFetchEntitiesByResourceAgents() {
   const [getUsers] = useGetUsersLazyQuery();
   const [getResourceAgentsLazyQuery] = useGetResourceAgentsLazyQuery();
 
-  const fetchEntitiesByResourceAgents = useCallback(async (resourceUuid: string, agentType: PermissionEntities, resourceType: PermissionEntities) => {
+  const fetchEntitiesByResourceAgents = useCallback(async (resourceUuid: string, agentType: PermissionEntities, resourceType: PermissionEntities, limit: number, offset: number) => {
     try {
       const resourceAgentsResult = await getResourceAgentsLazyQuery({
         variables: {
@@ -36,7 +36,7 @@ export default function useFetchEntitiesByResourceAgents() {
           return {data: null};
         }
 
-        const queryVariables = { uuids: agentUuids };
+        const queryVariables = { uuids: agentUuids, limit: limit, offset: offset};
 
         // Определяем функцию запроса на основе entityType
         switch (agentType) {
