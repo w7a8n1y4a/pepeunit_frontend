@@ -24,6 +24,8 @@ export default function PermissionForm({ currentNodeData, currentNodeType }: Per
     const { activeModal } = useModalStore();
     const [nodeOutputs, setNodeOutputs] = useState<Array<any> | null>(null);
 
+    const [refreshTrigger, setRefreshTrigger] = useState(false);
+
     const [deletePermissionMutation] = useDeletePermissionMutation();
     const { fetchEntitiesByResourceAgents } = useFetchEntitiesByResourceAgents();
 
@@ -52,7 +54,7 @@ export default function PermissionForm({ currentNodeData, currentNodeType }: Per
             }).then(result => {
                 if (result.data) {
                     setIsLoaderActive(false);
-                    setSelectedEntityType(selectedEntityType);
+                    setRefreshTrigger(!refreshTrigger)
                 }
             }).catch(error => {
                 setIsLoaderActive(false);
@@ -68,7 +70,6 @@ export default function PermissionForm({ currentNodeData, currentNodeType }: Per
         if (currentNodeData) {
             fetchEntitiesByResourceAgents(currentNodeData.uuid, selectedEntityType, currentNodeType, itemsPerPage, currentPage * itemsPerPage)
                 .then((result) => {
-                    console.log("Fetched entities:", result);
                     setIsLoaderActive(false);
 
                     if (result?.data) {
@@ -97,7 +98,6 @@ export default function PermissionForm({ currentNodeData, currentNodeType }: Per
                             count = result.data.getUnitNodes.count
                         }
                         
-                        console.log(formattedData)
                         setNodeOutputs(formattedData);
                         setTotalCount(count);
                     } else {
@@ -105,12 +105,11 @@ export default function PermissionForm({ currentNodeData, currentNodeType }: Per
                     }
                 })
                 .catch((error) => {
-                    console.error("Error fetching resources:", error);
                     setIsLoaderActive(false);
                     setResultData({ type: ResultType.Angry, message: error.message });
                 });
         }
-    }, [currentPage, selectedEntityType]);
+    }, [currentPage, selectedEntityType, refreshTrigger]);
 
     const totalPages = Math.ceil(totalCount / itemsPerPage);
 
@@ -133,7 +132,6 @@ export default function PermissionForm({ currentNodeData, currentNodeType }: Per
             <div className="unit-list">
                 {nodeOutputs ? (
                     nodeOutputs.map((unitOutput: any) => {
-                        console.log('unitOutput:', unitOutput);
                         if ( unitOutput.length === 0) return null;
 
                         return (
