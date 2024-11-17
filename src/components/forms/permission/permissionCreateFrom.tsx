@@ -15,17 +15,17 @@ import '../form.css';
 interface PermissionCreateFormProps {
     currentNodeData: any;
     currentNodeType: PermissionEntities;
+    selectedEntityType: PermissionEntities;
+    setSelectedEntityType: (show: PermissionEntities) => void;
 }
 
-export default function PermissionCreateForm({ currentNodeData, currentNodeType }: PermissionCreateFormProps) {
+export default function PermissionCreateForm({ currentNodeData, currentNodeType, selectedEntityType, setSelectedEntityType }: PermissionCreateFormProps) {
     const [ searchString, setSearchString ] = useState('');
     const [nodeOutputs, setNodeOutputs] = useState<Array<any> | null>(null);
 
     const [createPermissionMutation] = useCreatePermissionMutation();
     const { fetchEntitiesByFilter } = useFetchEntitiesByFilter();
 
-    const [selectedEntityType, setSelectedEntityType] = useState<PermissionEntities>(PermissionEntities.User);
-    
     const [errorState, setErrorState] = useState({
         searchString: false,
     });
@@ -81,7 +81,7 @@ export default function PermissionCreateForm({ currentNodeData, currentNodeType 
     };
 
     useEffect(() => {
-        loadEntities('', PermissionEntities.User, currentPage);
+        loadEntities('', selectedEntityType, currentPage);
     }, [currentNodeData]);
 
     useEffect(() => {

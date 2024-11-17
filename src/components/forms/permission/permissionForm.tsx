@@ -175,12 +175,14 @@ export default function PermissionForm({ currentNodeData, currentNodeType }: Per
             <BaseModal
                 modalName={'Поиск сущностей ' + currentNodeData?.name}
                 open={activeModal === 'unitPermissionCreate' + currentNodeType}
-                openModalType={"permissionMenu"} 
+                openModalType={"permissionMenu"  + currentNodeType} 
             >
                 {currentNodeData && (
                     <PermissionCreateForm
                         currentNodeData={currentNodeData}
                         currentNodeType={currentNodeType}
+                        selectedEntityType={selectedEntityType}
+                        setSelectedEntityType={setSelectedEntityType}
                     />
                 )}
             </BaseModal>

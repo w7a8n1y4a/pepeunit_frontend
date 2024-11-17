@@ -14,6 +14,8 @@ export default function UnitNodeContent(){
   const { currentNodeData, setCurrentNodeData } = useNodeStore();
   const { openModal } = useModalHandlers();
 
+  let nodeType = PermissionEntities.UnitNode
+
   return (
     <>
       <BaseModal
@@ -27,7 +29,7 @@ export default function UnitNodeContent(){
           <div>
             Состояние: {currentNodeData?.state || "Данных нет"}
           </div>
-          <button className="button_open_alter" onClick={() => openModal('permissionUnitNodeMenu')}>
+          <button className="button_open_alter" onClick={() => openModal('permissionMenu' + nodeType)}>
             Доступы
           </button>
           {
@@ -48,7 +50,7 @@ export default function UnitNodeContent(){
         </div>
       </BaseModal>
 
-      <BaseModal modalName={'Доступы ' + currentNodeData?.name} open={activeModal === 'permissionUnitNodeMenu'} openModalType='inputMenu'>
+      <BaseModal modalName={'Доступы ' + currentNodeData?.name} open={activeModal === 'permissionMenu' + nodeType} openModalType='inputMenu'>
         {
           currentNodeData && (
             <PermissionForm
