@@ -18,6 +18,8 @@ export default function UnitContent(){
   const { currentNodeData, setCurrentNodeData } = useNodeStore();
   const { removeNodesAndLinks } = useGraphStore();
   const { openModal } = useModalHandlers();
+
+  let nodeType = PermissionEntities.Unit
     
   const [isLoaderActive, setIsLoaderActive] = useState(false)
   const [resultData, setResultData] = useState<{ type: ResultType; message: string | null }>({
@@ -107,7 +109,7 @@ export default function UnitContent(){
           {
             isLoaderActive && (<Spinner/>)
           }
-          <button className="button_open_alter" onClick={() => openModal('permissionUnitMenu')}>
+          <button className="button_open_alter" onClick={() => openModal('permissionMenu' + nodeType)}>
             Доступы
           </button>
           <button className="button_open_alter" onClick={() => fileUpload("tar")}>
@@ -127,7 +129,7 @@ export default function UnitContent(){
           />
         </div>
       </BaseModal>
-      <BaseModal modalName={'Доступы ' + currentNodeData?.name } open={activeModal === 'permissionUnitMenu'} openModalType='unitMenu'>
+      <BaseModal modalName={'Доступы ' + currentNodeData?.name } open={activeModal === 'permissionMenu' + nodeType} openModalType='unitMenu'>
         {
           currentNodeData && (
             <PermissionForm

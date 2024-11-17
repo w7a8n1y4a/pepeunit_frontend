@@ -19,6 +19,8 @@ export default function RepoContent(){
   const { removeNodesAndLinks } = useGraphStore();
   const { openModal } = useModalHandlers();
 
+  let nodeType = PermissionEntities.Repo
+
   const [isLoaderActive, setIsLoaderActive] = useState(false)
   const [resultData, setResultData] = useState<{ type: ResultType; message: string | null }>({
     type: ResultType.Happy,
@@ -118,7 +120,7 @@ export default function RepoContent(){
           {
             isLoaderActive && (<Spinner/>)
           }
-          <button className="button_open_alter" onClick={() => openModal('permissionRepoMenu')}>
+          <button className="button_open_alter" onClick={() => openModal('permissionMenu' + nodeType)}>
             Доступы
           </button>
           <button className="button_open_alter" onClick={() => openModal('createUnit')}>
@@ -138,12 +140,12 @@ export default function RepoContent(){
           />
         </div>
       </BaseModal>
-      <BaseModal modalName={'Доступы ' + currentNodeData?.name} open={activeModal === 'permissionRepoMenu'} openModalType='repoMenu'>
+      <BaseModal modalName={'Доступы ' + currentNodeData?.name} open={activeModal === 'permissionMenu' + nodeType} openModalType='repoMenu'>
         {
           currentNodeData && (
             <PermissionForm
               currentNodeData={currentNodeData}
-              currentNodeType={PermissionEntities.Repo}
+              currentNodeType={nodeType}
             />
           )
         }
