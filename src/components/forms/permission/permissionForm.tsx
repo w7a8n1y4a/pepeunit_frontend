@@ -29,7 +29,7 @@ export default function PermissionForm({ currentNodeData, currentNodeType }: Per
     const [deletePermissionMutation] = useDeletePermissionMutation();
     const { fetchEntitiesByResourceAgents } = useFetchEntitiesByResourceAgents();
 
-    const [selectedEntityType, setSelectedEntityType] = useState<PermissionEntities>(PermissionEntities.Repo);
+    const [selectedEntityType, setSelectedEntityType] = useState<PermissionEntities>(PermissionEntities.User);
     
     const [isLoaderActive, setIsLoaderActive] = useState(false);
     const [resultData, setResultData] = useState<{ type: ResultType; message: string | null }>({
@@ -63,52 +63,63 @@ export default function PermissionForm({ currentNodeData, currentNodeType }: Per
         }
     };
 
-    useEffect(() => {
+    const loadEntities = async (entityType: PermissionEntities, page: number) => {
+        if (!currentNodeData) return;
+
         setIsLoaderActive(true);
-        setSelectedEntityType(selectedEntityType)
-        
-        if (currentNodeData) {
-            fetchEntitiesByResourceAgents(currentNodeData.uuid, selectedEntityType, currentNodeType, itemsPerPage, currentPage * itemsPerPage)
-                .then((result) => {
-                    setIsLoaderActive(false);
+        try {
+            const result = await fetchEntitiesByResourceAgents(
+                currentNodeData.uuid,
+                entityType,
+                currentNodeType,
+                itemsPerPage,
+                page * itemsPerPage
+            );
 
-                    if (result?.data) {
-                        let formattedData: Array<any> = [];
-                        let count: number = 0;
+            if (result?.data) {
+                let formattedData: Array<any> = [];
+                let count: number = 0;
 
-                        if ('getRepos' in result.data && result.data.getRepos) {
-                            formattedData = result.data.getRepos.repos;
-                            count = result.data.getRepos.count
-                        } else if ('getUsers' in result.data && result.data.getUsers) {
-                            formattedData = result.data.getUsers.users.map((user: any) => ({
-                                uuid: user.uuid,
-                                name: user.login,
-                                visibilityLevel: user.role + ' ' + user.status,
-                            }));
-                            count = result.data.getUsers.count
-                        } else if ('getUnits' in result.data && result.data.getUnits) {
-                            formattedData = result.data.getUnits.units;
-                            count = result.data.getUnits.count
-                        } else if ('getUnitNodes' in result.data && result.data.getUnitNodes) {
-                            formattedData = result.data.getUnitNodes.unitNodes.map((unitNode: any) => ({
-                                uuid: unitNode.uuid,
-                                name: unitNode.topicName,
-                                visibilityLevel: unitNode.visibilityLevel + ' ' + unitNode.state,
-                            }));;
-                            count = result.data.getUnitNodes.count
-                        }
-                        
-                        setNodeOutputs(formattedData);
-                        setTotalCount(count);
-                    } else {
-                        setNodeOutputs([]); // No data found, clear the output
-                    }
-                })
-                .catch((error) => {
-                    setIsLoaderActive(false);
-                    setResultData({ type: ResultType.Angry, message: error.message });
-                });
+                if ('getRepos' in result.data && result.data.getRepos) {
+                    formattedData = result.data.getRepos.repos;
+                    count = result.data.getRepos.count;
+                } else if ('getUsers' in result.data && result.data.getUsers) {
+                    formattedData = result.data.getUsers.users.map((user: any) => ({
+                        uuid: user.uuid,
+                        name: user.login,
+                        visibilityLevel: user.role + ' ' + user.status,
+                    }));
+                    count = result.data.getUsers.count;
+                } else if ('getUnits' in result.data && result.data.getUnits) {
+                    formattedData = result.data.getUnits.units;
+                    count = result.data.getUnits.count;
+                } else if ('getUnitNodes' in result.data && result.data.getUnitNodes) {
+                    formattedData = result.data.getUnitNodes.unitNodes.map((unitNode: any) => ({
+                        uuid: unitNode.uuid,
+                        name: unitNode.topicName,
+                        visibilityLevel: unitNode.visibilityLevel + ' ' + unitNode.state,
+                    }));
+                    count = result.data.getUnitNodes.count;
+                }
+
+                setNodeOutputs(formattedData);
+                setTotalCount(count);
+            } else {
+                setNodeOutputs([]);
+            }
+        } catch (error: any) {
+            setResultData({ type: ResultType.Angry, message: error.message });
+        } finally {
+            setIsLoaderActive(false);
         }
+    };
+
+    useEffect(() => {
+        loadEntities(selectedEntityType, 0);
+    }, [currentNodeData]);
+
+    useEffect(() => {
+        loadEntities(selectedEntityType, currentPage);
     }, [currentPage, selectedEntityType, refreshTrigger]);
 
     const totalPages = Math.ceil(totalCount / itemsPerPage);

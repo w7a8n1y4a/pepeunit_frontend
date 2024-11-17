@@ -24,7 +24,7 @@ export default function PermissionCreateForm({ currentNodeData, currentNodeType 
     const [createPermissionMutation] = useCreatePermissionMutation();
     const { fetchEntitiesByFilter } = useFetchEntitiesByFilter();
 
-    const [selectedEntityType, setSelectedEntityType] = useState<PermissionEntities>(PermissionEntities.Repo);
+    const [selectedEntityType, setSelectedEntityType] = useState<PermissionEntities>(PermissionEntities.User);
     
     const [errorState, setErrorState] = useState({
         searchString: false,
@@ -39,7 +39,7 @@ export default function PermissionCreateForm({ currentNodeData, currentNodeType 
     const [totalCount, setTotalCount] = useState(0);
     const itemsPerPage = 6;
 
-    useEffect(() => {
+    const loadEntities = async (searchString: string, selectedEntityType: PermissionEntities, currentPage: number) => {
         setIsLoaderActive(true)
         fetchEntitiesByFilter(searchString, selectedEntityType, itemsPerPage, currentPage * itemsPerPage)
             .then(result => {
@@ -78,6 +78,14 @@ export default function PermissionCreateForm({ currentNodeData, currentNodeType 
                 }
             }
         )
+    };
+
+    useEffect(() => {
+        loadEntities('', PermissionEntities.User, currentPage);
+    }, [currentNodeData]);
+
+    useEffect(() => {
+        loadEntities(searchString, selectedEntityType, currentPage);
     }, [searchString, currentPage, selectedEntityType]);
 
     const updateErrorState = (field: keyof typeof errorState, hasError: boolean) => {
