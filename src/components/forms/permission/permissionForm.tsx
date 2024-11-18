@@ -12,6 +12,7 @@ import ResultQuery from '@primitives/resultQuery';
 import PaginationControls from '@primitives/pagination';
 import PermissionCreateForm from '../../forms/permission/permissionCreateFrom';
 import useFetchEntitiesByResourceAgents from './useFetchEntitiesByResourceAgents';
+import PermissionList from './permissionList';
 import '../form.css';
 
 interface PermissionFormProps {
@@ -140,30 +141,13 @@ export default function PermissionForm({ currentNodeData, currentNodeType }: Per
                 ))}
             </div>
 
-            <div className="unit-list">
-                {nodeOutputs ? (
-                    nodeOutputs.map((unitOutput: any) => {
-                        if ( unitOutput.length === 0) return null;
-
-                        return (
-                            <div key={unitOutput.uuid} className="unit-item">
-                                <button
-                                    className="unit-header"
-                                >
-                                    <h3>{unitOutput.name} {unitOutput.visibilityLevel}</h3>
-                                    <button className="unit-node-del-button" onClick={() => handleDeletePermission(unitOutput.uuid, currentNodeData.uuid)}>
-                                        delete
-                                    </button>
-                                </button>
-                                
-                            </div>
-                        );
-                    })
-                ) : (<></>)}
-                <div className="unit-item" onClick={() => openModal('unitPermissionCreate' + currentNodeType)}>
-                    <h3>Добавить доступ</h3>
-                </div>
-            </div>
+            <PermissionList
+                nodeOutputs={nodeOutputs}
+                currentNodeData={currentNodeData}
+                currentNodeType={currentNodeType}
+                handleDeletePermission={handleDeletePermission}
+                openModal={openModal}
+            />
 
             <PaginationControls
                 currentPage={currentPage}
@@ -174,7 +158,7 @@ export default function PermissionForm({ currentNodeData, currentNodeType }: Per
 
             <BaseModal
                 modalName={'Поиск сущностей ' + currentNodeData?.name}
-                open={activeModal === 'unitPermissionCreate' + currentNodeType}
+                open={activeModal === 'permissionCreate' + currentNodeType}
                 openModalType={"permissionMenu"  + currentNodeType} 
             >
                 {currentNodeData && (
