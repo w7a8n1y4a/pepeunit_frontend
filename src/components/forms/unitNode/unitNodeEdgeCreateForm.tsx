@@ -5,6 +5,7 @@ import { ResultType } from '@rootTypes/resultEnum'
 import Spinner from '@primitives/spinner'
 import ResultQuery from '@primitives/resultQuery'
 import PaginationControls from '@primitives/pagination';
+import UnitList from './unitList'
 import '../form.css'
 
 interface UnitNodeEdgeFormProps {
@@ -21,8 +22,6 @@ export default function UnitNodeEdgeCreateForm({ currentNodeData }: UnitNodeEdge
         type: ResultType.Happy,
         message: null
     });
-
-    const [ collapsedUnits, setCollapsedUnits ] = useState<{ [key: string]: boolean }>({});
 
     const [ searchString, setSearchString ] = useState('');
     const [ data, setData ] = useState<any>(null);
@@ -57,13 +56,6 @@ export default function UnitNodeEdgeCreateForm({ currentNodeData }: UnitNodeEdge
         setErrorState(prevState => ({
             ...prevState,
             [field]: hasError
-        }));
-    };
-
-    const handleUnitToggle = (unitId: string) => {
-        setCollapsedUnits(prev => ({
-            ...prev,
-            [unitId]: !prev[unitId]
         }));
     };
 
@@ -110,29 +102,11 @@ export default function UnitNodeEdgeCreateForm({ currentNodeData }: UnitNodeEdge
                     setResultData={setResultData}
                 />
             </form>
-            <div className="unit-list">
-                {data && data.map((unit: any) => (
-                    <div key={unit.uuid} className="unit-item">
-                        <button className="unit-header" onClick={() => handleUnitToggle(unit.uuid)}>
-                            <h3>{unit.name + ' ' + unit.visibilityLevel}</h3>
-                        </button>
-                        
-                        {collapsedUnits[unit.uuid] && (
-                            <div className="unit-nodes">
-                                {unit.outputUnitNodes.map((node: any) => (
-                                    <div className="unit-node" key={node.uuid}>
-                                        <h4>{node.topicName} {node.state}</h4>
-                                        <button key={node.uuid} className="unit-node-add-button" onClick={() => handleCreateEdge(node.uuid)}>
-                                            add
-                                        </button>
 
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </div>
-                ))}
-            </div>
+            <UnitList
+                nodeOutputs={data}
+                handleDeleteEdge={handleCreateEdge}
+            />
             <PaginationControls
                 currentPage={currentPage}
                 totalPages={totalPages}
