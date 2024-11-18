@@ -9,6 +9,7 @@ import DefaultInput from '@primitives/defaultInput'
 import Spinner from '@primitives/spinner';
 import ResultQuery from '@primitives/resultQuery';
 import PaginationControls from '@primitives/pagination';
+import PermissionList from './permissionList';
 import useFetchEntitiesByFilter from './useFetchEntitiesByFilter';
 import '../form.css';
 
@@ -152,27 +153,12 @@ export default function PermissionCreateForm({ currentNodeData, currentNodeType,
                 ))}
             </div>
 
-            <div className="unit-list">
-                {nodeOutputs ? (
-                    nodeOutputs.map((unitOutput: any) => {
-                        if ( unitOutput.length === 0) return null;
-
-                        return (
-                            <div key={unitOutput.uuid} className="unit-item">
-                                <button
-                                    className="unit-header"
-                                >
-                                    <h3>{unitOutput.name} {unitOutput.visibilityLevel}</h3>
-                                    <button key={unitOutput.uuid} className="unit-node-add-button" onClick={() => handleCreatePermission(unitOutput.uuid)}>
-                                        add
-                                    </button>
-                                </button>
-                                
-                            </div>
-                        );
-                    })
-                ) : (<></>)}
-            </div>
+            <PermissionList
+                nodeOutputs={nodeOutputs}
+                currentNodeData={currentNodeData}
+                currentNodeType={currentNodeType}
+                handleCreatePermission={handleCreatePermission}
+            />
 
             <PaginationControls
                 currentPage={currentPage}

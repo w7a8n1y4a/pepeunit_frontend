@@ -7,6 +7,7 @@ import { ResultType } from '@rootTypes/resultEnum';
 import Spinner from '@primitives/spinner';
 import ResultQuery from '@primitives/resultQuery';
 import PaginationControls from '@primitives/pagination';
+import UnitList from './unitList';
 import UnitNodeEdgeCreateForm from '../../forms/unitNode/unitNodeEdgeCreateForm';
 import '../form.css';
 
@@ -20,7 +21,6 @@ export default function UnitNodeEdgeForm({ currentNodeData }: UnitNodeEdgeFormPr
     const [nodeOutputs, setNodeOutputs] = useState<Array<any> | null>(null);
     const [getUnitsOutputByInputQuery] = useGetUnitsOutputByInputLazyQuery();
     const [deleteUnitNodeEdgeMutation] = useDeleteUnitNodeEdgeMutation();
-    const [collapsedUnits, setCollapsedUnits] = useState<{ [key: string]: boolean }>({});
     
     const [isLoaderActive, setIsLoaderActive] = useState(false);
     const [resultData, setResultData] = useState<{ type: ResultType; message: string | null }>({
@@ -56,14 +56,7 @@ export default function UnitNodeEdgeForm({ currentNodeData }: UnitNodeEdgeFormPr
         fetchNodeOutputs();
     }, [currentNodeData, currentPage, activeModal]);
 
-    const handleUnitToggle = (unitId: string) => {
-        setCollapsedUnits(prev => ({
-            ...prev,
-            [unitId]: !prev[unitId]
-        }));
-    };
-
-    const handleDeleteRepo = (outputNodeUuid: string) => {
+    const handleDeleteEdge = (outputNodeUuid: string) => {
         setIsLoaderActive(true);
         setResultData({ ...resultData, message: null });
     
@@ -90,45 +83,12 @@ export default function UnitNodeEdgeForm({ currentNodeData }: UnitNodeEdgeFormPr
     return (
         <>
             {isLoaderActive && <Spinner />}
-            <div className="unit-list">
-                {nodeOutputs ? (
-                    nodeOutputs.map((unitOutput: any) => {
-                        const { uuid, visibilityLevel, name, outputUnitNodes } = unitOutput;
-                        console.log('unitOutput:', unitOutput);
-                        if (!uuid || !name) return null;
 
-                        return (
-                            <div key={uuid} className="unit-item">
-                                <button
-                                    className="unit-header"
-                                    onClick={() => handleUnitToggle(uuid)}
-                                >
-                                    <h3>{name} {visibilityLevel}</h3>
-                                </button>
-                                {collapsedUnits[uuid] && (
-                                    <div className="unit-nodes">
-                                        {outputUnitNodes && outputUnitNodes.map((node: any) => (
-                                            <div className="unit-node" key={node.uuid}>
-                                                <h4>{node.topicName || 'Unnamed Topic'} {node.state}</h4>
-                                                <button className="unit-node-del-button" onClick={() => handleDeleteRepo(node.uuid)}>
-                                                    delete
-                                                </button>
-                                            </div>
-                                        ))}
-                                        
-                                    </div>
-                                )}
-                                
-                            </div>
-                        );
-                    })
-                ) : (
-                    <p>No output nodes available.</p>
-                )}
-                <div className="unit-item" onClick={() => openModal('unitNodeEdgeCreate')}>
-                    <h3>Добавить новый Output</h3>
-                </div>
-            </div>
+            <UnitList
+                nodeOutputs={nodeOutputs}
+                handleDeleteEdge={handleDeleteEdge}
+                openModal={openModal}
+            />
 
             <PaginationControls
                 currentPage={currentPage}
