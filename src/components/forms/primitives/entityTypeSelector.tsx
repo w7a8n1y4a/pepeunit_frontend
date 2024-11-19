@@ -7,7 +7,7 @@ import {
 import './primitives.css'
 
 type EntityTypeSelectorProps = {
-    entities: typeof PermissionEntities; // или `string[]`, в зависимости от структуры `PermissionEntities`
+    entities: typeof PermissionEntities;
     selectedEntityType: string;
     setSelectedEntityType: (entityType: PermissionEntities) => void;
 };

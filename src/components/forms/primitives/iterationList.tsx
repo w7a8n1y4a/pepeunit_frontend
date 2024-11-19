@@ -49,9 +49,9 @@ const IterationList = <T extends { uuid: string }>({
             <button className="iteration-header" onClick={() => handleToggle(unit.uuid)}>
                 <h3>{unit.name} {unit.visibilityLevel}</h3>
             </button>
-            {collapsedUnits[unit.uuid] && unit.outputUnitNodes && (
+            {collapsedUnits[unit.uuid] && unit.unitNodes && (
                 <div className="iteration-nodes">
-                    {unit.outputUnitNodes.map((node: any) => (
+                    {unit.unitNodes.map((node: any) => (
                         <div className="iteration-node" key={node.uuid}>
                             <h4>{node.topicName}</h4>
                             {renderActionButtons(node.uuid)}

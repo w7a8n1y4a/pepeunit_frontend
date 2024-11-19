@@ -393,6 +393,7 @@ export type UnitFilterInput = {
   repoUuid?: InputMaybe<Scalars["UUID"]["input"]>;
   searchString?: InputMaybe<Scalars["String"]["input"]>;
   unitNodeInputUuid?: InputMaybe<Scalars["UUID"]["input"]>;
+  unitNodeType?: InputMaybe<Array<UnitNodeTypeEnum>>;
   uuids?: InputMaybe<Array<Scalars["UUID"]["input"]>>;
   visibilityLevel?: InputMaybe<Array<VisibilityLevel>>;
 };
@@ -461,10 +462,10 @@ export type UnitType = {
   isAutoUpdateFromRepoUnit: Scalars["Boolean"]["output"];
   lastUpdateDatetime: Scalars["DateTime"]["output"];
   name: Scalars["String"]["output"];
-  outputUnitNodes: Array<UnitNodeType>;
   repoBranch?: Maybe<Scalars["String"]["output"]>;
   repoCommit?: Maybe<Scalars["String"]["output"]>;
   repoUuid: Scalars["UUID"]["output"];
+  unitNodes: Array<UnitNodeType>;
   unitStateDict?: Maybe<Scalars["String"]["output"]>;
   uuid: Scalars["UUID"]["output"];
   visibilityLevel: VisibilityLevel;
@@ -1078,7 +1079,7 @@ export type GetUnitsQuery = {
   };
 };
 
-export type GetUnitsWithAllOutputQueryVariables = Exact<{
+export type GetUnitsWithUnitNodesQueryVariables = Exact<{
   creatorUuid?: InputMaybe<Scalars["UUID"]["input"]>;
   repoUuid?: InputMaybe<Scalars["UUID"]["input"]>;
   searchString?: InputMaybe<Scalars["String"]["input"]>;
@@ -1089,9 +1090,10 @@ export type GetUnitsWithAllOutputQueryVariables = Exact<{
   orderByLastUpdate?: InputMaybe<OrderByDate>;
   offset?: InputMaybe<Scalars["Int"]["input"]>;
   limit?: InputMaybe<Scalars["Int"]["input"]>;
+  unitNodeType?: InputMaybe<Array<UnitNodeTypeEnum> | UnitNodeTypeEnum>;
 }>;
 
-export type GetUnitsWithAllOutputQuery = {
+export type GetUnitsWithUnitNodesQuery = {
   __typename?: "Query";
   getUnits: {
     __typename?: "UnitsResultType";
@@ -1110,7 +1112,7 @@ export type GetUnitsWithAllOutputQuery = {
       lastUpdateDatetime: string;
       creatorUuid: string;
       repoUuid: string;
-      outputUnitNodes: Array<{
+      unitNodes: Array<{
         __typename?: "UnitNodeType";
         uuid: string;
         type: UnitNodeTypeEnum;
@@ -1156,7 +1158,7 @@ export type GetUnitsOutputByInputQuery = {
       lastUpdateDatetime: string;
       creatorUuid: string;
       repoUuid: string;
-      outputUnitNodes: Array<{
+      unitNodes: Array<{
         __typename?: "UnitNodeType";
         uuid: string;
         type: UnitNodeTypeEnum;
@@ -3287,8 +3289,8 @@ export type GetUnitsQueryResult = Apollo.QueryResult<
   GetUnitsQuery,
   GetUnitsQueryVariables
 >;
-export const GetUnitsWithAllOutputDocument = gql`
-  query getUnitsWithAllOutput(
+export const GetUnitsWithUnitNodesDocument = gql`
+  query getUnitsWithUnitNodes(
     $creatorUuid: UUID
     $repoUuid: UUID
     $searchString: String
@@ -3299,6 +3301,7 @@ export const GetUnitsWithAllOutputDocument = gql`
     $orderByLastUpdate: OrderByDate
     $offset: Int
     $limit: Int
+    $unitNodeType: [UnitNodeTypeEnum!]
   ) {
     getUnits(
       filters: {
@@ -3312,6 +3315,7 @@ export const GetUnitsWithAllOutputDocument = gql`
         orderByLastUpdate: $orderByLastUpdate
         offset: $offset
         limit: $limit
+        unitNodeType: $unitNodeType
       }
     ) {
       count
@@ -3328,7 +3332,7 @@ export const GetUnitsWithAllOutputDocument = gql`
         lastUpdateDatetime
         creatorUuid
         repoUuid
-        outputUnitNodes {
+        unitNodes {
           uuid
           type
           visibilityLevel
@@ -3345,16 +3349,16 @@ export const GetUnitsWithAllOutputDocument = gql`
 `;
 
 /**
- * __useGetUnitsWithAllOutputQuery__
+ * __useGetUnitsWithUnitNodesQuery__
  *
- * To run a query within a React component, call `useGetUnitsWithAllOutputQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetUnitsWithAllOutputQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetUnitsWithUnitNodesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUnitsWithUnitNodesQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetUnitsWithAllOutputQuery({
+ * const { data, loading, error } = useGetUnitsWithUnitNodesQuery({
  *   variables: {
  *      creatorUuid: // value for 'creatorUuid'
  *      repoUuid: // value for 'repoUuid'
@@ -3366,57 +3370,58 @@ export const GetUnitsWithAllOutputDocument = gql`
  *      orderByLastUpdate: // value for 'orderByLastUpdate'
  *      offset: // value for 'offset'
  *      limit: // value for 'limit'
+ *      unitNodeType: // value for 'unitNodeType'
  *   },
  * });
  */
-export function useGetUnitsWithAllOutputQuery(
+export function useGetUnitsWithUnitNodesQuery(
   baseOptions?: Apollo.QueryHookOptions<
-    GetUnitsWithAllOutputQuery,
-    GetUnitsWithAllOutputQueryVariables
+    GetUnitsWithUnitNodesQuery,
+    GetUnitsWithUnitNodesQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useQuery<
-    GetUnitsWithAllOutputQuery,
-    GetUnitsWithAllOutputQueryVariables
-  >(GetUnitsWithAllOutputDocument, options);
+    GetUnitsWithUnitNodesQuery,
+    GetUnitsWithUnitNodesQueryVariables
+  >(GetUnitsWithUnitNodesDocument, options);
 }
-export function useGetUnitsWithAllOutputLazyQuery(
+export function useGetUnitsWithUnitNodesLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
-    GetUnitsWithAllOutputQuery,
-    GetUnitsWithAllOutputQueryVariables
+    GetUnitsWithUnitNodesQuery,
+    GetUnitsWithUnitNodesQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useLazyQuery<
-    GetUnitsWithAllOutputQuery,
-    GetUnitsWithAllOutputQueryVariables
-  >(GetUnitsWithAllOutputDocument, options);
+    GetUnitsWithUnitNodesQuery,
+    GetUnitsWithUnitNodesQueryVariables
+  >(GetUnitsWithUnitNodesDocument, options);
 }
-export function useGetUnitsWithAllOutputSuspenseQuery(
+export function useGetUnitsWithUnitNodesSuspenseQuery(
   baseOptions?: Apollo.SuspenseQueryHookOptions<
-    GetUnitsWithAllOutputQuery,
-    GetUnitsWithAllOutputQueryVariables
+    GetUnitsWithUnitNodesQuery,
+    GetUnitsWithUnitNodesQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useSuspenseQuery<
-    GetUnitsWithAllOutputQuery,
-    GetUnitsWithAllOutputQueryVariables
-  >(GetUnitsWithAllOutputDocument, options);
+    GetUnitsWithUnitNodesQuery,
+    GetUnitsWithUnitNodesQueryVariables
+  >(GetUnitsWithUnitNodesDocument, options);
 }
-export type GetUnitsWithAllOutputQueryHookResult = ReturnType<
-  typeof useGetUnitsWithAllOutputQuery
+export type GetUnitsWithUnitNodesQueryHookResult = ReturnType<
+  typeof useGetUnitsWithUnitNodesQuery
 >;
-export type GetUnitsWithAllOutputLazyQueryHookResult = ReturnType<
-  typeof useGetUnitsWithAllOutputLazyQuery
+export type GetUnitsWithUnitNodesLazyQueryHookResult = ReturnType<
+  typeof useGetUnitsWithUnitNodesLazyQuery
 >;
-export type GetUnitsWithAllOutputSuspenseQueryHookResult = ReturnType<
-  typeof useGetUnitsWithAllOutputSuspenseQuery
+export type GetUnitsWithUnitNodesSuspenseQueryHookResult = ReturnType<
+  typeof useGetUnitsWithUnitNodesSuspenseQuery
 >;
-export type GetUnitsWithAllOutputQueryResult = Apollo.QueryResult<
-  GetUnitsWithAllOutputQuery,
-  GetUnitsWithAllOutputQueryVariables
+export type GetUnitsWithUnitNodesQueryResult = Apollo.QueryResult<
+  GetUnitsWithUnitNodesQuery,
+  GetUnitsWithUnitNodesQueryVariables
 >;
 export const GetUnitsOutputByInputDocument = gql`
   query getUnitsOutputByInput(
@@ -3455,7 +3460,7 @@ export const GetUnitsOutputByInputDocument = gql`
         lastUpdateDatetime
         creatorUuid
         repoUuid
-        outputUnitNodes {
+        unitNodes {
           uuid
           type
           visibilityLevel
