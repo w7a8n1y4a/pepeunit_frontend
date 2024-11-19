@@ -29,6 +29,21 @@ const IterationList = <T extends { uuid: string }>({
         }));
     };
 
+    const renderActionButtons = (uuid: string) => (
+        <>
+            {handleDelete && (
+                <button className="iteration-node-del-button" onClick={() => handleDelete(uuid)}>
+                    delete
+                </button>
+            )}
+            {handleCreate && (
+                <button className="iteration-node-add-button" onClick={() => handleCreate(uuid)}>
+                    add
+                </button>
+            )}
+        </>
+    );
+
     const renderUnitItem = (unit: any) => (
         <>
             <button className="iteration-header" onClick={() => handleToggle(unit.uuid)}>
@@ -39,22 +54,7 @@ const IterationList = <T extends { uuid: string }>({
                     {unit.outputUnitNodes.map((node: any) => (
                         <div className="iteration-node" key={node.uuid}>
                             <h4>{node.topicName}</h4>
-                            {handleDelete && (
-                                <button
-                                    className="iteration-node-del-button"
-                                    onClick={() => handleDelete(node.uuid)}
-                                >
-                                    delete
-                                </button>
-                            )}
-                            {handleCreate && (
-                                <button
-                                    className="iteration-node-add-button"
-                                    onClick={() => handleCreate(node.uuid)}
-                                >
-                                    add
-                                </button>
-                            )}
+                            {renderActionButtons(node.uuid)}
                         </div>
                     ))}
                 </div>
@@ -66,22 +66,7 @@ const IterationList = <T extends { uuid: string }>({
         <>
             <button className="iteration-header">
                 <h3>{permission.name} {permission.visibilityLevel}</h3>
-                {handleDelete ? (
-                    <button
-                        className="iteration-node-del-button"
-                        onClick={() => handleDelete(permission.uuid)}
-                    >
-                        delete
-                    </button>
-                ) : ( <></>)}
-                {handleCreate ? (
-                    <button
-                        className="iteration-node-add-button"
-                        onClick={() => handleCreate(permission.uuid)}
-                    >
-                        add
-                    </button>
-                ) : ( <></>)}
+                {renderActionButtons(permission.uuid)}
             </button>
         </>
     );
