@@ -23,6 +23,7 @@ interface PermissionCreateFormProps {
 
 export default function PermissionCreateForm({ currentNodeData, currentNodeType, selectedEntityType, setSelectedEntityType }: PermissionCreateFormProps) {
     const [ searchString, setSearchString ] = useState('');
+    const [ typeList, setTypeList ] = useState<'button' | 'collapse'>('button');
     const [nodeOutputs, setNodeOutputs] = useState<Array<any> | null>(null);
 
     const [createPermissionMutation] = useCreatePermissionMutation();
@@ -50,7 +51,7 @@ export default function PermissionCreateForm({ currentNodeData, currentNodeType,
                 if (result?.data) {
                     let formattedData: Array<any> = [];
                     let count: number = 0;
-
+                    setTypeList('button')
                     if ('getRepos' in result.data && result.data.getRepos) {
                         formattedData = result.data.getRepos.repos;
                         count = result.data.getRepos.count
@@ -61,16 +62,13 @@ export default function PermissionCreateForm({ currentNodeData, currentNodeType,
                             visibilityLevel: user.role + ' ' + user.status,
                         }));
                         count = result.data.getUsers.count
-                    } else if ('getUnits' in result.data && result.data.getUnits) {
+                    } else if ('getUnits' in result.data && selectedEntityType == PermissionEntities.Unit) {
                         formattedData = result.data.getUnits.units;
                         count = result.data.getUnits.count
-                    } else if ('getUnitNodes' in result.data && result.data.getUnitNodes) {
-                        formattedData = result.data.getUnitNodes.unitNodes.map((unitNode: any) => ({
-                            uuid: unitNode.uuid,
-                            name: unitNode.topicName,
-                            visibilityLevel: unitNode.visibilityLevel + ' ' + unitNode.state,
-                        }));;
-                        count = result.data.getUnitNodes.count
+                    } else if ('getUnits' in result.data && selectedEntityType == PermissionEntities.UnitNode) {
+                        formattedData = result.data.getUnits.units;
+                        count = result.data.getUnits.count
+                        setTypeList('collapse')
                     }
                     
                     setNodeOutputs(formattedData);
@@ -150,7 +148,7 @@ export default function PermissionCreateForm({ currentNodeData, currentNodeType,
 
             <IterationList
                 items={nodeOutputs}
-                renderType={'button'}
+                renderType={typeList}
                 handleCreate={handleCreatePermission}
                 openModalName={null}
             />
