@@ -66,7 +66,7 @@ gql`
             }
         }
     }
-    query getUnitsWithAllOutput(
+    query getUnitsWithUnitNodes(
         $creatorUuid: UUID
         $repoUuid: UUID
         $searchString: String
@@ -77,6 +77,7 @@ gql`
         $orderByLastUpdate: OrderByDate
         $offset: Int
         $limit: Int
+        $unitNodeType: [UnitNodeTypeEnum!]
     ) {
         getUnits(
             filters: {
@@ -90,6 +91,7 @@ gql`
                 orderByLastUpdate: $orderByLastUpdate
                 offset: $offset
                 limit: $limit
+                unitNodeType: $unitNodeType
             }
         ) {
             count
@@ -106,7 +108,7 @@ gql`
                 lastUpdateDatetime
                 creatorUuid
                 repoUuid
-                outputUnitNodes {
+                unitNodes {
                     uuid
                     type
                     visibilityLevel
@@ -156,7 +158,7 @@ gql`
                 lastUpdateDatetime
                 creatorUuid
                 repoUuid
-                outputUnitNodes {
+                unitNodes {
                     uuid
                     type
                     visibilityLevel

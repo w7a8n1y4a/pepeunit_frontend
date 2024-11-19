@@ -1,4 +1,4 @@
-import { useGetUnitsWithAllOutputLazyQuery, useCreateUnitNodeEdgeMutation } from '@rootTypes/compositionFunctions'
+import { useGetUnitsWithUnitNodesLazyQuery, useCreateUnitNodeEdgeMutation, UnitNodeTypeEnum } from '@rootTypes/compositionFunctions'
 import { useState, useEffect } from 'react'
 import DefaultInput from '@primitives/defaultInput'
 import { ResultType } from '@rootTypes/resultEnum'
@@ -30,16 +30,17 @@ export default function UnitNodeEdgeCreateForm({ currentNodeData }: UnitNodeEdge
     const [totalCount, setTotalCount] = useState(0);
     const itemsPerPage = 6;
 
-    const [ getUnitsWithAllOutput ] = useGetUnitsWithAllOutputLazyQuery();
+    const [ getUnitsWithUnitNodes ] = useGetUnitsWithUnitNodesLazyQuery();
     const [ createUnitNodeEdgeMutation ] = useCreateUnitNodeEdgeMutation();
 
     useEffect(() => {
         setIsLoaderActive(true)
-        getUnitsWithAllOutput({
+        getUnitsWithUnitNodes({
             variables: {
                 searchString: searchString,
                 limit: itemsPerPage,
-                offset: currentPage * itemsPerPage
+                offset: currentPage * itemsPerPage,
+                unitNodeType: [UnitNodeTypeEnum.Output]
             }
         }).then(resultUnitsWithOutput => {
                 if (resultUnitsWithOutput.data?.getUnits){
