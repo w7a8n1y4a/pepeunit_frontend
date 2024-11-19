@@ -1,16 +1,16 @@
 import { useCallback } from "react";
 import { 
   useGetReposLazyQuery, 
-  useGetUnitsLazyQuery, 
-  useGetUnitNodesLazyQuery, 
-  useGetUsersLazyQuery 
+  useGetUnitsLazyQuery,
+  useGetUsersLazyQuery,
+  useGetUnitsWithUnitNodesLazyQuery
 } from '@rootTypes/compositionFunctions';
 import { PermissionEntities } from '@rootTypes/compositionFunctions';
 
 export default function useFetchEntitiesByFilter() {
   const [getRepos] = useGetReposLazyQuery();
+  const [getUnitsWithUnitNodes] = useGetUnitsWithUnitNodesLazyQuery();
   const [getUnits] = useGetUnitsLazyQuery();
-  const [getUnitNodes] = useGetUnitNodesLazyQuery();
   const [getUsers] = useGetUsersLazyQuery();
 
   const fetchEntitiesByFilter = useCallback(async (searchString: string, agentType: PermissionEntities, limit: number, offset: number) => {
@@ -23,7 +23,7 @@ export default function useFetchEntitiesByFilter() {
         case PermissionEntities.Unit:
           return getUnits({ variables: queryVariables });
         case PermissionEntities.UnitNode:
-          return getUnitNodes({ variables: queryVariables });
+          return getUnitsWithUnitNodes({ variables: queryVariables });
         case PermissionEntities.User:
           return getUsers({ variables: queryVariables });
         default:
@@ -32,7 +32,7 @@ export default function useFetchEntitiesByFilter() {
     } catch (error) {
       console.error("Error fetching entities by search string:", error);
     }
-  }, [getRepos, getUnits, getUnitNodes, getUsers]);
+  }, [getRepos, getUnitsWithUnitNodes, getUnits, getUsers]);
 
   return { fetchEntitiesByFilter };
 }
