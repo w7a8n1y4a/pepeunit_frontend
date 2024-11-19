@@ -5,7 +5,7 @@ import { ResultType } from '@rootTypes/resultEnum'
 import Spinner from '@primitives/spinner'
 import ResultQuery from '@primitives/resultQuery'
 import PaginationControls from '@primitives/pagination';
-import UnitList from './unitList'
+import IterationList from '@primitives/iterationList'
 import '../form.css'
 
 interface UnitNodeEdgeFormProps {
@@ -103,9 +103,11 @@ export default function UnitNodeEdgeCreateForm({ currentNodeData }: UnitNodeEdge
                 />
             </form>
 
-            <UnitList
-                nodeOutputs={data}
-                handleDeleteEdge={handleCreateEdge}
+            <IterationList
+                items={data}
+                renderType={'collapse'}
+                handleCreate={handleCreateEdge}
+                openModalName={null}
             />
             <PaginationControls
                 currentPage={currentPage}

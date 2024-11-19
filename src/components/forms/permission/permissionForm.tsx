@@ -4,7 +4,6 @@ import {
     useDeletePermissionMutation
  } from '@rootTypes/compositionFunctions';
 import { useState, useEffect } from 'react';
-import useModalHandlers from '@handlers/useModalHandlers';
 import { useModalStore } from '@stores/baseStore';
 import { ResultType } from '@rootTypes/resultEnum';
 import Spinner from '@primitives/spinner';
@@ -12,7 +11,7 @@ import ResultQuery from '@primitives/resultQuery';
 import PaginationControls from '@primitives/pagination';
 import PermissionCreateForm from '../../forms/permission/permissionCreateFrom';
 import useFetchEntitiesByResourceAgents from './useFetchEntitiesByResourceAgents';
-import PermissionList from './permissionList';
+import IterationList from '@primitives/iterationList'
 import '../form.css';
 
 interface PermissionFormProps {
@@ -21,7 +20,6 @@ interface PermissionFormProps {
 }
 
 export default function PermissionForm({ currentNodeData, currentNodeType }: PermissionFormProps) {
-    const { openModal } = useModalHandlers();
     const { activeModal } = useModalStore();
     const [nodeOutputs, setNodeOutputs] = useState<Array<any> | null>(null);
 
@@ -42,7 +40,7 @@ export default function PermissionForm({ currentNodeData, currentNodeType }: Per
     const [totalCount, setTotalCount] = useState(0);
     const itemsPerPage = 6;
 
-    const handleDeletePermission = (agentUuid: string, resourceUuid: string) => {
+    const handleDeletePermission = (agentUuid: string) => {
         setIsLoaderActive(true);
         setResultData({ ...resultData, message: null });
     
@@ -50,7 +48,7 @@ export default function PermissionForm({ currentNodeData, currentNodeType }: Per
             deletePermissionMutation({
                 variables: {
                     agentUuid: agentUuid,
-                    resourceUuid: resourceUuid
+                    resourceUuid: currentNodeData.uuid
                 }
             }).then(result => {
                 if (result.data) {
@@ -141,13 +139,13 @@ export default function PermissionForm({ currentNodeData, currentNodeType }: Per
                 ))}
             </div>
 
-            <PermissionList
-                nodeOutputs={nodeOutputs}
-                currentNodeData={currentNodeData}
-                currentNodeType={currentNodeType}
-                handleDeletePermission={handleDeletePermission}
-                openModal={openModal}
+            <IterationList
+                items={nodeOutputs}
+                renderType={'button'}
+                handleDelete={handleDeletePermission}
+                openModalName={'permissionCreate' + currentNodeType}
             />
+
 
             <PaginationControls
                 currentPage={currentPage}
