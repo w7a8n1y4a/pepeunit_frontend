@@ -9,7 +9,7 @@ import DefaultInput from '@primitives/defaultInput'
 import Spinner from '@primitives/spinner';
 import ResultQuery from '@primitives/resultQuery';
 import PaginationControls from '@primitives/pagination';
-import PermissionList from './permissionList';
+import IterationList from '@primitives/iterationList'
 import useFetchEntitiesByFilter from './useFetchEntitiesByFilter';
 import '../form.css';
 
@@ -153,11 +153,11 @@ export default function PermissionCreateForm({ currentNodeData, currentNodeType,
                 ))}
             </div>
 
-            <PermissionList
-                nodeOutputs={nodeOutputs}
-                currentNodeData={currentNodeData}
-                currentNodeType={currentNodeType}
-                handleCreatePermission={handleCreatePermission}
+            <IterationList
+                items={nodeOutputs}
+                renderType={'button'}
+                handleCreate={handleCreatePermission}
+                openModalName={null}
             />
 
             <PaginationControls

@@ -1,13 +1,12 @@
 import BaseModal from '../../modal/baseModal';
 import { useGetUnitsOutputByInputLazyQuery, useDeleteUnitNodeEdgeMutation } from '@rootTypes/compositionFunctions';
 import { useState, useEffect } from 'react';
-import useModalHandlers from '@handlers/useModalHandlers';
 import { useModalStore } from '@stores/baseStore';
 import { ResultType } from '@rootTypes/resultEnum';
 import Spinner from '@primitives/spinner';
 import ResultQuery from '@primitives/resultQuery';
 import PaginationControls from '@primitives/pagination';
-import UnitList from './unitList';
+import IterationList from '@primitives/iterationList'
 import UnitNodeEdgeCreateForm from '../../forms/unitNode/unitNodeEdgeCreateForm';
 import '../form.css';
 
@@ -16,7 +15,6 @@ interface UnitNodeEdgeFormProps {
 }
 
 export default function UnitNodeEdgeForm({ currentNodeData }: UnitNodeEdgeFormProps) {
-    const { openModal } = useModalHandlers();
     const { activeModal } = useModalStore();
     const [nodeOutputs, setNodeOutputs] = useState<Array<any> | null>(null);
     const [getUnitsOutputByInputQuery] = useGetUnitsOutputByInputLazyQuery();
@@ -84,10 +82,11 @@ export default function UnitNodeEdgeForm({ currentNodeData }: UnitNodeEdgeFormPr
         <>
             {isLoaderActive && <Spinner />}
 
-            <UnitList
-                nodeOutputs={nodeOutputs}
-                handleDeleteEdge={handleDeleteEdge}
-                openModal={openModal}
+            <IterationList
+                items={nodeOutputs}
+                renderType={'collapse'}
+                handleDelete={handleDeleteEdge}
+                openModalName={'unitNodeEdgeCreate'}
             />
 
             <PaginationControls
