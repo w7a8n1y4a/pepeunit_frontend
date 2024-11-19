@@ -9,6 +9,7 @@ import { ResultType } from '@rootTypes/resultEnum';
 import Spinner from '@primitives/spinner';
 import ResultQuery from '@primitives/resultQuery';
 import PaginationControls from '@primitives/pagination';
+import EntityTypeSelector from '@primitives/entityTypeSelector';
 import PermissionCreateForm from '../../forms/permission/permissionCreateFrom';
 import useFetchEntitiesByResourceAgents from './useFetchEntitiesByResourceAgents';
 import IterationList from '@primitives/iterationList'
@@ -127,17 +128,11 @@ export default function PermissionForm({ currentNodeData, currentNodeType }: Per
         <>
             {isLoaderActive && <Spinner />}
 
-            <div className="entity-type-selector">
-                {Object.values(PermissionEntities).map((entityType) => (
-                    <button
-                        key={entityType}
-                        className={`entity-button ${selectedEntityType === entityType ? 'active' : ''}`}
-                        onClick={() => setSelectedEntityType(entityType as PermissionEntities)}
-                    >
-                        {entityType}
-                    </button>
-                ))}
-            </div>
+            <EntityTypeSelector
+                entities={PermissionEntities}
+                selectedEntityType={selectedEntityType}
+                setSelectedEntityType={setSelectedEntityType}
+            />
 
             <IterationList
                 items={nodeOutputs}
