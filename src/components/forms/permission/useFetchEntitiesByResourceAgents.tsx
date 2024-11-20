@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { 
   useGetReposLazyQuery, 
   useGetUnitsLazyQuery, 
-  useGetUnitNodesLazyQuery, 
+  useGetUnitsWithUnitNodesLazyQuery, 
   useGetUsersLazyQuery,
   useGetResourceAgentsLazyQuery
 } from '@rootTypes/compositionFunctions';
@@ -11,25 +11,13 @@ import { PermissionEntities } from '@rootTypes/compositionFunctions';
 export default function useFetchEntitiesByResourceAgents() {
   const [getRepos] = useGetReposLazyQuery();
   const [getUnits] = useGetUnitsLazyQuery();
-  const [getUnitNodes] = useGetUnitNodesLazyQuery();
+  const [getUnitsWithUnitNodes] = useGetUnitsWithUnitNodesLazyQuery();
   const [getUsers] = useGetUsersLazyQuery();
   const [getResourceAgentsLazyQuery] = useGetResourceAgentsLazyQuery();
 
-  const fetchEntitiesByResourceAgents = useCallback(async (resourceUuid: string, agentType: PermissionEntities, resourceType: PermissionEntities, limit: number, offset: number) => {
+  const fetchEntitiesByResourceAgents = useCallback(async (agentType: PermissionEntities, limit: number, offset: number, agentUuids: string[] | null) => {
     try {
-      const resourceAgentsResult = await getResourceAgentsLazyQuery({
-        variables: {
-          agentType: agentType,
-          resourceUuid: resourceUuid,
-          resourceType: resourceType
-        },
-      });
-
-      if (resourceAgentsResult.data?.getResourceAgents?.permissions) {
-        const agentUuids = resourceAgentsResult.data.getResourceAgents.permissions.map(
-          (permission) => permission.agentUuid
-        );
-
+      if (agentUuids) {
         console.log('agent permission', agentUuids)
 
         if (agentUuids.length === 0) {
@@ -45,7 +33,7 @@ export default function useFetchEntitiesByResourceAgents() {
           case PermissionEntities.Unit:
             return getUnits({ variables: queryVariables });
           case PermissionEntities.UnitNode:
-            return getUnitNodes({ variables: queryVariables });
+            return getUnitsWithUnitNodes({ variables: queryVariables });
           case PermissionEntities.User:
             return getUsers({ variables: queryVariables });
           default:
@@ -57,7 +45,7 @@ export default function useFetchEntitiesByResourceAgents() {
     } catch (error) {
       console.error("Error fetching entities by resource agents:");
     }
-  }, [getRepos, getUnits, getUnitNodes, getUsers, getResourceAgentsLazyQuery]);
+  }, [getRepos, getUnits, getUnitsWithUnitNodes, getUsers, getResourceAgentsLazyQuery]);
 
   return { fetchEntitiesByResourceAgents };
 }
