@@ -1,7 +1,8 @@
-import '../form.css';
 import attention_img from '/images/attention.svg'
 import { useState, useEffect, useRef } from 'react';
 import { ResultType } from '@rootTypes/resultEnum'
+
+import './primitives.css'
 
 interface DefaultInputProps {
     id: string;

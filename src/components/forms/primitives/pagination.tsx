@@ -1,5 +1,7 @@
 import React from 'react';
 
+import './primitives.css'
+
 interface PaginationControlsProps {
     currentPage: number;
     totalPages: number;
