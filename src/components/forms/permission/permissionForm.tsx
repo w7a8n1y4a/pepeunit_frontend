@@ -1,7 +1,9 @@
 import BaseModal from '../../modal/baseModal';
 import {
     PermissionEntities,
-    useDeletePermissionMutation
+    useDeletePermissionMutation,
+    useGetResourceAgentsLazyQuery,
+    GetUnitsWithUnitNodesQuery
  } from '@rootTypes/compositionFunctions';
 import { useState, useEffect } from 'react';
 import { useModalStore } from '@stores/baseStore';
@@ -23,11 +25,13 @@ interface PermissionFormProps {
 export default function PermissionForm({ currentNodeData, currentNodeType }: PermissionFormProps) {
     const { activeModal } = useModalStore();
     const [nodeOutputs, setNodeOutputs] = useState<Array<any> | null>(null);
+    const [ typeList, setTypeList ] = useState<'button' | 'collapse'>('button');
 
     const [refreshTrigger, setRefreshTrigger] = useState(false);
 
     const [deletePermissionMutation] = useDeletePermissionMutation();
     const { fetchEntitiesByResourceAgents } = useFetchEntitiesByResourceAgents();
+    const [getResourceAgentsLazyQuery] = useGetResourceAgentsLazyQuery();
 
     const [selectedEntityType, setSelectedEntityType] = useState<PermissionEntities>(PermissionEntities.User);
     
@@ -68,14 +72,28 @@ export default function PermissionForm({ currentNodeData, currentNodeType }: Per
 
         setIsLoaderActive(true);
         try {
-            const result = await fetchEntitiesByResourceAgents(
-                currentNodeData.uuid,
-                entityType,
-                currentNodeType,
-                itemsPerPage,
-                page * itemsPerPage
-            );
+            let agentUuids: string[] | null = null
+            const resourceAgentsResult = await getResourceAgentsLazyQuery({
+                variables: {
+                    agentType: entityType,
+                    resourceUuid: currentNodeData.uuid,
+                    resourceType: currentNodeType
+                },
+            });
+    
+            if (resourceAgentsResult.data?.getResourceAgents?.permissions) {
+                agentUuids = resourceAgentsResult.data.getResourceAgents.permissions.map(
+                    (permission) => permission.agentUuid
+                );
+            }
 
+            const result = await fetchEntitiesByResourceAgents(
+                entityType,
+                itemsPerPage,
+                page * itemsPerPage,
+                agentUuids
+            );
+            setTypeList('button')
             if (result?.data) {
                 let formattedData: Array<any> = [];
                 let count: number = 0;
@@ -90,16 +108,25 @@ export default function PermissionForm({ currentNodeData, currentNodeType }: Per
                         visibilityLevel: user.role + ' ' + user.status,
                     }));
                     count = result.data.getUsers.count;
-                } else if ('getUnits' in result.data && result.data.getUnits) {
+                } else if ('getUnits' in result.data && selectedEntityType == PermissionEntities.Unit) {
                     formattedData = result.data.getUnits.units;
-                    count = result.data.getUnits.count;
-                } else if ('getUnitNodes' in result.data && result.data.getUnitNodes) {
-                    formattedData = result.data.getUnitNodes.unitNodes.map((unitNode: any) => ({
-                        uuid: unitNode.uuid,
-                        name: unitNode.topicName,
-                        visibilityLevel: unitNode.visibilityLevel + ' ' + unitNode.state,
-                    }));
-                    count = result.data.getUnitNodes.count;
+                    count = result.data.getUnits.count
+                } else if ('getUnits' in result.data && selectedEntityType == PermissionEntities.UnitNode) {
+                    if (agentUuids !== null) {
+                        const unitsWithUnitNodes = result.data.getUnits.units as GetUnitsWithUnitNodesQuery['getUnits']['units'];
+                        result.data.getUnits.units = unitsWithUnitNodes
+                          .map(unit => ({
+                            ...unit,
+                            unitNodes: unit.unitNodes.filter(node => agentUuids.includes(node.uuid)),
+                          }))
+                          .filter(unit => unit.unitNodes.length > 0); // Удаляем units с пустыми unitNodes
+                    } else {
+                        result.data.getUnits.units
+                    }
+
+                    formattedData = result.data.getUnits.units;
+                    count = result.data.getUnits.units.length
+                    setTypeList('collapse')
                 }
 
                 setNodeOutputs(formattedData);
@@ -136,7 +163,7 @@ export default function PermissionForm({ currentNodeData, currentNodeType }: Per
 
             <IterationList
                 items={nodeOutputs}
-                renderType={'button'}
+                renderType={typeList}
                 handleDelete={handleDeletePermission}
                 openModalName={'permissionCreate' + currentNodeType}
             />
