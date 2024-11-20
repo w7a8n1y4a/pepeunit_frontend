@@ -1,11 +1,11 @@
-import { useGetUnitsWithAllOutputLazyQuery, useCreateUnitNodeEdgeMutation } from '@rootTypes/compositionFunctions'
+import { useGetUnitsWithUnitNodesLazyQuery, useCreateUnitNodeEdgeMutation, UnitNodeTypeEnum } from '@rootTypes/compositionFunctions'
 import { useState, useEffect } from 'react'
 import DefaultInput from '@primitives/defaultInput'
 import { ResultType } from '@rootTypes/resultEnum'
 import Spinner from '@primitives/spinner'
 import ResultQuery from '@primitives/resultQuery'
 import PaginationControls from '@primitives/pagination';
-import UnitList from './unitList'
+import IterationList from '@primitives/iterationList'
 import '../form.css'
 
 interface UnitNodeEdgeFormProps {
@@ -30,16 +30,17 @@ export default function UnitNodeEdgeCreateForm({ currentNodeData }: UnitNodeEdge
     const [totalCount, setTotalCount] = useState(0);
     const itemsPerPage = 6;
 
-    const [ getUnitsWithAllOutput ] = useGetUnitsWithAllOutputLazyQuery();
+    const [ getUnitsWithUnitNodes ] = useGetUnitsWithUnitNodesLazyQuery();
     const [ createUnitNodeEdgeMutation ] = useCreateUnitNodeEdgeMutation();
 
     useEffect(() => {
         setIsLoaderActive(true)
-        getUnitsWithAllOutput({
+        getUnitsWithUnitNodes({
             variables: {
                 searchString: searchString,
                 limit: itemsPerPage,
-                offset: currentPage * itemsPerPage
+                offset: currentPage * itemsPerPage,
+                unitNodeType: [UnitNodeTypeEnum.Output]
             }
         }).then(resultUnitsWithOutput => {
                 if (resultUnitsWithOutput.data?.getUnits){
@@ -103,9 +104,11 @@ export default function UnitNodeEdgeCreateForm({ currentNodeData }: UnitNodeEdge
                 />
             </form>
 
-            <UnitList
-                nodeOutputs={data}
-                handleDeleteEdge={handleCreateEdge}
+            <IterationList
+                items={data}
+                renderType={'collapse'}
+                handleCreate={handleCreateEdge}
+                openModalName={null}
             />
             <PaginationControls
                 currentPage={currentPage}

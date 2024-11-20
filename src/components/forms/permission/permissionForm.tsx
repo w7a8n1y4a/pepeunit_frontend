@@ -1,18 +1,20 @@
 import BaseModal from '../../modal/baseModal';
 import {
     PermissionEntities,
-    useDeletePermissionMutation
+    useDeletePermissionMutation,
+    useGetResourceAgentsLazyQuery,
+    GetUnitsWithUnitNodesQuery
  } from '@rootTypes/compositionFunctions';
 import { useState, useEffect } from 'react';
-import useModalHandlers from '@handlers/useModalHandlers';
 import { useModalStore } from '@stores/baseStore';
 import { ResultType } from '@rootTypes/resultEnum';
 import Spinner from '@primitives/spinner';
 import ResultQuery from '@primitives/resultQuery';
 import PaginationControls from '@primitives/pagination';
+import EntityTypeSelector from '@primitives/entityTypeSelector';
 import PermissionCreateForm from '../../forms/permission/permissionCreateFrom';
 import useFetchEntitiesByResourceAgents from './useFetchEntitiesByResourceAgents';
-import PermissionList from './permissionList';
+import IterationList from '@primitives/iterationList'
 import '../form.css';
 
 interface PermissionFormProps {
@@ -21,14 +23,15 @@ interface PermissionFormProps {
 }
 
 export default function PermissionForm({ currentNodeData, currentNodeType }: PermissionFormProps) {
-    const { openModal } = useModalHandlers();
     const { activeModal } = useModalStore();
     const [nodeOutputs, setNodeOutputs] = useState<Array<any> | null>(null);
+    const [ typeList, setTypeList ] = useState<'button' | 'collapse'>('button');
 
     const [refreshTrigger, setRefreshTrigger] = useState(false);
 
     const [deletePermissionMutation] = useDeletePermissionMutation();
     const { fetchEntitiesByResourceAgents } = useFetchEntitiesByResourceAgents();
+    const [getResourceAgentsLazyQuery] = useGetResourceAgentsLazyQuery();
 
     const [selectedEntityType, setSelectedEntityType] = useState<PermissionEntities>(PermissionEntities.User);
     
@@ -42,7 +45,7 @@ export default function PermissionForm({ currentNodeData, currentNodeType }: Per
     const [totalCount, setTotalCount] = useState(0);
     const itemsPerPage = 6;
 
-    const handleDeletePermission = (agentUuid: string, resourceUuid: string) => {
+    const handleDeletePermission = (agentUuid: string) => {
         setIsLoaderActive(true);
         setResultData({ ...resultData, message: null });
     
@@ -50,7 +53,7 @@ export default function PermissionForm({ currentNodeData, currentNodeType }: Per
             deletePermissionMutation({
                 variables: {
                     agentUuid: agentUuid,
-                    resourceUuid: resourceUuid
+                    resourceUuid: currentNodeData.uuid
                 }
             }).then(result => {
                 if (result.data) {
@@ -69,14 +72,28 @@ export default function PermissionForm({ currentNodeData, currentNodeType }: Per
 
         setIsLoaderActive(true);
         try {
-            const result = await fetchEntitiesByResourceAgents(
-                currentNodeData.uuid,
-                entityType,
-                currentNodeType,
-                itemsPerPage,
-                page * itemsPerPage
-            );
+            let agentUuids: string[] | null = null
+            const resourceAgentsResult = await getResourceAgentsLazyQuery({
+                variables: {
+                    agentType: entityType,
+                    resourceUuid: currentNodeData.uuid,
+                    resourceType: currentNodeType
+                },
+            });
+    
+            if (resourceAgentsResult.data?.getResourceAgents?.permissions) {
+                agentUuids = resourceAgentsResult.data.getResourceAgents.permissions.map(
+                    (permission) => permission.agentUuid
+                );
+            }
 
+            const result = await fetchEntitiesByResourceAgents(
+                entityType,
+                itemsPerPage,
+                page * itemsPerPage,
+                agentUuids
+            );
+            setTypeList('button')
             if (result?.data) {
                 let formattedData: Array<any> = [];
                 let count: number = 0;
@@ -91,16 +108,25 @@ export default function PermissionForm({ currentNodeData, currentNodeType }: Per
                         visibilityLevel: user.role + ' ' + user.status,
                     }));
                     count = result.data.getUsers.count;
-                } else if ('getUnits' in result.data && result.data.getUnits) {
+                } else if ('getUnits' in result.data && selectedEntityType == PermissionEntities.Unit) {
                     formattedData = result.data.getUnits.units;
-                    count = result.data.getUnits.count;
-                } else if ('getUnitNodes' in result.data && result.data.getUnitNodes) {
-                    formattedData = result.data.getUnitNodes.unitNodes.map((unitNode: any) => ({
-                        uuid: unitNode.uuid,
-                        name: unitNode.topicName,
-                        visibilityLevel: unitNode.visibilityLevel + ' ' + unitNode.state,
-                    }));
-                    count = result.data.getUnitNodes.count;
+                    count = result.data.getUnits.count
+                } else if ('getUnits' in result.data && selectedEntityType == PermissionEntities.UnitNode) {
+                    if (agentUuids !== null) {
+                        const unitsWithUnitNodes = result.data.getUnits.units as GetUnitsWithUnitNodesQuery['getUnits']['units'];
+                        result.data.getUnits.units = unitsWithUnitNodes
+                          .map(unit => ({
+                            ...unit,
+                            unitNodes: unit.unitNodes.filter(node => agentUuids.includes(node.uuid)),
+                          }))
+                          .filter(unit => unit.unitNodes.length > 0); // Удаляем units с пустыми unitNodes
+                    } else {
+                        result.data.getUnits.units
+                    }
+
+                    formattedData = result.data.getUnits.units;
+                    count = result.data.getUnits.units.length
+                    setTypeList('collapse')
                 }
 
                 setNodeOutputs(formattedData);
@@ -129,25 +155,19 @@ export default function PermissionForm({ currentNodeData, currentNodeType }: Per
         <>
             {isLoaderActive && <Spinner />}
 
-            <div className="entity-type-selector">
-                {Object.values(PermissionEntities).map((entityType) => (
-                    <button
-                        key={entityType}
-                        className={`entity-button ${selectedEntityType === entityType ? 'active' : ''}`}
-                        onClick={() => setSelectedEntityType(entityType as PermissionEntities)}
-                    >
-                        {entityType}
-                    </button>
-                ))}
-            </div>
-
-            <PermissionList
-                nodeOutputs={nodeOutputs}
-                currentNodeData={currentNodeData}
-                currentNodeType={currentNodeType}
-                handleDeletePermission={handleDeletePermission}
-                openModal={openModal}
+            <EntityTypeSelector
+                entities={PermissionEntities}
+                selectedEntityType={selectedEntityType}
+                setSelectedEntityType={setSelectedEntityType}
             />
+
+            <IterationList
+                items={nodeOutputs}
+                renderType={typeList}
+                handleDelete={handleDeletePermission}
+                openModalName={'permissionCreate' + currentNodeType}
+            />
+
 
             <PaginationControls
                 currentPage={currentPage}
