@@ -119,12 +119,14 @@ export default function PermissionForm({ currentNodeData, currentNodeType }: Per
                             ...unit,
                             unitNodes: unit.unitNodes.filter(node => agentUuids.includes(node.uuid)),
                           }))
-                          .filter(unit => unit.unitNodes.length > 0); // Удаляем units с пустыми unitNodes
-                    } else {
-                        result.data.getUnits.units
+                          .filter(unit => unit.unitNodes.length > 0);
                     }
 
-                    formattedData = result.data.getUnits.units;
+                    const allUnits = result.data.getUnits.units;
+                    const startIndex = page * itemsPerPage;
+                    const endIndex = startIndex + itemsPerPage;
+                    formattedData = allUnits.slice(startIndex, endIndex);
+
                     count = result.data.getUnits.units.length
                     setTypeList('collapse')
                 }
