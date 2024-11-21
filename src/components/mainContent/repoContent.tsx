@@ -1,24 +1,31 @@
 import { ResultType } from '@rootTypes/resultEnum'
-import { useUpdateLocalRepoMutation, PermissionEntities, useUpdateUnitsFirmwareMutation, useDeleteRepoMutation } from '@rootTypes/compositionFunctions'
+import { useUpdateLocalRepoMutation, PermissionEntities, useUpdateUnitsFirmwareMutation, useDeleteRepoMutation, useGetVersionsLazyQuery } from '@rootTypes/compositionFunctions'
 import BaseModal from '../modal/baseModal'
 import CreateUnitForm from '../forms/unit/createUnitForm';
 import UpdateRepoForm from '../forms/repo/updateRepoForm';
 import PermissionForm from '../forms/permission/permissionForm';
 import UpdateRepoCredentialsForm from '../forms/repo/updateRepoCredentialsForm'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Spinner from '@primitives/spinner'
 import ResultQuery from '@primitives/resultQuery'
+import VersionChart from '@primitives/versionChart'
 
 import { useGraphStore } from '@stores/graphStore';
 import { useModalStore, useNodeStore } from '@stores/baseStore';
 import { useUserStore } from '@stores/userStore';
 import useModalHandlers from '@handlers/useModalHandlers';
 
+import {
+  GetVersionsQuery
+} from '@rootTypes/compositionFunctions';
+
 export default function RepoContent(){
   const { activeModal, setActiveModal } = useModalStore();
   const { currentNodeData, setCurrentNodeData } = useNodeStore();
   const { removeNodesAndLinks } = useGraphStore();
   const { openModal } = useModalHandlers();
+
+  const [versions, setVersions] = useState<GetVersionsQuery['getVersions'] | null>(null)
 
   const { user } = useUserStore();
 
@@ -33,6 +40,7 @@ export default function RepoContent(){
   const [updateLocalRepo] = useUpdateLocalRepoMutation();
   const [updateUnitsFirmware] = useUpdateUnitsFirmwareMutation()
   const [deleteRepo] = useDeleteRepoMutation()
+  const [getVersions] = useGetVersionsLazyQuery()
 
   const handleUpdateLocalRepo = () => {
     setIsLoaderActive(true)
@@ -113,6 +121,24 @@ export default function RepoContent(){
     }
   };
 
+  useEffect(() => {
+    console.log('test')
+    if (currentNodeData){
+      console.log(currentNodeData.uuid)
+      getVersions({
+        variables: {
+            uuid: currentNodeData.uuid,
+        }
+      }).then(result => {
+          if (result.data?.getVersions){
+              console.log(result.data.getVersions)
+              setVersions(result.data.getVersions)
+          }
+        }
+      )
+    }
+}, [currentNodeData]);
+
   return (
     <>
       <BaseModal
@@ -122,6 +148,9 @@ export default function RepoContent(){
         <div className="modal_menu_content">
           {
             isLoaderActive && (<Spinner/>)
+          }
+          {
+            versions && versions.unitCount > 0 ? (<VersionChart data={versions} />) : (<></>)
           }
           {
             user ? (
