@@ -14,6 +14,7 @@ gql`
             topicName
             state
             unitUuid
+            creatorUuid
         }
     }
     query getUnitNodes(
@@ -47,6 +48,7 @@ gql`
                 topicName
                 state
                 unitUuid
+                creatorUuid
             }
         }
     }
