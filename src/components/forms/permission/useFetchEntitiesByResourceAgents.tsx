@@ -33,7 +33,7 @@ export default function useFetchEntitiesByResourceAgents() {
           case PermissionEntities.Unit:
             return getUnits({ variables: queryVariables });
           case PermissionEntities.UnitNode:
-            return getUnitsWithUnitNodes({ variables: queryVariables });
+            return getUnitsWithUnitNodes({ variables: {} });
           case PermissionEntities.User:
             return getUsers({ variables: queryVariables });
           default:
