@@ -6,6 +6,9 @@ import { createUploadLink } from 'apollo-upload-client';
 import { ApolloClient, InMemoryCache, ApolloProvider, from } from '@apollo/client';
 import { isAuthTokenExpired } from './utils/isAuthTokenExpired';
 import Header from './components/header/header';
+import { useEffect } from 'react';
+
+import { useUserStore } from '@stores/userStore';
 
 const authLink = setContext((_, { headers }) => {
   const token = localStorage.getItem('token');
@@ -67,6 +70,17 @@ const client = new ApolloClient({
 });
 
 function App() {
+
+  const { setUser } = useUserStore();
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      const parsedUser = JSON.parse(storedUser);
+      setUser(parsedUser);
+    }
+  }, []);
+
   return (
     <>
       <ApolloProvider client={client}>
