@@ -1225,6 +1225,7 @@ export type GetUnitNodesQuery = {
       topicName: string;
       state?: string | null;
       unitUuid: string;
+      creatorUuid: string;
     }>;
   };
 };
@@ -3734,6 +3735,7 @@ export const GetUnitNodesDocument = gql`
         topicName
         state
         unitUuid
+        creatorUuid
       }
     }
   }

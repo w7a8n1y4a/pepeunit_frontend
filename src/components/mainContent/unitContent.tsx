@@ -10,6 +10,7 @@ import UpdateUnitEnvForm from '../forms/unit/updateUnitEnvForm'
 
 import { useGraphStore } from '@stores/graphStore';
 import { useModalStore, useNodeStore } from '@stores/baseStore';
+import { useUserStore } from '@stores/userStore';
 import useModalHandlers from '@handlers/useModalHandlers';
 
 
@@ -18,6 +19,7 @@ export default function UnitContent(){
   const { currentNodeData, setCurrentNodeData } = useNodeStore();
   const { removeNodesAndLinks } = useGraphStore();
   const { openModal } = useModalHandlers();
+  const { user } = useUserStore();
 
   let nodeType = PermissionEntities.Unit
     
@@ -99,6 +101,15 @@ export default function UnitContent(){
     }
   };
 
+  function getStateData() {
+    if (currentNodeData) {
+      let state: any = JSON.parse(currentNodeData.unitStateDict)
+      return JSON.stringify(state, null, 4)
+    } else {
+      return ''
+    }
+  }
+
   return (
     <>
       <BaseModal
@@ -109,21 +120,35 @@ export default function UnitContent(){
           {
             isLoaderActive && (<Spinner/>)
           }
-          <button className="button_open_alter" onClick={() => openModal('permissionMenu' + nodeType)}>
-            Доступы
-          </button>
-          <button className="button_open_alter" onClick={() => fileUpload("tar")}>
-            Скачать tar
-          </button>
-          <button className="button_open_alter" onClick={() => fileUpload("tgz")}>
-            Скачать tgz
-          </button>
-          <button className="button_open_alter" onClick={() => fileUpload("zip")}>
-            Скачать zip
-          </button>
-          <button className="button_open_alter" onClick={() => openModal('unitSettingsMenu')}>
-            Настройки
-          </button>
+
+          {
+            currentNodeData?.unitStateDict ? (
+              <pre>
+                {getStateData()}
+              </pre>
+            ) : (<></>)
+          }
+          {
+            user && currentNodeData && user.uuid == currentNodeData.creatorUuid ? (
+              <>
+                <button className="button_open_alter" onClick={() => openModal('permissionMenu' + nodeType)}>
+                  Доступы
+                </button>
+                <button className="button_open_alter" onClick={() => fileUpload("tar")}>
+                  Скачать tar
+                </button>
+                <button className="button_open_alter" onClick={() => fileUpload("tgz")}>
+                  Скачать tgz
+                </button>
+                <button className="button_open_alter" onClick={() => fileUpload("zip")}>
+                  Скачать zip
+                </button>
+                <button className="button_open_alter" onClick={() => openModal('unitSettingsMenu')}>
+                  Настройки
+                </button>
+              </>
+            ) : (<></>)
+          }
           <ResultQuery
             resultData={resultData}
           />

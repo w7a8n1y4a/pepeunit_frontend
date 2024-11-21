@@ -8,11 +8,13 @@ import UnitNodeEdgeForm from '../forms/unitNode/unitNodeEdgeForm'
 import PermissionForm from '../forms/permission/permissionForm';
 import useModalHandlers from '@handlers/useModalHandlers';
 
+import { useUserStore } from '@stores/userStore';
 
 export default function UnitNodeContent(){
   const { activeModal } = useModalStore();
   const { currentNodeData, setCurrentNodeData } = useNodeStore();
   const { openModal } = useModalHandlers();
+  const { user } = useUserStore();
 
   let nodeType = PermissionEntities.UnitNode
 
@@ -29,24 +31,30 @@ export default function UnitNodeContent(){
           <div>
             Состояние: {currentNodeData?.state || "Данных нет"}
           </div>
-          <button className="button_open_alter" onClick={() => openModal('permissionMenu' + nodeType)}>
-            Доступы
-          </button>
           {
-            currentNodeData?.type == UnitNodeTypeEnum.Input ? (
+            user && currentNodeData && user.uuid == currentNodeData.creatorUuid ? (
               <>
-                <button className="button_open_alter" onClick={() => openModal('unitNodeSetState')}>
-                  Установить значение
+                <button className="button_open_alter" onClick={() => openModal('permissionMenu' + nodeType)}>
+                  Доступы
                 </button>
-                <button className="button_open_alter" onClick={() => openModal('unitNodeAddOutputToInput')}>
-                  Связи
+                {
+                  currentNodeData?.type == UnitNodeTypeEnum.Input ? (
+                    <>
+                      <button className="button_open_alter" onClick={() => openModal('unitNodeSetState')}>
+                        Установить значение
+                      </button>
+                      <button className="button_open_alter" onClick={() => openModal('unitNodeAddOutputToInput')}>
+                        Связи
+                      </button>
+                    </>
+                  ) : (<></>)
+                }
+                <button className="button_open_alter" onClick={() => openModal('unitNodeUpdate')}>
+                  Настройки
                 </button>
               </>
             ) : (<></>)
           }
-          <button className="button_open_alter" onClick={() => openModal('unitNodeUpdate')}>
-            Настройки
-          </button>
         </div>
       </BaseModal>
 
