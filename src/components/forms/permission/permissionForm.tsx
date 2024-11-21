@@ -156,7 +156,7 @@ export default function PermissionForm({ currentNodeData, currentNodeType }: Per
             {isLoaderActive && <Spinner />}
 
             <EntityTypeSelector
-                entities={PermissionEntities}
+                entities={[PermissionEntities.Unit, PermissionEntities.User, PermissionEntities.UnitNode]}
                 selectedEntityType={selectedEntityType}
                 setSelectedEntityType={setSelectedEntityType}
             />
