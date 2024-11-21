@@ -8,9 +8,13 @@ import Spinner from '@primitives/spinner'
 import ResultQuery from '@primitives/resultQuery'
 import '../form.css'
 
+import { useUserStore } from '@stores/userStore';
+
 export default function ChangePassForm() {
-    const [password, setPassword] = useState('');
+    const [password, setPassword] = useState('');']'
     const [confirmPassword, setConfirmPassword] = useState('');
+
+    const { setUser } = useUserStore();
 
     const [errorState, setErrorState] = useState({
         password: true,
@@ -44,7 +48,8 @@ export default function ChangePassForm() {
             }
         }).then(updateUserData => {
             if (updateUserData.data) { 
-                localStorage.setItem('user', JSON.stringify(updateUserData.data.updateUser));
+                setUser(updateUserData.data.updateUser)
+                
                 setIsLoaderActive(false)
                 setResultData({ type: ResultType.Happy, message: 'Пароль успешно изменён'})
             }

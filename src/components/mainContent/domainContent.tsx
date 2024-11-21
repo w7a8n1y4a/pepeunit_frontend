@@ -1,17 +1,20 @@
 import { ResultType } from '@rootTypes/resultEnum'
-import { useBulkUpdateMutation, useGetBaseMetricsLazyQuery, BaseMetricsType } from '@rootTypes/compositionFunctions'
+import { useBulkUpdateMutation, useGetBaseMetricsLazyQuery, BaseMetricsType, UserRole } from '@rootTypes/compositionFunctions'
 import BaseModal from '../modal/baseModal'
 import { useState, useEffect } from 'react';
 import Spinner from '@primitives/spinner'
 import ResultQuery from '@primitives/resultQuery'
 
 import { useModalStore, useNodeStore } from '@stores/baseStore';
+import { useUserStore } from '@stores/userStore';
 import useModalHandlers from '@handlers/useModalHandlers';
+
 
 export default function DomainContent(){
   const { activeModal } = useModalStore();
   const { currentNodeData } = useNodeStore();
   const { openModal } = useModalHandlers();
+  const { user } = useUserStore();
 
   const [baseMetrics, setBaseMetrics] = useState<BaseMetricsType | null>(null)
   const [isLoaderActive, setIsLoaderActive] = useState(false)
@@ -62,9 +65,14 @@ export default function DomainContent(){
           <button className="button_open_alter" onClick={() => openModal('statistics')}>
             Статистики
           </button>
-          <button className="button_open_alter" onClick={handleBulkUpdate}>
-            Обновить все Repo и связанные Unit
-          </button>
+
+          {
+            user?.role === UserRole.Admin ? (
+              <button className="button_open_alter" onClick={handleBulkUpdate}>
+                Обновить все Repo и связанные Unit
+              </button>
+            ) : (<></>)
+          }
           <ResultQuery
             resultData={resultData}
           />

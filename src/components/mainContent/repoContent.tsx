@@ -11,6 +11,7 @@ import ResultQuery from '@primitives/resultQuery'
 
 import { useGraphStore } from '@stores/graphStore';
 import { useModalStore, useNodeStore } from '@stores/baseStore';
+import { useUserStore } from '@stores/userStore';
 import useModalHandlers from '@handlers/useModalHandlers';
 
 export default function RepoContent(){
@@ -18,6 +19,8 @@ export default function RepoContent(){
   const { currentNodeData, setCurrentNodeData } = useNodeStore();
   const { removeNodesAndLinks } = useGraphStore();
   const { openModal } = useModalHandlers();
+
+  const { user } = useUserStore();
 
   let nodeType = PermissionEntities.Repo
 
@@ -120,25 +123,45 @@ export default function RepoContent(){
           {
             isLoaderActive && (<Spinner/>)
           }
-          <button className="button_open_alter" onClick={() => openModal('permissionMenu' + nodeType)}>
-            Доступы
-          </button>
-          <button className="button_open_alter" onClick={() => openModal('createUnit')}>
-            Создать Unit
-          </button>
-          <button className="button_open_alter" onClick={() => openModal('repoSettingsMenu')}>
-            Настройки
-          </button>
-          <button className="button_open_alter" onClick={handleUpdateLocalRepo}>
-            Обновить доступные версии
-          </button>
-          <button className="button_open_alter" onClick={handleUpdateUnitsFirmware}>
-            Обновить связанные Unit
-          </button>
+          {
+            user ? (
+              <button className="button_open_alter" onClick={() => openModal('createUnit')}>
+              Создать Unit
+            </button>
+            ) : (<></>)
+          }
+
+          {
+            user && user.uuid == currentNodeData?.creatorUuid ? (
+              <>
+                <button className="button_open_alter" onClick={() => openModal('permissionMenu' + nodeType)}>
+                  Доступы
+                </button>
+                <button className="button_open_alter" onClick={() => openModal('repoSettingsMenu')}>
+                  Настройки
+                </button>
+                <button className="button_open_alter" onClick={handleUpdateLocalRepo}>
+                  Обновить доступные версии
+                </button>
+                <button className="button_open_alter" onClick={handleUpdateUnitsFirmware}>
+                  Обновить связанные Unit
+                </button>
+              </>
+            ) : (<></>)
+          }
           <ResultQuery
             resultData={resultData}
           />
         </div>
+      </BaseModal>
+      <BaseModal modalName='Создание Unit' open={activeModal === 'createUnit'} openModalType='repoMenu'>
+        {
+          currentNodeData && (
+            <CreateUnitForm
+              currentNodeData={currentNodeData}
+            />
+          )
+        }
       </BaseModal>
       <BaseModal modalName={'Доступы ' + currentNodeData?.name} open={activeModal === 'permissionMenu' + nodeType} openModalType='repoMenu'>
         {
@@ -146,15 +169,6 @@ export default function RepoContent(){
             <PermissionForm
               currentNodeData={currentNodeData}
               currentNodeType={nodeType}
-            />
-          )
-        }
-      </BaseModal>
-      <BaseModal modalName='Создание Unit' open={activeModal === 'createUnit'} openModalType='repoMenu'>
-        {
-          currentNodeData && (
-            <CreateUnitForm
-              currentNodeData={currentNodeData}
             />
           )
         }
