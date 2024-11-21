@@ -10,6 +10,8 @@ import ResultQuery from '@primitives/resultQuery'
 import '../form.css'
 
 import { useModalStore } from '@stores/baseStore';
+import { useUserStore } from '@stores/userStore';
+
 
 interface RegisterFormProps {
     openModalSignIn: () => void;
@@ -17,6 +19,7 @@ interface RegisterFormProps {
 
 export default function RegisterForm({ openModalSignIn }: RegisterFormProps) {
     const { setActiveModal } = useModalStore();
+    const { setUser } = useUserStore();
 
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
@@ -60,8 +63,9 @@ export default function RegisterForm({ openModalSignIn }: RegisterFormProps) {
                 }).then(tokenData => {
                     if (tokenData.data) { 
                         localStorage.setItem('token', tokenData.data.getToken);
-                        localStorage.setItem('user', JSON.stringify(createUserData.data?.createUser));
-
+                        if (createUserData.data) {
+                            setUser(createUserData.data.createUser)
+                        }
                         setActiveModal(null)
                         setIsLoaderActive(false)
                     }

@@ -10,6 +10,7 @@ import ResultQuery from '@primitives/resultQuery'
 import '../form.css'
 
 import { useModalStore } from '@stores/baseStore';
+import { useUserStore } from '@stores/userStore';
 
 interface SignInFormProps {
     openModalRegister: () => void;
@@ -17,6 +18,7 @@ interface SignInFormProps {
 
 export default function SignInForm({openModalRegister}: SignInFormProps) {
     const { setActiveModal } = useModalStore();
+    const { setUser } = useUserStore();
 
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
@@ -62,7 +64,7 @@ export default function SignInForm({openModalRegister}: SignInFormProps) {
                     }
                 }).then(userData => {
                     if (userData.data) {
-                        localStorage.setItem('user', JSON.stringify(userData.data.getUser));
+                        setUser(userData.data.getUser)
                     }
                     setActiveModal(null)
                     setIsLoaderActive(false)

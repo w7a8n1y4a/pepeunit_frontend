@@ -7,13 +7,15 @@ import isValidLogin from '@utils/isValidLogin'
 import '../form.css'
 
 import { useModalStore } from '@stores/baseStore';
+import { useUserStore } from '@stores/userStore';
 
 interface ChangeLoginFormProps {
-    currentLogin: string
+    currentLogin: string | undefined
 }
 
 export default function ChangeLoginForm({ currentLogin }: ChangeLoginFormProps) {
     const { setActiveModal } = useModalStore();
+    const { setUser } = useUserStore();
 
     const [login, setLogin] = useState(currentLogin);
     const [errorState, setErrorState] = useState({
@@ -52,7 +54,7 @@ export default function ChangeLoginForm({ currentLogin }: ChangeLoginFormProps) 
             }
         }).then(updateUserData => {
             if (updateUserData.data) { 
-                localStorage.setItem('user', JSON.stringify(updateUserData.data.updateUser));
+                setUser(updateUserData.data.updateUser)
                 
                 setIsLoaderActive(false)
                 setActiveModal(null)
@@ -72,7 +74,7 @@ export default function ChangeLoginForm({ currentLogin }: ChangeLoginFormProps) 
                         id="login_change"
                         type="text"
                         placeholder="New Login"
-                        value={login}
+                        value={login ? login : ''}
                         validateState={login}
                         onChange={setLogin}
                         validateFunc={isValidLogin}

@@ -13,24 +13,25 @@ import { useState, useCallback, useReducer, useEffect } from 'react';
 
 import { useModalStore } from '@stores/baseStore';
 import useModalHandlers from '@handlers/useModalHandlers';
+import { useUserStore } from '@stores/userStore';
 
 export default function Header(){
     const { activeModal } = useModalStore();
     const { openModal, closeModal } = useModalHandlers();
 
+    const { user, clearUser } = useUserStore();
+
     const [, forceUpdate] = useReducer(x => x + 1, 0);
 
-    const user = localStorage.getItem('user');
-    const loginStorage = user ? JSON.parse(user).login : '';
-    const [login, setLogin ] = useState(loginStorage)
+    const [login, setLogin ] = useState(user?.login)
 
     useEffect(() => {
-        setLogin(loginStorage)
-    }, [loginStorage]);
+        setLogin(user?.login)
+    }, [user]);
 
     const signout = useCallback(() => {
         localStorage.removeItem('token');
-        localStorage.removeItem('user');
+        clearUser()
         closeModal();
         forceUpdate();
     }, [closeModal]);
@@ -51,7 +52,7 @@ export default function Header(){
                 Search
             </div>
             <div className='user_controls'>
-                {login !== '' ? (
+                {login ? (
                     <div>
                         <button className="user_menu_button" onClick={() => openModal('userMenu')}>
                             {login}
