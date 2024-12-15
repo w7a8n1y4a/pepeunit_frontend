@@ -8,7 +8,7 @@ gql`
         $isAutoUpdateFromRepoUnit: Boolean!
         $repoBranch: String
         $repoCommit: String
-        $targetFirmwarePlatform: String!
+        $targetFirmwarePlatform: String
     ) {
         createUnit (
             unit: {
@@ -26,6 +26,7 @@ gql`
             name
             createDatetime
             isAutoUpdateFromRepoUnit
+            targetFirmwarePlatform
             repoBranch
             repoCommit
             unitStateDict
@@ -60,6 +61,7 @@ gql`
             name
             createDatetime
             isAutoUpdateFromRepoUnit
+            targetFirmwarePlatform
             repoBranch
             repoCommit
             unitStateDict

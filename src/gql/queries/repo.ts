@@ -93,6 +93,19 @@ gql`
         }
     }
 
+    query getAvailablePlatforms(
+        $uuid: UUID!
+        $targetTag: String
+    ) {
+        getAvailablePlatforms (
+            uuid: $uuid
+            targetTag: $targetTag
+        ) {
+            name
+            link
+        }
+    }
+
     query getVersions(
         $uuid: UUID!
     ) {
