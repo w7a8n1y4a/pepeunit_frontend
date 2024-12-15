@@ -44,7 +44,7 @@ gql`
         $defaultBranch: String
         $defaultCommit: String
         $isOnlyTagUpdate: Boolean
-        $isCompilableRepo: Boolean!
+        $isCompilableRepo: Boolean
     ) {
         updateRepo (
             uuid: $uuid

@@ -1,7 +1,7 @@
 import { ResultType } from '@rootTypes/resultEnum'
 import { NodeType } from '@rootTypes/nodeTypeEnum'
 import { getNodeColor } from '@utils/getNodeColor'
-import { useCreateRepoMutation, VisibilityLevel, CreateRepoMutationVariables } from '@rootTypes/compositionFunctions'
+import { useCreateRepoMutation, VisibilityLevel, CreateRepoMutationVariables, GitPlatform } from '@rootTypes/compositionFunctions'
 import { useState } from 'react';
 import isValidLogin from '@utils/isValidLogin'
 import isValidString from '@utils/isValidString'
@@ -22,6 +22,8 @@ export default function CreateRepoForm() {
     const [repoName, setRepoName] = useState('');
     const [repoUrl, setRepoUrl] = useState('');
     const [repoVisibilityLevel, setRepoVisibilityLevel] = useState(VisibilityLevel.Public);
+    const [gitPlatform, setGitPlatform] = useState(GitPlatform.Gitlab);
+    const [isСompilableRepository, setIsСompilableRepository] = useState(false);
     const [isPrivateRepository, setIsPrivateRepository] = useState(false);
     const [repoUsername, setRepoUsername] = useState('');
     const [repoPatToken, setPatToken] = useState('');
@@ -60,7 +62,9 @@ export default function CreateRepoForm() {
             visibilityLevel: repoVisibilityLevel,
             name: repoName,
             repoUrl: repoUrl,
-            isPublicRepository: !isPrivateRepository
+            isPublicRepository: !isPrivateRepository,
+            isCompilableRepo: isСompilableRepository,
+            platform: gitPlatform
         }
 
         if (repoUsername !== '' && repoPatToken !== ''){
@@ -134,6 +138,13 @@ export default function CreateRepoForm() {
                         setIsErrorExist={(hasError) => updateErrorState('repoUrl', hasError)}
                         setResultData={setResultData}
                     />
+                    <select id='base_enum' value={gitPlatform} onChange={(e) => {
+                        setGitPlatform(e.target.value as GitPlatform); 
+                    }}
+                    >
+                        <option value={GitPlatform.Gitlab}>Gitlab</option>
+                        <option value={GitPlatform.Github}>Github</option>
+                    </select>
                     <select id='base_enum' value={repoVisibilityLevel} onChange={(e) => {
                         setRepoVisibilityLevel(e.target.value as VisibilityLevel); 
                     }}
@@ -142,6 +153,22 @@ export default function CreateRepoForm() {
                         <option value={VisibilityLevel.Internal}>Internal</option>
                         <option value={VisibilityLevel.Private}>Private</option>
                     </select>
+
+                    <div className='toggle_container'>
+                        <label className="toggle">
+                            <input 
+                                type="checkbox" 
+                                checked={isСompilableRepository}
+                                onChange={(e) => { setIsСompilableRepository(e.target.checked)}
+                                } 
+                            />
+                            <span className="slider"></span>
+                        </label>
+                        <div className="toggle_text">
+                            Компилируемый ?
+                        </div>
+                    </div>
+
                     <div className='toggle_container'>
                         <label className="toggle">
                             <input 

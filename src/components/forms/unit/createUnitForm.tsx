@@ -1,7 +1,7 @@
 import { ResultType } from '@rootTypes/resultEnum'
 import { NodeType } from '@rootTypes/nodeTypeEnum'
 import { getNodeColor } from '@utils/getNodeColor'
-import { useCreateUnitMutation, useGetBranchCommitsLazyQuery, VisibilityLevel, CreateUnitMutationVariables, RepoType } from '@rootTypes/compositionFunctions'
+import { useCreateUnitMutation, useGetBranchCommitsLazyQuery, VisibilityLevel, CreateUnitMutationVariables, RepoType, useGetAvailablePlatformsLazyQuery } from '@rootTypes/compositionFunctions'
 import { useState, useEffect } from 'react';
 import { getCommitSummary } from '@utils/getCommitSummary';
 import isValidLogin from '@utils/isValidLogin'
@@ -13,11 +13,11 @@ import '../form.css'
 import { useGraphStore } from '@stores/graphStore';
 import { useModalStore, useNodeStore } from '@stores/baseStore';
 
-interface CreateRepoFormProps {
+interface CreateUnitFormProps {
     currentNodeData: RepoType;
 }
 
-export default function CreateRepoForm({ currentNodeData }:CreateRepoFormProps) {
+export default function CreateUnitForm({ currentNodeData }:CreateUnitFormProps) {
     const { setActiveModal } = useModalStore();
     const { setCurrentNodeData } = useNodeStore();
 
@@ -28,11 +28,18 @@ export default function CreateRepoForm({ currentNodeData }:CreateRepoFormProps) 
         tag?: string | null;
     }> | null>(null);
 
+    const [repoAvailablePlatforms, setRepoAvailablePlatforms] = useState<Array<{
+        __typename?: "PlatformType";
+        name: string;
+        link: string;
+    }> | null>(null);
+
     const [repoName, setRepoName] = useState('');
     const [unitVisibilityLevel, setUnitVisibilityLevel] = useState(VisibilityLevel.Public);
     const [isAutoUpdateFromRepoUnit, setIsAutoUpdateFromRepoUnit] = useState(true);
     const [repoBranch, setRepoBranch] = useState<string | null>(null);
     const [repoCommit, setRepoCommit] = useState<string | null>(null);
+    const [targetPlatform, setTargetPlatform] = useState<string | null>(null);
 
     const [errorState, setErrorState] = useState({
         name: true,
@@ -55,6 +62,7 @@ export default function CreateRepoForm({ currentNodeData }:CreateRepoFormProps) 
     };
     
     const [getBranchCommits] = useGetBranchCommitsLazyQuery();
+    const [getAvailablePlatforms] = useGetAvailablePlatformsLazyQuery();
     const [createUnitMutation] = useCreateUnitMutation();
 
     const handleCreateUnit = () => {
@@ -70,10 +78,14 @@ export default function CreateRepoForm({ currentNodeData }:CreateRepoFormProps) 
             name: repoName,
             isAutoUpdateFromRepoUnit: isAutoUpdateFromRepoUnit
         }
+
+        if (currentNodeData.isCompilableRepo){
+            unitVariables.targetFirmwarePlatform = targetPlatform
+        }
         
         if (!isAutoUpdateFromRepoUnit){
             unitVariables.repoBranch = repoBranch
-            unitVariables.repoCommit = repoCommit
+            unitVariables.repoCommit = repoCommit ? JSON.parse(repoCommit).commit : null
         }
         
         createUnitMutation({
@@ -129,6 +141,29 @@ export default function CreateRepoForm({ currentNodeData }:CreateRepoFormProps) 
             )
         }
     }, [repoBranch, isAutoUpdateFromRepoUnit]);
+
+    useEffect(() => {
+        if (currentNodeData.isCompilableRepo){
+            let tag = null
+
+            if (!isAutoUpdateFromRepoUnit && repoCommit){
+                tag = JSON.parse(repoCommit).tag
+            }
+
+            getAvailablePlatforms({
+                variables: {
+                    uuid: currentNodeData.uuid,
+                    targetTag: tag
+                }
+            }).then(availablePlatforms => {
+                    if (availablePlatforms.data?.getAvailablePlatforms){
+                        setRepoAvailablePlatforms(availablePlatforms.data.getAvailablePlatforms)
+                    }
+                }
+            )
+        }
+    }, [repoCommit, isAutoUpdateFromRepoUnit]);
+
 
     return (
         <>  
@@ -219,7 +254,7 @@ export default function CreateRepoForm({ currentNodeData }:CreateRepoFormProps) 
                                     {   
                                         repoAvailableCommits?.map(
                                             item => (
-                                                <option value={item.commit}>
+                                                <option value={JSON.stringify({commit: item.commit, tag: item.tag})}>
                                                     {getCommitSummary(item.tag, item.commit, item.summary)}
                                                 </option>
                                             )
@@ -229,6 +264,21 @@ export default function CreateRepoForm({ currentNodeData }:CreateRepoFormProps) 
                             </div>
                         )
                     }
+                    <select id='base_enum' value={targetPlatform === null ? '' : targetPlatform} onChange={(e) => {
+                            setTargetPlatform(e.target.value)
+                        }}
+                    >   
+                        <option value="" disabled selected>Выберите платформу</option>
+                        {   
+                            repoAvailablePlatforms?.map(
+                                item => (
+                                    <option value={item.name}>
+                                        {item.name}
+                                    </option>
+                                )
+                            )
+                        }
+                    </select>
                 </form>
             </div>
             <button className="button_main_action" onClick={handleCreateUnit} disabled={Object.values(errorState).some(isError => isError)}>
