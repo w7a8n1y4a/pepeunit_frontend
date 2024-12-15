@@ -60,6 +60,11 @@ export type CredentialsInput = {
   username: Scalars["String"]["input"];
 };
 
+export enum GitPlatform {
+  Github = "GITHUB",
+  Gitlab = "GITLAB",
+}
+
 export type Mutation = {
   __typename?: "Mutation";
   blockUser: NoneType;
@@ -309,8 +314,10 @@ export type QueryGetVersionsArgs = {
 
 export type RepoCreateInput = {
   credentials?: InputMaybe<CredentialsInput>;
+  isCompilableRepo: Scalars["Boolean"]["input"];
   isPublicRepository: Scalars["Boolean"]["input"];
   name: Scalars["String"]["input"];
+  platform: GitPlatform;
   repoUrl: Scalars["String"]["input"];
   visibilityLevel: VisibilityLevel;
 };
@@ -336,10 +343,12 @@ export type RepoType = {
   defaultBranch?: Maybe<Scalars["String"]["output"]>;
   defaultCommit?: Maybe<Scalars["String"]["output"]>;
   isAutoUpdateRepo: Scalars["Boolean"]["output"];
+  isCompilableRepo: Scalars["Boolean"]["output"];
   isOnlyTagUpdate: Scalars["Boolean"]["output"];
   isPublicRepository: Scalars["Boolean"]["output"];
   lastUpdateDatetime: Scalars["DateTime"]["output"];
   name: Scalars["String"]["output"];
+  platform: GitPlatform;
   repoUrl: Scalars["String"]["output"];
   uuid: Scalars["UUID"]["output"];
   visibilityLevel: VisibilityLevel;
@@ -349,6 +358,7 @@ export type RepoUpdateInput = {
   defaultBranch?: InputMaybe<Scalars["String"]["input"]>;
   defaultCommit?: InputMaybe<Scalars["String"]["input"]>;
   isAutoUpdateRepo?: InputMaybe<Scalars["Boolean"]["input"]>;
+  isCompilableRepo?: InputMaybe<Scalars["Boolean"]["input"]>;
   isOnlyTagUpdate?: InputMaybe<Scalars["Boolean"]["input"]>;
   name?: InputMaybe<Scalars["String"]["input"]>;
   visibilityLevel?: InputMaybe<VisibilityLevel>;
@@ -379,6 +389,7 @@ export type UnitCreateInput = {
   repoBranch?: InputMaybe<Scalars["String"]["input"]>;
   repoCommit?: InputMaybe<Scalars["String"]["input"]>;
   repoUuid: Scalars["UUID"]["input"];
+  targetFirmwarePlatform?: InputMaybe<Scalars["String"]["input"]>;
   visibilityLevel: VisibilityLevel;
 };
 
@@ -394,6 +405,7 @@ export type UnitFilterInput = {
   searchString?: InputMaybe<Scalars["String"]["input"]>;
   unitNodeInputUuid?: InputMaybe<Scalars["UUID"]["input"]>;
   unitNodeType?: InputMaybe<Array<UnitNodeTypeEnum>>;
+  unitNodeUuids?: InputMaybe<Array<Scalars["UUID"]["input"]>>;
   uuids?: InputMaybe<Array<Scalars["UUID"]["input"]>>;
   visibilityLevel?: InputMaybe<Array<VisibilityLevel>>;
 };
@@ -414,6 +426,7 @@ export type UnitNodeFilterInput = {
   limit?: InputMaybe<Scalars["Int"]["input"]>;
   offset?: InputMaybe<Scalars["Int"]["input"]>;
   orderByCreateDate?: InputMaybe<OrderByDate>;
+  outputUuid?: InputMaybe<Scalars["UUID"]["input"]>;
   searchString?: InputMaybe<Scalars["String"]["input"]>;
   type?: InputMaybe<Array<UnitNodeTypeEnum>>;
   unitUuid?: InputMaybe<Scalars["UUID"]["input"]>;
@@ -465,6 +478,7 @@ export type UnitType = {
   repoBranch?: Maybe<Scalars["String"]["output"]>;
   repoCommit?: Maybe<Scalars["String"]["output"]>;
   repoUuid: Scalars["UUID"]["output"];
+  targetFirmwarePlatform?: Maybe<Scalars["String"]["output"]>;
   unitNodes: Array<UnitNodeType>;
   unitStateDict?: Maybe<Scalars["String"]["output"]>;
   uuid: Scalars["UUID"]["output"];
@@ -476,6 +490,7 @@ export type UnitUpdateInput = {
   name?: InputMaybe<Scalars["String"]["input"]>;
   repoBranch?: InputMaybe<Scalars["String"]["input"]>;
   repoCommit?: InputMaybe<Scalars["String"]["input"]>;
+  targetFirmwarePlatform?: InputMaybe<Scalars["String"]["input"]>;
   visibilityLevel?: InputMaybe<VisibilityLevel>;
 };
 
@@ -576,8 +591,10 @@ export type CreateRepoMutationVariables = Exact<{
   visibilityLevel: VisibilityLevel;
   name: Scalars["String"]["input"];
   repoUrl: Scalars["String"]["input"];
+  platform: GitPlatform;
   isPublicRepository: Scalars["Boolean"]["input"];
   credentials?: InputMaybe<CredentialsInput>;
+  isCompilableRepo: Scalars["Boolean"]["input"];
 }>;
 
 export type CreateRepoMutation = {
@@ -608,6 +625,7 @@ export type UpdateRepoMutationVariables = Exact<{
   defaultBranch?: InputMaybe<Scalars["String"]["input"]>;
   defaultCommit?: InputMaybe<Scalars["String"]["input"]>;
   isOnlyTagUpdate?: InputMaybe<Scalars["Boolean"]["input"]>;
+  isCompilableRepo: Scalars["Boolean"]["input"];
 }>;
 
 export type UpdateRepoMutation = {
@@ -696,6 +714,7 @@ export type CreateUnitMutationVariables = Exact<{
   isAutoUpdateFromRepoUnit: Scalars["Boolean"]["input"];
   repoBranch?: InputMaybe<Scalars["String"]["input"]>;
   repoCommit?: InputMaybe<Scalars["String"]["input"]>;
+  targetFirmwarePlatform: Scalars["String"]["input"];
 }>;
 
 export type CreateUnitMutation = {
@@ -724,6 +743,7 @@ export type UpdateUnitMutationVariables = Exact<{
   isAutoUpdateFromRepoUnit?: InputMaybe<Scalars["Boolean"]["input"]>;
   repoBranch?: InputMaybe<Scalars["String"]["input"]>;
   repoCommit?: InputMaybe<Scalars["String"]["input"]>;
+  targetFirmwarePlatform?: InputMaybe<Scalars["String"]["input"]>;
 }>;
 
 export type UpdateUnitMutation = {
@@ -931,11 +951,13 @@ export type GetRepoQuery = {
     name: string;
     createDatetime: string;
     repoUrl: string;
+    platform: GitPlatform;
     isPublicRepository: boolean;
     defaultBranch?: string | null;
     isAutoUpdateRepo: boolean;
     defaultCommit?: string | null;
     isOnlyTagUpdate: boolean;
+    isCompilableRepo: boolean;
     lastUpdateDatetime: string;
     branches: Array<string>;
     creatorUuid: string;
@@ -1195,6 +1217,7 @@ export type GetUnitNodeQuery = {
     topicName: string;
     state?: string | null;
     unitUuid: string;
+    creatorUuid: string;
   };
 };
 
@@ -1413,16 +1436,20 @@ export const CreateRepoDocument = gql`
     $visibilityLevel: VisibilityLevel!
     $name: String!
     $repoUrl: String!
+    $platform: GitPlatform!
     $isPublicRepository: Boolean!
     $credentials: CredentialsInput
+    $isCompilableRepo: Boolean!
   ) {
     createRepo(
       repo: {
         visibilityLevel: $visibilityLevel
         name: $name
         repoUrl: $repoUrl
+        platform: $platform
         isPublicRepository: $isPublicRepository
         credentials: $credentials
+        isCompilableRepo: $isCompilableRepo
       }
     ) {
       uuid
@@ -1462,8 +1489,10 @@ export type CreateRepoMutationFn = Apollo.MutationFunction<
  *      visibilityLevel: // value for 'visibilityLevel'
  *      name: // value for 'name'
  *      repoUrl: // value for 'repoUrl'
+ *      platform: // value for 'platform'
  *      isPublicRepository: // value for 'isPublicRepository'
  *      credentials: // value for 'credentials'
+ *      isCompilableRepo: // value for 'isCompilableRepo'
  *   },
  * });
  */
@@ -1497,6 +1526,7 @@ export const UpdateRepoDocument = gql`
     $defaultBranch: String
     $defaultCommit: String
     $isOnlyTagUpdate: Boolean
+    $isCompilableRepo: Boolean!
   ) {
     updateRepo(
       uuid: $uuid
@@ -1507,6 +1537,7 @@ export const UpdateRepoDocument = gql`
         defaultBranch: $defaultBranch
         defaultCommit: $defaultCommit
         isOnlyTagUpdate: $isOnlyTagUpdate
+        isCompilableRepo: $isCompilableRepo
       }
     ) {
       uuid
@@ -1550,6 +1581,7 @@ export type UpdateRepoMutationFn = Apollo.MutationFunction<
  *      defaultBranch: // value for 'defaultBranch'
  *      defaultCommit: // value for 'defaultCommit'
  *      isOnlyTagUpdate: // value for 'isOnlyTagUpdate'
+ *      isCompilableRepo: // value for 'isCompilableRepo'
  *   },
  * });
  */
@@ -1844,6 +1876,7 @@ export const CreateUnitDocument = gql`
     $isAutoUpdateFromRepoUnit: Boolean!
     $repoBranch: String
     $repoCommit: String
+    $targetFirmwarePlatform: String!
   ) {
     createUnit(
       unit: {
@@ -1851,6 +1884,7 @@ export const CreateUnitDocument = gql`
         visibilityLevel: $visibilityLevel
         name: $name
         isAutoUpdateFromRepoUnit: $isAutoUpdateFromRepoUnit
+        targetFirmwarePlatform: $targetFirmwarePlatform
         repoBranch: $repoBranch
         repoCommit: $repoCommit
       }
@@ -1894,6 +1928,7 @@ export type CreateUnitMutationFn = Apollo.MutationFunction<
  *      isAutoUpdateFromRepoUnit: // value for 'isAutoUpdateFromRepoUnit'
  *      repoBranch: // value for 'repoBranch'
  *      repoCommit: // value for 'repoCommit'
+ *      targetFirmwarePlatform: // value for 'targetFirmwarePlatform'
  *   },
  * });
  */
@@ -1926,6 +1961,7 @@ export const UpdateUnitDocument = gql`
     $isAutoUpdateFromRepoUnit: Boolean
     $repoBranch: String
     $repoCommit: String
+    $targetFirmwarePlatform: String
   ) {
     updateUnit(
       uuid: $uuid
@@ -1933,6 +1969,7 @@ export const UpdateUnitDocument = gql`
         visibilityLevel: $visibilityLevel
         name: $name
         isAutoUpdateFromRepoUnit: $isAutoUpdateFromRepoUnit
+        targetFirmwarePlatform: $targetFirmwarePlatform
         repoBranch: $repoBranch
         repoCommit: $repoCommit
       }
@@ -1976,6 +2013,7 @@ export type UpdateUnitMutationFn = Apollo.MutationFunction<
  *      isAutoUpdateFromRepoUnit: // value for 'isAutoUpdateFromRepoUnit'
  *      repoBranch: // value for 'repoBranch'
  *      repoCommit: // value for 'repoCommit'
+ *      targetFirmwarePlatform: // value for 'targetFirmwarePlatform'
  *   },
  * });
  */
@@ -2730,11 +2768,13 @@ export const GetRepoDocument = gql`
       name
       createDatetime
       repoUrl
+      platform
       isPublicRepository
       defaultBranch
       isAutoUpdateRepo
       defaultCommit
       isOnlyTagUpdate
+      isCompilableRepo
       lastUpdateDatetime
       branches
       creatorUuid
@@ -3632,6 +3672,7 @@ export const GetUnitNodeDocument = gql`
       topicName
       state
       unitUuid
+      creatorUuid
     }
   }
 `;
