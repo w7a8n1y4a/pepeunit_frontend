@@ -5,20 +5,16 @@ gql`
         $visibilityLevel: VisibilityLevel!
         $name: String!
         $repoUrl: String!
-        $platform: GitPlatform! 
         $isPublicRepository: Boolean!
         $credentials: CredentialsInput
-        $isCompilableRepo: Boolean!
     ) {
         createRepo (
             repo: {
                 visibilityLevel: $visibilityLevel
                 name: $name
                 repoUrl: $repoUrl
-                platform: $platform
                 isPublicRepository: $isPublicRepository
                 credentials: $credentials
-                isCompilableRepo: $isCompilableRepo
             }
         ){
             uuid
@@ -44,7 +40,6 @@ gql`
         $defaultBranch: String
         $defaultCommit: String
         $isOnlyTagUpdate: Boolean
-        $isCompilableRepo: Boolean!
     ) {
         updateRepo (
             uuid: $uuid
@@ -55,7 +50,6 @@ gql`
                 defaultBranch: $defaultBranch
                 defaultCommit: $defaultCommit
                 isOnlyTagUpdate: $isOnlyTagUpdate
-                isCompilableRepo: $isCompilableRepo
             }
         ){
             uuid
