@@ -263,6 +263,7 @@ export type Query = {
 };
 
 export type QueryGetAvailablePlatformsArgs = {
+  targetCommit?: InputMaybe<Scalars["String"]["input"]>;
   targetTag?: InputMaybe<Scalars["String"]["input"]>;
   uuid: Scalars["UUID"]["input"];
 };
@@ -1040,6 +1041,7 @@ export type GetBranchCommitsQuery = {
 export type GetAvailablePlatformsQueryVariables = Exact<{
   uuid: Scalars["UUID"]["input"];
   targetTag?: InputMaybe<Scalars["String"]["input"]>;
+  targetCommit?: InputMaybe<Scalars["String"]["input"]>;
 }>;
 
 export type GetAvailablePlatformsQuery = {
@@ -3093,8 +3095,16 @@ export type GetBranchCommitsQueryResult = Apollo.QueryResult<
   GetBranchCommitsQueryVariables
 >;
 export const GetAvailablePlatformsDocument = gql`
-  query getAvailablePlatforms($uuid: UUID!, $targetTag: String) {
-    getAvailablePlatforms(uuid: $uuid, targetTag: $targetTag) {
+  query getAvailablePlatforms(
+    $uuid: UUID!
+    $targetTag: String
+    $targetCommit: String
+  ) {
+    getAvailablePlatforms(
+      uuid: $uuid
+      targetTag: $targetTag
+      targetCommit: $targetCommit
+    ) {
       name
       link
     }
@@ -3115,6 +3125,7 @@ export const GetAvailablePlatformsDocument = gql`
  *   variables: {
  *      uuid: // value for 'uuid'
  *      targetTag: // value for 'targetTag'
+ *      targetCommit: // value for 'targetCommit'
  *   },
  * });
  */
