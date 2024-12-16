@@ -146,6 +146,25 @@ export default function UpdateRepoForm({ currentNodeData, setCurrentNodeData }: 
                             )
                         }
                     </select>
+
+                    <div className='toggle_container'>
+                        <label className="toggle">
+                            <input 
+                                type="checkbox" 
+                                checked={currentNodeData.isCompilableRepo}
+                                onChange={(e) => { setCurrentNodeData({
+                                        ...currentNodeData,
+                                        isCompilableRepo: e.target.checked,
+                                    })
+                                }} 
+                            />
+                            <span className="slider"></span>
+                        </label>
+                        <div className="toggle_text">
+                            Компилируемый ?
+                        </div>
+                    </div>
+
                     <div className='toggle_container'>
                         <label className="toggle">
                             <input 
@@ -154,7 +173,7 @@ export default function UpdateRepoForm({ currentNodeData, setCurrentNodeData }: 
                                 onChange={(e) => setCurrentNodeData({
                                             ...currentNodeData,
                                             isAutoUpdateRepo: e.target.checked,
-                                            isOnlyTagUpdate:  e.target.checked === false ? e.target.checked : currentNodeData.isOnlyTagUpdate
+                                            isOnlyTagUpdate: currentNodeData.isCompilableRepo ? true : e.target.checked === false ? e.target.checked : currentNodeData.isOnlyTagUpdate
                                         }
                                     )
                                 } 
@@ -174,7 +193,7 @@ export default function UpdateRepoForm({ currentNodeData, setCurrentNodeData }: 
                                     checked={currentNodeData.isOnlyTagUpdate}
                                     onChange={(e) => setCurrentNodeData({
                                                 ...currentNodeData,
-                                                isOnlyTagUpdate: e.target.checked,
+                                                isOnlyTagUpdate: currentNodeData.isCompilableRepo ? true : e.target.checked,
                                             }
                                         )
                                     } 
