@@ -66,6 +66,7 @@ export default function UpdateUnitForm({ currentNodeData, setCurrentNodeData }: 
     }, [currentNodeData.repoBranch, currentNodeData.isAutoUpdateFromRepoUnit]);
 
     useEffect(() => {
+        setCurrentRepoData(null)
         getRepo(
             {
                 variables: {
@@ -74,33 +75,55 @@ export default function UpdateUnitForm({ currentNodeData, setCurrentNodeData }: 
             }
         ).then(repoData => {
                 if (repoData.data?.getRepo){
-                    setCurrentRepoData(repoData.data.getRepo) 
+
+                    let repo = repoData.data.getRepo
+                    setCurrentRepoData(repo)
+                    setRepoAvailablePlatforms(null)
+
+                    if (repo.isCompilableRepo){
+                        let commit = null
+
+                        if (!currentNodeData.isAutoUpdateFromRepoUnit && currentNodeData.repoCommit){
+                            commit = currentNodeData.repoCommit
+                        }
+                        getAvailablePlatforms({
+                            variables: {
+                                uuid: currentNodeData.repoUuid,
+                                targetCommit: commit
+                            }
+                        }).then(availablePlatforms => {
+                                if (availablePlatforms.data?.getAvailablePlatforms){
+                                    setRepoAvailablePlatforms(availablePlatforms.data.getAvailablePlatforms)
+                                }
+                            }
+                        )
+                    }
                 }
             }
         )
     }, [currentNodeData]);
 
-    useEffect(() => {
-        if (currentRepoData && currentRepoData?.isCompilableRepo){
-            let tag = null
+    // useEffect(() => {
+    //     setRepoAvailablePlatforms(null)
+    //     if (currentRepoData && currentRepoData.isCompilableRepo){
+    //         let commit = null
 
-            if (!currentNodeData.isAutoUpdateFromRepoUnit && currentNodeData.repoCommit){
-                tag = JSON.parse(currentNodeData.repoCommit).tag
-            }
-            getAvailablePlatforms({
-                variables: {
-                    uuid: currentNodeData.repoUuid,
-                    targetTag: tag
-                }
-            }).then(availablePlatforms => {
-                    if (availablePlatforms.data?.getAvailablePlatforms){
-                        console.log(availablePlatforms.data.getAvailablePlatforms)
-                        setRepoAvailablePlatforms(availablePlatforms.data.getAvailablePlatforms)
-                    }
-                }
-            )
-        }
-    }, [currentNodeData.repoCommit, currentNodeData.isAutoUpdateFromRepoUnit]);
+    //         if (!currentNodeData.isAutoUpdateFromRepoUnit && currentNodeData.repoCommit){
+    //             commit = currentNodeData.repoCommit
+    //         }
+    //         getAvailablePlatforms({
+    //             variables: {
+    //                 uuid: currentNodeData.repoUuid,
+    //                 targetCommit: commit
+    //             }
+    //         }).then(availablePlatforms => {
+    //                 if (availablePlatforms.data?.getAvailablePlatforms){
+    //                     setRepoAvailablePlatforms(availablePlatforms.data.getAvailablePlatforms)
+    //                 }
+    //             }
+    //         )
+    //     }
+    // }, [currentNodeData.repoCommit, currentNodeData.isAutoUpdateFromRepoUnit]);
 
     const handleUpdateUnit = () => {
         setIsLoaderActive(true)
@@ -108,20 +131,6 @@ export default function UpdateUnitForm({ currentNodeData, setCurrentNodeData }: 
             ...resultData,
             message: null
         })
-
-        let targetRepoCommit = null
-        if (currentNodeData.repoCommit){
-            try {
-                targetRepoCommit = JSON.parse(currentNodeData.repoCommit).commit
-            } catch (e) {
-                targetRepoCommit = currentNodeData.repoCommit
-            }
-        }
-
-        currentNodeData = {
-            ...currentNodeData,
-            repoCommit: targetRepoCommit
-        }
 
         updateUnitMutation({
             variables: currentNodeData
@@ -238,7 +247,7 @@ export default function UpdateUnitForm({ currentNodeData, setCurrentNodeData }: 
                                     {   
                                         repoAvailableCommits?.map(
                                             item => (
-                                                <option value={JSON.stringify({commit: item.commit, tag: item.tag})}>
+                                                <option value={item.commit}>
                                                     {getCommitSummary(item.tag, item.commit, item.summary)}
                                                 </option>
                                             )
@@ -248,32 +257,36 @@ export default function UpdateUnitForm({ currentNodeData, setCurrentNodeData }: 
                             </div>
                         )
                     }
-                    <div>
-                        <select
-                            id='base_enum'
-                            value={
-                                currentNodeData.targetFirmwarePlatform === null ? '' : currentNodeData.targetFirmwarePlatform
-                            }
-                            onChange={(e) => {
-                                    setCurrentNodeData({
-                                        ...currentNodeData,
-                                        targetFirmwarePlatform: e.target.value,
+                    {
+                        currentRepoData && currentRepoData.isCompilableRepo && (
+                            <div>
+                                <select
+                                    id='base_enum'
+                                    value={
+                                        currentNodeData.targetFirmwarePlatform === null ? '' : currentNodeData.targetFirmwarePlatform
                                     }
-                                )
-                            }}
-                        >   
-                            <option value="" disabled selected>Выберите платформу</option>
-                            {   
-                                repoAvailablePlatforms?.map(
-                                    item => (
-                                        <option value={item.name}>
-                                            {item.name}
-                                        </option>
-                                    )
-                                )
-                            }
-                        </select>
-                    </div>
+                                    onChange={(e) => {
+                                            setCurrentNodeData({
+                                                ...currentNodeData,
+                                                targetFirmwarePlatform: e.target.value,
+                                            }
+                                        )
+                                    }}
+                                >   
+                                    <option value="" disabled selected>Выберите платформу</option>
+                                    {   
+                                        repoAvailablePlatforms?.map(
+                                            item => (
+                                                <option value={item.name}>
+                                                    {item.name}
+                                                </option>
+                                            )
+                                        )
+                                    }
+                                </select>
+                            </div>
+                        )
+                    }
                 </form>
             </div>
             <button className="button_main_action" onClick={handleUpdateUnit} disabled={Object.values(errorState).some(isError => isError)}>

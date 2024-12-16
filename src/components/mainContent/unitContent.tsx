@@ -1,7 +1,7 @@
 import { ResultType } from '@rootTypes/resultEnum'
-import { useDeleteUnitMutation, PermissionEntities } from '@rootTypes/compositionFunctions'
+import { useDeleteUnitMutation, PermissionEntities, useGetAvailablePlatformsLazyQuery, useGetRepoLazyQuery, RepoType } from '@rootTypes/compositionFunctions'
 import BaseModal from '../modal/baseModal'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Spinner from '@primitives/spinner'
 import ResultQuery from '@primitives/resultQuery'
 import UpdateUnitForm from '../forms/unit/updateUnitForm';
@@ -18,6 +18,8 @@ export default function UnitContent(){
   const { activeModal, setActiveModal } = useModalStore();
   const { currentNodeData, setCurrentNodeData } = useNodeStore();
   const { removeNodesAndLinks } = useGraphStore();
+  const [currentRepoData, setCurrentRepoData] = useState<RepoType | null>(null);
+  
   const { openModal } = useModalHandlers();
   const { user } = useUserStore();
 
@@ -29,7 +31,15 @@ export default function UnitContent(){
     message: null
   });
 
+  const [repoAvailablePlatforms, setRepoAvailablePlatforms] = useState<Array<{
+    __typename?: "PlatformType";
+    name: string;
+    link: string;
+  }> | null>(null);
+
   const [deleteUnit] = useDeleteUnitMutation()
+  const [getRepo] = useGetRepoLazyQuery();
+  const [getAvailablePlatforms] = useGetAvailablePlatformsLazyQuery();
 
   const fileUpload = (type: string) => {
     setIsLoaderActive(true)
@@ -110,6 +120,47 @@ export default function UnitContent(){
     }
   }
 
+  // Функция для загрузки данных
+  const fetchRepoAndPlatforms = async () => {
+    try {
+      if (!currentNodeData) return;
+
+      setIsLoaderActive(true);
+      setCurrentRepoData(null); // Сброс репозитория
+      setRepoAvailablePlatforms(null); // Сброс платформ
+
+      // 1. Получение данных репозитория
+      const repoResponse = await getRepo({ variables: { uuid: currentNodeData.repoUuid } });
+      const repo = repoResponse.data?.getRepo;
+
+      if (repo) {
+        setCurrentRepoData(repo);
+
+        // 2. Проверка и загрузка платформ
+        if (repo.isCompilableRepo) {
+          const platformsResponse = await getAvailablePlatforms(
+            { variables: { uuid: currentNodeData.repoUuid, targetCommit: currentNodeData.repoCommit } }
+          );
+          const platforms = platformsResponse.data?.getAvailablePlatforms;
+
+          if (platforms) {
+            setRepoAvailablePlatforms(platforms);
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Ошибка загрузки данных:", error);
+      setResultData({ type: ResultType.Angry, message: "Ошибка загрузки данных" });
+    } finally {
+      setIsLoaderActive(false);
+    }
+  };
+
+  // Эффект: Перезагрузка данных при смене currentNodeData
+  useEffect(() => {
+    fetchRepoAndPlatforms();
+  }, [currentNodeData]);
+  
   return (
     <>
       <BaseModal
@@ -143,6 +194,13 @@ export default function UnitContent(){
                 <button className="button_open_alter" onClick={() => fileUpload("zip")}>
                   Скачать zip
                 </button>
+
+                {currentRepoData?.isCompilableRepo && repoAvailablePlatforms?.map(item => (
+                  <a key={item.name} href={item.link}>
+                    <button className="button_open_alter">Platform - {item.name}</button>
+                  </a>
+                ))}
+
                 <button className="button_open_alter" onClick={() => openModal('unitSettingsMenu')}>
                   Настройки
                 </button>
