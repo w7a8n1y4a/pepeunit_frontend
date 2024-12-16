@@ -12,6 +12,7 @@ gql`
             name
             createDatetime
             isAutoUpdateFromRepoUnit
+            targetFirmwarePlatform
             repoBranch
             repoCommit
             unitStateDict

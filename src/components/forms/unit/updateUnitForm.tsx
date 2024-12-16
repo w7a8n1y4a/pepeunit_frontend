@@ -1,5 +1,5 @@
 import { ResultType } from '@rootTypes/resultEnum'
-import { VisibilityLevel, UnitType, useGetBranchCommitsLazyQuery, useUpdateUnitMutation, useGetRepoLazyQuery, RepoType } from '@rootTypes/compositionFunctions'
+import { VisibilityLevel, UnitType, useGetBranchCommitsLazyQuery, useUpdateUnitMutation, useGetRepoLazyQuery, RepoType, useGetAvailablePlatformsLazyQuery } from '@rootTypes/compositionFunctions'
 import { useState, useEffect } from 'react';
 import { getCommitSummary } from '@utils/getCommitSummary';
 import isValidLogin from '@utils/isValidLogin'
@@ -24,6 +24,12 @@ export default function UpdateUnitForm({ currentNodeData, setCurrentNodeData }: 
         tag?: string | null;
     }> | null>(null);
 
+    const [repoAvailablePlatforms, setRepoAvailablePlatforms] = useState<Array<{
+        __typename?: "PlatformType";
+        name: string;
+        link: string;
+    }> | null>(null);
+
     const [errorState, setErrorState] = useState({
         name: false,
     });
@@ -35,6 +41,7 @@ export default function UpdateUnitForm({ currentNodeData, setCurrentNodeData }: 
 
     const [getBranchCommits] = useGetBranchCommitsLazyQuery();
     const [updateUnitMutation] = useUpdateUnitMutation();
+    const [getAvailablePlatforms] = useGetAvailablePlatformsLazyQuery();
     const [getRepo] = useGetRepoLazyQuery();
 
     useEffect(() => {
@@ -59,6 +66,7 @@ export default function UpdateUnitForm({ currentNodeData, setCurrentNodeData }: 
     }, [currentNodeData.repoBranch, currentNodeData.isAutoUpdateFromRepoUnit]);
 
     useEffect(() => {
+        setCurrentRepoData(null)
         getRepo(
             {
                 variables: {
@@ -67,12 +75,55 @@ export default function UpdateUnitForm({ currentNodeData, setCurrentNodeData }: 
             }
         ).then(repoData => {
                 if (repoData.data?.getRepo){
-                    console.log(repoData.data.getRepo)
-                    setCurrentRepoData(repoData.data.getRepo) 
+
+                    let repo = repoData.data.getRepo
+                    setCurrentRepoData(repo)
+                    setRepoAvailablePlatforms(null)
+
+                    if (repo.isCompilableRepo){
+                        let commit = null
+
+                        if (!currentNodeData.isAutoUpdateFromRepoUnit && currentNodeData.repoCommit){
+                            commit = currentNodeData.repoCommit
+                        }
+                        getAvailablePlatforms({
+                            variables: {
+                                uuid: currentNodeData.repoUuid,
+                                targetCommit: commit
+                            }
+                        }).then(availablePlatforms => {
+                                if (availablePlatforms.data?.getAvailablePlatforms){
+                                    setRepoAvailablePlatforms(availablePlatforms.data.getAvailablePlatforms)
+                                }
+                            }
+                        )
+                    }
                 }
             }
         )
     }, [currentNodeData]);
+
+    // useEffect(() => {
+    //     setRepoAvailablePlatforms(null)
+    //     if (currentRepoData && currentRepoData.isCompilableRepo){
+    //         let commit = null
+
+    //         if (!currentNodeData.isAutoUpdateFromRepoUnit && currentNodeData.repoCommit){
+    //             commit = currentNodeData.repoCommit
+    //         }
+    //         getAvailablePlatforms({
+    //             variables: {
+    //                 uuid: currentNodeData.repoUuid,
+    //                 targetCommit: commit
+    //             }
+    //         }).then(availablePlatforms => {
+    //                 if (availablePlatforms.data?.getAvailablePlatforms){
+    //                     setRepoAvailablePlatforms(availablePlatforms.data.getAvailablePlatforms)
+    //                 }
+    //             }
+    //         )
+    //     }
+    // }, [currentNodeData.repoCommit, currentNodeData.isAutoUpdateFromRepoUnit]);
 
     const handleUpdateUnit = () => {
         setIsLoaderActive(true)
@@ -198,6 +249,36 @@ export default function UpdateUnitForm({ currentNodeData, setCurrentNodeData }: 
                                             item => (
                                                 <option value={item.commit}>
                                                     {getCommitSummary(item.tag, item.commit, item.summary)}
+                                                </option>
+                                            )
+                                        )
+                                    }
+                                </select>
+                            </div>
+                        )
+                    }
+                    {
+                        currentRepoData && currentRepoData.isCompilableRepo && (
+                            <div>
+                                <select
+                                    id='base_enum'
+                                    value={
+                                        currentNodeData.targetFirmwarePlatform === null ? '' : currentNodeData.targetFirmwarePlatform
+                                    }
+                                    onChange={(e) => {
+                                            setCurrentNodeData({
+                                                ...currentNodeData,
+                                                targetFirmwarePlatform: e.target.value,
+                                            }
+                                        )
+                                    }}
+                                >   
+                                    <option value="" disabled selected>Выберите платформу</option>
+                                    {   
+                                        repoAvailablePlatforms?.map(
+                                            item => (
+                                                <option value={item.name}>
+                                                    {item.name}
                                                 </option>
                                             )
                                         )

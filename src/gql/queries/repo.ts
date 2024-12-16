@@ -89,6 +89,21 @@ gql`
         }
     }
 
+    query getAvailablePlatforms(
+        $uuid: UUID!
+        $targetTag: String
+        $targetCommit: String
+    ) {
+        getAvailablePlatforms (
+            uuid: $uuid
+            targetTag: $targetTag
+            targetCommit: $targetCommit
+        ) {
+            name
+            link
+        }
+    }
+
     query getVersions(
         $uuid: UUID!
     ) {

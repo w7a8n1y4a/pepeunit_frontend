@@ -230,8 +230,15 @@ export type PermissionsType = {
   permissions: Array<PermissionType>;
 };
 
+export type PlatformType = {
+  __typename?: "PlatformType";
+  link: Scalars["String"]["output"];
+  name: Scalars["String"]["output"];
+};
+
 export type Query = {
   __typename?: "Query";
+  getAvailablePlatforms: Array<PlatformType>;
   getBaseMetrics: BaseMetricsType;
   getBranchCommits: Array<CommitType>;
   getRepo: RepoType;
@@ -248,6 +255,12 @@ export type Query = {
   getUsers: UsersResultType;
   getVerificationUser: Scalars["String"]["output"];
   getVersions: RepoVersionsType;
+};
+
+export type QueryGetAvailablePlatformsArgs = {
+  targetCommit?: InputMaybe<Scalars["String"]["input"]>;
+  targetTag?: InputMaybe<Scalars["String"]["input"]>;
+  uuid: Scalars["UUID"]["input"];
 };
 
 export type QueryGetBranchCommitsArgs = {
@@ -608,6 +621,7 @@ export type UpdateRepoMutationVariables = Exact<{
   defaultBranch?: InputMaybe<Scalars["String"]["input"]>;
   defaultCommit?: InputMaybe<Scalars["String"]["input"]>;
   isOnlyTagUpdate?: InputMaybe<Scalars["Boolean"]["input"]>;
+  isCompilableRepo?: InputMaybe<Scalars["Boolean"]["input"]>;
 }>;
 
 export type UpdateRepoMutation = {
@@ -696,6 +710,7 @@ export type CreateUnitMutationVariables = Exact<{
   isAutoUpdateFromRepoUnit: Scalars["Boolean"]["input"];
   repoBranch?: InputMaybe<Scalars["String"]["input"]>;
   repoCommit?: InputMaybe<Scalars["String"]["input"]>;
+  targetFirmwarePlatform?: InputMaybe<Scalars["String"]["input"]>;
 }>;
 
 export type CreateUnitMutation = {
@@ -707,6 +722,7 @@ export type CreateUnitMutation = {
     name: string;
     createDatetime: string;
     isAutoUpdateFromRepoUnit: boolean;
+    targetFirmwarePlatform?: string | null;
     repoBranch?: string | null;
     repoCommit?: string | null;
     unitStateDict?: string | null;
@@ -735,6 +751,7 @@ export type UpdateUnitMutation = {
     name: string;
     createDatetime: string;
     isAutoUpdateFromRepoUnit: boolean;
+    targetFirmwarePlatform?: string | null;
     repoBranch?: string | null;
     repoCommit?: string | null;
     unitStateDict?: string | null;
@@ -969,11 +986,13 @@ export type GetReposQuery = {
       name: string;
       createDatetime: string;
       repoUrl: string;
+      platform: GitPlatform;
       isPublicRepository: boolean;
       defaultBranch?: string | null;
       isAutoUpdateRepo: boolean;
       defaultCommit?: string | null;
       isOnlyTagUpdate: boolean;
+      isCompilableRepo: boolean;
       lastUpdateDatetime: string;
       branches: Array<string>;
       creatorUuid: string;
@@ -996,6 +1015,21 @@ export type GetBranchCommitsQuery = {
     commit: string;
     summary: string;
     tag?: string | null;
+  }>;
+};
+
+export type GetAvailablePlatformsQueryVariables = Exact<{
+  uuid: Scalars["UUID"]["input"];
+  targetTag?: InputMaybe<Scalars["String"]["input"]>;
+  targetCommit?: InputMaybe<Scalars["String"]["input"]>;
+}>;
+
+export type GetAvailablePlatformsQuery = {
+  __typename?: "Query";
+  getAvailablePlatforms: Array<{
+    __typename?: "PlatformType";
+    name: string;
+    link: string;
   }>;
 };
 
@@ -1030,6 +1064,7 @@ export type GetUnitQuery = {
     name: string;
     createDatetime: string;
     isAutoUpdateFromRepoUnit: boolean;
+    targetFirmwarePlatform?: string | null;
     repoBranch?: string | null;
     repoCommit?: string | null;
     unitStateDict?: string | null;
@@ -1068,6 +1103,7 @@ export type GetUnitsQuery = {
       name: string;
       createDatetime: string;
       isAutoUpdateFromRepoUnit: boolean;
+      targetFirmwarePlatform?: string | null;
       repoBranch?: string | null;
       repoCommit?: string | null;
       unitStateDict?: string | null;
@@ -1105,6 +1141,7 @@ export type GetUnitsWithUnitNodesQuery = {
       name: string;
       createDatetime: string;
       isAutoUpdateFromRepoUnit: boolean;
+      targetFirmwarePlatform?: string | null;
       repoBranch?: string | null;
       repoCommit?: string | null;
       unitStateDict?: string | null;
@@ -1151,6 +1188,7 @@ export type GetUnitsOutputByInputQuery = {
       name: string;
       createDatetime: string;
       isAutoUpdateFromRepoUnit: boolean;
+      targetFirmwarePlatform?: string | null;
       repoBranch?: string | null;
       repoCommit?: string | null;
       unitStateDict?: string | null;
@@ -1497,6 +1535,7 @@ export const UpdateRepoDocument = gql`
     $defaultBranch: String
     $defaultCommit: String
     $isOnlyTagUpdate: Boolean
+    $isCompilableRepo: Boolean
   ) {
     updateRepo(
       uuid: $uuid
@@ -1844,6 +1883,7 @@ export const CreateUnitDocument = gql`
     $isAutoUpdateFromRepoUnit: Boolean!
     $repoBranch: String
     $repoCommit: String
+    $targetFirmwarePlatform: String
   ) {
     createUnit(
       unit: {
@@ -1860,6 +1900,7 @@ export const CreateUnitDocument = gql`
       name
       createDatetime
       isAutoUpdateFromRepoUnit
+      targetFirmwarePlatform
       repoBranch
       repoCommit
       unitStateDict
@@ -1942,6 +1983,7 @@ export const UpdateUnitDocument = gql`
       name
       createDatetime
       isAutoUpdateFromRepoUnit
+      targetFirmwarePlatform
       repoBranch
       repoCommit
       unitStateDict
@@ -2835,11 +2877,13 @@ export const GetReposDocument = gql`
         name
         createDatetime
         repoUrl
+        platform
         isPublicRepository
         defaultBranch
         isAutoUpdateRepo
         defaultCommit
         isOnlyTagUpdate
+        isCompilableRepo
         lastUpdateDatetime
         branches
         creatorUuid
@@ -3014,6 +3058,94 @@ export type GetBranchCommitsQueryResult = Apollo.QueryResult<
   GetBranchCommitsQuery,
   GetBranchCommitsQueryVariables
 >;
+export const GetAvailablePlatformsDocument = gql`
+  query getAvailablePlatforms(
+    $uuid: UUID!
+    $targetTag: String
+    $targetCommit: String
+  ) {
+    getAvailablePlatforms(
+      uuid: $uuid
+      targetTag: $targetTag
+      targetCommit: $targetCommit
+    ) {
+      name
+      link
+    }
+  }
+`;
+
+/**
+ * __useGetAvailablePlatformsQuery__
+ *
+ * To run a query within a React component, call `useGetAvailablePlatformsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAvailablePlatformsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAvailablePlatformsQuery({
+ *   variables: {
+ *      uuid: // value for 'uuid'
+ *      targetTag: // value for 'targetTag'
+ *      targetCommit: // value for 'targetCommit'
+ *   },
+ * });
+ */
+export function useGetAvailablePlatformsQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GetAvailablePlatformsQuery,
+    GetAvailablePlatformsQueryVariables
+  > &
+    (
+      | { variables: GetAvailablePlatformsQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    GetAvailablePlatformsQuery,
+    GetAvailablePlatformsQueryVariables
+  >(GetAvailablePlatformsDocument, options);
+}
+export function useGetAvailablePlatformsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetAvailablePlatformsQuery,
+    GetAvailablePlatformsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    GetAvailablePlatformsQuery,
+    GetAvailablePlatformsQueryVariables
+  >(GetAvailablePlatformsDocument, options);
+}
+export function useGetAvailablePlatformsSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    GetAvailablePlatformsQuery,
+    GetAvailablePlatformsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<
+    GetAvailablePlatformsQuery,
+    GetAvailablePlatformsQueryVariables
+  >(GetAvailablePlatformsDocument, options);
+}
+export type GetAvailablePlatformsQueryHookResult = ReturnType<
+  typeof useGetAvailablePlatformsQuery
+>;
+export type GetAvailablePlatformsLazyQueryHookResult = ReturnType<
+  typeof useGetAvailablePlatformsLazyQuery
+>;
+export type GetAvailablePlatformsSuspenseQueryHookResult = ReturnType<
+  typeof useGetAvailablePlatformsSuspenseQuery
+>;
+export type GetAvailablePlatformsQueryResult = Apollo.QueryResult<
+  GetAvailablePlatformsQuery,
+  GetAvailablePlatformsQueryVariables
+>;
 export const GetVersionsDocument = gql`
   query getVersions($uuid: UUID!) {
     getVersions(uuid: $uuid) {
@@ -3102,6 +3234,7 @@ export const GetUnitDocument = gql`
       name
       createDatetime
       isAutoUpdateFromRepoUnit
+      targetFirmwarePlatform
       repoBranch
       repoCommit
       unitStateDict
@@ -3208,6 +3341,7 @@ export const GetUnitsDocument = gql`
         name
         createDatetime
         isAutoUpdateFromRepoUnit
+        targetFirmwarePlatform
         repoBranch
         repoCommit
         unitStateDict
@@ -3326,6 +3460,7 @@ export const GetUnitsWithUnitNodesDocument = gql`
         name
         createDatetime
         isAutoUpdateFromRepoUnit
+        targetFirmwarePlatform
         repoBranch
         repoCommit
         unitStateDict
@@ -3454,6 +3589,7 @@ export const GetUnitsOutputByInputDocument = gql`
         name
         createDatetime
         isAutoUpdateFromRepoUnit
+        targetFirmwarePlatform
         repoBranch
         repoCommit
         unitStateDict
