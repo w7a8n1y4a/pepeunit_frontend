@@ -57,6 +57,7 @@ gql`
                 name
                 createDatetime
                 isAutoUpdateFromRepoUnit
+                targetFirmwarePlatform
                 repoBranch
                 repoCommit
                 unitStateDict
@@ -102,6 +103,7 @@ gql`
                 name
                 createDatetime
                 isAutoUpdateFromRepoUnit
+                targetFirmwarePlatform
                 repoBranch
                 repoCommit
                 unitStateDict
@@ -152,6 +154,7 @@ gql`
                 name
                 createDatetime
                 isAutoUpdateFromRepoUnit
+                targetFirmwarePlatform
                 repoBranch
                 repoCommit
                 unitStateDict

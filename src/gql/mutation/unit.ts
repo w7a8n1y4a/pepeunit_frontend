@@ -16,6 +16,7 @@ gql`
                 visibilityLevel: $visibilityLevel
                 name: $name
                 isAutoUpdateFromRepoUnit: $isAutoUpdateFromRepoUnit
+                targetFirmwarePlatform: $targetFirmwarePlatform
                 repoBranch: $repoBranch
                 repoCommit: $repoCommit
             }
@@ -42,6 +43,7 @@ gql`
         $isAutoUpdateFromRepoUnit: Boolean
         $repoBranch: String
         $repoCommit: String
+        $targetFirmwarePlatform: String
     ) {
         updateUnit (
             uuid: $uuid
@@ -49,6 +51,7 @@ gql`
                 visibilityLevel: $visibilityLevel
                 name: $name
                 isAutoUpdateFromRepoUnit: $isAutoUpdateFromRepoUnit
+                targetFirmwarePlatform: $targetFirmwarePlatform
                 repoBranch: $repoBranch
                 repoCommit: $repoCommit
             }
