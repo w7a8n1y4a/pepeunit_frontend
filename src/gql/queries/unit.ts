@@ -15,11 +15,22 @@ gql`
             targetFirmwarePlatform
             repoBranch
             repoCommit
-            unitStateDict
+            unitState{
+                ifconfig
+                millis
+                memFree
+                memAlloc
+                freq
+                statvfs
+                commitVersion
+            }
             currentCommitVersion
             lastUpdateDatetime
             creatorUuid
             repoUuid
+            firmwareUpdateStatus
+            firmwareUpdateError
+            lastFirmwareUpdateDatetime
         }
     }
     query getUnits(
@@ -60,11 +71,22 @@ gql`
                 targetFirmwarePlatform
                 repoBranch
                 repoCommit
-                unitStateDict
+                unitState{
+                    ifconfig
+                    millis
+                    memFree
+                    memAlloc
+                    freq
+                    statvfs
+                    commitVersion
+                }
                 currentCommitVersion
                 lastUpdateDatetime
                 creatorUuid
                 repoUuid
+                firmwareUpdateStatus
+                firmwareUpdateError
+                lastFirmwareUpdateDatetime
             }
         }
     }
@@ -106,11 +128,22 @@ gql`
                 targetFirmwarePlatform
                 repoBranch
                 repoCommit
-                unitStateDict
+                unitState{
+                    ifconfig
+                    millis
+                    memFree
+                    memAlloc
+                    freq
+                    statvfs
+                    commitVersion
+                }
                 currentCommitVersion
                 lastUpdateDatetime
                 creatorUuid
                 repoUuid
+                firmwareUpdateStatus
+                firmwareUpdateError
+                lastFirmwareUpdateDatetime
                 unitNodes {
                     uuid
                     type
@@ -157,11 +190,22 @@ gql`
                 targetFirmwarePlatform
                 repoBranch
                 repoCommit
-                unitStateDict
+                unitState{
+                    ifconfig
+                    millis
+                    memFree
+                    memAlloc
+                    freq
+                    statvfs
+                    commitVersion
+                }
                 currentCommitVersion
                 lastUpdateDatetime
                 creatorUuid
                 repoUuid
+                firmwareUpdateStatus
+                firmwareUpdateError
+                lastFirmwareUpdateDatetime
                 unitNodes {
                     uuid
                     type
@@ -180,6 +224,25 @@ gql`
         $uuid: UUID!
     ) {
         getUnitEnv (
+            uuid: $uuid
+        )
+    }
+
+    query getTargetVersion(
+        $uuid: UUID!
+    ){
+        getTargetVersion(
+            uuid: $uuid
+        ){
+            commit
+            tag
+        }
+    }
+
+    query getStateStorage(
+        $uuid: UUID!
+    ) {
+        getStateStorage (
             uuid: $uuid
         )
     }

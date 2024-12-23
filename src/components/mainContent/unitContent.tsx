@@ -113,7 +113,7 @@ export default function UnitContent(){
 
   function getStateData() {
     if (currentNodeData) {
-      let state: any = JSON.parse(currentNodeData.unitStateDict)
+      let state: any = currentNodeData.unitState
       return JSON.stringify(state, null, 4)
     } else {
       return ''
@@ -173,7 +173,7 @@ export default function UnitContent(){
           }
 
           {
-            currentNodeData?.unitStateDict ? (
+            currentNodeData?.unitState ? (
               <pre>
                 {getStateData()}
               </pre>

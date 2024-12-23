@@ -29,11 +29,22 @@ gql`
             targetFirmwarePlatform
             repoBranch
             repoCommit
-            unitStateDict
+            unitState{
+                ifconfig
+                millis
+                memFree
+                memAlloc
+                freq
+                statvfs
+                commitVersion
+            }
             currentCommitVersion
             lastUpdateDatetime
             creatorUuid
             repoUuid
+            firmwareUpdateStatus
+            firmwareUpdateError
+            lastFirmwareUpdateDatetime
         }
     }
     mutation updateUnit(
@@ -64,11 +75,22 @@ gql`
             targetFirmwarePlatform
             repoBranch
             repoCommit
-            unitStateDict
+            unitState{
+                ifconfig
+                millis
+                memFree
+                memAlloc
+                freq
+                statvfs
+                commitVersion
+            }
             currentCommitVersion
             lastUpdateDatetime
             creatorUuid
             repoUuid
+            firmwareUpdateStatus
+            firmwareUpdateError
+            lastFirmwareUpdateDatetime
         }
     }
     mutation deleteUnit(
@@ -87,6 +109,28 @@ gql`
         updateUnitEnv (
             uuid: $uuid
             envJsonStr: $envJsonStr
+        ){
+            isNone
+        }
+    }
+    mutation setStateStorage(
+        $uuid: UUID!
+        $state: String!
+    ) {
+        setStateStorage (
+            uuid: $uuid
+            state: $state
+        ){
+            isNone
+        }
+    }
+    mutation sendCommandToInputBaseTopic(
+        $uuid: UUID!
+        $command: BackendTopicCommand!
+    ) {
+        sendCommandToInputBaseTopic (
+            uuid: $uuid
+            command: $command
         ){
             isNone
         }
