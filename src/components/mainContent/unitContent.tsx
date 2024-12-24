@@ -178,21 +178,22 @@ export default function UnitContent(){
     }
   };
 
-  // Эффект: Перезагрузка данных при смене currentNodeData
   useEffect(() => {
     fetchRepoAndPlatforms();
-    getTargetVersion(
-      {
-        variables: {
-          uuid: currentNodeData.uuid,
+    if (currentNodeData){
+      getTargetVersion(
+        {
+          variables: {
+            uuid: currentNodeData.uuid,
+          }
         }
-      }
-    ).then(result => {
-      if (result.data?.getTargetVersion){
-        setTargetVersion(result.data.getTargetVersion.commit)
-        setIsLoaderActive(false)
-      }
-    })
+      ).then(result => {
+        if (result.data?.getTargetVersion){
+          setTargetVersion(result.data.getTargetVersion.commit)
+          setIsLoaderActive(false)
+        }
+      })
+    }
   }, [currentNodeData]);
   
   return (
@@ -219,7 +220,7 @@ export default function UnitContent(){
             Текущая версия - {currentNodeData?.currentCommitVersion}
           </div>
           <div>
-            Target версия - {targetVersion}
+            Target версия - {targetVersion ? (targetVersion) : (<></>)}
           </div>
           {
             currentNodeData?.unitState ? (
