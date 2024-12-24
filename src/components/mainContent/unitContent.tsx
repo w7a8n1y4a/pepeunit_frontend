@@ -1,5 +1,5 @@
 import { ResultType } from '@rootTypes/resultEnum'
-import { useDeleteUnitMutation, PermissionEntities, useGetAvailablePlatformsLazyQuery, useGetRepoLazyQuery, RepoType } from '@rootTypes/compositionFunctions'
+import { useDeleteUnitMutation, PermissionEntities, useGetAvailablePlatformsLazyQuery, useGetRepoLazyQuery, RepoType, useSendCommandToInputBaseTopicMutation, BackendTopicCommand } from '@rootTypes/compositionFunctions'
 import BaseModal from '../modal/baseModal'
 import { useState, useEffect } from 'react';
 import Spinner from '@primitives/spinner'
@@ -40,6 +40,7 @@ export default function UnitContent(){
   const [deleteUnit] = useDeleteUnitMutation()
   const [getRepo] = useGetRepoLazyQuery();
   const [getAvailablePlatforms] = useGetAvailablePlatformsLazyQuery();
+  const [sendCommandToInputBaseTopic] = useSendCommandToInputBaseTopicMutation();
 
   const fileUpload = (type: string) => {
     setIsLoaderActive(true)
@@ -83,6 +84,25 @@ export default function UnitContent(){
       });
     }
   }
+
+  const handleSendUnitCommand = (command: BackendTopicCommand) => {
+    setIsLoaderActive(true)
+
+    if (currentNodeData){
+      sendCommandToInputBaseTopic(
+        {
+          variables: {
+            uuid: currentNodeData.uuid,
+            command: command
+          }
+        }
+      ).then(result => {
+        if (result.data){
+          setIsLoaderActive(false)
+        }
+      })
+    }
+  };
 
   const handleDeleteUnit = () => {
     setIsLoaderActive(true)
@@ -182,6 +202,18 @@ export default function UnitContent(){
           {
             user && currentNodeData && user.uuid == currentNodeData.creatorUuid ? (
               <>
+                <button className="button_open_alter" onClick={() => handleSendUnitCommand(BackendTopicCommand.Update)}>
+                  Обновить Firmware
+                </button>
+
+                <button className="button_open_alter" onClick={() => handleSendUnitCommand(BackendTopicCommand.SchemaUpdate)}>
+                  Обновить Schema
+                </button>
+
+                <button className="button_open_alter" onClick={() => handleSendUnitCommand(BackendTopicCommand.EnvUpdate)}>
+                  Обновить Env
+                </button>
+
                 <button className="button_open_alter" onClick={() => openModal('permissionMenu' + nodeType)}>
                   Доступы
                 </button>
