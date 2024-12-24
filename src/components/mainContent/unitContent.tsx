@@ -1,5 +1,5 @@
 import { ResultType } from '@rootTypes/resultEnum'
-import { useDeleteUnitMutation, PermissionEntities, useGetAvailablePlatformsLazyQuery, useGetRepoLazyQuery, RepoType, useSendCommandToInputBaseTopicMutation, BackendTopicCommand } from '@rootTypes/compositionFunctions'
+import { useDeleteUnitMutation, PermissionEntities, useGetAvailablePlatformsLazyQuery, useGetRepoLazyQuery, RepoType, useSendCommandToInputBaseTopicMutation, BackendTopicCommand, useGetTargetVersionLazyQuery } from '@rootTypes/compositionFunctions'
 import BaseModal from '../modal/baseModal'
 import { useState, useEffect } from 'react';
 import Spinner from '@primitives/spinner'
@@ -19,6 +19,7 @@ export default function UnitContent(){
   const { currentNodeData, setCurrentNodeData } = useNodeStore();
   const { removeNodesAndLinks } = useGraphStore();
   const [currentRepoData, setCurrentRepoData] = useState<RepoType | null>(null);
+  const [targetVersion, setTargetVersion] = useState<string | null>(null);
   
   const { openModal } = useModalHandlers();
   const { user } = useUserStore();
@@ -41,6 +42,7 @@ export default function UnitContent(){
   const [getRepo] = useGetRepoLazyQuery();
   const [getAvailablePlatforms] = useGetAvailablePlatformsLazyQuery();
   const [sendCommandToInputBaseTopic] = useSendCommandToInputBaseTopicMutation();
+  const [getTargetVersion] = useGetTargetVersionLazyQuery();
 
   const fileUpload = (type: string) => {
     setIsLoaderActive(true)
@@ -179,6 +181,18 @@ export default function UnitContent(){
   // Эффект: Перезагрузка данных при смене currentNodeData
   useEffect(() => {
     fetchRepoAndPlatforms();
+    getTargetVersion(
+      {
+        variables: {
+          uuid: currentNodeData.uuid,
+        }
+      }
+    ).then(result => {
+      if (result.data?.getTargetVersion){
+        setTargetVersion(result.data.getTargetVersion.commit)
+        setIsLoaderActive(false)
+      }
+    })
   }, [currentNodeData]);
   
   return (
@@ -192,6 +206,21 @@ export default function UnitContent(){
             isLoaderActive && (<Spinner/>)
           }
 
+          <div>
+            Статус - {currentNodeData?.firmwareUpdateStatus}
+          </div>
+          <div>
+            Ошибка - {currentNodeData?.firmwareUpdateError}
+          </div>
+          <div>
+            Запрос был в - {currentNodeData?.lastFirmwareUpdateDatetime}
+          </div>
+          <div>
+            Текущая версия - {currentNodeData?.currentCommitVersion}
+          </div>
+          <div>
+            Target версия - {targetVersion}
+          </div>
           {
             currentNodeData?.unitState ? (
               <pre>
