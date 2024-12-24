@@ -32,6 +32,12 @@ export type Scalars = {
   UUID: { input: string; output: string };
 };
 
+export enum BackendTopicCommand {
+  EnvUpdate = "ENV_UPDATE",
+  SchemaUpdate = "SCHEMA_UPDATE",
+  Update = "UPDATE",
+}
+
 export type BaseMetricsType = {
   __typename?: "BaseMetricsType";
   repoCount: Scalars["Int"]["output"];
@@ -78,6 +84,8 @@ export type Mutation = {
   deleteRepo: NoneType;
   deleteUnit: NoneType;
   deleteUnitNodeEdge: NoneType;
+  sendCommandToInputBaseTopic: NoneType;
+  setStateStorage: NoneType;
   setStateUnitNodeInput: UnitNodeType;
   unblockUser: NoneType;
   updateLocalRepo: NoneType;
@@ -86,7 +94,6 @@ export type Mutation = {
   updateUnit: UnitType;
   updateUnitEnv: NoneType;
   updateUnitNode: UnitNodeType;
-  updateUnitSchema: NoneType;
   updateUnitsFirmware: NoneType;
   updateUser: UserType;
 };
@@ -133,6 +140,16 @@ export type MutationDeleteUnitNodeEdgeArgs = {
   outputUuid: Scalars["UUID"]["input"];
 };
 
+export type MutationSendCommandToInputBaseTopicArgs = {
+  command: BackendTopicCommand;
+  uuid: Scalars["UUID"]["input"];
+};
+
+export type MutationSetStateStorageArgs = {
+  state: Scalars["String"]["input"];
+  uuid: Scalars["UUID"]["input"];
+};
+
 export type MutationSetStateUnitNodeInputArgs = {
   unitNode: UnitNodeSetStateInput;
   uuid: Scalars["UUID"]["input"];
@@ -168,10 +185,6 @@ export type MutationUpdateUnitEnvArgs = {
 
 export type MutationUpdateUnitNodeArgs = {
   unitNode: UnitNodeUpdateInput;
-  uuid: Scalars["UUID"]["input"];
-};
-
-export type MutationUpdateUnitSchemaArgs = {
   uuid: Scalars["UUID"]["input"];
 };
 
@@ -249,6 +262,8 @@ export type Query = {
   getRepo: RepoType;
   getRepos: ReposResultType;
   getResourceAgents: PermissionsType;
+  getStateStorage: Scalars["String"]["output"];
+  getTargetVersion: TargetVersionType;
   getToken: Scalars["String"]["output"];
   getUnit: UnitType;
   getUnitCurrentSchema: Scalars["String"]["output"];
@@ -283,6 +298,14 @@ export type QueryGetReposArgs = {
 
 export type QueryGetResourceAgentsArgs = {
   filters: PermissionFilterInput;
+};
+
+export type QueryGetStateStorageArgs = {
+  uuid: Scalars["UUID"]["input"];
+};
+
+export type QueryGetTargetVersionArgs = {
+  uuid: Scalars["UUID"]["input"];
 };
 
 export type QueryGetTokenArgs = {
@@ -396,6 +419,12 @@ export type ReposResultType = {
   repos: Array<RepoType>;
 };
 
+export type TargetVersionType = {
+  __typename?: "TargetVersionType";
+  commit: Scalars["String"]["output"];
+  tag?: Maybe<Scalars["String"]["output"]>;
+};
+
 export type UnitCreateInput = {
   isAutoUpdateFromRepoUnit: Scalars["Boolean"]["input"];
   name: Scalars["String"]["input"];
@@ -422,6 +451,12 @@ export type UnitFilterInput = {
   uuids?: InputMaybe<Array<Scalars["UUID"]["input"]>>;
   visibilityLevel?: InputMaybe<Array<VisibilityLevel>>;
 };
+
+export enum UnitFirmwareUpdateStatus {
+  Error = "ERROR",
+  RequestSent = "REQUEST_SENT",
+  Success = "SUCCESS",
+}
 
 export type UnitNodeEdgeCreateInput = {
   nodeInputUuid: Scalars["UUID"]["input"];
@@ -480,12 +515,26 @@ export type UnitNodesResultType = {
   unitNodes: Array<UnitNodeType>;
 };
 
+export type UnitStateType = {
+  __typename?: "UnitStateType";
+  commitVersion?: Maybe<Scalars["String"]["output"]>;
+  freq?: Maybe<Scalars["Float"]["output"]>;
+  ifconfig: Array<Scalars["String"]["output"]>;
+  memAlloc?: Maybe<Scalars["Float"]["output"]>;
+  memFree?: Maybe<Scalars["Float"]["output"]>;
+  millis?: Maybe<Scalars["Float"]["output"]>;
+  statvfs: Array<Scalars["Float"]["output"]>;
+};
+
 export type UnitType = {
   __typename?: "UnitType";
   createDatetime: Scalars["DateTime"]["output"];
   creatorUuid: Scalars["UUID"]["output"];
   currentCommitVersion?: Maybe<Scalars["String"]["output"]>;
+  firmwareUpdateError?: Maybe<Scalars["String"]["output"]>;
+  firmwareUpdateStatus?: Maybe<UnitFirmwareUpdateStatus>;
   isAutoUpdateFromRepoUnit: Scalars["Boolean"]["output"];
+  lastFirmwareUpdateDatetime?: Maybe<Scalars["DateTime"]["output"]>;
   lastUpdateDatetime: Scalars["DateTime"]["output"];
   name: Scalars["String"]["output"];
   repoBranch?: Maybe<Scalars["String"]["output"]>;
@@ -493,7 +542,7 @@ export type UnitType = {
   repoUuid: Scalars["UUID"]["output"];
   targetFirmwarePlatform?: Maybe<Scalars["String"]["output"]>;
   unitNodes: Array<UnitNodeType>;
-  unitStateDict?: Maybe<Scalars["String"]["output"]>;
+  unitState?: Maybe<UnitStateType>;
   uuid: Scalars["UUID"]["output"];
   visibilityLevel: VisibilityLevel;
 };
@@ -742,11 +791,23 @@ export type CreateUnitMutation = {
     targetFirmwarePlatform?: string | null;
     repoBranch?: string | null;
     repoCommit?: string | null;
-    unitStateDict?: string | null;
     currentCommitVersion?: string | null;
     lastUpdateDatetime: string;
     creatorUuid: string;
     repoUuid: string;
+    firmwareUpdateStatus?: UnitFirmwareUpdateStatus | null;
+    firmwareUpdateError?: string | null;
+    lastFirmwareUpdateDatetime?: string | null;
+    unitState?: {
+      __typename?: "UnitStateType";
+      ifconfig: Array<string>;
+      millis?: number | null;
+      memFree?: number | null;
+      memAlloc?: number | null;
+      freq?: number | null;
+      statvfs: Array<number>;
+      commitVersion?: string | null;
+    } | null;
   };
 };
 
@@ -772,11 +833,23 @@ export type UpdateUnitMutation = {
     targetFirmwarePlatform?: string | null;
     repoBranch?: string | null;
     repoCommit?: string | null;
-    unitStateDict?: string | null;
     currentCommitVersion?: string | null;
     lastUpdateDatetime: string;
     creatorUuid: string;
     repoUuid: string;
+    firmwareUpdateStatus?: UnitFirmwareUpdateStatus | null;
+    firmwareUpdateError?: string | null;
+    lastFirmwareUpdateDatetime?: string | null;
+    unitState?: {
+      __typename?: "UnitStateType";
+      ifconfig: Array<string>;
+      millis?: number | null;
+      memFree?: number | null;
+      memAlloc?: number | null;
+      freq?: number | null;
+      statvfs: Array<number>;
+      commitVersion?: string | null;
+    } | null;
   };
 };
 
@@ -797,6 +870,26 @@ export type UpdateUnitEnvMutationVariables = Exact<{
 export type UpdateUnitEnvMutation = {
   __typename?: "Mutation";
   updateUnitEnv: { __typename?: "NoneType"; isNone: boolean };
+};
+
+export type SetStateStorageMutationVariables = Exact<{
+  uuid: Scalars["UUID"]["input"];
+  state: Scalars["String"]["input"];
+}>;
+
+export type SetStateStorageMutation = {
+  __typename?: "Mutation";
+  setStateStorage: { __typename?: "NoneType"; isNone: boolean };
+};
+
+export type SendCommandToInputBaseTopicMutationVariables = Exact<{
+  uuid: Scalars["UUID"]["input"];
+  command: BackendTopicCommand;
+}>;
+
+export type SendCommandToInputBaseTopicMutation = {
+  __typename?: "Mutation";
+  sendCommandToInputBaseTopic: { __typename?: "NoneType"; isNone: boolean };
 };
 
 export type UpdateUnitNodeMutationVariables = Exact<{
@@ -1087,11 +1180,23 @@ export type GetUnitQuery = {
     targetFirmwarePlatform?: string | null;
     repoBranch?: string | null;
     repoCommit?: string | null;
-    unitStateDict?: string | null;
     currentCommitVersion?: string | null;
     lastUpdateDatetime: string;
     creatorUuid: string;
     repoUuid: string;
+    firmwareUpdateStatus?: UnitFirmwareUpdateStatus | null;
+    firmwareUpdateError?: string | null;
+    lastFirmwareUpdateDatetime?: string | null;
+    unitState?: {
+      __typename?: "UnitStateType";
+      ifconfig: Array<string>;
+      millis?: number | null;
+      memFree?: number | null;
+      memAlloc?: number | null;
+      freq?: number | null;
+      statvfs: Array<number>;
+      commitVersion?: string | null;
+    } | null;
   };
 };
 
@@ -1126,11 +1231,23 @@ export type GetUnitsQuery = {
       targetFirmwarePlatform?: string | null;
       repoBranch?: string | null;
       repoCommit?: string | null;
-      unitStateDict?: string | null;
       currentCommitVersion?: string | null;
       lastUpdateDatetime: string;
       creatorUuid: string;
       repoUuid: string;
+      firmwareUpdateStatus?: UnitFirmwareUpdateStatus | null;
+      firmwareUpdateError?: string | null;
+      lastFirmwareUpdateDatetime?: string | null;
+      unitState?: {
+        __typename?: "UnitStateType";
+        ifconfig: Array<string>;
+        millis?: number | null;
+        memFree?: number | null;
+        memAlloc?: number | null;
+        freq?: number | null;
+        statvfs: Array<number>;
+        commitVersion?: string | null;
+      } | null;
     }>;
   };
 };
@@ -1164,11 +1281,23 @@ export type GetUnitsWithUnitNodesQuery = {
       targetFirmwarePlatform?: string | null;
       repoBranch?: string | null;
       repoCommit?: string | null;
-      unitStateDict?: string | null;
       currentCommitVersion?: string | null;
       lastUpdateDatetime: string;
       creatorUuid: string;
       repoUuid: string;
+      firmwareUpdateStatus?: UnitFirmwareUpdateStatus | null;
+      firmwareUpdateError?: string | null;
+      lastFirmwareUpdateDatetime?: string | null;
+      unitState?: {
+        __typename?: "UnitStateType";
+        ifconfig: Array<string>;
+        millis?: number | null;
+        memFree?: number | null;
+        memAlloc?: number | null;
+        freq?: number | null;
+        statvfs: Array<number>;
+        commitVersion?: string | null;
+      } | null;
       unitNodes: Array<{
         __typename?: "UnitNodeType";
         uuid: string;
@@ -1211,11 +1340,23 @@ export type GetUnitsOutputByInputQuery = {
       targetFirmwarePlatform?: string | null;
       repoBranch?: string | null;
       repoCommit?: string | null;
-      unitStateDict?: string | null;
       currentCommitVersion?: string | null;
       lastUpdateDatetime: string;
       creatorUuid: string;
       repoUuid: string;
+      firmwareUpdateStatus?: UnitFirmwareUpdateStatus | null;
+      firmwareUpdateError?: string | null;
+      lastFirmwareUpdateDatetime?: string | null;
+      unitState?: {
+        __typename?: "UnitStateType";
+        ifconfig: Array<string>;
+        millis?: number | null;
+        memFree?: number | null;
+        memAlloc?: number | null;
+        freq?: number | null;
+        statvfs: Array<number>;
+        commitVersion?: string | null;
+      } | null;
       unitNodes: Array<{
         __typename?: "UnitNodeType";
         uuid: string;
@@ -1237,6 +1378,28 @@ export type GetUnitEnvQueryVariables = Exact<{
 }>;
 
 export type GetUnitEnvQuery = { __typename?: "Query"; getUnitEnv: string };
+
+export type GetTargetVersionQueryVariables = Exact<{
+  uuid: Scalars["UUID"]["input"];
+}>;
+
+export type GetTargetVersionQuery = {
+  __typename?: "Query";
+  getTargetVersion: {
+    __typename?: "TargetVersionType";
+    commit: string;
+    tag?: string | null;
+  };
+};
+
+export type GetStateStorageQueryVariables = Exact<{
+  uuid: Scalars["UUID"]["input"];
+}>;
+
+export type GetStateStorageQuery = {
+  __typename?: "Query";
+  getStateStorage: string;
+};
 
 export type GetUnitNodeQueryVariables = Exact<{
   uuid: Scalars["UUID"]["input"];
@@ -1933,11 +2096,22 @@ export const CreateUnitDocument = gql`
       targetFirmwarePlatform
       repoBranch
       repoCommit
-      unitStateDict
+      unitState {
+        ifconfig
+        millis
+        memFree
+        memAlloc
+        freq
+        statvfs
+        commitVersion
+      }
       currentCommitVersion
       lastUpdateDatetime
       creatorUuid
       repoUuid
+      firmwareUpdateStatus
+      firmwareUpdateError
+      lastFirmwareUpdateDatetime
     }
   }
 `;
@@ -2019,11 +2193,22 @@ export const UpdateUnitDocument = gql`
       targetFirmwarePlatform
       repoBranch
       repoCommit
-      unitStateDict
+      unitState {
+        ifconfig
+        millis
+        memFree
+        memAlloc
+        freq
+        statvfs
+        commitVersion
+      }
       currentCommitVersion
       lastUpdateDatetime
       creatorUuid
       repoUuid
+      firmwareUpdateStatus
+      firmwareUpdateError
+      lastFirmwareUpdateDatetime
     }
   }
 `;
@@ -2177,6 +2362,112 @@ export type UpdateUnitEnvMutationOptions = Apollo.BaseMutationOptions<
   UpdateUnitEnvMutation,
   UpdateUnitEnvMutationVariables
 >;
+export const SetStateStorageDocument = gql`
+  mutation setStateStorage($uuid: UUID!, $state: String!) {
+    setStateStorage(uuid: $uuid, state: $state) {
+      isNone
+    }
+  }
+`;
+export type SetStateStorageMutationFn = Apollo.MutationFunction<
+  SetStateStorageMutation,
+  SetStateStorageMutationVariables
+>;
+
+/**
+ * __useSetStateStorageMutation__
+ *
+ * To run a mutation, you first call `useSetStateStorageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSetStateStorageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [setStateStorageMutation, { data, loading, error }] = useSetStateStorageMutation({
+ *   variables: {
+ *      uuid: // value for 'uuid'
+ *      state: // value for 'state'
+ *   },
+ * });
+ */
+export function useSetStateStorageMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    SetStateStorageMutation,
+    SetStateStorageMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    SetStateStorageMutation,
+    SetStateStorageMutationVariables
+  >(SetStateStorageDocument, options);
+}
+export type SetStateStorageMutationHookResult = ReturnType<
+  typeof useSetStateStorageMutation
+>;
+export type SetStateStorageMutationResult =
+  Apollo.MutationResult<SetStateStorageMutation>;
+export type SetStateStorageMutationOptions = Apollo.BaseMutationOptions<
+  SetStateStorageMutation,
+  SetStateStorageMutationVariables
+>;
+export const SendCommandToInputBaseTopicDocument = gql`
+  mutation sendCommandToInputBaseTopic(
+    $uuid: UUID!
+    $command: BackendTopicCommand!
+  ) {
+    sendCommandToInputBaseTopic(uuid: $uuid, command: $command) {
+      isNone
+    }
+  }
+`;
+export type SendCommandToInputBaseTopicMutationFn = Apollo.MutationFunction<
+  SendCommandToInputBaseTopicMutation,
+  SendCommandToInputBaseTopicMutationVariables
+>;
+
+/**
+ * __useSendCommandToInputBaseTopicMutation__
+ *
+ * To run a mutation, you first call `useSendCommandToInputBaseTopicMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSendCommandToInputBaseTopicMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sendCommandToInputBaseTopicMutation, { data, loading, error }] = useSendCommandToInputBaseTopicMutation({
+ *   variables: {
+ *      uuid: // value for 'uuid'
+ *      command: // value for 'command'
+ *   },
+ * });
+ */
+export function useSendCommandToInputBaseTopicMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    SendCommandToInputBaseTopicMutation,
+    SendCommandToInputBaseTopicMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    SendCommandToInputBaseTopicMutation,
+    SendCommandToInputBaseTopicMutationVariables
+  >(SendCommandToInputBaseTopicDocument, options);
+}
+export type SendCommandToInputBaseTopicMutationHookResult = ReturnType<
+  typeof useSendCommandToInputBaseTopicMutation
+>;
+export type SendCommandToInputBaseTopicMutationResult =
+  Apollo.MutationResult<SendCommandToInputBaseTopicMutation>;
+export type SendCommandToInputBaseTopicMutationOptions =
+  Apollo.BaseMutationOptions<
+    SendCommandToInputBaseTopicMutation,
+    SendCommandToInputBaseTopicMutationVariables
+  >;
 export const UpdateUnitNodeDocument = gql`
   mutation updateUnitNode(
     $uuid: UUID!
@@ -3273,11 +3564,22 @@ export const GetUnitDocument = gql`
       targetFirmwarePlatform
       repoBranch
       repoCommit
-      unitStateDict
+      unitState {
+        ifconfig
+        millis
+        memFree
+        memAlloc
+        freq
+        statvfs
+        commitVersion
+      }
       currentCommitVersion
       lastUpdateDatetime
       creatorUuid
       repoUuid
+      firmwareUpdateStatus
+      firmwareUpdateError
+      lastFirmwareUpdateDatetime
     }
   }
 `;
@@ -3380,11 +3682,22 @@ export const GetUnitsDocument = gql`
         targetFirmwarePlatform
         repoBranch
         repoCommit
-        unitStateDict
+        unitState {
+          ifconfig
+          millis
+          memFree
+          memAlloc
+          freq
+          statvfs
+          commitVersion
+        }
         currentCommitVersion
         lastUpdateDatetime
         creatorUuid
         repoUuid
+        firmwareUpdateStatus
+        firmwareUpdateError
+        lastFirmwareUpdateDatetime
       }
     }
   }
@@ -3499,11 +3812,22 @@ export const GetUnitsWithUnitNodesDocument = gql`
         targetFirmwarePlatform
         repoBranch
         repoCommit
-        unitStateDict
+        unitState {
+          ifconfig
+          millis
+          memFree
+          memAlloc
+          freq
+          statvfs
+          commitVersion
+        }
         currentCommitVersion
         lastUpdateDatetime
         creatorUuid
         repoUuid
+        firmwareUpdateStatus
+        firmwareUpdateError
+        lastFirmwareUpdateDatetime
         unitNodes {
           uuid
           type
@@ -3628,11 +3952,22 @@ export const GetUnitsOutputByInputDocument = gql`
         targetFirmwarePlatform
         repoBranch
         repoCommit
-        unitStateDict
+        unitState {
+          ifconfig
+          millis
+          memFree
+          memAlloc
+          freq
+          statvfs
+          commitVersion
+        }
         currentCommitVersion
         lastUpdateDatetime
         creatorUuid
         repoUuid
+        firmwareUpdateStatus
+        firmwareUpdateError
+        lastFirmwareUpdateDatetime
         unitNodes {
           uuid
           type
@@ -3793,6 +4128,159 @@ export type GetUnitEnvSuspenseQueryHookResult = ReturnType<
 export type GetUnitEnvQueryResult = Apollo.QueryResult<
   GetUnitEnvQuery,
   GetUnitEnvQueryVariables
+>;
+export const GetTargetVersionDocument = gql`
+  query getTargetVersion($uuid: UUID!) {
+    getTargetVersion(uuid: $uuid) {
+      commit
+      tag
+    }
+  }
+`;
+
+/**
+ * __useGetTargetVersionQuery__
+ *
+ * To run a query within a React component, call `useGetTargetVersionQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTargetVersionQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTargetVersionQuery({
+ *   variables: {
+ *      uuid: // value for 'uuid'
+ *   },
+ * });
+ */
+export function useGetTargetVersionQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GetTargetVersionQuery,
+    GetTargetVersionQueryVariables
+  > &
+    (
+      | { variables: GetTargetVersionQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetTargetVersionQuery, GetTargetVersionQueryVariables>(
+    GetTargetVersionDocument,
+    options,
+  );
+}
+export function useGetTargetVersionLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetTargetVersionQuery,
+    GetTargetVersionQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    GetTargetVersionQuery,
+    GetTargetVersionQueryVariables
+  >(GetTargetVersionDocument, options);
+}
+export function useGetTargetVersionSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    GetTargetVersionQuery,
+    GetTargetVersionQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<
+    GetTargetVersionQuery,
+    GetTargetVersionQueryVariables
+  >(GetTargetVersionDocument, options);
+}
+export type GetTargetVersionQueryHookResult = ReturnType<
+  typeof useGetTargetVersionQuery
+>;
+export type GetTargetVersionLazyQueryHookResult = ReturnType<
+  typeof useGetTargetVersionLazyQuery
+>;
+export type GetTargetVersionSuspenseQueryHookResult = ReturnType<
+  typeof useGetTargetVersionSuspenseQuery
+>;
+export type GetTargetVersionQueryResult = Apollo.QueryResult<
+  GetTargetVersionQuery,
+  GetTargetVersionQueryVariables
+>;
+export const GetStateStorageDocument = gql`
+  query getStateStorage($uuid: UUID!) {
+    getStateStorage(uuid: $uuid)
+  }
+`;
+
+/**
+ * __useGetStateStorageQuery__
+ *
+ * To run a query within a React component, call `useGetStateStorageQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetStateStorageQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetStateStorageQuery({
+ *   variables: {
+ *      uuid: // value for 'uuid'
+ *   },
+ * });
+ */
+export function useGetStateStorageQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GetStateStorageQuery,
+    GetStateStorageQueryVariables
+  > &
+    (
+      | { variables: GetStateStorageQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetStateStorageQuery, GetStateStorageQueryVariables>(
+    GetStateStorageDocument,
+    options,
+  );
+}
+export function useGetStateStorageLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetStateStorageQuery,
+    GetStateStorageQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    GetStateStorageQuery,
+    GetStateStorageQueryVariables
+  >(GetStateStorageDocument, options);
+}
+export function useGetStateStorageSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    GetStateStorageQuery,
+    GetStateStorageQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<
+    GetStateStorageQuery,
+    GetStateStorageQueryVariables
+  >(GetStateStorageDocument, options);
+}
+export type GetStateStorageQueryHookResult = ReturnType<
+  typeof useGetStateStorageQuery
+>;
+export type GetStateStorageLazyQueryHookResult = ReturnType<
+  typeof useGetStateStorageLazyQuery
+>;
+export type GetStateStorageSuspenseQueryHookResult = ReturnType<
+  typeof useGetStateStorageSuspenseQuery
+>;
+export type GetStateStorageQueryResult = Apollo.QueryResult<
+  GetStateStorageQuery,
+  GetStateStorageQueryVariables
 >;
 export const GetUnitNodeDocument = gql`
   query getUnitNode($uuid: UUID!) {
