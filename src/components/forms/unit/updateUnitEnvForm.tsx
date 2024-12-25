@@ -1,4 +1,4 @@
-import { ResultType } from '@rootTypes/resultEnum'
+import { useResultHandler } from '@rootTypes/useResultHandler';
 import { UnitType, useGetUnitEnvLazyQuery, useUpdateUnitEnvMutation } from '@rootTypes/compositionFunctions'
 import { useState, useEffect } from 'react';
 import Spinner from '@primitives/spinner'
@@ -11,52 +11,44 @@ interface CreateUnitFormProps {
 }
 
 export default function UpdateUnitEnvForm({ currentNodeData }:CreateUnitFormProps) {
+    const { resultData, handleError, handleSuccess } = useResultHandler();
 
     const [currentUnitEnv, setCurrentUnitEnv] = useState<Record<string, string | number> | null>(null)
 
     const [isLoaderActive, setIsLoaderActive] = useState(false)
-    const [resultData, setResultData] = useState<{ type: ResultType; message: string | null }>({
-        type: ResultType.Happy,
-        message: null
-    });
     
     const [getUnitEnv] = useGetUnitEnvLazyQuery()
     const [updateUnitEnv] = useUpdateUnitEnvMutation();
 
     const handleCreateUnit = () => {
         setIsLoaderActive(true)
-        setResultData({
-            ...resultData,
-            message: null
-        })
         
-        updateUnitEnv(
-            {
-                variables: {
-                    uuid: currentNodeData.uuid,
-                    envJsonStr: JSON.stringify(currentUnitEnv)
-                }
+        updateUnitEnv({
+            variables: {
+                uuid: currentNodeData.uuid,
+                envJsonStr: JSON.stringify(currentUnitEnv)
             }
-        ).then(result =>{
+        }).then(result => {
             if (result.data){
-                setIsLoaderActive(false)
-                setResultData({ type: ResultType.Happy, message: "Env успешно обновлён"})
+                handleSuccess("ENV success update")
 
                 getUnitEnv({
                     variables: {
                         uuid: currentNodeData.uuid,
                     }
                 }).then(resultUnitEnv => {
-                        if (resultUnitEnv.data?.getUnitEnv){
-                            setCurrentUnitEnv(JSON.parse(resultUnitEnv.data.getUnitEnv))
-                        }
+                    if (resultUnitEnv.data?.getUnitEnv){
+                        setCurrentUnitEnv(JSON.parse(resultUnitEnv.data.getUnitEnv))
                     }
-                )
+                }).catch(error => {
+                    handleError(error);
+                })
             }
         }).catch(error => {
-            setIsLoaderActive(false)
-            setResultData({ type: ResultType.Angry, message: error.graphQLErrors[0].message.slice(4)})
-        })
+            handleError(error);
+        }).finally(() => {
+            setIsLoaderActive(false);
+        });
     };
 
     useEffect(() => {
@@ -66,7 +58,6 @@ export default function UpdateUnitEnvForm({ currentNodeData }:CreateUnitFormProp
             }
         }).then(resultUnitEnv => {
                 if (resultUnitEnv.data?.getUnitEnv){
-                    console.log(JSON.parse(resultUnitEnv.data.getUnitEnv))
                     setCurrentUnitEnv(JSON.parse(resultUnitEnv.data.getUnitEnv))
                 }
             }

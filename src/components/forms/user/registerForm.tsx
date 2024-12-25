@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ResultType } from '@rootTypes/resultEnum'
+import { useResultHandler } from '@rootTypes/useResultHandler';
 import { useCreateUserMutation, useGetTokenLazyQuery } from '@rootTypes/compositionFunctions';
 import isValidPassword from '@utils/isValidPassword'
 import isValidLogin from '@utils/isValidLogin'
@@ -18,6 +18,7 @@ interface RegisterFormProps {
 }
 
 export default function RegisterForm({ openModalSignIn }: RegisterFormProps) {
+    const { resultData, setResultData, handleError } = useResultHandler();
     const { setActiveModal } = useModalStore();
     const { setUser } = useUserStore();
 
@@ -30,20 +31,12 @@ export default function RegisterForm({ openModalSignIn }: RegisterFormProps) {
         confirmPassword: true
     });
     const [isLoaderActive, setIsLoaderActive] = useState(false)
-    const [resultData, setResultData] = useState<{ type: ResultType; message: string | null }>({
-        type: ResultType.Happy,
-        message: null
-    });
 
     const [createUserMutation] = useCreateUserMutation();
     const [getToken] = useGetTokenLazyQuery();
     
     const handleRegister = () => {
         setIsLoaderActive(true)
-        setResultData({
-            ...resultData,
-            message: null
-        })
 
         localStorage.removeItem('token');
         createUserMutation({
@@ -53,8 +46,6 @@ export default function RegisterForm({ openModalSignIn }: RegisterFormProps) {
             }
         }).then(createUserData => {
             if (createUserData.data) {
-                console.log('Пользователь создан:', createUserData.data);
-
                 getToken({
                     variables: {
                         credentials: login,
@@ -67,14 +58,14 @@ export default function RegisterForm({ openModalSignIn }: RegisterFormProps) {
                             setUser(createUserData.data.createUser)
                         }
                         setActiveModal(null)
-                        setIsLoaderActive(false)
                     }
                 })
             }
         }).catch(error => {
-            setIsLoaderActive(false)
-            setResultData({ type: ResultType.Angry, message: error.graphQLErrors[0].message.slice(4)})
-        })
+            handleError(error);
+        }).finally(() => {
+            setIsLoaderActive(false);
+        });
     };
 
     const updateErrorState = (field: keyof typeof errorState, hasError: boolean) => {

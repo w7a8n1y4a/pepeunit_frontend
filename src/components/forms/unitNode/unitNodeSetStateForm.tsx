@@ -1,4 +1,5 @@
 import { ResultType } from '@rootTypes/resultEnum'
+import { useResultHandler } from '@rootTypes/useResultHandler';
 import { useSetStateUnitNodeInputMutation, } from '@rootTypes/compositionFunctions'
 import { useState } from 'react';
 import isValidString from '@utils/isValidString'
@@ -13,24 +14,17 @@ interface UnitNodeSetStateFormProps {
 }
 
 export default function UnitNodeSetStateForm({ currentNodeData, setCurrentNodeData }: UnitNodeSetStateFormProps) {
+    const { resultData, setResultData, handleError, handleSuccess } = useResultHandler();
 
     const [errorState, setErrorState] = useState({
         name: false,
     });
     const [isLoaderActive, setIsLoaderActive] = useState(false)
-    const [resultData, setResultData] = useState<{ type: ResultType; message: string | null }>({
-        type: ResultType.Happy,
-        message: null
-    });
 
     const [setStateUnitNodeInputMutation] = useSetStateUnitNodeInputMutation();
 
     const handleUnitNodeSetState = () => {
         setIsLoaderActive(true)
-        setResultData({
-            ...resultData,
-            message: null
-        })
 
         setStateUnitNodeInputMutation({
             variables: {
@@ -39,13 +33,13 @@ export default function UnitNodeSetStateForm({ currentNodeData, setCurrentNodeDa
             }
         }).then(UpdateUnitNodeData =>{
             if (UpdateUnitNodeData.data){
-                setIsLoaderActive(false)
-                setResultData({ type: ResultType.Happy, message: "Состояние UnitNode успешно обновлёно"})
+                handleSuccess("State UnitNode success update")
             }
         }).catch(error => {
-            setIsLoaderActive(false)
-            setResultData({ type: ResultType.Angry, message: error.graphQLErrors[0].message.slice(4)})
-        })
+            handleError(error);
+        }).finally(() => {
+            setIsLoaderActive(false);
+        });
     };
 
     const updateErrorState = (field: keyof typeof errorState, hasError: boolean) => {

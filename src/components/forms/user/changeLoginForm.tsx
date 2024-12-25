@@ -1,12 +1,12 @@
+import { useResultHandler } from '@rootTypes/useResultHandler';
 import { useState, useEffect } from 'react';
-import { ResultType } from '@rootTypes/resultEnum'
 import { useUpdateUserMutation } from '@rootTypes/compositionFunctions';
 import DefaultInput from '@primitives/defaultInput'
 import Spinner from '@primitives/spinner'
+import ResultQuery from '@primitives/resultQuery'
 import isValidLogin from '@utils/isValidLogin'
 import '../form.css'
 
-import { useModalStore } from '@stores/baseStore';
 import { useUserStore } from '@stores/userStore';
 
 interface ChangeLoginFormProps {
@@ -14,17 +14,14 @@ interface ChangeLoginFormProps {
 }
 
 export default function ChangeLoginForm({ currentLogin }: ChangeLoginFormProps) {
-    const { setActiveModal } = useModalStore();
+    const { resultData, setResultData, handleError, handleSuccess } = useResultHandler();
+    const [isLoaderActive, setIsLoaderActive] = useState(false)
+
     const { setUser } = useUserStore();
 
     const [login, setLogin] = useState(currentLogin);
     const [errorState, setErrorState] = useState({
         login: false,
-    });
-    const [isLoaderActive, setIsLoaderActive] = useState(false)
-    const [resultData, setResultData] = useState<{ type: ResultType; message: string | null }>({
-        type: ResultType.Happy,
-        message: null
     });
     
     useEffect(() => {
@@ -42,11 +39,6 @@ export default function ChangeLoginForm({ currentLogin }: ChangeLoginFormProps) 
 
     const handleChangeLogin = () => {
         setIsLoaderActive(true)
-        setResultData({
-            ...resultData,
-            message: null
-        })
-
 
         updateUserMutation({
             variables: {
@@ -55,11 +47,13 @@ export default function ChangeLoginForm({ currentLogin }: ChangeLoginFormProps) 
         }).then(updateUserData => {
             if (updateUserData.data) { 
                 setUser(updateUserData.data.updateUser)
-                
-                setIsLoaderActive(false)
-                setActiveModal(null)
+                handleSuccess("New Login success set")
             }
-        })
+        }).catch(error => {
+            handleError(error);
+        }).finally(() => {
+            setIsLoaderActive(false);
+        });
 
     };
 
@@ -86,6 +80,9 @@ export default function ChangeLoginForm({ currentLogin }: ChangeLoginFormProps) 
             <button className="button_main_action" onClick={handleChangeLogin} disabled={Object.values(errorState).some(isError => isError)}>
                 Изменить
             </button>
+            <ResultQuery
+                resultData={resultData}
+            />
         </>
     );
 }
