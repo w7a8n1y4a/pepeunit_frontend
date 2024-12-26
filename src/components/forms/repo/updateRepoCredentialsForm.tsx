@@ -1,20 +1,20 @@
 import { useState } from 'react';
 import { useResultHandler } from '@rootTypes/useResultHandler';
 import { useAsyncHandler } from '@rootTypes/useAsyncHandler';
-import { useUpdateRepoCredentialsMutation, RepoType } from '@rootTypes/compositionFunctions'
+import { useUpdateRepoCredentialsMutation } from '@rootTypes/compositionFunctions'
 import isValidString from '@utils/isValidString'
 import DefaultInput from '@primitives/defaultInput'
 import Spinner from '@primitives/spinner'
 import ResultQuery from '@primitives/resultQuery'
 import '../form.css'
 
-interface UpdateRepoCredentialsFormProps {
-    currentNodeData: RepoType;
-}
+import { useNodeStore } from '@stores/baseStore';
 
-export default function UpdateRepoCredentialsForm({ currentNodeData }: UpdateRepoCredentialsFormProps) {
+export default function UpdateRepoCredentialsForm() {
     const { resultData, setResultData, handleError, handleSuccess } = useResultHandler();
     const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
+
+    const { currentNodeData } = useNodeStore();
 
     const [repoUsername, setRepoUsername] = useState('');
     const [repoPatToken, setPatToken] = useState('');

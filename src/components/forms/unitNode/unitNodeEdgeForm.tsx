@@ -11,13 +11,13 @@ import IterationList from '@primitives/iterationList'
 import UnitNodeEdgeCreateForm from '../../forms/unitNode/unitNodeEdgeCreateForm';
 import '../form.css';
 
-interface UnitNodeEdgeFormProps {
-    currentNodeData: any;
-}
+import { useNodeStore } from '@stores/baseStore';
 
-export default function UnitNodeEdgeForm({ currentNodeData }: UnitNodeEdgeFormProps) {
+export default function UnitNodeEdgeForm() {
     const { resultData, handleError } = useResultHandler();
     const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
+
+    const { currentNodeData } = useNodeStore();
 
     const { activeModal } = useModalStore();
     const [nodeOutputs, setNodeOutputs] = useState<Array<any> | null>(null);
@@ -90,9 +90,7 @@ export default function UnitNodeEdgeForm({ currentNodeData }: UnitNodeEdgeFormPr
                 openModalType={"unitNodeAddOutputToInput"} 
             >
                 {currentNodeData && (
-                    <UnitNodeEdgeCreateForm
-                        currentNodeData={currentNodeData}
-                    />
+                    <UnitNodeEdgeCreateForm/>
                 )}
             </BaseModal>
 

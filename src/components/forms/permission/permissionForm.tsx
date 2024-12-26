@@ -18,14 +18,18 @@ import useFetchEntitiesByResourceAgents from './useFetchEntitiesByResourceAgents
 import IterationList from '@primitives/iterationList'
 import '../form.css';
 
+import { useNodeStore } from '@stores/baseStore';
+
+
 interface PermissionFormProps {
-    currentNodeData: any;
     currentNodeType: PermissionEntities;
 }
 
-export default function PermissionForm({ currentNodeData, currentNodeType }: PermissionFormProps) {
+export default function PermissionForm({ currentNodeType }: PermissionFormProps) {
     const { resultData, handleError, handleSuccess } = useResultHandler();
     const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
+
+    const { currentNodeData } = useNodeStore();
 
     const { activeModal } = useModalStore();
     const [nodeOutputs, setNodeOutputs] = useState<Array<any> | null>(null);
@@ -173,7 +177,6 @@ export default function PermissionForm({ currentNodeData, currentNodeType }: Per
             >
                 {currentNodeData && (
                     <PermissionCreateForm
-                        currentNodeData={currentNodeData}
                         currentNodeType={currentNodeType}
                         selectedEntityType={selectedEntityType}
                         setSelectedEntityType={setSelectedEntityType}

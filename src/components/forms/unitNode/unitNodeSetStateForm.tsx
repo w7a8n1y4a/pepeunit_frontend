@@ -9,14 +9,14 @@ import Spinner from '@primitives/spinner'
 import ResultQuery from '@primitives/resultQuery'
 import '../form.css'
 
-interface UnitNodeSetStateFormProps {
-    currentNodeData: any;
-    setCurrentNodeData: (repo: any | null) => void;
-}
+import { useNodeStore } from '@stores/baseStore';
 
-export default function UnitNodeSetStateForm({ currentNodeData, setCurrentNodeData }: UnitNodeSetStateFormProps) {
+
+export default function UnitNodeSetStateForm() {
     const { resultData, setResultData, handleError, handleSuccess } = useResultHandler();
     const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
+
+    const { currentNodeData, setCurrentNodeData } = useNodeStore();
 
     const [errorState, setErrorState] = useState({
         name: false,
