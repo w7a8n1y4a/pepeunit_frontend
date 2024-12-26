@@ -1,5 +1,6 @@
+import { useResultHandler } from '@rootTypes/useResultHandler';
+import { useAsyncHandler } from '@rootTypes/useAsyncHandler';
 import { useState } from 'react';
-import { ResultType } from '@rootTypes/resultEnum'
 import { useUpdateUserMutation } from '@rootTypes/compositionFunctions';
 import isValidPassword from '@utils/isValidPassword'
 import isValidMatchPassword from '@utils/isValidMatchPassword'
@@ -11,6 +12,9 @@ import '../form.css'
 import { useUserStore } from '@stores/userStore';
 
 export default function ChangePassForm() {
+    const { resultData, setResultData, handleError, handleSuccess } = useResultHandler();
+    const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
+
     const [password, setPassword] = useState('');']'
     const [confirmPassword, setConfirmPassword] = useState('');
 
@@ -19,11 +23,6 @@ export default function ChangePassForm() {
     const [errorState, setErrorState] = useState({
         password: true,
         confirmPassword: true
-    });
-    const [isLoaderActive, setIsLoaderActive] = useState(false)
-    const [resultData, setResultData] = useState<{ type: ResultType; message: string | null }>({
-        type: ResultType.Happy,
-        message: null
     });
 
     const updateErrorState = (field: keyof typeof errorState, hasError: boolean) => {
@@ -36,25 +35,18 @@ export default function ChangePassForm() {
     const [updateUserMutation] = useUpdateUserMutation();
 
     const handleChangeLogin = () => {
-        setIsLoaderActive(true)
-        setResultData({
-            ...resultData,
-            message: null
-        })
+        runAsync(async () => {
 
-        updateUserMutation({
-            variables: {
-                password: password
-            }
-        }).then(updateUserData => {
-            if (updateUserData.data) { 
-                setUser(updateUserData.data.updateUser)
-                
-                setIsLoaderActive(false)
-                setResultData({ type: ResultType.Happy, message: 'Пароль успешно изменён'})
+            let result = await updateUserMutation({
+                variables: {
+                    password: password
+                }
+            })
+            if (result.data) { 
+                setUser(result.data.updateUser)
+                handleSuccess("Pass success update")
             }
         })
-
     };
 
     return (

@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { ResultType } from '@rootTypes/resultEnum'
+import { useResultHandler } from '@rootTypes/useResultHandler';
+import { useAsyncHandler } from '@rootTypes/useAsyncHandler';
 import { useUpdateRepoCredentialsMutation, RepoType } from '@rootTypes/compositionFunctions'
 import isValidString from '@utils/isValidString'
 import DefaultInput from '@primitives/defaultInput'
@@ -12,14 +13,11 @@ interface UpdateRepoCredentialsFormProps {
 }
 
 export default function UpdateRepoCredentialsForm({ currentNodeData }: UpdateRepoCredentialsFormProps) {
+    const { resultData, setResultData, handleError, handleSuccess } = useResultHandler();
+    const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
+
     const [repoUsername, setRepoUsername] = useState('');
     const [repoPatToken, setPatToken] = useState('');
-
-    const [isLoaderActive, setIsLoaderActive] = useState(false)
-    const [resultData, setResultData] = useState<{ type: ResultType; message: string | null }>({
-        type: ResultType.Happy,
-        message: null
-    });
 
     const [errorState, setErrorState] = useState({
         username: true,
@@ -36,28 +34,20 @@ export default function UpdateRepoCredentialsForm({ currentNodeData }: UpdateRep
     const [updateRepoCredentialsMutation] = useUpdateRepoCredentialsMutation();
 
     const handleUpdateCredentials = () => {
-        setIsLoaderActive(true)
-        setResultData({
-            ...resultData,
-            message: null
-        })
+        runAsync(async () => {
 
-        updateRepoCredentialsMutation({
-            variables: {
-                uuid: currentNodeData.uuid,
-                data: {
-                    username: repoUsername,
-                    patToken: repoPatToken
+            let result = await updateRepoCredentialsMutation({
+                variables: {
+                    uuid: currentNodeData.uuid,
+                    data: {
+                        username: repoUsername,
+                        patToken: repoPatToken
+                    }
                 }
+            })
+            if (result.data){
+                handleSuccess("Repo auth data successfully updated")
             }
-        }).then(UpdateRepoData =>{
-            if (UpdateRepoData.data){
-                setIsLoaderActive(false)
-                setResultData({ type: ResultType.Happy, message: "Авторизационные данные успешно обновлены"})
-            }
-        }).catch(error => {
-            setIsLoaderActive(false)
-            setResultData({ type: ResultType.Angry, message: error.graphQLErrors[0].message.slice(4)})
         })
     };
 

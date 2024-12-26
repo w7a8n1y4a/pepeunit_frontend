@@ -1,4 +1,5 @@
-import { ResultType } from '@rootTypes/resultEnum'
+import { useResultHandler } from '@rootTypes/useResultHandler';
+import { useAsyncHandler } from '@rootTypes/useAsyncHandler';
 import { UnitType, useGetUnitEnvLazyQuery, useUpdateUnitEnvMutation } from '@rootTypes/compositionFunctions'
 import { useState, useEffect } from 'react';
 import Spinner from '@primitives/spinner'
@@ -6,71 +7,53 @@ import ResultQuery from '@primitives/resultQuery'
 import '../form.css'
 
 
-interface CreateUnitFormProps {
+interface UpdateUnitEnvFormProps {
     currentNodeData: UnitType;
 }
 
-export default function UpdateUnitEnvForm({ currentNodeData }:CreateUnitFormProps) {
+export default function UpdateUnitEnvForm({ currentNodeData }:UpdateUnitEnvFormProps) {
+    const { resultData, handleError, handleSuccess } = useResultHandler();
+    const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
 
     const [currentUnitEnv, setCurrentUnitEnv] = useState<Record<string, string | number> | null>(null)
 
-    const [isLoaderActive, setIsLoaderActive] = useState(false)
-    const [resultData, setResultData] = useState<{ type: ResultType; message: string | null }>({
-        type: ResultType.Happy,
-        message: null
-    });
-    
     const [getUnitEnv] = useGetUnitEnvLazyQuery()
     const [updateUnitEnv] = useUpdateUnitEnvMutation();
 
-    const handleCreateUnit = () => {
-        setIsLoaderActive(true)
-        setResultData({
-            ...resultData,
-            message: null
-        })
-        
-        updateUnitEnv(
-            {
+    const handleUpdateUnitEnv = () => {
+        runAsync(async () => {
+            let result = await updateUnitEnv({
                 variables: {
                     uuid: currentNodeData.uuid,
                     envJsonStr: JSON.stringify(currentUnitEnv)
                 }
-            }
-        ).then(result =>{
+            })
             if (result.data){
-                setIsLoaderActive(false)
-                setResultData({ type: ResultType.Happy, message: "Env успешно обновлён"})
+                handleSuccess("ENV success update")
 
-                getUnitEnv({
+                let resultUnitEnv = await getUnitEnv({
                     variables: {
                         uuid: currentNodeData.uuid,
                     }
-                }).then(resultUnitEnv => {
-                        if (resultUnitEnv.data?.getUnitEnv){
-                            setCurrentUnitEnv(JSON.parse(resultUnitEnv.data.getUnitEnv))
-                        }
-                    }
-                )
+                })
+                if (resultUnitEnv.data?.getUnitEnv){
+                    setCurrentUnitEnv(JSON.parse(resultUnitEnv.data.getUnitEnv))
+                }
             }
-        }).catch(error => {
-            setIsLoaderActive(false)
-            setResultData({ type: ResultType.Angry, message: error.graphQLErrors[0].message.slice(4)})
         })
     };
 
     useEffect(() => {
-        getUnitEnv({
-            variables: {
-                uuid: currentNodeData.uuid,
-            }
-        }).then(resultUnitEnv => {
-                if (resultUnitEnv.data?.getUnitEnv){
-                    console.log(JSON.parse(resultUnitEnv.data.getUnitEnv))
-                    setCurrentUnitEnv(JSON.parse(resultUnitEnv.data.getUnitEnv))
+        runAsync(async () => {
+            let result = await getUnitEnv({
+                variables: {
+                    uuid: currentNodeData.uuid,
                 }
+            })
+            if (result.data?.getUnitEnv){
+                setCurrentUnitEnv(JSON.parse(result.data.getUnitEnv))
             }
-        )
+        })
     }, [currentNodeData]);
 
     const handleInputChange = (key: string, value: string) => {
@@ -104,7 +87,7 @@ export default function UpdateUnitEnvForm({ currentNodeData }:CreateUnitFormProp
                         ))}
                 </div>
             </div>
-            <button className="button_main_action" onClick={handleCreateUnit}>
+            <button className="button_main_action" onClick={handleUpdateUnitEnv}>
                 Обновить
             </button>
             <ResultQuery

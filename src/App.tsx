@@ -31,17 +31,11 @@ const authLink = setContext((_, { headers }) => {
 const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors) {
       if (graphQLErrors[0]?.extensions?.code === 401) {
-          // localStorage.removeItem('newToken');
-          // router.replace({
-          //     name: 'projects',
-          //     query: { redirect: router.currentRoute.value.path },
-          // });
-          console.log('kek')
+          console.log('401')
       }
 
       if (graphQLErrors[0]?.extensions?.code === 403) {
-          // toast.warning('Ваш аккаунт не верифицирован!');
-          console.log('kekv')
+          console.log('403')
       }
   }
 

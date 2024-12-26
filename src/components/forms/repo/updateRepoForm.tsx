@@ -1,4 +1,6 @@
 import { ResultType } from '@rootTypes/resultEnum'
+import { useResultHandler } from '@rootTypes/useResultHandler';
+import { useAsyncHandler } from '@rootTypes/useAsyncHandler';
 import { VisibilityLevel, RepoType, useGetBranchCommitsLazyQuery, useUpdateRepoMutation } from '@rootTypes/compositionFunctions'
 import { useState, useEffect } from 'react';
 import { getCommitSummary } from '@utils/getCommitSummary';
@@ -14,6 +16,8 @@ interface UpdateRepoFormProps {
 }
 
 export default function UpdateRepoForm({ currentNodeData, setCurrentNodeData }: UpdateRepoFormProps) {
+    const { resultData, setResultData, handleError, handleSuccess } = useResultHandler();
+    const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
 
     const [repoAvailableCommits, setRepoAvailableCommits] = useState<Array<{
         __typename?: "CommitType";
@@ -25,53 +29,40 @@ export default function UpdateRepoForm({ currentNodeData, setCurrentNodeData }: 
     const [errorState, setErrorState] = useState({
         name: false,
     });
-    const [isLoaderActive, setIsLoaderActive] = useState(false)
-    const [resultData, setResultData] = useState<{ type: ResultType; message: string | null }>({
-        type: ResultType.Happy,
-        message: null
-    });
 
     const [getBranchCommits] = useGetBranchCommitsLazyQuery();
     const [updateRepoMutation] = useUpdateRepoMutation();
 
     useEffect(() => {
-        console.log(currentNodeData)
-        if (currentNodeData.defaultBranch){
-            getBranchCommits({
-                variables: {
-                    uuid: currentNodeData.uuid,
-                    repoBranch: currentNodeData.defaultBranch,
-                    onlyTag: false,
-                    limit: 100,
-                    offset: 0
-                }
-            }).then(availableCommits => {
-                    if (availableCommits.data?.getBranchCommits){
-                        setRepoAvailableCommits(availableCommits.data.getBranchCommits)
-                        console.log(availableCommits.data.getBranchCommits)
+        runAsync(async () => {
+            if (currentNodeData.defaultBranch){
+
+                let result = await getBranchCommits({
+                    variables: {
+                        uuid: currentNodeData.uuid,
+                        repoBranch: currentNodeData.defaultBranch,
+                        onlyTag: false,
+                        limit: 100,
+                        offset: 0
                     }
+                })
+
+                if (result.data?.getBranchCommits){
+                    setRepoAvailableCommits(result.data.getBranchCommits)
                 }
-            )
-        }
+            }
+        })
     }, [currentNodeData.defaultBranch, currentNodeData.isAutoUpdateRepo]);
 
     const handleUpdateRepo = () => {
-        setIsLoaderActive(true)
-        setResultData({
-            ...resultData,
-            message: null
-        })
+        runAsync(async () => {
+            let updateRepoData = await updateRepoMutation({
+                variables: currentNodeData
+            })
 
-        updateRepoMutation({
-            variables: currentNodeData
-        }).then(UpdateRepoData =>{
-            if (UpdateRepoData.data){
-                setIsLoaderActive(false)
-                setResultData({ type: ResultType.Happy, message: "Repo успешно обновлён"})
+            if (updateRepoData.data){
+                handleSuccess("Repo success update")
             }
-        }).catch(error => {
-            setIsLoaderActive(false)
-            setResultData({ type: ResultType.Angry, message: error.graphQLErrors[0].message.slice(4)})
         })
     };
 

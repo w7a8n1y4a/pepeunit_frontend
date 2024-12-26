@@ -1,12 +1,13 @@
+import { useResultHandler } from '@rootTypes/useResultHandler';
+import { useAsyncHandler } from '@rootTypes/useAsyncHandler';
 import { useState, useEffect } from 'react';
-import { ResultType } from '@rootTypes/resultEnum'
 import { useUpdateUserMutation } from '@rootTypes/compositionFunctions';
 import DefaultInput from '@primitives/defaultInput'
 import Spinner from '@primitives/spinner'
+import ResultQuery from '@primitives/resultQuery'
 import isValidLogin from '@utils/isValidLogin'
 import '../form.css'
 
-import { useModalStore } from '@stores/baseStore';
 import { useUserStore } from '@stores/userStore';
 
 interface ChangeLoginFormProps {
@@ -14,17 +15,14 @@ interface ChangeLoginFormProps {
 }
 
 export default function ChangeLoginForm({ currentLogin }: ChangeLoginFormProps) {
-    const { setActiveModal } = useModalStore();
+    const { resultData, setResultData, handleError, handleSuccess } = useResultHandler();
+    const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
+
     const { setUser } = useUserStore();
 
     const [login, setLogin] = useState(currentLogin);
     const [errorState, setErrorState] = useState({
         login: false,
-    });
-    const [isLoaderActive, setIsLoaderActive] = useState(false)
-    const [resultData, setResultData] = useState<{ type: ResultType; message: string | null }>({
-        type: ResultType.Happy,
-        message: null
     });
     
     useEffect(() => {
@@ -41,26 +39,18 @@ export default function ChangeLoginForm({ currentLogin }: ChangeLoginFormProps) 
     const [updateUserMutation] = useUpdateUserMutation();
 
     const handleChangeLogin = () => {
-        setIsLoaderActive(true)
-        setResultData({
-            ...resultData,
-            message: null
-        })
+        runAsync(async () => {
 
-
-        updateUserMutation({
-            variables: {
-                login: login
-            }
-        }).then(updateUserData => {
-            if (updateUserData.data) { 
-                setUser(updateUserData.data.updateUser)
-                
-                setIsLoaderActive(false)
-                setActiveModal(null)
+            let result = await updateUserMutation({
+                variables: {
+                    login: login
+                }
+            })
+            if (result.data) { 
+                setUser(result.data.updateUser)
+                handleSuccess("New Login success set")
             }
         })
-
     };
 
     return (
@@ -86,6 +76,9 @@ export default function ChangeLoginForm({ currentLogin }: ChangeLoginFormProps) 
             <button className="button_main_action" onClick={handleChangeLogin} disabled={Object.values(errorState).some(isError => isError)}>
                 Изменить
             </button>
+            <ResultQuery
+                resultData={resultData}
+            />
         </>
     );
 }

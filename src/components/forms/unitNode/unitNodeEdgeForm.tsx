@@ -1,8 +1,9 @@
 import BaseModal from '../../modal/baseModal';
+import { useResultHandler } from '@rootTypes/useResultHandler';
+import { useAsyncHandler } from '@rootTypes/useAsyncHandler';
 import { useGetUnitsOutputByInputLazyQuery, useDeleteUnitNodeEdgeMutation } from '@rootTypes/compositionFunctions';
 import { useState, useEffect } from 'react';
 import { useModalStore } from '@stores/baseStore';
-import { ResultType } from '@rootTypes/resultEnum';
 import Spinner from '@primitives/spinner';
 import ResultQuery from '@primitives/resultQuery';
 import PaginationControls from '@primitives/pagination';
@@ -15,39 +16,32 @@ interface UnitNodeEdgeFormProps {
 }
 
 export default function UnitNodeEdgeForm({ currentNodeData }: UnitNodeEdgeFormProps) {
+    const { resultData, handleError } = useResultHandler();
+    const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
+
     const { activeModal } = useModalStore();
     const [nodeOutputs, setNodeOutputs] = useState<Array<any> | null>(null);
     const [getUnitsOutputByInputQuery] = useGetUnitsOutputByInputLazyQuery();
     const [deleteUnitNodeEdgeMutation] = useDeleteUnitNodeEdgeMutation();
-    
-    const [isLoaderActive, setIsLoaderActive] = useState(false);
-    const [resultData, setResultData] = useState<{ type: ResultType; message: string | null }>({
-        type: ResultType.Happy,
-        message: null
-    });
     
     const [currentPage, setCurrentPage] = useState(0);
     const [totalCount, setTotalCount] = useState(0);
     const itemsPerPage = 6;
 
     const fetchNodeOutputs = () => {
-        setIsLoaderActive(true);
-        getUnitsOutputByInputQuery({
-            variables: {
-                unitNodeInputUuid: currentNodeData.uuid,
-                limit: itemsPerPage,
-                offset: currentPage * itemsPerPage
+        runAsync(async () => {
+            let result = await getUnitsOutputByInputQuery({
+                variables: {
+                    unitNodeInputUuid: currentNodeData.uuid,
+                    limit: itemsPerPage,
+                    offset: currentPage * itemsPerPage
+                }
+            })
+            if (result.data) {
+                setNodeOutputs(result.data.getUnits.units);
+                setTotalCount(result.data.getUnits.count);
             }
-        }).then(ResultData => {
-            if (ResultData.data) {
-                setNodeOutputs(ResultData.data.getUnits.units);
-                setTotalCount(ResultData.data.getUnits.count);
-                setIsLoaderActive(false);
-            }
-        }).catch(error => {
-            setIsLoaderActive(false);
-            setResultData({ type: ResultType.Angry, message: error.graphQLErrors[0].message.slice(4) });
-        });
+        })
     };
 
     useEffect(() => {
@@ -55,25 +49,19 @@ export default function UnitNodeEdgeForm({ currentNodeData }: UnitNodeEdgeFormPr
     }, [currentNodeData, currentPage, activeModal]);
 
     const handleDeleteEdge = (outputNodeUuid: string) => {
-        setIsLoaderActive(true);
-        setResultData({ ...resultData, message: null });
-    
-        if (currentNodeData) {
-            deleteUnitNodeEdgeMutation({
-                variables: {
-                    inputUuid: currentNodeData.uuid,
-                    outputUuid: outputNodeUuid
-                }
-            }).then(result => {
+        runAsync(async () => {
+            if (currentNodeData) {
+                let result = await deleteUnitNodeEdgeMutation({
+                    variables: {
+                        inputUuid: currentNodeData.uuid,
+                        outputUuid: outputNodeUuid
+                    }
+                })
                 if (result.data) {
-                    setIsLoaderActive(false);
                     fetchNodeOutputs();
                 }
-            }).catch(error => {
-                setIsLoaderActive(false);
-                setResultData({ type: ResultType.Angry, message: error.graphQLErrors[0].message.slice(4) });
-            });
-        }
+            }
+        })
     };
 
     const totalPages = Math.ceil(totalCount / itemsPerPage);

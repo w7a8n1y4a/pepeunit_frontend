@@ -1,5 +1,6 @@
-import { ResultType } from '@rootTypes/resultEnum'
 import { NodeType } from '@rootTypes/nodeTypeEnum'
+import { useResultHandler } from '@rootTypes/useResultHandler';
+import { useAsyncHandler } from '@rootTypes/useAsyncHandler';
 import { getNodeColor } from '@utils/getNodeColor'
 import { useCreateRepoMutation, VisibilityLevel, CreateRepoMutationVariables, GitPlatform } from '@rootTypes/compositionFunctions'
 import { useState } from 'react';
@@ -15,6 +16,8 @@ import { useGraphStore } from '@stores/graphStore';
 import { useModalStore, useNodeStore } from '@stores/baseStore';
 
 export default function CreateRepoForm() {
+    const { resultData, setResultData, handleError } = useResultHandler();
+    const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
 
     const { setActiveModal } = useModalStore();
     const { setCurrentNodeData } = useNodeStore();
@@ -36,11 +39,6 @@ export default function CreateRepoForm() {
         username: false,
         patToken: false
     });
-    const [isLoaderActive, setIsLoaderActive] = useState(false)
-    const [resultData, setResultData] = useState<{ type: ResultType; message: string | null }>({
-        type: ResultType.Happy,
-        message: null
-    });
 
     const updateErrorState = (field: keyof typeof errorState, hasError: boolean) => {
         setErrorState(prevState => ({
@@ -52,60 +50,50 @@ export default function CreateRepoForm() {
     const [createRepoMutation] = useCreateRepoMutation();
 
     const handleCreateRepo = () => {
-        setIsLoaderActive(true)
-        setResultData({
-            ...resultData,
-            message: null
-        })
-
-        let repoVariables: CreateRepoMutationVariables = {
-            visibilityLevel: repoVisibilityLevel,
-            name: repoName,
-            repoUrl: repoUrl,
-            isPublicRepository: !isPrivateRepository,
-            isCompilableRepo: isСompilableRepository,
-            platform: gitPlatform
-        }
-
-        if (repoUsername !== '' && repoPatToken !== ''){
-            repoVariables.credentials = {
-                username: repoUsername,
-                patToken: repoPatToken
+        runAsync(async () => {
+            let repoVariables: CreateRepoMutationVariables = {
+                visibilityLevel: repoVisibilityLevel,
+                name: repoName,
+                repoUrl: repoUrl,
+                isPublicRepository: !isPrivateRepository,
+                isCompilableRepo: isСompilableRepository,
+                platform: gitPlatform
             }
-        }
 
-        createRepoMutation({
-            variables: repoVariables
-        }).then(CreateRepoData =>{
-            if (CreateRepoData.data){
-                console.log('Repo создан', CreateRepoData.data)
-                
-                let newRepo = CreateRepoData.data.createRepo
+            if (repoUsername !== '' && repoPatToken !== ''){
+                repoVariables.credentials = {
+                    username: repoUsername,
+                    patToken: repoPatToken
+                }
+            }
+
+            let result = await createRepoMutation({
+                variables: repoVariables
+            })
+
+            if (result.data){
+                let newRepo = result.data.createRepo
 
                 const newNode = {
                     id: newRepo.uuid,
                     type: NodeType.Repo,
                     color: getNodeColor(NodeType.Repo),
                     data: newRepo
-                  };
-              
-                  const newLink = {
+                };
+            
+                const newLink = {
                     source: import.meta.env.VITE_INSTANCE_NAME,
                     target: newRepo.uuid,
                     value: 1
-                  };
+                };
 
                 setGraphData({
                     nodes: [...graphData.nodes, newNode],
                     links: [...graphData.links, newLink],
-                  });
+                });
                 setCurrentNodeData(newRepo)
                 setActiveModal('updateRepo')
-                setIsLoaderActive(false)
             }
-        }).catch(error => {
-            setIsLoaderActive(false)
-            setResultData({ type: ResultType.Angry, message: error.graphQLErrors[0].message.slice(4)})
         })
     };
 

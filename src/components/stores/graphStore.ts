@@ -43,8 +43,6 @@ export const useGraphStore = create<GraphStoreType>((set) => ({
   removeNodesAndLinks: (uuids: string | string[]) => set((state) => {
     const uuidArray = Array.isArray(uuids) ? uuids : [uuids];
 
-    console.log(state)
-
     // Удаляем связи, связанные с узлами по UUID
     const newLinks = state.graphData.links.filter(link => {
       // Извлекаем id из source и target
@@ -57,9 +55,6 @@ export const useGraphStore = create<GraphStoreType>((set) => ({
 
     // Удаляем узлы по UUID
     const newNodes = state.graphData.nodes.filter(node => !uuidArray.includes(String(node.id)));
-
-    console.log(uuidArray)
-    console.log(newLinks)
 
     return {
       graphData: {
