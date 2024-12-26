@@ -1,5 +1,6 @@
 import { ResultType } from '@rootTypes/resultEnum'
 import { useResultHandler } from '@rootTypes/useResultHandler';
+import { useAsyncHandler } from '@rootTypes/useAsyncHandler';
 import { useDeleteUnitMutation, PermissionEntities, useGetAvailablePlatformsLazyQuery, useGetRepoLazyQuery, RepoType, useSendCommandToInputBaseTopicMutation, BackendTopicCommand, useGetTargetVersionLazyQuery } from '@rootTypes/compositionFunctions'
 import BaseModal from '../modal/baseModal'
 import { useState, useEffect } from 'react';
@@ -17,6 +18,7 @@ import useModalHandlers from '@handlers/useModalHandlers';
 
 export default function UnitContent(){
   const { resultData, setResultData, handleError, handleSuccess } = useResultHandler();
+  const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
 
   const { activeModal, setActiveModal } = useModalStore();
   const { currentNodeData, setCurrentNodeData } = useNodeStore();
@@ -29,8 +31,6 @@ export default function UnitContent(){
 
   let nodeType = PermissionEntities.Unit
     
-  const [isLoaderActive, setIsLoaderActive] = useState(false)
-
   const [repoAvailablePlatforms, setRepoAvailablePlatforms] = useState<Array<{
     __typename?: "PlatformType";
     name: string;
@@ -44,8 +44,6 @@ export default function UnitContent(){
   const [getTargetVersion] = useGetTargetVersionLazyQuery();
 
   const fileUpload = (type: string) => {
-    setIsLoaderActive(true)
-
     let url = import.meta.env.VITE_BACKEND_URI.replace('graphql', '') + 'api/v1/units/firmware/' + type + '/' + currentNodeData?.uuid
     let token = localStorage.getItem('token')
 
@@ -76,56 +74,46 @@ export default function UnitContent(){
             setResultData({ type: ResultType.Angry, message: data.detail})
           }
         )
-      }).finally(() => {
-          setIsLoaderActive(false);
-      });
+      })
     }
   }
 
   const handleSendUnitCommand = (command: BackendTopicCommand) => {
-    setIsLoaderActive(true)
+    runAsync(async () => {
 
-    if (currentNodeData){
-      sendCommandToInputBaseTopic(
-        {
-          variables: {
-            uuid: currentNodeData.uuid,
-            command: command
+      if (currentNodeData){
+        let result = await sendCommandToInputBaseTopic(
+          {
+            variables: {
+              uuid: currentNodeData.uuid,
+              command: command
+            }
           }
-        }
-      ).then(result => {
+        )
         if (result.data){
           handleSuccess("MQTT command " + command + " success send")
         }
-      }).catch(error => {
-          handleError(error);
-      }).finally(() => {
-          setIsLoaderActive(false);
-      });
-    }
+      }
+    })
   };
 
   const handleDeleteUnit = () => {
-    setIsLoaderActive(true)
+    runAsync(async () => {
 
-    if (currentNodeData){
-      deleteUnit(
-        {
-          variables: {
-            uuid: currentNodeData.uuid
+      if (currentNodeData){
+        let result = await deleteUnit(
+          {
+            variables: {
+              uuid: currentNodeData.uuid
+            }
           }
-        }
-      ).then(result => {
+        )
         if (result.data){
           setActiveModal(null)
           removeNodesAndLinks(currentNodeData.uuid)
         }
-      }).catch(error => {
-          handleError(error);
-      }).finally(() => {
-          setIsLoaderActive(false);
-      });
-    }
+      }
+    })
   };
 
   function getStateData() {
@@ -137,56 +125,44 @@ export default function UnitContent(){
     }
   }
 
-  // Функция для загрузки данных
-  const fetchRepoAndPlatforms = async () => {
-    try {
-      if (!currentNodeData) return;
-
-      setIsLoaderActive(true);
-      setCurrentRepoData(null); // Сброс репозитория
-      setRepoAvailablePlatforms(null); // Сброс платформ
-
-      // 1. Получение данных репозитория
-      const repoResponse = await getRepo({ variables: { uuid: currentNodeData.repoUuid } });
-      const repo = repoResponse.data?.getRepo;
-
-      if (repo) {
-        setCurrentRepoData(repo);
-
-        // 2. Проверка и загрузка платформ
-        if (repo.isCompilableRepo) {
-          const platformsResponse = await getAvailablePlatforms(
-            { variables: { uuid: currentNodeData.repoUuid, targetCommit: currentNodeData.repoCommit } }
-          );
-          const platforms = platformsResponse.data?.getAvailablePlatforms;
-
-          if (platforms) {
-            setRepoAvailablePlatforms(platforms);
-          }
-        }
-      }
-    } catch (error) {
-      setResultData({ type: ResultType.Angry, message: "Ошибка загрузки данных" });
-    } finally {
-      setIsLoaderActive(false);
-    }
-  };
-
   useEffect(() => {
-    fetchRepoAndPlatforms();
-    if (currentNodeData){
-      getTargetVersion(
-        {
-          variables: {
-            uuid: currentNodeData.uuid,
+    runAsync(async () => {
+      if (currentNodeData){
+        setCurrentRepoData(null); // Сброс репозитория
+        setRepoAvailablePlatforms(null); // Сброс платформ
+  
+        // 1. Получение данных репозитория
+        const repoResponse = await getRepo({ variables: { uuid: currentNodeData.repoUuid } });
+        const repo = repoResponse.data?.getRepo;
+  
+        if (repo) {
+          setCurrentRepoData(repo);
+  
+          // 2. Проверка и загрузка платформ
+          if (repo.isCompilableRepo) {
+            const platformsResponse = await getAvailablePlatforms(
+              { variables: { uuid: currentNodeData.repoUuid, targetCommit: currentNodeData.repoCommit } }
+            );
+            const platforms = platformsResponse.data?.getAvailablePlatforms;
+  
+            if (platforms) {
+              setRepoAvailablePlatforms(platforms);
+            }
           }
         }
-      ).then(result => {
+
+        let result = await getTargetVersion(
+          {
+            variables: {
+              uuid: currentNodeData.uuid,
+            }
+          }
+        )
         if (result.data?.getTargetVersion){
           setTargetVersion(result.data.getTargetVersion.commit)
         }
-      })
-    }
+      }
+    })
   }, [currentNodeData]);
   
   return (
