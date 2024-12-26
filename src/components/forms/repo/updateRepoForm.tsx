@@ -1,7 +1,7 @@
 import { ResultType } from '@rootTypes/resultEnum'
 import { useResultHandler } from '@rootTypes/useResultHandler';
 import { useAsyncHandler } from '@rootTypes/useAsyncHandler';
-import { VisibilityLevel, RepoType, useGetBranchCommitsLazyQuery, useUpdateRepoMutation } from '@rootTypes/compositionFunctions'
+import { VisibilityLevel, useGetBranchCommitsLazyQuery, useUpdateRepoMutation } from '@rootTypes/compositionFunctions'
 import { useState, useEffect } from 'react';
 import { getCommitSummary } from '@utils/getCommitSummary';
 import isValidLogin from '@utils/isValidLogin'
@@ -10,14 +10,14 @@ import Spinner from '@primitives/spinner'
 import ResultQuery from '@primitives/resultQuery'
 import '../form.css'
 
-interface UpdateRepoFormProps {
-    currentNodeData: RepoType;
-    setCurrentNodeData: (repo: RepoType | null) => void;
-}
+import { useNodeStore } from '@stores/baseStore';
 
-export default function UpdateRepoForm({ currentNodeData, setCurrentNodeData }: UpdateRepoFormProps) {
+
+export default function UpdateRepoForm() {
     const { resultData, setResultData, handleError, handleSuccess } = useResultHandler();
     const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
+
+    const { currentNodeData, setCurrentNodeData } = useNodeStore();
 
     const [repoAvailableCommits, setRepoAvailableCommits] = useState<Array<{
         __typename?: "CommitType";
@@ -129,7 +129,7 @@ export default function UpdateRepoForm({ currentNodeData, setCurrentNodeData }: 
                         <option value="" disabled selected>Выберите ветку</option>
                         {   
                             currentNodeData.branches?.map(
-                                item => (
+                                (item: string) => (
                                     <option value={item}>
                                         {item}
                                     </option>

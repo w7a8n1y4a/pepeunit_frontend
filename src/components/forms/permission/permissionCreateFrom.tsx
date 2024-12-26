@@ -15,16 +15,20 @@ import EntityTypeSelector from '@primitives/entityTypeSelector';
 import useFetchEntitiesByFilter from './useFetchEntitiesByFilter';
 import '../form.css';
 
+import { useNodeStore } from '@stores/baseStore';
+
+
 interface PermissionCreateFormProps {
-    currentNodeData: any;
     currentNodeType: PermissionEntities;
     selectedEntityType: PermissionEntities;
     setSelectedEntityType: (show: PermissionEntities) => void;
 }
 
-export default function PermissionCreateForm({ currentNodeData, currentNodeType, selectedEntityType, setSelectedEntityType }: PermissionCreateFormProps) {
+export default function PermissionCreateForm({ currentNodeType, selectedEntityType, setSelectedEntityType }: PermissionCreateFormProps) {
     const { resultData, setResultData, handleError, handleSuccess } = useResultHandler();
     const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
+
+    const { currentNodeData } = useNodeStore();
     
     const [ searchString, setSearchString ] = useState('');
     const [ typeList, setTypeList ] = useState<'button' | 'collapse'>('button');

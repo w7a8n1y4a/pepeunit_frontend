@@ -25,7 +25,7 @@ export default function RepoContent(){
   const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
 
   const { activeModal, setActiveModal } = useModalStore();
-  const { currentNodeData, setCurrentNodeData } = useNodeStore();
+  const { currentNodeData } = useNodeStore();
   const { removeNodesAndLinks } = useGraphStore();
   const { openModal } = useModalHandlers();
 
@@ -153,9 +153,7 @@ export default function RepoContent(){
       <BaseModal modalName='Создание Unit' open={activeModal === 'createUnit'} openModalType='repoMenu'>
         {
           currentNodeData && (
-            <CreateUnitForm
-              currentNodeData={currentNodeData}
-            />
+            <CreateUnitForm/>
           )
         }
       </BaseModal>
@@ -163,7 +161,6 @@ export default function RepoContent(){
         {
           currentNodeData && (
             <PermissionForm
-              currentNodeData={currentNodeData}
               currentNodeType={nodeType}
             />
           )
@@ -203,10 +200,7 @@ export default function RepoContent(){
       >
         {
           currentNodeData && (
-            <UpdateRepoForm
-              currentNodeData={currentNodeData}
-              setCurrentNodeData={setCurrentNodeData}
-            />
+            <UpdateRepoForm/>
           )
         }
       </BaseModal>
@@ -217,9 +211,7 @@ export default function RepoContent(){
       >
         {
           currentNodeData && (
-            <UpdateRepoCredentialsForm
-              currentNodeData={currentNodeData}
-            />
+            <UpdateRepoCredentialsForm/>
           )
         }
       </BaseModal>

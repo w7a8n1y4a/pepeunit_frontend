@@ -3,7 +3,7 @@ import { NodeType } from '@rootTypes/nodeTypeEnum'
 import { useResultHandler } from '@rootTypes/useResultHandler';
 import { useAsyncHandler } from '@rootTypes/useAsyncHandler';
 import { getNodeColor } from '@utils/getNodeColor'
-import { useCreateUnitMutation, useGetBranchCommitsLazyQuery, VisibilityLevel, CreateUnitMutationVariables, RepoType, useGetAvailablePlatformsLazyQuery } from '@rootTypes/compositionFunctions'
+import { useCreateUnitMutation, useGetBranchCommitsLazyQuery, VisibilityLevel, CreateUnitMutationVariables, useGetAvailablePlatformsLazyQuery } from '@rootTypes/compositionFunctions'
 import { useState, useEffect } from 'react';
 import { getCommitSummary } from '@utils/getCommitSummary';
 import isValidLogin from '@utils/isValidLogin'
@@ -15,16 +15,13 @@ import '../form.css'
 import { useGraphStore } from '@stores/graphStore';
 import { useModalStore, useNodeStore } from '@stores/baseStore';
 
-interface CreateUnitFormProps {
-    currentNodeData: RepoType;
-}
 
-export default function CreateUnitForm({ currentNodeData }:CreateUnitFormProps) {
+export default function CreateUnitForm() {
     const { resultData, setResultData, handleError } = useResultHandler();
     const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
 
     const { setActiveModal } = useModalStore();
-    const { setCurrentNodeData } = useNodeStore();
+    const { currentNodeData, setCurrentNodeData } = useNodeStore();
 
     const [repoAvailableCommits, setRepoAvailableCommits] = useState<Array<{
         __typename?: "CommitType";
@@ -229,7 +226,7 @@ export default function CreateUnitForm({ currentNodeData }:CreateUnitFormProps) 
                                     <option value="" disabled selected>Выберите ветку</option>
                                     {   
                                         currentNodeData.branches.map(
-                                            item => (
+                                            (item: string) => (
                                                 <option value={item}>
                                                     {item}
                                                 </option>

@@ -5,15 +5,14 @@ import Spinner from '@primitives/spinner'
 import ResultQuery from '@primitives/resultQuery'
 import '../form.css'
 
+import { useNodeStore } from '@stores/baseStore';
 
-interface UpdateUnitNodeFormProps {
-    currentNodeData: any;
-    setCurrentNodeData: (unitNode: any | null) => void;
-}
 
-export default function UpdateUnitNodeForm({ currentNodeData, setCurrentNodeData }: UpdateUnitNodeFormProps) {
+export default function UpdateUnitNodeForm() {
     const { resultData, handleError, handleSuccess } = useResultHandler();
     const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
+
+    const { currentNodeData, setCurrentNodeData } = useNodeStore();
 
     const [updateUnitNodeMutation] = useUpdateUnitNodeMutation();
 
