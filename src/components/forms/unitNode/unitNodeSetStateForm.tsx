@@ -1,5 +1,6 @@
 import { ResultType } from '@rootTypes/resultEnum'
 import { useResultHandler } from '@rootTypes/useResultHandler';
+import { useAsyncHandler } from '@rootTypes/useAsyncHandler';
 import { useSetStateUnitNodeInputMutation, } from '@rootTypes/compositionFunctions'
 import { useState } from 'react';
 import isValidString from '@utils/isValidString'
@@ -15,31 +16,26 @@ interface UnitNodeSetStateFormProps {
 
 export default function UnitNodeSetStateForm({ currentNodeData, setCurrentNodeData }: UnitNodeSetStateFormProps) {
     const { resultData, setResultData, handleError, handleSuccess } = useResultHandler();
+    const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
 
     const [errorState, setErrorState] = useState({
         name: false,
     });
-    const [isLoaderActive, setIsLoaderActive] = useState(false)
 
     const [setStateUnitNodeInputMutation] = useSetStateUnitNodeInputMutation();
 
     const handleUnitNodeSetState = () => {
-        setIsLoaderActive(true)
-
-        setStateUnitNodeInputMutation({
-            variables: {
-                uuid: currentNodeData.uuid,
-                state: currentNodeData.state
-            }
-        }).then(UpdateUnitNodeData =>{
-            if (UpdateUnitNodeData.data){
+        runAsync(async () => {
+            let result = await setStateUnitNodeInputMutation({
+                variables: {
+                    uuid: currentNodeData.uuid,
+                    state: currentNodeData.state
+                }
+            })
+            if (result.data){
                 handleSuccess("State UnitNode success update")
             }
-        }).catch(error => {
-            handleError(error);
-        }).finally(() => {
-            setIsLoaderActive(false);
-        });
+        })
     };
 
     const updateErrorState = (field: keyof typeof errorState, hasError: boolean) => {

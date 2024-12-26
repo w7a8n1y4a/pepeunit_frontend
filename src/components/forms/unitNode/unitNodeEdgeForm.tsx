@@ -1,5 +1,6 @@
 import BaseModal from '../../modal/baseModal';
 import { useResultHandler } from '@rootTypes/useResultHandler';
+import { useAsyncHandler } from '@rootTypes/useAsyncHandler';
 import { useGetUnitsOutputByInputLazyQuery, useDeleteUnitNodeEdgeMutation } from '@rootTypes/compositionFunctions';
 import { useState, useEffect } from 'react';
 import { useModalStore } from '@stores/baseStore';
@@ -16,36 +17,31 @@ interface UnitNodeEdgeFormProps {
 
 export default function UnitNodeEdgeForm({ currentNodeData }: UnitNodeEdgeFormProps) {
     const { resultData, handleError } = useResultHandler();
+    const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
 
     const { activeModal } = useModalStore();
     const [nodeOutputs, setNodeOutputs] = useState<Array<any> | null>(null);
     const [getUnitsOutputByInputQuery] = useGetUnitsOutputByInputLazyQuery();
     const [deleteUnitNodeEdgeMutation] = useDeleteUnitNodeEdgeMutation();
     
-    const [isLoaderActive, setIsLoaderActive] = useState(false);
-    
     const [currentPage, setCurrentPage] = useState(0);
     const [totalCount, setTotalCount] = useState(0);
     const itemsPerPage = 6;
 
     const fetchNodeOutputs = () => {
-        setIsLoaderActive(true);
-        getUnitsOutputByInputQuery({
-            variables: {
-                unitNodeInputUuid: currentNodeData.uuid,
-                limit: itemsPerPage,
-                offset: currentPage * itemsPerPage
+        runAsync(async () => {
+            let result = await getUnitsOutputByInputQuery({
+                variables: {
+                    unitNodeInputUuid: currentNodeData.uuid,
+                    limit: itemsPerPage,
+                    offset: currentPage * itemsPerPage
+                }
+            })
+            if (result.data) {
+                setNodeOutputs(result.data.getUnits.units);
+                setTotalCount(result.data.getUnits.count);
             }
-        }).then(ResultData => {
-            if (ResultData.data) {
-                setNodeOutputs(ResultData.data.getUnits.units);
-                setTotalCount(ResultData.data.getUnits.count);
-            }
-        }).catch(error => {
-            handleError(error);
-        }).finally(() => {
-            setIsLoaderActive(false);
-        });
+        })
     };
 
     useEffect(() => {
@@ -53,24 +49,19 @@ export default function UnitNodeEdgeForm({ currentNodeData }: UnitNodeEdgeFormPr
     }, [currentNodeData, currentPage, activeModal]);
 
     const handleDeleteEdge = (outputNodeUuid: string) => {
-        setIsLoaderActive(true);
-    
-        if (currentNodeData) {
-            deleteUnitNodeEdgeMutation({
-                variables: {
-                    inputUuid: currentNodeData.uuid,
-                    outputUuid: outputNodeUuid
-                }
-            }).then(result => {
+        runAsync(async () => {
+            if (currentNodeData) {
+                let result = await deleteUnitNodeEdgeMutation({
+                    variables: {
+                        inputUuid: currentNodeData.uuid,
+                        outputUuid: outputNodeUuid
+                    }
+                })
                 if (result.data) {
                     fetchNodeOutputs();
                 }
-            }).catch(error => {
-                handleError(error);
-            }).finally(() => {
-                setIsLoaderActive(false);
-            });
-        }
+            }
+        })
     };
 
     const totalPages = Math.ceil(totalCount / itemsPerPage);

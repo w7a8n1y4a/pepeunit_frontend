@@ -1,4 +1,5 @@
 import { useResultHandler } from '@rootTypes/useResultHandler';
+import { useAsyncHandler } from '@rootTypes/useAsyncHandler';
 import { useState } from 'react';
 import { useUpdateUserMutation } from '@rootTypes/compositionFunctions';
 import isValidPassword from '@utils/isValidPassword'
@@ -11,8 +12,8 @@ import '../form.css'
 import { useUserStore } from '@stores/userStore';
 
 export default function ChangePassForm() {
-    const [isLoaderActive, setIsLoaderActive] = useState(false)
     const { resultData, setResultData, handleError, handleSuccess } = useResultHandler();
+    const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
 
     const [password, setPassword] = useState('');']'
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -34,24 +35,18 @@ export default function ChangePassForm() {
     const [updateUserMutation] = useUpdateUserMutation();
 
     const handleChangeLogin = () => {
-        setIsLoaderActive(true)
+        runAsync(async () => {
 
-        updateUserMutation({
-            variables: {
-                password: password
-            }
-        }).then(updateUserData => {
-            if (updateUserData.data) { 
-                setUser(updateUserData.data.updateUser)
-                
+            let result = await updateUserMutation({
+                variables: {
+                    password: password
+                }
+            })
+            if (result.data) { 
+                setUser(result.data.updateUser)
                 handleSuccess("Pass success update")
             }
-        }).catch(error => {
-            handleError(error);
-        }).finally(() => {
-            setIsLoaderActive(false);
-        });
-
+        })
     };
 
     return (

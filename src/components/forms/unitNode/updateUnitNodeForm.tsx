@@ -1,6 +1,6 @@
 import { useResultHandler } from '@rootTypes/useResultHandler';
+import { useAsyncHandler } from '@rootTypes/useAsyncHandler';
 import { VisibilityLevel, UnitNodeTypeEnum, useUpdateUnitNodeMutation} from '@rootTypes/compositionFunctions'
-import { useState } from 'react';
 import Spinner from '@primitives/spinner'
 import ResultQuery from '@primitives/resultQuery'
 import '../form.css'
@@ -13,28 +13,23 @@ interface UpdateUnitNodeFormProps {
 
 export default function UpdateUnitNodeForm({ currentNodeData, setCurrentNodeData }: UpdateUnitNodeFormProps) {
     const { resultData, handleError, handleSuccess } = useResultHandler();
-    const [isLoaderActive, setIsLoaderActive] = useState(false)
+    const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
 
     const [updateUnitNodeMutation] = useUpdateUnitNodeMutation();
 
     const handleUpdateUnitNode = () => {
-        setIsLoaderActive(true)
-
-        updateUnitNodeMutation({
-            variables: {
-                uuid: currentNodeData.uuid,
-                visibilityLevel: currentNodeData.visibilityLevel,
-                isRewritableInput: currentNodeData.type == UnitNodeTypeEnum.Input ? currentNodeData.isRewritableInput : null
-            }
-        }).then(UpdateUnitData =>{
-            if (UpdateUnitData.data){
+        runAsync(async () => {
+            let result = await updateUnitNodeMutation({
+                variables: {
+                    uuid: currentNodeData.uuid,
+                    visibilityLevel: currentNodeData.visibilityLevel,
+                    isRewritableInput: currentNodeData.type == UnitNodeTypeEnum.Input ? currentNodeData.isRewritableInput : null
+                }
+            })
+            if (result.data){
                 handleSuccess("UnitNode success update")
             }
-        }).catch(error => {
-            handleError(error);
-        }).finally(() => {
-            setIsLoaderActive(false);
-        });
+        })
     };
 
     return (
