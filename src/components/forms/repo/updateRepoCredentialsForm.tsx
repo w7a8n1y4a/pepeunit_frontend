@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ResultType } from '@rootTypes/resultEnum'
+import { useResultHandler } from '@rootTypes/useResultHandler';
 import { useUpdateRepoCredentialsMutation, RepoType } from '@rootTypes/compositionFunctions'
 import isValidString from '@utils/isValidString'
 import DefaultInput from '@primitives/defaultInput'
@@ -12,14 +12,12 @@ interface UpdateRepoCredentialsFormProps {
 }
 
 export default function UpdateRepoCredentialsForm({ currentNodeData }: UpdateRepoCredentialsFormProps) {
+    const { resultData, setResultData, handleError, handleSuccess } = useResultHandler();
+
     const [repoUsername, setRepoUsername] = useState('');
     const [repoPatToken, setPatToken] = useState('');
 
     const [isLoaderActive, setIsLoaderActive] = useState(false)
-    const [resultData, setResultData] = useState<{ type: ResultType; message: string | null }>({
-        type: ResultType.Happy,
-        message: null
-    });
 
     const [errorState, setErrorState] = useState({
         username: true,
@@ -37,10 +35,6 @@ export default function UpdateRepoCredentialsForm({ currentNodeData }: UpdateRep
 
     const handleUpdateCredentials = () => {
         setIsLoaderActive(true)
-        setResultData({
-            ...resultData,
-            message: null
-        })
 
         updateRepoCredentialsMutation({
             variables: {
@@ -52,13 +46,13 @@ export default function UpdateRepoCredentialsForm({ currentNodeData }: UpdateRep
             }
         }).then(UpdateRepoData =>{
             if (UpdateRepoData.data){
-                setIsLoaderActive(false)
-                setResultData({ type: ResultType.Happy, message: "Авторизационные данные успешно обновлены"})
+                handleSuccess("Repo auth data successfully updated")
             }
         }).catch(error => {
-            setIsLoaderActive(false)
-            setResultData({ type: ResultType.Angry, message: error.graphQLErrors[0].message.slice(4)})
-        })
+            handleError(error);
+        }).finally(() => {
+            setIsLoaderActive(false);
+        });
     };
 
     return (

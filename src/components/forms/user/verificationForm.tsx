@@ -1,9 +1,13 @@
 import { useState } from 'react';
+import { useResultHandler } from '@rootTypes/useResultHandler';
+import ResultQuery from '@primitives/resultQuery'
 import { useGetVerificationUserLazyQuery } from '@rootTypes/compositionFunctions';
 import Spinner from '@primitives/spinner'
 import '../form.css'
 
 export default function VerificationForm() {
+    const { resultData, handleError } = useResultHandler();
+
     const [verificationCode, setVerificationCode] = useState('');
     const [isLoaderActive, setIsLoaderActive] = useState(false)
     
@@ -16,12 +20,12 @@ export default function VerificationForm() {
         getVerification().then(verificationCode => {
             if (verificationCode.data) { 
                 setVerificationCode(verificationCode.data.getVerificationUser)
-                
-            } else {
-                console.error('Ошибка получения кода:', verificationCode.error);
             }
-            setIsLoaderActive(false)
-        })
+        }).catch(error => {
+            handleError(error);
+        }).finally(() => {
+            setIsLoaderActive(false);
+        });
     };
 
     return (
@@ -39,6 +43,9 @@ export default function VerificationForm() {
             <button className="button_main_action" onClick={handleVerification}>
                 Сгенерировать
             </button>
+            <ResultQuery
+                resultData={resultData}
+            />
         </>
     );
 }

@@ -1,4 +1,4 @@
-import { ResultType } from '@rootTypes/resultEnum'
+import { useResultHandler } from '@rootTypes/useResultHandler';
 import { VisibilityLevel, UnitType, useGetBranchCommitsLazyQuery, useUpdateUnitMutation, useGetRepoLazyQuery, RepoType, useGetAvailablePlatformsLazyQuery } from '@rootTypes/compositionFunctions'
 import { useState, useEffect } from 'react';
 import { getCommitSummary } from '@utils/getCommitSummary';
@@ -15,6 +15,7 @@ interface UpdateUnitFormProps {
 }
 
 export default function UpdateUnitForm({ currentNodeData, setCurrentNodeData }: UpdateUnitFormProps) {
+    const { resultData, setResultData, handleError, handleSuccess } = useResultHandler();
     const [currentRepoData, setCurrentRepoData] = useState<RepoType | null>(null);
 
     const [repoAvailableCommits, setRepoAvailableCommits] = useState<Array<{
@@ -34,10 +35,6 @@ export default function UpdateUnitForm({ currentNodeData, setCurrentNodeData }: 
         name: false,
     });
     const [isLoaderActive, setIsLoaderActive] = useState(false)
-    const [resultData, setResultData] = useState<{ type: ResultType; message: string | null }>({
-        type: ResultType.Happy,
-        message: null
-    });
 
     const [getBranchCommits] = useGetBranchCommitsLazyQuery();
     const [updateUnitMutation] = useUpdateUnitMutation();
@@ -45,7 +42,6 @@ export default function UpdateUnitForm({ currentNodeData, setCurrentNodeData }: 
     const [getRepo] = useGetRepoLazyQuery();
 
     useEffect(() => {
-        console.log(currentNodeData)
         if (currentNodeData.repoBranch){
             getBranchCommits({
                 variables: {
@@ -58,10 +54,11 @@ export default function UpdateUnitForm({ currentNodeData, setCurrentNodeData }: 
             }).then(availableCommits => {
                     if (availableCommits.data?.getBranchCommits){
                         setRepoAvailableCommits(availableCommits.data.getBranchCommits)
-                        console.log(availableCommits.data.getBranchCommits)
                     }
                 }
-            )
+            ).catch(error => {
+                handleError(error);
+            })
         }
     }, [currentNodeData.repoBranch, currentNodeData.isAutoUpdateFromRepoUnit]);
 
@@ -100,49 +97,25 @@ export default function UpdateUnitForm({ currentNodeData, setCurrentNodeData }: 
                     }
                 }
             }
-        )
+        ).catch(error => {
+            handleError(error);
+        })
     }, [currentNodeData]);
-
-    // useEffect(() => {
-    //     setRepoAvailablePlatforms(null)
-    //     if (currentRepoData && currentRepoData.isCompilableRepo){
-    //         let commit = null
-
-    //         if (!currentNodeData.isAutoUpdateFromRepoUnit && currentNodeData.repoCommit){
-    //             commit = currentNodeData.repoCommit
-    //         }
-    //         getAvailablePlatforms({
-    //             variables: {
-    //                 uuid: currentNodeData.repoUuid,
-    //                 targetCommit: commit
-    //             }
-    //         }).then(availablePlatforms => {
-    //                 if (availablePlatforms.data?.getAvailablePlatforms){
-    //                     setRepoAvailablePlatforms(availablePlatforms.data.getAvailablePlatforms)
-    //                 }
-    //             }
-    //         )
-    //     }
-    // }, [currentNodeData.repoCommit, currentNodeData.isAutoUpdateFromRepoUnit]);
 
     const handleUpdateUnit = () => {
         setIsLoaderActive(true)
-        setResultData({
-            ...resultData,
-            message: null
-        })
 
         updateUnitMutation({
             variables: currentNodeData
         }).then(UpdateUnitData =>{
             if (UpdateUnitData.data){
-                setIsLoaderActive(false)
-                setResultData({ type: ResultType.Happy, message: "Unit успешно обновлён"})
+                handleSuccess("Unit success update")
             }
         }).catch(error => {
-            setIsLoaderActive(false)
-            setResultData({ type: ResultType.Angry, message: error.graphQLErrors[0].message.slice(4)})
-        })
+            handleError(error);
+        }).finally(() => {
+            setIsLoaderActive(false);
+        });
     };
 
     const updateErrorState = (field: keyof typeof errorState, hasError: boolean) => {

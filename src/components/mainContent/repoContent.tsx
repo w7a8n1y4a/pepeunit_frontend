@@ -1,4 +1,4 @@
-import { ResultType } from '@rootTypes/resultEnum'
+import { useResultHandler } from '@rootTypes/useResultHandler';
 import { useUpdateLocalRepoMutation, PermissionEntities, useUpdateUnitsFirmwareMutation, useDeleteRepoMutation, useGetVersionsLazyQuery } from '@rootTypes/compositionFunctions'
 import BaseModal from '../modal/baseModal'
 import CreateUnitForm from '../forms/unit/createUnitForm';
@@ -20,6 +20,7 @@ import {
 } from '@rootTypes/compositionFunctions';
 
 export default function RepoContent(){
+  const { resultData, handleError, handleSuccess } = useResultHandler();
   const { activeModal, setActiveModal } = useModalStore();
   const { currentNodeData, setCurrentNodeData } = useNodeStore();
   const { removeNodesAndLinks } = useGraphStore();
@@ -32,10 +33,6 @@ export default function RepoContent(){
   let nodeType = PermissionEntities.Repo
 
   const [isLoaderActive, setIsLoaderActive] = useState(false)
-  const [resultData, setResultData] = useState<{ type: ResultType; message: string | null }>({
-    type: ResultType.Happy,
-    message: null
-  });
 
   const [updateLocalRepo] = useUpdateLocalRepoMutation();
   const [updateUnitsFirmware] = useUpdateUnitsFirmwareMutation()
@@ -44,10 +41,6 @@ export default function RepoContent(){
 
   const handleUpdateLocalRepo = () => {
     setIsLoaderActive(true)
-    setResultData({
-      ...resultData,
-      message: null
-    })
 
     if (currentNodeData){
       updateLocalRepo(
@@ -58,22 +51,18 @@ export default function RepoContent(){
         }
       ).then(result => {
         if (result.data){
-          setIsLoaderActive(false)
-          setResultData({ type: ResultType.Happy, message: "Запрос обновления отправлен"})
+          handleSuccess("Git Repo update request send")
         }
       }).catch(error => {
-        setIsLoaderActive(false)
-        setResultData({ type: ResultType.Angry, message: error.graphQLErrors[0].message.slice(4)})
-      })
+        handleError(error);
+      }).finally(() => {
+          setIsLoaderActive(false);
+      });
     }
   };
 
   const handleUpdateUnitsFirmware = () => {
     setIsLoaderActive(true)
-    setResultData({
-      ...resultData,
-      message: null
-    })
 
     if (currentNodeData){
       updateUnitsFirmware(
@@ -84,22 +73,18 @@ export default function RepoContent(){
         }
       ).then(result => {
         if (result.data){
-          setIsLoaderActive(false)
-          setResultData({ type: ResultType.Happy, message: "Запрос обновления связанных Unit отправлен"})
+          handleSuccess("Unit update query send")
         }
       }).catch(error => {
-        setIsLoaderActive(false)
-        setResultData({ type: ResultType.Angry, message: error.graphQLErrors[0].message.slice(4)})
-      })
+        handleError(error);
+      }).finally(() => {
+          setIsLoaderActive(false);
+      });
     }
   };
 
   const handleDeleteRepo = () => {
     setIsLoaderActive(true)
-    setResultData({
-      ...resultData,
-      message: null
-    })
 
     if (currentNodeData){
       deleteRepo(
@@ -110,32 +95,34 @@ export default function RepoContent(){
         }
       ).then(result => {
         if (result.data){
-          setIsLoaderActive(false)
           setActiveModal(null)
           removeNodesAndLinks(currentNodeData.uuid)
+          handleSuccess("Repo success update")
         }
       }).catch(error => {
-        setIsLoaderActive(false)
-        setResultData({ type: ResultType.Angry, message: error.graphQLErrors[0].message.slice(4)})
-      })
+        handleError(error);
+      }).finally(() => {
+          setIsLoaderActive(false);
+      });
     }
   };
 
   useEffect(() => {
-    console.log('test')
     if (currentNodeData){
-      console.log(currentNodeData.uuid)
       getVersions({
         variables: {
             uuid: currentNodeData.uuid,
         }
       }).then(result => {
           if (result.data?.getVersions){
-              console.log(result.data.getVersions)
               setVersions(result.data.getVersions)
           }
         }
-      )
+      ).catch(error => {
+          handleError(error);
+      }).finally(() => {
+          setIsLoaderActive(false);
+      });
     }
 }, [currentNodeData]);
 

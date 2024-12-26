@@ -1,4 +1,4 @@
-import { ResultType } from '@rootTypes/resultEnum'
+import { useResultHandler } from '@rootTypes/useResultHandler';
 import { VisibilityLevel, UnitNodeTypeEnum, useUpdateUnitNodeMutation} from '@rootTypes/compositionFunctions'
 import { useState } from 'react';
 import Spinner from '@primitives/spinner'
@@ -12,20 +12,13 @@ interface UpdateUnitNodeFormProps {
 }
 
 export default function UpdateUnitNodeForm({ currentNodeData, setCurrentNodeData }: UpdateUnitNodeFormProps) {
+    const { resultData, handleError, handleSuccess } = useResultHandler();
     const [isLoaderActive, setIsLoaderActive] = useState(false)
-    const [resultData, setResultData] = useState<{ type: ResultType; message: string | null }>({
-        type: ResultType.Happy,
-        message: null
-    });
 
     const [updateUnitNodeMutation] = useUpdateUnitNodeMutation();
 
     const handleUpdateUnitNode = () => {
         setIsLoaderActive(true)
-        setResultData({
-            ...resultData,
-            message: null
-        })
 
         updateUnitNodeMutation({
             variables: {
@@ -35,13 +28,13 @@ export default function UpdateUnitNodeForm({ currentNodeData, setCurrentNodeData
             }
         }).then(UpdateUnitData =>{
             if (UpdateUnitData.data){
-                setIsLoaderActive(false)
-                setResultData({ type: ResultType.Happy, message: "UnitNode успешно обновлён"})
+                handleSuccess("UnitNode success update")
             }
         }).catch(error => {
-            setIsLoaderActive(false)
-            setResultData({ type: ResultType.Angry, message: error.graphQLErrors[0].message.slice(4)})
-        })
+            handleError(error);
+        }).finally(() => {
+            setIsLoaderActive(false);
+        });
     };
 
     return (

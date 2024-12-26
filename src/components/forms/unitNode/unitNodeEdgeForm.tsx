@@ -1,8 +1,8 @@
 import BaseModal from '../../modal/baseModal';
+import { useResultHandler } from '@rootTypes/useResultHandler';
 import { useGetUnitsOutputByInputLazyQuery, useDeleteUnitNodeEdgeMutation } from '@rootTypes/compositionFunctions';
 import { useState, useEffect } from 'react';
 import { useModalStore } from '@stores/baseStore';
-import { ResultType } from '@rootTypes/resultEnum';
 import Spinner from '@primitives/spinner';
 import ResultQuery from '@primitives/resultQuery';
 import PaginationControls from '@primitives/pagination';
@@ -15,16 +15,14 @@ interface UnitNodeEdgeFormProps {
 }
 
 export default function UnitNodeEdgeForm({ currentNodeData }: UnitNodeEdgeFormProps) {
+    const { resultData, handleError } = useResultHandler();
+
     const { activeModal } = useModalStore();
     const [nodeOutputs, setNodeOutputs] = useState<Array<any> | null>(null);
     const [getUnitsOutputByInputQuery] = useGetUnitsOutputByInputLazyQuery();
     const [deleteUnitNodeEdgeMutation] = useDeleteUnitNodeEdgeMutation();
     
     const [isLoaderActive, setIsLoaderActive] = useState(false);
-    const [resultData, setResultData] = useState<{ type: ResultType; message: string | null }>({
-        type: ResultType.Happy,
-        message: null
-    });
     
     const [currentPage, setCurrentPage] = useState(0);
     const [totalCount, setTotalCount] = useState(0);
@@ -42,11 +40,11 @@ export default function UnitNodeEdgeForm({ currentNodeData }: UnitNodeEdgeFormPr
             if (ResultData.data) {
                 setNodeOutputs(ResultData.data.getUnits.units);
                 setTotalCount(ResultData.data.getUnits.count);
-                setIsLoaderActive(false);
             }
         }).catch(error => {
+            handleError(error);
+        }).finally(() => {
             setIsLoaderActive(false);
-            setResultData({ type: ResultType.Angry, message: error.graphQLErrors[0].message.slice(4) });
         });
     };
 
@@ -56,7 +54,6 @@ export default function UnitNodeEdgeForm({ currentNodeData }: UnitNodeEdgeFormPr
 
     const handleDeleteEdge = (outputNodeUuid: string) => {
         setIsLoaderActive(true);
-        setResultData({ ...resultData, message: null });
     
         if (currentNodeData) {
             deleteUnitNodeEdgeMutation({
@@ -66,12 +63,12 @@ export default function UnitNodeEdgeForm({ currentNodeData }: UnitNodeEdgeFormPr
                 }
             }).then(result => {
                 if (result.data) {
-                    setIsLoaderActive(false);
                     fetchNodeOutputs();
                 }
             }).catch(error => {
+                handleError(error);
+            }).finally(() => {
                 setIsLoaderActive(false);
-                setResultData({ type: ResultType.Angry, message: error.graphQLErrors[0].message.slice(4) });
             });
         }
     };

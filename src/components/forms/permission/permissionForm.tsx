@@ -5,9 +5,9 @@ import {
     useGetResourceAgentsLazyQuery,
     GetUnitsWithUnitNodesQuery
  } from '@rootTypes/compositionFunctions';
+import { useResultHandler } from '@rootTypes/useResultHandler';
 import { useState, useEffect } from 'react';
 import { useModalStore } from '@stores/baseStore';
-import { ResultType } from '@rootTypes/resultEnum';
 import Spinner from '@primitives/spinner';
 import ResultQuery from '@primitives/resultQuery';
 import PaginationControls from '@primitives/pagination';
@@ -23,6 +23,8 @@ interface PermissionFormProps {
 }
 
 export default function PermissionForm({ currentNodeData, currentNodeType }: PermissionFormProps) {
+    const { resultData, handleError, handleSuccess } = useResultHandler();
+
     const { activeModal } = useModalStore();
     const [nodeOutputs, setNodeOutputs] = useState<Array<any> | null>(null);
     const [ typeList, setTypeList ] = useState<'button' | 'collapse'>('button');
@@ -36,10 +38,6 @@ export default function PermissionForm({ currentNodeData, currentNodeType }: Per
     const [selectedEntityType, setSelectedEntityType] = useState<PermissionEntities>(PermissionEntities.User);
     
     const [isLoaderActive, setIsLoaderActive] = useState(false);
-    const [resultData, setResultData] = useState<{ type: ResultType; message: string | null }>({
-        type: ResultType.Happy,
-        message: null
-    });
     
     const [currentPage, setCurrentPage] = useState(0);
     const [totalCount, setTotalCount] = useState(0);
@@ -47,7 +45,6 @@ export default function PermissionForm({ currentNodeData, currentNodeType }: Per
 
     const handleDeletePermission = (agentUuid: string) => {
         setIsLoaderActive(true);
-        setResultData({ ...resultData, message: null });
     
         if (currentNodeData) {
             deletePermissionMutation({
@@ -57,12 +54,13 @@ export default function PermissionForm({ currentNodeData, currentNodeType }: Per
                 }
             }).then(result => {
                 if (result.data) {
-                    setIsLoaderActive(false);
                     setRefreshTrigger(!refreshTrigger)
+                    handleSuccess("Permission success delete")
                 }
             }).catch(error => {
+                handleError(error);
+            }).finally(() => {
                 setIsLoaderActive(false);
-                setResultData({ type: ResultType.Angry, message: error.graphQLErrors[0].message.slice(4) });
             });
         }
     };
@@ -137,7 +135,7 @@ export default function PermissionForm({ currentNodeData, currentNodeType }: Per
                 setNodeOutputs([]);
             }
         } catch (error: any) {
-            setResultData({ type: ResultType.Angry, message: error.message });
+            handleError(error);
         } finally {
             setIsLoaderActive(false);
         }

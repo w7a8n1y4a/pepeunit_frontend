@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ResultType } from '@rootTypes/resultEnum'
+import { useResultHandler } from '@rootTypes/useResultHandler';
 import { useGetTokenLazyQuery, useGetUserLazyQuery } from '@rootTypes/compositionFunctions';
 import { getUserUuidByToken } from '@utils/getUserUuidByToken';
 import isValidPassword from '@utils/isValidPassword'
@@ -17,6 +17,9 @@ interface SignInFormProps {
 }
 
 export default function SignInForm({openModalRegister}: SignInFormProps) {
+    const [isLoaderActive, setIsLoaderActive] = useState(false)
+    const { resultData, setResultData, handleError } = useResultHandler();
+
     const { setActiveModal } = useModalStore();
     const { setUser } = useUserStore();
 
@@ -25,11 +28,6 @@ export default function SignInForm({openModalRegister}: SignInFormProps) {
     const [errorState, setErrorState] = useState({
         login: true,
         password: true,
-    });
-    const [isLoaderActive, setIsLoaderActive] = useState(false)
-    const [resultData, setResultData] = useState<{ type: ResultType; message: string | null }>({
-        type: ResultType.Happy,
-        message: null
     });
     
     const updateErrorState = (field: keyof typeof errorState, hasError: boolean) => {
@@ -44,10 +42,6 @@ export default function SignInForm({openModalRegister}: SignInFormProps) {
 
     const handleLogin = () => {
         setIsLoaderActive(true)
-        setResultData({
-            ...resultData,
-            message: null
-        })
 
         localStorage.removeItem('token')
         getToken({
@@ -67,15 +61,13 @@ export default function SignInForm({openModalRegister}: SignInFormProps) {
                         setUser(userData.data.getUser)
                     }
                     setActiveModal(null)
-                    setIsLoaderActive(false)
                 })
             }
-
-            if (tokenData !== undefined && tokenData.errors) {
-                setIsLoaderActive(false)
-                setResultData({ type: ResultType.Angry, message: tokenData.errors[0].message.slice(4)})
-            }
-        })
+        }).catch(error => {
+            handleError(error);
+        }).finally(() => {
+            setIsLoaderActive(false);
+        });
     };
 
     return (

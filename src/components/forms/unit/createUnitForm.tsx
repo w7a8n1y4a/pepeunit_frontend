@@ -1,5 +1,6 @@
 import { ResultType } from '@rootTypes/resultEnum'
 import { NodeType } from '@rootTypes/nodeTypeEnum'
+import { useResultHandler } from '@rootTypes/useResultHandler';
 import { getNodeColor } from '@utils/getNodeColor'
 import { useCreateUnitMutation, useGetBranchCommitsLazyQuery, VisibilityLevel, CreateUnitMutationVariables, RepoType, useGetAvailablePlatformsLazyQuery } from '@rootTypes/compositionFunctions'
 import { useState, useEffect } from 'react';
@@ -18,6 +19,8 @@ interface CreateUnitFormProps {
 }
 
 export default function CreateUnitForm({ currentNodeData }:CreateUnitFormProps) {
+    const { resultData, setResultData, handleError } = useResultHandler();
+
     const { setActiveModal } = useModalStore();
     const { setCurrentNodeData } = useNodeStore();
 
@@ -47,10 +50,6 @@ export default function CreateUnitForm({ currentNodeData }:CreateUnitFormProps) 
         repoCommit: false
     });
     const [isLoaderActive, setIsLoaderActive] = useState(false)
-    const [resultData, setResultData] = useState<{ type: ResultType; message: string | null }>({
-        type: ResultType.Happy,
-        message: null
-    });
 
     const { graphData, setGraphData } = useGraphStore();
     
@@ -67,10 +66,6 @@ export default function CreateUnitForm({ currentNodeData }:CreateUnitFormProps) 
 
     const handleCreateUnit = () => {
         setIsLoaderActive(true)
-        setResultData({
-            ...resultData,
-            message: null
-        })
 
         let unitVariables: CreateUnitMutationVariables = {
             repoUuid: currentNodeData.uuid,
@@ -92,8 +87,6 @@ export default function CreateUnitForm({ currentNodeData }:CreateUnitFormProps) 
             variables: unitVariables
         }).then(CreateUnitData =>{
             if (CreateUnitData.data){
-                console.log('Unit создан', CreateUnitData.data)
-
                 let newUnit = CreateUnitData.data.createUnit
 
                 const newNode = {
@@ -114,13 +107,13 @@ export default function CreateUnitForm({ currentNodeData }:CreateUnitFormProps) 
                     links: [...graphData.links, newLink],
                   });
                 setCurrentNodeData(CreateUnitData.data.createUnit)
-                setIsLoaderActive(false)
                 setActiveModal(null)
             }
         }).catch(error => {
-            setIsLoaderActive(false)
-            setResultData({ type: ResultType.Angry, message: error.graphQLErrors[0].message.slice(4)})
-        })
+            handleError(error)
+        }).finally(() => {
+            setIsLoaderActive(false);
+        });
     };
 
     useEffect(() => {
@@ -134,11 +127,12 @@ export default function CreateUnitForm({ currentNodeData }:CreateUnitFormProps) 
                     offset: 0
                 }
             }).then(availableCommits => {
-                    if (availableCommits.data?.getBranchCommits){
-                        setRepoAvailableCommits(availableCommits.data.getBranchCommits)
-                    }
+                if (availableCommits.data?.getBranchCommits){
+                    setRepoAvailableCommits(availableCommits.data.getBranchCommits)
                 }
-            )
+            }).catch(error => {
+                handleError(error);
+            })
         }
     }, [repoBranch, isAutoUpdateFromRepoUnit]);
 
@@ -160,7 +154,9 @@ export default function CreateUnitForm({ currentNodeData }:CreateUnitFormProps) 
                         setRepoAvailablePlatforms(availablePlatforms.data.getAvailablePlatforms)
                     }
                 }
-            )
+            ).catch(error => {
+                handleError(error);
+            })
         }
     }, [repoCommit, isAutoUpdateFromRepoUnit]);
 

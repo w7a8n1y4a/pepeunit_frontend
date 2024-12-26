@@ -3,8 +3,8 @@ import {
     useCreatePermissionMutation
 
  } from '@rootTypes/compositionFunctions';
+import { useResultHandler } from '@rootTypes/useResultHandler';
 import { useState, useEffect } from 'react';
-import { ResultType } from '@rootTypes/resultEnum';
 import DefaultInput from '@primitives/defaultInput'
 import Spinner from '@primitives/spinner';
 import ResultQuery from '@primitives/resultQuery';
@@ -22,6 +22,8 @@ interface PermissionCreateFormProps {
 }
 
 export default function PermissionCreateForm({ currentNodeData, currentNodeType, selectedEntityType, setSelectedEntityType }: PermissionCreateFormProps) {
+    const { resultData, setResultData, handleError, handleSuccess } = useResultHandler();
+    
     const [ searchString, setSearchString ] = useState('');
     const [ typeList, setTypeList ] = useState<'button' | 'collapse'>('button');
     const [nodeOutputs, setNodeOutputs] = useState<Array<any> | null>(null);
@@ -33,10 +35,6 @@ export default function PermissionCreateForm({ currentNodeData, currentNodeType,
         searchString: false,
     });
     const [isLoaderActive, setIsLoaderActive] = useState(false);
-    const [resultData, setResultData] = useState<{ type: ResultType; message: string | null }>({
-        type: ResultType.Happy,
-        message: null
-    });
     
     const [currentPage, setCurrentPage] = useState(0);
     const [totalCount, setTotalCount] = useState(0);
@@ -46,8 +44,6 @@ export default function PermissionCreateForm({ currentNodeData, currentNodeType,
         setIsLoaderActive(true)
         fetchEntitiesByFilter(searchString, selectedEntityType, itemsPerPage, currentPage * itemsPerPage)
             .then(result => {
-                setIsLoaderActive(false);
-
                 if (result?.data) {
                     let formattedData: Array<any> = [];
                     let count: number = 0;
@@ -74,10 +70,14 @@ export default function PermissionCreateForm({ currentNodeData, currentNodeType,
                     setNodeOutputs(formattedData);
                     setTotalCount(count);
                 } else {
-                    setNodeOutputs([]); // No data found, clear the output
+                    setNodeOutputs([]);
                 }
             }
-        )
+        ).catch(error => {
+            handleError(error);
+        }).finally(() => {
+            setIsLoaderActive(false);
+        });
     };
 
     useEffect(() => {
@@ -97,10 +97,6 @@ export default function PermissionCreateForm({ currentNodeData, currentNodeType,
 
     const handleCreatePermission = (entityUuid: string) => {
         setIsLoaderActive(true)
-        setResultData({
-            ...resultData,
-            message: null
-        })
 
         createPermissionMutation({
             variables: {
@@ -111,13 +107,13 @@ export default function PermissionCreateForm({ currentNodeData, currentNodeType,
             }
         }).then(ResultData =>{
             if (ResultData.data){
-                setIsLoaderActive(false)
-                setResultData({ type: ResultType.Happy, message: "Permission создан"})
+                handleSuccess("Permission success create")
             }
         }).catch(error => {
-            setIsLoaderActive(false)
-            setResultData({ type: ResultType.Angry, message: error.graphQLErrors[0].message.slice(4)})
-        })
+            handleError(error);
+        }).finally(() => {
+            setIsLoaderActive(false);
+        });
     };
 
     const totalPages = Math.ceil(totalCount / itemsPerPage);

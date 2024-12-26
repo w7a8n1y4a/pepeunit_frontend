@@ -1,4 +1,5 @@
 import { ResultType } from '@rootTypes/resultEnum'
+import { useResultHandler } from '@rootTypes/useResultHandler';
 import { useDeleteUnitMutation, PermissionEntities, useGetAvailablePlatformsLazyQuery, useGetRepoLazyQuery, RepoType, useSendCommandToInputBaseTopicMutation, BackendTopicCommand, useGetTargetVersionLazyQuery } from '@rootTypes/compositionFunctions'
 import BaseModal from '../modal/baseModal'
 import { useState, useEffect } from 'react';
@@ -15,6 +16,8 @@ import useModalHandlers from '@handlers/useModalHandlers';
 
 
 export default function UnitContent(){
+  const { resultData, setResultData, handleError, handleSuccess } = useResultHandler();
+
   const { activeModal, setActiveModal } = useModalStore();
   const { currentNodeData, setCurrentNodeData } = useNodeStore();
   const { removeNodesAndLinks } = useGraphStore();
@@ -27,10 +30,6 @@ export default function UnitContent(){
   let nodeType = PermissionEntities.Unit
     
   const [isLoaderActive, setIsLoaderActive] = useState(false)
-  const [resultData, setResultData] = useState<{ type: ResultType; message: string | null }>({
-    type: ResultType.Happy,
-    message: null
-  });
 
   const [repoAvailablePlatforms, setRepoAvailablePlatforms] = useState<Array<{
     __typename?: "PlatformType";
@@ -46,10 +45,6 @@ export default function UnitContent(){
 
   const fileUpload = (type: string) => {
     setIsLoaderActive(true)
-    setResultData({
-      ...resultData,
-      message: null
-    })
 
     let url = import.meta.env.VITE_BACKEND_URI.replace('graphql', '') + 'api/v1/units/firmware/' + type + '/' + currentNodeData?.uuid
     let token = localStorage.getItem('token')
@@ -83,6 +78,8 @@ export default function UnitContent(){
             setResultData({ type: ResultType.Angry, message: data.detail})
           }
         )
+      }).finally(() => {
+          setIsLoaderActive(false);
       });
     }
   }
@@ -100,18 +97,18 @@ export default function UnitContent(){
         }
       ).then(result => {
         if (result.data){
-          setIsLoaderActive(false)
+          handleSuccess("MQTT command " + command + " success send")
         }
-      })
+      }).catch(error => {
+          handleError(error);
+      }).finally(() => {
+          setIsLoaderActive(false);
+      });
     }
   };
 
   const handleDeleteUnit = () => {
     setIsLoaderActive(true)
-    setResultData({
-      ...resultData,
-      message: null
-    })
 
     if (currentNodeData){
       deleteUnit(
@@ -122,14 +119,14 @@ export default function UnitContent(){
         }
       ).then(result => {
         if (result.data){
-          setIsLoaderActive(false)
           setActiveModal(null)
           removeNodesAndLinks(currentNodeData.uuid)
         }
       }).catch(error => {
-        setIsLoaderActive(false)
-        setResultData({ type: ResultType.Angry, message: error.graphQLErrors[0].message.slice(4)})
-      })
+          handleError(error);
+      }).finally(() => {
+          setIsLoaderActive(false);
+      });
     }
   };
 
@@ -171,7 +168,6 @@ export default function UnitContent(){
         }
       }
     } catch (error) {
-      console.error("Ошибка загрузки данных:", error);
       setResultData({ type: ResultType.Angry, message: "Ошибка загрузки данных" });
     } finally {
       setIsLoaderActive(false);
@@ -190,7 +186,6 @@ export default function UnitContent(){
       ).then(result => {
         if (result.data?.getTargetVersion){
           setTargetVersion(result.data.getTargetVersion.commit)
-          setIsLoaderActive(false)
         }
       })
     }

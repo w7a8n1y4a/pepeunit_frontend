@@ -1,7 +1,7 @@
+import { useResultHandler } from '@rootTypes/useResultHandler';
 import { useGetUnitsWithUnitNodesLazyQuery, useCreateUnitNodeEdgeMutation, UnitNodeTypeEnum } from '@rootTypes/compositionFunctions'
 import { useState, useEffect } from 'react'
 import DefaultInput from '@primitives/defaultInput'
-import { ResultType } from '@rootTypes/resultEnum'
 import Spinner from '@primitives/spinner'
 import ResultQuery from '@primitives/resultQuery'
 import PaginationControls from '@primitives/pagination';
@@ -13,15 +13,12 @@ interface UnitNodeEdgeFormProps {
 }
 
 export default function UnitNodeEdgeCreateForm({ currentNodeData }: UnitNodeEdgeFormProps) {
+    const { resultData, setResultData, handleError, handleSuccess } = useResultHandler();
 
     const [errorState, setErrorState] = useState({
         searchString: false,
     });
     const [isLoaderActive, setIsLoaderActive] = useState(false)
-    const [resultData, setResultData] = useState<{ type: ResultType; message: string | null }>({
-        type: ResultType.Happy,
-        message: null
-    });
 
     const [ searchString, setSearchString ] = useState('');
     const [ data, setData ] = useState<any>(null);
@@ -43,14 +40,15 @@ export default function UnitNodeEdgeCreateForm({ currentNodeData }: UnitNodeEdge
                 unitNodeType: [UnitNodeTypeEnum.Output]
             }
         }).then(resultUnitsWithOutput => {
-                if (resultUnitsWithOutput.data?.getUnits){
-                    console.log(resultUnitsWithOutput.data.getUnits.units)
-                    setIsLoaderActive(false)
-                    setTotalCount(resultUnitsWithOutput.data.getUnits.count);
-                    setData(resultUnitsWithOutput.data.getUnits.units)
-                }
+            if (resultUnitsWithOutput.data?.getUnits){
+                setTotalCount(resultUnitsWithOutput.data.getUnits.count);
+                setData(resultUnitsWithOutput.data.getUnits.units)
             }
-        )
+        }).catch(error => {
+            handleError(error);
+        }).finally(() => {
+            setIsLoaderActive(false);
+        });
     }, [searchString, currentPage]);
 
     const updateErrorState = (field: keyof typeof errorState, hasError: boolean) => {
@@ -62,11 +60,6 @@ export default function UnitNodeEdgeCreateForm({ currentNodeData }: UnitNodeEdge
 
     const handleCreateEdge = (nodeUuid: string) => {
         setIsLoaderActive(true)
-        setResultData({
-            ...resultData,
-            message: null
-        })
-        console.log(nodeUuid, currentNodeData.uuid)
         createUnitNodeEdgeMutation({
             variables: {
                 nodeOutputUuid: nodeUuid,
@@ -74,13 +67,13 @@ export default function UnitNodeEdgeCreateForm({ currentNodeData }: UnitNodeEdge
             }
         }).then(ResultData =>{
             if (ResultData.data){
-                setIsLoaderActive(false)
-                setResultData({ type: ResultType.Happy, message: "Edge успешно создан"})
+                handleSuccess("Edge success create")
             }
         }).catch(error => {
-            setIsLoaderActive(false)
-            setResultData({ type: ResultType.Angry, message: error.graphQLErrors[0].message.slice(4)})
-        })
+            handleError(error);
+        }).finally(() => {
+            setIsLoaderActive(false);
+        });
     };
 
     const totalPages = Math.ceil(totalCount / itemsPerPage);

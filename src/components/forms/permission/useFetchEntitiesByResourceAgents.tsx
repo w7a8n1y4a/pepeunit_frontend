@@ -18,8 +18,6 @@ export default function useFetchEntitiesByResourceAgents() {
   const fetchEntitiesByResourceAgents = useCallback(async (agentType: PermissionEntities, limit: number, offset: number, agentUuids: string[] | null) => {
     try {
       if (agentUuids) {
-        console.log('agent permission', agentUuids)
-
         if (agentUuids.length === 0) {
           return {data: null};
         }
