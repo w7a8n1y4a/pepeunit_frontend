@@ -1,4 +1,5 @@
-import { ResultType } from '@rootTypes/resultEnum'
+import { useResultHandler } from '@rootTypes/useResultHandler';
+import { useAsyncHandler } from '@rootTypes/useAsyncHandler';
 import { useUpdateLocalRepoMutation, PermissionEntities, useUpdateUnitsFirmwareMutation, useDeleteRepoMutation, useGetVersionsLazyQuery } from '@rootTypes/compositionFunctions'
 import BaseModal from '../modal/baseModal'
 import CreateUnitForm from '../forms/unit/createUnitForm';
@@ -20,6 +21,9 @@ import {
 } from '@rootTypes/compositionFunctions';
 
 export default function RepoContent(){
+  const { resultData, handleError, handleSuccess } = useResultHandler();
+  const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
+
   const { activeModal, setActiveModal } = useModalStore();
   const { currentNodeData, setCurrentNodeData } = useNodeStore();
   const { removeNodesAndLinks } = useGraphStore();
@@ -31,112 +35,75 @@ export default function RepoContent(){
 
   let nodeType = PermissionEntities.Repo
 
-  const [isLoaderActive, setIsLoaderActive] = useState(false)
-  const [resultData, setResultData] = useState<{ type: ResultType; message: string | null }>({
-    type: ResultType.Happy,
-    message: null
-  });
-
   const [updateLocalRepo] = useUpdateLocalRepoMutation();
   const [updateUnitsFirmware] = useUpdateUnitsFirmwareMutation()
   const [deleteRepo] = useDeleteRepoMutation()
   const [getVersions] = useGetVersionsLazyQuery()
 
   const handleUpdateLocalRepo = () => {
-    setIsLoaderActive(true)
-    setResultData({
-      ...resultData,
-      message: null
-    })
-
-    if (currentNodeData){
-      updateLocalRepo(
-        {
+    runAsync(async () => {
+      if (currentNodeData){
+        let result = await updateLocalRepo({
           variables: {
             uuid: currentNodeData.uuid
           }
-        }
-      ).then(result => {
+        })
         if (result.data){
-          setIsLoaderActive(false)
-          setResultData({ type: ResultType.Happy, message: "Запрос обновления отправлен"})
+          handleSuccess("Git Repo update request send")
         }
-      }).catch(error => {
-        setIsLoaderActive(false)
-        setResultData({ type: ResultType.Angry, message: error.graphQLErrors[0].message.slice(4)})
-      })
-    }
+      }
+    })
   };
 
   const handleUpdateUnitsFirmware = () => {
-    setIsLoaderActive(true)
-    setResultData({
-      ...resultData,
-      message: null
-    })
-
-    if (currentNodeData){
-      updateUnitsFirmware(
-        {
-          variables: {
-            uuid: currentNodeData.uuid
+    runAsync(async () => {
+      if (currentNodeData){
+        let result = await updateUnitsFirmware(
+          {
+            variables: {
+              uuid: currentNodeData.uuid
+            }
           }
-        }
-      ).then(result => {
+        )
         if (result.data){
-          setIsLoaderActive(false)
-          setResultData({ type: ResultType.Happy, message: "Запрос обновления связанных Unit отправлен"})
+          handleSuccess("Unit`s update query send")
         }
-      }).catch(error => {
-        setIsLoaderActive(false)
-        setResultData({ type: ResultType.Angry, message: error.graphQLErrors[0].message.slice(4)})
-      })
-    }
+      }
+    })
   };
 
   const handleDeleteRepo = () => {
-    setIsLoaderActive(true)
-    setResultData({
-      ...resultData,
-      message: null
-    })
-
-    if (currentNodeData){
-      deleteRepo(
-        {
-          variables: {
-            uuid: currentNodeData.uuid
+    runAsync(async () => {
+      if (currentNodeData){
+        let result = await deleteRepo(
+          {
+            variables: {
+              uuid: currentNodeData.uuid
+            }
           }
-        }
-      ).then(result => {
+        )
         if (result.data){
-          setIsLoaderActive(false)
           setActiveModal(null)
           removeNodesAndLinks(currentNodeData.uuid)
+          handleSuccess("Repo success update")
         }
-      }).catch(error => {
-        setIsLoaderActive(false)
-        setResultData({ type: ResultType.Angry, message: error.graphQLErrors[0].message.slice(4)})
-      })
-    }
+      }
+    })
   };
 
   useEffect(() => {
-    console.log('test')
-    if (currentNodeData){
-      console.log(currentNodeData.uuid)
-      getVersions({
-        variables: {
-            uuid: currentNodeData.uuid,
-        }
-      }).then(result => {
-          if (result.data?.getVersions){
-              console.log(result.data.getVersions)
-              setVersions(result.data.getVersions)
+    runAsync(async () => {
+      if (currentNodeData){
+        let result = await getVersions({
+          variables: {
+              uuid: currentNodeData.uuid,
           }
+        })
+        if (result.data?.getVersions){
+            setVersions(result.data.getVersions)
         }
-      )
-    }
+      }
+    })
 }, [currentNodeData]);
 
   return (

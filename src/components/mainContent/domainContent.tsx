@@ -1,4 +1,5 @@
-import { ResultType } from '@rootTypes/resultEnum'
+import { useResultHandler } from '@rootTypes/useResultHandler';
+import { useAsyncHandler } from '@rootTypes/useAsyncHandler';
 import { useBulkUpdateMutation, useGetBaseMetricsLazyQuery, BaseMetricsType, UserRole } from '@rootTypes/compositionFunctions'
 import BaseModal from '../modal/baseModal'
 import { useState, useEffect } from 'react';
@@ -11,44 +12,34 @@ import useModalHandlers from '@handlers/useModalHandlers';
 
 
 export default function DomainContent(){
+  const { resultData, handleError, handleSuccess } = useResultHandler();
+  const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
+
   const { activeModal } = useModalStore();
   const { currentNodeData } = useNodeStore();
   const { openModal } = useModalHandlers();
   const { user } = useUserStore();
 
   const [baseMetrics, setBaseMetrics] = useState<BaseMetricsType | null>(null)
-  const [isLoaderActive, setIsLoaderActive] = useState(false)
-  const [resultData, setResultData] = useState<{ type: ResultType; message: string | null }>({
-    type: ResultType.Happy,
-    message: null
-  });
+
   const [bulkUpdate] = useBulkUpdateMutation()
   const [getBaseMetrics] = useGetBaseMetricsLazyQuery()
 
   useEffect(() => {
-    getBaseMetrics().then(metrics => {
-      if (metrics.data?.getBaseMetrics){
-        setBaseMetrics(metrics.data.getBaseMetrics)
+    runAsync(async () => {
+      let result = await getBaseMetrics()
+      if (result.data?.getBaseMetrics){
+        setBaseMetrics(result.data.getBaseMetrics)
       }
     })
   }, []);
 
   const handleBulkUpdate = () => {
-    setIsLoaderActive(true)
-    setResultData({
-      ...resultData,
-      message: null
-    })
-
-    bulkUpdate().then(result => {
+    runAsync(async () => {
+      let result = await bulkUpdate()
       if (result.data){
-        console.log(result.data)
-        setIsLoaderActive(false)
-        setResultData({ type: ResultType.Happy, message: "Запрос обновления Repo и Unit отправлен"})
+        handleSuccess("Unit and Repo update query send")
       }
-    }).catch(error => {
-      setIsLoaderActive(false)
-      setResultData({ type: ResultType.Angry, message: error.graphQLErrors[0].message.slice(4)})
     })
   };
 

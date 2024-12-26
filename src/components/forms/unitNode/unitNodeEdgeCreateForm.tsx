@@ -1,7 +1,8 @@
+import { useResultHandler } from '@rootTypes/useResultHandler';
+import { useAsyncHandler } from '@rootTypes/useAsyncHandler';
 import { useGetUnitsWithUnitNodesLazyQuery, useCreateUnitNodeEdgeMutation, UnitNodeTypeEnum } from '@rootTypes/compositionFunctions'
 import { useState, useEffect } from 'react'
 import DefaultInput from '@primitives/defaultInput'
-import { ResultType } from '@rootTypes/resultEnum'
 import Spinner from '@primitives/spinner'
 import ResultQuery from '@primitives/resultQuery'
 import PaginationControls from '@primitives/pagination';
@@ -13,14 +14,11 @@ interface UnitNodeEdgeFormProps {
 }
 
 export default function UnitNodeEdgeCreateForm({ currentNodeData }: UnitNodeEdgeFormProps) {
+    const { resultData, setResultData, handleError, handleSuccess } = useResultHandler();
+    const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
 
     const [errorState, setErrorState] = useState({
         searchString: false,
-    });
-    const [isLoaderActive, setIsLoaderActive] = useState(false)
-    const [resultData, setResultData] = useState<{ type: ResultType; message: string | null }>({
-        type: ResultType.Happy,
-        message: null
     });
 
     const [ searchString, setSearchString ] = useState('');
@@ -34,23 +32,20 @@ export default function UnitNodeEdgeCreateForm({ currentNodeData }: UnitNodeEdge
     const [ createUnitNodeEdgeMutation ] = useCreateUnitNodeEdgeMutation();
 
     useEffect(() => {
-        setIsLoaderActive(true)
-        getUnitsWithUnitNodes({
-            variables: {
-                searchString: searchString,
-                limit: itemsPerPage,
-                offset: currentPage * itemsPerPage,
-                unitNodeType: [UnitNodeTypeEnum.Output]
-            }
-        }).then(resultUnitsWithOutput => {
-                if (resultUnitsWithOutput.data?.getUnits){
-                    console.log(resultUnitsWithOutput.data.getUnits.units)
-                    setIsLoaderActive(false)
-                    setTotalCount(resultUnitsWithOutput.data.getUnits.count);
-                    setData(resultUnitsWithOutput.data.getUnits.units)
+        runAsync(async () => {
+            let result = await getUnitsWithUnitNodes({
+                variables: {
+                    searchString: searchString,
+                    limit: itemsPerPage,
+                    offset: currentPage * itemsPerPage,
+                    unitNodeType: [UnitNodeTypeEnum.Output]
                 }
+            })
+            if (result.data?.getUnits){
+                setTotalCount(result.data.getUnits.count);
+                setData(result.data.getUnits.units)
             }
-        )
+        })
     }, [searchString, currentPage]);
 
     const updateErrorState = (field: keyof typeof errorState, hasError: boolean) => {
@@ -61,25 +56,16 @@ export default function UnitNodeEdgeCreateForm({ currentNodeData }: UnitNodeEdge
     };
 
     const handleCreateEdge = (nodeUuid: string) => {
-        setIsLoaderActive(true)
-        setResultData({
-            ...resultData,
-            message: null
-        })
-        console.log(nodeUuid, currentNodeData.uuid)
-        createUnitNodeEdgeMutation({
-            variables: {
-                nodeOutputUuid: nodeUuid,
-                nodeInputUuid: currentNodeData.uuid
+        runAsync(async () => {
+            let result = await createUnitNodeEdgeMutation({
+                variables: {
+                    nodeOutputUuid: nodeUuid,
+                    nodeInputUuid: currentNodeData.uuid
+                }
+            })
+            if (result.data){
+                handleSuccess("Edge success create")
             }
-        }).then(ResultData =>{
-            if (ResultData.data){
-                setIsLoaderActive(false)
-                setResultData({ type: ResultType.Happy, message: "Edge успешно создан"})
-            }
-        }).catch(error => {
-            setIsLoaderActive(false)
-            setResultData({ type: ResultType.Angry, message: error.graphQLErrors[0].message.slice(4)})
         })
     };
 

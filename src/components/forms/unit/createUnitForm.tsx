@@ -1,5 +1,7 @@
 import { ResultType } from '@rootTypes/resultEnum'
 import { NodeType } from '@rootTypes/nodeTypeEnum'
+import { useResultHandler } from '@rootTypes/useResultHandler';
+import { useAsyncHandler } from '@rootTypes/useAsyncHandler';
 import { getNodeColor } from '@utils/getNodeColor'
 import { useCreateUnitMutation, useGetBranchCommitsLazyQuery, VisibilityLevel, CreateUnitMutationVariables, RepoType, useGetAvailablePlatformsLazyQuery } from '@rootTypes/compositionFunctions'
 import { useState, useEffect } from 'react';
@@ -18,6 +20,9 @@ interface CreateUnitFormProps {
 }
 
 export default function CreateUnitForm({ currentNodeData }:CreateUnitFormProps) {
+    const { resultData, setResultData, handleError } = useResultHandler();
+    const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
+
     const { setActiveModal } = useModalStore();
     const { setCurrentNodeData } = useNodeStore();
 
@@ -46,11 +51,6 @@ export default function CreateUnitForm({ currentNodeData }:CreateUnitFormProps) 
         repoBranch: false,
         repoCommit: false
     });
-    const [isLoaderActive, setIsLoaderActive] = useState(false)
-    const [resultData, setResultData] = useState<{ type: ResultType; message: string | null }>({
-        type: ResultType.Happy,
-        message: null
-    });
 
     const { graphData, setGraphData } = useGraphStore();
     
@@ -66,101 +66,92 @@ export default function CreateUnitForm({ currentNodeData }:CreateUnitFormProps) 
     const [createUnitMutation] = useCreateUnitMutation();
 
     const handleCreateUnit = () => {
-        setIsLoaderActive(true)
-        setResultData({
-            ...resultData,
-            message: null
-        })
+        runAsync(async () => {
+            let unitVariables: CreateUnitMutationVariables = {
+                repoUuid: currentNodeData.uuid,
+                visibilityLevel: unitVisibilityLevel,
+                name: repoName,
+                isAutoUpdateFromRepoUnit: isAutoUpdateFromRepoUnit
+            }
 
-        let unitVariables: CreateUnitMutationVariables = {
-            repoUuid: currentNodeData.uuid,
-            visibilityLevel: unitVisibilityLevel,
-            name: repoName,
-            isAutoUpdateFromRepoUnit: isAutoUpdateFromRepoUnit
-        }
-
-        if (currentNodeData.isCompilableRepo){
-            unitVariables.targetFirmwarePlatform = targetPlatform
-        }
-        
-        if (!isAutoUpdateFromRepoUnit){
-            unitVariables.repoBranch = repoBranch
-            unitVariables.repoCommit = repoCommit ? JSON.parse(repoCommit).commit : null
-        }
-        
-        createUnitMutation({
-            variables: unitVariables
-        }).then(CreateUnitData =>{
-            if (CreateUnitData.data){
-                console.log('Unit создан', CreateUnitData.data)
-
-                let newUnit = CreateUnitData.data.createUnit
+            if (currentNodeData.isCompilableRepo){
+                unitVariables.targetFirmwarePlatform = targetPlatform
+            }
+            
+            if (!isAutoUpdateFromRepoUnit){
+                unitVariables.repoBranch = repoBranch
+                unitVariables.repoCommit = repoCommit ? JSON.parse(repoCommit).commit : null
+            }
+            
+            let result = await createUnitMutation({
+                variables: unitVariables
+            })
+            if (result.data){
+                let newUnit = result.data.createUnit
 
                 const newNode = {
                     id: newUnit.uuid,
                     type: NodeType.Unit,
                     color: getNodeColor(NodeType.Unit),
                     data: newUnit
-                  };
-              
-                  const newLink = {
+                };
+            
+                const newLink = {
                     source: newUnit.repoUuid,
                     target: newUnit.uuid,
                     value: 1
-                  };
+                };
 
                 setGraphData({
                     nodes: [...graphData.nodes, newNode],
                     links: [...graphData.links, newLink],
-                  });
-                setCurrentNodeData(CreateUnitData.data.createUnit)
-                setIsLoaderActive(false)
+                });
+                setCurrentNodeData(result.data.createUnit)
                 setActiveModal(null)
             }
-        }).catch(error => {
-            setIsLoaderActive(false)
-            setResultData({ type: ResultType.Angry, message: error.graphQLErrors[0].message.slice(4)})
         })
     };
 
     useEffect(() => {
         if (repoBranch && !isAutoUpdateFromRepoUnit){
-            getBranchCommits({
-                variables: {
-                    uuid: currentNodeData.uuid,
-                    repoBranch: repoBranch,
-                    onlyTag: false,
-                    limit: 100,
-                    offset: 0
-                }
-            }).then(availableCommits => {
-                    if (availableCommits.data?.getBranchCommits){
-                        setRepoAvailableCommits(availableCommits.data.getBranchCommits)
+            runAsync(async () => {
+                let result = await getBranchCommits({
+                    variables: {
+                        uuid: currentNodeData.uuid,
+                        repoBranch: repoBranch,
+                        onlyTag: false,
+                        limit: 100,
+                        offset: 0
                     }
+                })
+
+                if (result.data?.getBranchCommits){
+                    setRepoAvailableCommits(result.data.getBranchCommits)
                 }
-            )
+            })
         }
     }, [repoBranch, isAutoUpdateFromRepoUnit]);
 
     useEffect(() => {
         if (currentNodeData.isCompilableRepo){
-            let tag = null
+            runAsync(async () => {
+                let tag = null
 
-            if (!isAutoUpdateFromRepoUnit && repoCommit){
-                tag = JSON.parse(repoCommit).tag
-            }
-
-            getAvailablePlatforms({
-                variables: {
-                    uuid: currentNodeData.uuid,
-                    targetTag: tag
+                if (!isAutoUpdateFromRepoUnit && repoCommit){
+                    tag = JSON.parse(repoCommit).tag
                 }
-            }).then(availablePlatforms => {
-                    if (availablePlatforms.data?.getAvailablePlatforms){
-                        setRepoAvailablePlatforms(availablePlatforms.data.getAvailablePlatforms)
+
+                let result = await getAvailablePlatforms({
+                    variables: {
+                        uuid: currentNodeData.uuid,
+                        targetTag: tag
                     }
+                })
+                
+                if (result.data?.getAvailablePlatforms){
+                    setRepoAvailablePlatforms(result.data.getAvailablePlatforms)
                 }
-            )
+            })
         }
     }, [repoCommit, isAutoUpdateFromRepoUnit]);
 

@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { ResultType } from '@rootTypes/resultEnum'
+import { useResultHandler } from '@rootTypes/useResultHandler';
+import { useAsyncHandler } from '@rootTypes/useAsyncHandler';
 import { useCreateUserMutation, useGetTokenLazyQuery } from '@rootTypes/compositionFunctions';
 import isValidPassword from '@utils/isValidPassword'
 import isValidLogin from '@utils/isValidLogin'
@@ -18,6 +19,9 @@ interface RegisterFormProps {
 }
 
 export default function RegisterForm({ openModalSignIn }: RegisterFormProps) {
+    const { resultData, setResultData, handleError } = useResultHandler();
+    const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
+
     const { setActiveModal } = useModalStore();
     const { setUser } = useUserStore();
 
@@ -29,51 +33,35 @@ export default function RegisterForm({ openModalSignIn }: RegisterFormProps) {
         password: true,
         confirmPassword: true
     });
-    const [isLoaderActive, setIsLoaderActive] = useState(false)
-    const [resultData, setResultData] = useState<{ type: ResultType; message: string | null }>({
-        type: ResultType.Happy,
-        message: null
-    });
 
     const [createUserMutation] = useCreateUserMutation();
     const [getToken] = useGetTokenLazyQuery();
     
     const handleRegister = () => {
-        setIsLoaderActive(true)
-        setResultData({
-            ...resultData,
-            message: null
-        })
+        runAsync(async () => {
 
-        localStorage.removeItem('token');
-        createUserMutation({
-            variables: {
-                login: login,
-                password: password
-            }
-        }).then(createUserData => {
-            if (createUserData.data) {
-                console.log('Пользователь создан:', createUserData.data);
-
-                getToken({
+            localStorage.removeItem('token');
+            let result = await createUserMutation({
+                variables: {
+                    login: login,
+                    password: password
+                }
+            })
+            if (result.data) {
+                let tokenData = await getToken({
                     variables: {
                         credentials: login,
                         password: password,
                     }
-                }).then(tokenData => {
-                    if (tokenData.data) { 
-                        localStorage.setItem('token', tokenData.data.getToken);
-                        if (createUserData.data) {
-                            setUser(createUserData.data.createUser)
-                        }
-                        setActiveModal(null)
-                        setIsLoaderActive(false)
-                    }
                 })
+                if (tokenData.data) { 
+                    localStorage.setItem('token', tokenData.data.getToken);
+                    if (result.data) {
+                        setUser(result.data.createUser)
+                    }
+                    setActiveModal(null)
+                }
             }
-        }).catch(error => {
-            setIsLoaderActive(false)
-            setResultData({ type: ResultType.Angry, message: error.graphQLErrors[0].message.slice(4)})
         })
     };
 

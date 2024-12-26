@@ -1,4 +1,6 @@
 import { ResultType } from '@rootTypes/resultEnum'
+import { useResultHandler } from '@rootTypes/useResultHandler';
+import { useAsyncHandler } from '@rootTypes/useAsyncHandler';
 import { useSetStateUnitNodeInputMutation, } from '@rootTypes/compositionFunctions'
 import { useState } from 'react';
 import isValidString from '@utils/isValidString'
@@ -13,38 +15,26 @@ interface UnitNodeSetStateFormProps {
 }
 
 export default function UnitNodeSetStateForm({ currentNodeData, setCurrentNodeData }: UnitNodeSetStateFormProps) {
+    const { resultData, setResultData, handleError, handleSuccess } = useResultHandler();
+    const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
 
     const [errorState, setErrorState] = useState({
         name: false,
-    });
-    const [isLoaderActive, setIsLoaderActive] = useState(false)
-    const [resultData, setResultData] = useState<{ type: ResultType; message: string | null }>({
-        type: ResultType.Happy,
-        message: null
     });
 
     const [setStateUnitNodeInputMutation] = useSetStateUnitNodeInputMutation();
 
     const handleUnitNodeSetState = () => {
-        setIsLoaderActive(true)
-        setResultData({
-            ...resultData,
-            message: null
-        })
-
-        setStateUnitNodeInputMutation({
-            variables: {
-                uuid: currentNodeData.uuid,
-                state: currentNodeData.state
+        runAsync(async () => {
+            let result = await setStateUnitNodeInputMutation({
+                variables: {
+                    uuid: currentNodeData.uuid,
+                    state: currentNodeData.state
+                }
+            })
+            if (result.data){
+                handleSuccess("State UnitNode success update")
             }
-        }).then(UpdateUnitNodeData =>{
-            if (UpdateUnitNodeData.data){
-                setIsLoaderActive(false)
-                setResultData({ type: ResultType.Happy, message: "Состояние UnitNode успешно обновлёно"})
-            }
-        }).catch(error => {
-            setIsLoaderActive(false)
-            setResultData({ type: ResultType.Angry, message: error.graphQLErrors[0].message.slice(4)})
         })
     };
 
