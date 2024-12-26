@@ -1,4 +1,5 @@
 import { useResultHandler } from '@rootTypes/useResultHandler';
+import { useAsyncHandler } from '@rootTypes/useAsyncHandler';
 import { VisibilityLevel, UnitType, useGetBranchCommitsLazyQuery, useUpdateUnitMutation, useGetRepoLazyQuery, RepoType, useGetAvailablePlatformsLazyQuery } from '@rootTypes/compositionFunctions'
 import { useState, useEffect } from 'react';
 import { getCommitSummary } from '@utils/getCommitSummary';
@@ -16,6 +17,8 @@ interface UpdateUnitFormProps {
 
 export default function UpdateUnitForm({ currentNodeData, setCurrentNodeData }: UpdateUnitFormProps) {
     const { resultData, setResultData, handleError, handleSuccess } = useResultHandler();
+    const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
+
     const [currentRepoData, setCurrentRepoData] = useState<RepoType | null>(null);
 
     const [repoAvailableCommits, setRepoAvailableCommits] = useState<Array<{
@@ -34,7 +37,6 @@ export default function UpdateUnitForm({ currentNodeData, setCurrentNodeData }: 
     const [errorState, setErrorState] = useState({
         name: false,
     });
-    const [isLoaderActive, setIsLoaderActive] = useState(false)
 
     const [getBranchCommits] = useGetBranchCommitsLazyQuery();
     const [updateUnitMutation] = useUpdateUnitMutation();
@@ -42,80 +44,72 @@ export default function UpdateUnitForm({ currentNodeData, setCurrentNodeData }: 
     const [getRepo] = useGetRepoLazyQuery();
 
     useEffect(() => {
-        if (currentNodeData.repoBranch){
-            getBranchCommits({
-                variables: {
-                    uuid: currentNodeData.repoUuid,
-                    repoBranch: currentNodeData.repoBranch,
-                    onlyTag: false,
-                    limit: 100,
-                    offset: 0
-                }
-            }).then(availableCommits => {
-                    if (availableCommits.data?.getBranchCommits){
-                        setRepoAvailableCommits(availableCommits.data.getBranchCommits)
+        runAsync(async () => {
+            if (currentNodeData.repoBranch){
+                let result = await getBranchCommits({
+                    variables: {
+                        uuid: currentNodeData.repoUuid,
+                        repoBranch: currentNodeData.repoBranch,
+                        onlyTag: false,
+                        limit: 100,
+                        offset: 0
                     }
+                })
+                
+                if (result.data?.getBranchCommits){
+                    setRepoAvailableCommits(result.data.getBranchCommits)
                 }
-            ).catch(error => {
-                handleError(error);
-            })
-        }
+            }
+        })
     }, [currentNodeData.repoBranch, currentNodeData.isAutoUpdateFromRepoUnit]);
 
     useEffect(() => {
-        setCurrentRepoData(null)
-        getRepo(
-            {
-                variables: {
-                    uuid: currentNodeData.repoUuid
-                }
-            }
-        ).then(repoData => {
-                if (repoData.data?.getRepo){
-
-                    let repo = repoData.data.getRepo
-                    setCurrentRepoData(repo)
-                    setRepoAvailablePlatforms(null)
-
-                    if (repo.isCompilableRepo){
-                        let commit = null
-
-                        if (!currentNodeData.isAutoUpdateFromRepoUnit && currentNodeData.repoCommit){
-                            commit = currentNodeData.repoCommit
-                        }
-                        getAvailablePlatforms({
-                            variables: {
-                                uuid: currentNodeData.repoUuid,
-                                targetCommit: commit
-                            }
-                        }).then(availablePlatforms => {
-                                if (availablePlatforms.data?.getAvailablePlatforms){
-                                    setRepoAvailablePlatforms(availablePlatforms.data.getAvailablePlatforms)
-                                }
-                            }
-                        )
+        runAsync(async () => {
+            setCurrentRepoData(null)
+            let result = await getRepo(
+                {
+                    variables: {
+                        uuid: currentNodeData.repoUuid
                     }
                 }
+            )
+            if (result.data?.getRepo){
+
+                let repo = result.data.getRepo
+                setCurrentRepoData(repo)
+                setRepoAvailablePlatforms(null)
+
+                if (repo.isCompilableRepo){
+                    let commit = null
+
+                    if (!currentNodeData.isAutoUpdateFromRepoUnit && currentNodeData.repoCommit){
+                        commit = currentNodeData.repoCommit
+                    }
+                    getAvailablePlatforms({
+                        variables: {
+                            uuid: currentNodeData.repoUuid,
+                            targetCommit: commit
+                        }
+                    }).then(availablePlatforms => {
+                            if (availablePlatforms.data?.getAvailablePlatforms){
+                                setRepoAvailablePlatforms(availablePlatforms.data.getAvailablePlatforms)
+                            }
+                        }
+                    )
+                }
             }
-        ).catch(error => {
-            handleError(error);
         })
     }, [currentNodeData]);
 
     const handleUpdateUnit = () => {
-        setIsLoaderActive(true)
-
-        updateUnitMutation({
-            variables: currentNodeData
-        }).then(UpdateUnitData =>{
-            if (UpdateUnitData.data){
+        runAsync(async () => {
+            let updateUnitData = await updateUnitMutation({
+                variables: currentNodeData
+            })
+            if (updateUnitData.data){
                 handleSuccess("Unit success update")
             }
-        }).catch(error => {
-            handleError(error);
-        }).finally(() => {
-            setIsLoaderActive(false);
-        });
+        })
     };
 
     const updateErrorState = (field: keyof typeof errorState, hasError: boolean) => {

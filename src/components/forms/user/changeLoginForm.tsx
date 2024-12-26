@@ -1,4 +1,5 @@
 import { useResultHandler } from '@rootTypes/useResultHandler';
+import { useAsyncHandler } from '@rootTypes/useAsyncHandler';
 import { useState, useEffect } from 'react';
 import { useUpdateUserMutation } from '@rootTypes/compositionFunctions';
 import DefaultInput from '@primitives/defaultInput'
@@ -15,7 +16,7 @@ interface ChangeLoginFormProps {
 
 export default function ChangeLoginForm({ currentLogin }: ChangeLoginFormProps) {
     const { resultData, setResultData, handleError, handleSuccess } = useResultHandler();
-    const [isLoaderActive, setIsLoaderActive] = useState(false)
+    const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
 
     const { setUser } = useUserStore();
 
@@ -38,23 +39,18 @@ export default function ChangeLoginForm({ currentLogin }: ChangeLoginFormProps) 
     const [updateUserMutation] = useUpdateUserMutation();
 
     const handleChangeLogin = () => {
-        setIsLoaderActive(true)
+        runAsync(async () => {
 
-        updateUserMutation({
-            variables: {
-                login: login
-            }
-        }).then(updateUserData => {
-            if (updateUserData.data) { 
-                setUser(updateUserData.data.updateUser)
+            let result = await updateUserMutation({
+                variables: {
+                    login: login
+                }
+            })
+            if (result.data) { 
+                setUser(result.data.updateUser)
                 handleSuccess("New Login success set")
             }
-        }).catch(error => {
-            handleError(error);
-        }).finally(() => {
-            setIsLoaderActive(false);
-        });
-
+        })
     };
 
     return (

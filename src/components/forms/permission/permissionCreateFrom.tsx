@@ -4,6 +4,7 @@ import {
 
  } from '@rootTypes/compositionFunctions';
 import { useResultHandler } from '@rootTypes/useResultHandler';
+import { useAsyncHandler } from '@rootTypes/useAsyncHandler';
 import { useState, useEffect } from 'react';
 import DefaultInput from '@primitives/defaultInput'
 import Spinner from '@primitives/spinner';
@@ -23,6 +24,7 @@ interface PermissionCreateFormProps {
 
 export default function PermissionCreateForm({ currentNodeData, currentNodeType, selectedEntityType, setSelectedEntityType }: PermissionCreateFormProps) {
     const { resultData, setResultData, handleError, handleSuccess } = useResultHandler();
+    const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
     
     const [ searchString, setSearchString ] = useState('');
     const [ typeList, setTypeList ] = useState<'button' | 'collapse'>('button');
@@ -34,50 +36,43 @@ export default function PermissionCreateForm({ currentNodeData, currentNodeType,
     const [errorState, setErrorState] = useState({
         searchString: false,
     });
-    const [isLoaderActive, setIsLoaderActive] = useState(false);
     
     const [currentPage, setCurrentPage] = useState(0);
     const [totalCount, setTotalCount] = useState(0);
     const itemsPerPage = 6;
 
     const loadEntities = async (searchString: string, selectedEntityType: PermissionEntities, currentPage: number) => {
-        setIsLoaderActive(true)
-        fetchEntitiesByFilter(searchString, selectedEntityType, itemsPerPage, currentPage * itemsPerPage)
-            .then(result => {
-                if (result?.data) {
-                    let formattedData: Array<any> = [];
-                    let count: number = 0;
-                    setTypeList('button')
-                    if ('getRepos' in result.data && result.data.getRepos) {
-                        formattedData = result.data.getRepos.repos;
-                        count = result.data.getRepos.count
-                    } else if ('getUsers' in result.data && result.data.getUsers) {
-                        formattedData = result.data.getUsers.users.map((user: any) => ({
-                            uuid: user.uuid,
-                            name: user.login,
-                            visibilityLevel: user.role + ' ' + user.status,
-                        }));
-                        count = result.data.getUsers.count
-                    } else if ('getUnits' in result.data && selectedEntityType == PermissionEntities.Unit) {
-                        formattedData = result.data.getUnits.units;
-                        count = result.data.getUnits.count
-                    } else if ('getUnits' in result.data && selectedEntityType == PermissionEntities.UnitNode) {
-                        formattedData = result.data.getUnits.units;
-                        count = result.data.getUnits.count
-                        setTypeList('collapse')
-                    }
-                    
-                    setNodeOutputs(formattedData);
-                    setTotalCount(count);
-                } else {
-                    setNodeOutputs([]);
+        runAsync(async () => {
+            let result = await fetchEntitiesByFilter(searchString, selectedEntityType, itemsPerPage, currentPage * itemsPerPage)
+            if (result?.data) {
+                let formattedData: Array<any> = [];
+                let count: number = 0;
+                setTypeList('button')
+                if ('getRepos' in result.data && result.data.getRepos) {
+                    formattedData = result.data.getRepos.repos;
+                    count = result.data.getRepos.count
+                } else if ('getUsers' in result.data && result.data.getUsers) {
+                    formattedData = result.data.getUsers.users.map((user: any) => ({
+                        uuid: user.uuid,
+                        name: user.login,
+                        visibilityLevel: user.role + ' ' + user.status,
+                    }));
+                    count = result.data.getUsers.count
+                } else if ('getUnits' in result.data && selectedEntityType == PermissionEntities.Unit) {
+                    formattedData = result.data.getUnits.units;
+                    count = result.data.getUnits.count
+                } else if ('getUnits' in result.data && selectedEntityType == PermissionEntities.UnitNode) {
+                    formattedData = result.data.getUnits.units;
+                    count = result.data.getUnits.count
+                    setTypeList('collapse')
                 }
+                
+                setNodeOutputs(formattedData);
+                setTotalCount(count);
+            } else {
+                setNodeOutputs([]);
             }
-        ).catch(error => {
-            handleError(error);
-        }).finally(() => {
-            setIsLoaderActive(false);
-        });
+        })
     };
 
     useEffect(() => {
@@ -96,24 +91,19 @@ export default function PermissionCreateForm({ currentNodeData, currentNodeType,
     };
 
     const handleCreatePermission = (entityUuid: string) => {
-        setIsLoaderActive(true)
-
-        createPermissionMutation({
-            variables: {
-                agentUuid: entityUuid,
-                agentType: selectedEntityType,
-                resourceUuid: currentNodeData.uuid,
-                resourceType: currentNodeType
-            }
-        }).then(ResultData =>{
-            if (ResultData.data){
+        runAsync(async () => {
+            let result = await createPermissionMutation({
+                variables: {
+                    agentUuid: entityUuid,
+                    agentType: selectedEntityType,
+                    resourceUuid: currentNodeData.uuid,
+                    resourceType: currentNodeType
+                }
+            })
+            if (result.data){
                 handleSuccess("Permission success create")
             }
-        }).catch(error => {
-            handleError(error);
-        }).finally(() => {
-            setIsLoaderActive(false);
-        });
+        })
     };
 
     const totalPages = Math.ceil(totalCount / itemsPerPage);

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useResultHandler } from '@rootTypes/useResultHandler';
+import { useAsyncHandler } from '@rootTypes/useAsyncHandler';
 import { useGetTokenLazyQuery, useGetUserLazyQuery } from '@rootTypes/compositionFunctions';
 import { getUserUuidByToken } from '@utils/getUserUuidByToken';
 import isValidPassword from '@utils/isValidPassword'
@@ -17,8 +18,8 @@ interface SignInFormProps {
 }
 
 export default function SignInForm({openModalRegister}: SignInFormProps) {
-    const [isLoaderActive, setIsLoaderActive] = useState(false)
     const { resultData, setResultData, handleError } = useResultHandler();
+    const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
 
     const { setActiveModal } = useModalStore();
     const { setUser } = useUserStore();
@@ -41,33 +42,28 @@ export default function SignInForm({openModalRegister}: SignInFormProps) {
     const [getUser] = useGetUserLazyQuery();
 
     const handleLogin = () => {
-        setIsLoaderActive(true)
+        runAsync(async () => {
+            localStorage.removeItem('token')
+            let result = await getToken({
+                variables: {
+                    credentials: login,
+                    password: password,
+                }
+            })
+            if (result.data) { 
+                localStorage.setItem('token', result.data.getToken);
 
-        localStorage.removeItem('token')
-        getToken({
-            variables: {
-                credentials: login,
-                password: password,
-            }
-        }).then(tokenData => {
-            if (tokenData.data) { 
-                localStorage.setItem('token', tokenData.data.getToken);
-                getUser({
+                let userData = await getUser({
                     variables: {
-                        uuid: getUserUuidByToken(tokenData.data.getToken)
+                        uuid: getUserUuidByToken(result.data.getToken)
                     }
-                }).then(userData => {
-                    if (userData.data) {
-                        setUser(userData.data.getUser)
-                    }
-                    setActiveModal(null)
                 })
+                if (userData.data) {
+                    setUser(userData.data.getUser)
+                }
+                setActiveModal(null)
             }
-        }).catch(error => {
-            handleError(error);
-        }).finally(() => {
-            setIsLoaderActive(false);
-        });
+        })
     };
 
     return (

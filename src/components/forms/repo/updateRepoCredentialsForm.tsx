@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useResultHandler } from '@rootTypes/useResultHandler';
+import { useAsyncHandler } from '@rootTypes/useAsyncHandler';
 import { useUpdateRepoCredentialsMutation, RepoType } from '@rootTypes/compositionFunctions'
 import isValidString from '@utils/isValidString'
 import DefaultInput from '@primitives/defaultInput'
@@ -13,11 +14,10 @@ interface UpdateRepoCredentialsFormProps {
 
 export default function UpdateRepoCredentialsForm({ currentNodeData }: UpdateRepoCredentialsFormProps) {
     const { resultData, setResultData, handleError, handleSuccess } = useResultHandler();
+    const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
 
     const [repoUsername, setRepoUsername] = useState('');
     const [repoPatToken, setPatToken] = useState('');
-
-    const [isLoaderActive, setIsLoaderActive] = useState(false)
 
     const [errorState, setErrorState] = useState({
         username: true,
@@ -34,25 +34,21 @@ export default function UpdateRepoCredentialsForm({ currentNodeData }: UpdateRep
     const [updateRepoCredentialsMutation] = useUpdateRepoCredentialsMutation();
 
     const handleUpdateCredentials = () => {
-        setIsLoaderActive(true)
+        runAsync(async () => {
 
-        updateRepoCredentialsMutation({
-            variables: {
-                uuid: currentNodeData.uuid,
-                data: {
-                    username: repoUsername,
-                    patToken: repoPatToken
+            let result = await updateRepoCredentialsMutation({
+                variables: {
+                    uuid: currentNodeData.uuid,
+                    data: {
+                        username: repoUsername,
+                        patToken: repoPatToken
+                    }
                 }
-            }
-        }).then(UpdateRepoData =>{
-            if (UpdateRepoData.data){
+            })
+            if (result.data){
                 handleSuccess("Repo auth data successfully updated")
             }
-        }).catch(error => {
-            handleError(error);
-        }).finally(() => {
-            setIsLoaderActive(false);
-        });
+        })
     };
 
     return (

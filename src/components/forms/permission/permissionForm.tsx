@@ -6,6 +6,7 @@ import {
     GetUnitsWithUnitNodesQuery
  } from '@rootTypes/compositionFunctions';
 import { useResultHandler } from '@rootTypes/useResultHandler';
+import { useAsyncHandler } from '@rootTypes/useAsyncHandler';
 import { useState, useEffect } from 'react';
 import { useModalStore } from '@stores/baseStore';
 import Spinner from '@primitives/spinner';
@@ -24,6 +25,7 @@ interface PermissionFormProps {
 
 export default function PermissionForm({ currentNodeData, currentNodeType }: PermissionFormProps) {
     const { resultData, handleError, handleSuccess } = useResultHandler();
+    const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
 
     const { activeModal } = useModalStore();
     const [nodeOutputs, setNodeOutputs] = useState<Array<any> | null>(null);
@@ -37,39 +39,31 @@ export default function PermissionForm({ currentNodeData, currentNodeType }: Per
 
     const [selectedEntityType, setSelectedEntityType] = useState<PermissionEntities>(PermissionEntities.User);
     
-    const [isLoaderActive, setIsLoaderActive] = useState(false);
-    
     const [currentPage, setCurrentPage] = useState(0);
     const [totalCount, setTotalCount] = useState(0);
     const itemsPerPage = 6;
 
     const handleDeletePermission = (agentUuid: string) => {
-        setIsLoaderActive(true);
-    
-        if (currentNodeData) {
-            deletePermissionMutation({
-                variables: {
-                    agentUuid: agentUuid,
-                    resourceUuid: currentNodeData.uuid
-                }
-            }).then(result => {
+        runAsync(async () => {
+            if (currentNodeData) {
+                let result = await deletePermissionMutation({
+                    variables: {
+                        agentUuid: agentUuid,
+                        resourceUuid: currentNodeData.uuid
+                    }
+                })
                 if (result.data) {
                     setRefreshTrigger(!refreshTrigger)
                     handleSuccess("Permission success delete")
                 }
-            }).catch(error => {
-                handleError(error);
-            }).finally(() => {
-                setIsLoaderActive(false);
-            });
-        }
+            }
+        })
     };
 
     const loadEntities = async (entityType: PermissionEntities, page: number) => {
         if (!currentNodeData) return;
 
-        setIsLoaderActive(true);
-        try {
+        runAsync(async () => {
             let agentUuids: string[] | null = null
             const resourceAgentsResult = await getResourceAgentsLazyQuery({
                 variables: {
@@ -134,11 +128,7 @@ export default function PermissionForm({ currentNodeData, currentNodeType }: Per
             } else {
                 setNodeOutputs([]);
             }
-        } catch (error: any) {
-            handleError(error);
-        } finally {
-            setIsLoaderActive(false);
-        }
+        })
     };
 
     useEffect(() => {

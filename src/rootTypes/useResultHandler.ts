@@ -20,7 +20,9 @@ export function useResultHandler() {
   };
 
   const handleError = (error: any) => {
+    console.log(error)
     const errorMessage = error?.graphQLErrors?.[0]?.message?.slice(4) || 'Unknown error';
+    console.log(errorMessage)
     setResultData({
       type: ResultType.Angry,
       message: errorMessage,
