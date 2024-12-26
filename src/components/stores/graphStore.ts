@@ -6,7 +6,7 @@ type NodeTypeStorage = {
   id: string | number;
   type: NodeType;
   color: string;
-  data: any; // Или RepoType, если тип известен
+  data: any;
 };
 
 type LinkTypeStorage = {
@@ -25,7 +25,7 @@ type GraphStoreType = {
   removeNodesAndLinks: (uuids: string | string[]) => void;
 };
 
-export const useGraphStore = create<GraphStoreType>((set) => ({
+export const useGraphStore = create<GraphStoreType>((set, get) => ({
   graphData: {
     nodes: [
       {
@@ -43,17 +43,13 @@ export const useGraphStore = create<GraphStoreType>((set) => ({
   removeNodesAndLinks: (uuids: string | string[]) => set((state) => {
     const uuidArray = Array.isArray(uuids) ? uuids : [uuids];
 
-    // Удаляем связи, связанные с узлами по UUID
     const newLinks = state.graphData.links.filter(link => {
-      // Извлекаем id из source и target
       const sourceId = typeof link.source === 'object' ? String(link.source.id) : String(link.source);
       const targetId = typeof link.target === 'object' ? String(link.target.id) : String(link.target);
     
-      // Сравниваем id с массивом UUID
       return !uuidArray.includes(sourceId) && !uuidArray.includes(targetId);
     });
 
-    // Удаляем узлы по UUID
     const newNodes = state.graphData.nodes.filter(node => !uuidArray.includes(String(node.id)));
 
     return {
@@ -63,4 +59,19 @@ export const useGraphStore = create<GraphStoreType>((set) => ({
       }
     };
   }),
+  updateNodeData: (uuid: string, newData: any) => set((state) => {
+    const updatedNodes = state.graphData.nodes.map((node) =>
+      String(node.id) === uuid ? { ...node, ...newData } : node
+    );
+    return {
+      graphData: {
+        ...state.graphData,
+        nodes: updatedNodes,
+      },
+    };
+  }),
+  getNodeByUuid: (uuid: string) => {
+    const state = get();
+    return state.graphData.nodes.find((node: any) => String(node.id) === uuid);
+  },
 }));

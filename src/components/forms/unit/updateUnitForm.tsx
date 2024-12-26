@@ -1,6 +1,6 @@
 import { useResultHandler } from '@rootTypes/useResultHandler';
 import { useAsyncHandler } from '@rootTypes/useAsyncHandler';
-import { VisibilityLevel, UnitType, useGetBranchCommitsLazyQuery, useUpdateUnitMutation, useGetRepoLazyQuery, RepoType, useGetAvailablePlatformsLazyQuery } from '@rootTypes/compositionFunctions'
+import { VisibilityLevel, useGetBranchCommitsLazyQuery, useUpdateUnitMutation, useGetRepoLazyQuery, RepoType, useGetAvailablePlatformsLazyQuery } from '@rootTypes/compositionFunctions'
 import { useState, useEffect } from 'react';
 import { getCommitSummary } from '@utils/getCommitSummary';
 import isValidLogin from '@utils/isValidLogin'
@@ -9,15 +9,14 @@ import Spinner from '@primitives/spinner'
 import ResultQuery from '@primitives/resultQuery'
 import '../form.css'
 
+import { useNodeStore } from '@stores/baseStore';
 
-interface UpdateUnitFormProps {
-    currentNodeData: UnitType;
-    setCurrentNodeData: (repo: UnitType | null) => void;
-}
 
-export default function UpdateUnitForm({ currentNodeData, setCurrentNodeData }: UpdateUnitFormProps) {
+export default function UpdateUnitForm() {
     const { resultData, setResultData, handleError, handleSuccess } = useResultHandler();
     const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
+
+    const { currentNodeData, setCurrentNodeData } = useNodeStore();
 
     const [currentRepoData, setCurrentRepoData] = useState<RepoType | null>(null);
 

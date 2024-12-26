@@ -9,13 +9,14 @@ import PaginationControls from '@primitives/pagination';
 import IterationList from '@primitives/iterationList'
 import '../form.css'
 
-interface UnitNodeEdgeFormProps {
-    currentNodeData: any;
-}
+import { useNodeStore } from '@stores/baseStore';
 
-export default function UnitNodeEdgeCreateForm({ currentNodeData }: UnitNodeEdgeFormProps) {
+
+export default function UnitNodeEdgeCreateForm() {
     const { resultData, setResultData, handleError, handleSuccess } = useResultHandler();
     const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
+
+    const { currentNodeData } = useNodeStore();
 
     const [errorState, setErrorState] = useState({
         searchString: false,

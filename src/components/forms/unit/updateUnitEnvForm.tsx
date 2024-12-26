@@ -1,19 +1,19 @@
 import { useResultHandler } from '@rootTypes/useResultHandler';
 import { useAsyncHandler } from '@rootTypes/useAsyncHandler';
-import { UnitType, useGetUnitEnvLazyQuery, useUpdateUnitEnvMutation } from '@rootTypes/compositionFunctions'
+import { useGetUnitEnvLazyQuery, useUpdateUnitEnvMutation } from '@rootTypes/compositionFunctions'
 import { useState, useEffect } from 'react';
 import Spinner from '@primitives/spinner'
 import ResultQuery from '@primitives/resultQuery'
 import '../form.css'
 
+import { useNodeStore } from '@stores/baseStore';
 
-interface UpdateUnitEnvFormProps {
-    currentNodeData: UnitType;
-}
 
-export default function UpdateUnitEnvForm({ currentNodeData }:UpdateUnitEnvFormProps) {
+export default function UpdateUnitEnvForm() {
     const { resultData, handleError, handleSuccess } = useResultHandler();
     const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
+
+    const { currentNodeData } = useNodeStore();
 
     const [currentUnitEnv, setCurrentUnitEnv] = useState<Record<string, string | number> | null>(null)
 

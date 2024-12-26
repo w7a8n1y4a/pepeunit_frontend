@@ -12,7 +12,7 @@ import { useUserStore } from '@stores/userStore';
 
 export default function UnitNodeContent(){
   const { activeModal } = useModalStore();
-  const { currentNodeData, setCurrentNodeData } = useNodeStore();
+  const { currentNodeData } = useNodeStore();
   const { openModal } = useModalHandlers();
   const { user } = useUserStore();
 
@@ -62,7 +62,6 @@ export default function UnitNodeContent(){
         {
           currentNodeData && (
             <PermissionForm
-              currentNodeData={currentNodeData}
               currentNodeType={PermissionEntities.UnitNode}
             />
           )
@@ -76,9 +75,7 @@ export default function UnitNodeContent(){
       >
         {
           currentNodeData && (
-            <UnitNodeEdgeForm
-              currentNodeData={currentNodeData}
-            />
+            <UnitNodeEdgeForm/>
           )
         }
       </BaseModal>
@@ -90,10 +87,7 @@ export default function UnitNodeContent(){
       >
         {
           currentNodeData && (
-            <UpdateUnitNodeForm
-              currentNodeData={currentNodeData}
-              setCurrentNodeData={setCurrentNodeData}
-            />
+            <UpdateUnitNodeForm/>
           )
         }
       </BaseModal>
@@ -105,10 +99,7 @@ export default function UnitNodeContent(){
       >
         {
           currentNodeData && (
-            <UnitNodeSetStateForm
-              currentNodeData={currentNodeData}
-              setCurrentNodeData={setCurrentNodeData}
-            />
+            <UnitNodeSetStateForm/>
           )
         }
       </BaseModal>
