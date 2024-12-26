@@ -1,4 +1,5 @@
 import { useResultHandler } from '@rootTypes/useResultHandler';
+import { useAsyncHandler } from '@rootTypes/useAsyncHandler';
 import { useUpdateLocalRepoMutation, PermissionEntities, useUpdateUnitsFirmwareMutation, useDeleteRepoMutation, useGetVersionsLazyQuery } from '@rootTypes/compositionFunctions'
 import BaseModal from '../modal/baseModal'
 import CreateUnitForm from '../forms/unit/createUnitForm';
@@ -21,6 +22,8 @@ import {
 
 export default function RepoContent(){
   const { resultData, handleError, handleSuccess } = useResultHandler();
+  const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
+
   const { activeModal, setActiveModal } = useModalStore();
   const { currentNodeData, setCurrentNodeData } = useNodeStore();
   const { removeNodesAndLinks } = useGraphStore();
@@ -32,98 +35,75 @@ export default function RepoContent(){
 
   let nodeType = PermissionEntities.Repo
 
-  const [isLoaderActive, setIsLoaderActive] = useState(false)
-
   const [updateLocalRepo] = useUpdateLocalRepoMutation();
   const [updateUnitsFirmware] = useUpdateUnitsFirmwareMutation()
   const [deleteRepo] = useDeleteRepoMutation()
   const [getVersions] = useGetVersionsLazyQuery()
 
   const handleUpdateLocalRepo = () => {
-    setIsLoaderActive(true)
-
-    if (currentNodeData){
-      updateLocalRepo(
-        {
+    runAsync(async () => {
+      if (currentNodeData){
+        let result = await updateLocalRepo({
           variables: {
             uuid: currentNodeData.uuid
           }
-        }
-      ).then(result => {
+        })
         if (result.data){
           handleSuccess("Git Repo update request send")
         }
-      }).catch(error => {
-        handleError(error);
-      }).finally(() => {
-          setIsLoaderActive(false);
-      });
-    }
+      }
+    })
   };
 
   const handleUpdateUnitsFirmware = () => {
-    setIsLoaderActive(true)
-
-    if (currentNodeData){
-      updateUnitsFirmware(
-        {
-          variables: {
-            uuid: currentNodeData.uuid
+    runAsync(async () => {
+      if (currentNodeData){
+        let result = await updateUnitsFirmware(
+          {
+            variables: {
+              uuid: currentNodeData.uuid
+            }
           }
-        }
-      ).then(result => {
+        )
         if (result.data){
-          handleSuccess("Unit update query send")
+          handleSuccess("Unit`s update query send")
         }
-      }).catch(error => {
-        handleError(error);
-      }).finally(() => {
-          setIsLoaderActive(false);
-      });
-    }
+      }
+    })
   };
 
   const handleDeleteRepo = () => {
-    setIsLoaderActive(true)
-
-    if (currentNodeData){
-      deleteRepo(
-        {
-          variables: {
-            uuid: currentNodeData.uuid
+    runAsync(async () => {
+      if (currentNodeData){
+        let result = await deleteRepo(
+          {
+            variables: {
+              uuid: currentNodeData.uuid
+            }
           }
-        }
-      ).then(result => {
+        )
         if (result.data){
           setActiveModal(null)
           removeNodesAndLinks(currentNodeData.uuid)
           handleSuccess("Repo success update")
         }
-      }).catch(error => {
-        handleError(error);
-      }).finally(() => {
-          setIsLoaderActive(false);
-      });
-    }
+      }
+    })
   };
 
   useEffect(() => {
-    if (currentNodeData){
-      getVersions({
-        variables: {
-            uuid: currentNodeData.uuid,
-        }
-      }).then(result => {
-          if (result.data?.getVersions){
-              setVersions(result.data.getVersions)
+    runAsync(async () => {
+      if (currentNodeData){
+        let result = await getVersions({
+          variables: {
+              uuid: currentNodeData.uuid,
           }
+        })
+        if (result.data?.getVersions){
+            setVersions(result.data.getVersions)
         }
-      ).catch(error => {
-          handleError(error);
-      }).finally(() => {
-          setIsLoaderActive(false);
-      });
-    }
+      }
+    })
 }, [currentNodeData]);
 
   return (

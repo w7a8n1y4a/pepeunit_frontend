@@ -7,11 +7,11 @@ import ResultQuery from '@primitives/resultQuery'
 import '../form.css'
 
 
-interface CreateUnitFormProps {
+interface UpdateUnitEnvFormProps {
     currentNodeData: UnitType;
 }
 
-export default function UpdateUnitEnvForm({ currentNodeData }:CreateUnitFormProps) {
+export default function UpdateUnitEnvForm({ currentNodeData }:UpdateUnitEnvFormProps) {
     const { resultData, handleError, handleSuccess } = useResultHandler();
     const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
 
@@ -20,7 +20,7 @@ export default function UpdateUnitEnvForm({ currentNodeData }:CreateUnitFormProp
     const [getUnitEnv] = useGetUnitEnvLazyQuery()
     const [updateUnitEnv] = useUpdateUnitEnvMutation();
 
-    const handleCreateUnit = () => {
+    const handleUpdateUnitEnv = () => {
         runAsync(async () => {
             let result = await updateUnitEnv({
                 variables: {
@@ -31,17 +31,14 @@ export default function UpdateUnitEnvForm({ currentNodeData }:CreateUnitFormProp
             if (result.data){
                 handleSuccess("ENV success update")
 
-                getUnitEnv({
+                let resultUnitEnv = await getUnitEnv({
                     variables: {
                         uuid: currentNodeData.uuid,
                     }
-                }).then(resultUnitEnv => {
-                    if (resultUnitEnv.data?.getUnitEnv){
-                        setCurrentUnitEnv(JSON.parse(resultUnitEnv.data.getUnitEnv))
-                    }
-                }).catch(error => {
-                    handleError(error);
                 })
+                if (resultUnitEnv.data?.getUnitEnv){
+                    setCurrentUnitEnv(JSON.parse(resultUnitEnv.data.getUnitEnv))
+                }
             }
         })
     };
@@ -90,7 +87,7 @@ export default function UpdateUnitEnvForm({ currentNodeData }:CreateUnitFormProp
                         ))}
                 </div>
             </div>
-            <button className="button_main_action" onClick={handleCreateUnit}>
+            <button className="button_main_action" onClick={handleUpdateUnitEnv}>
                 Обновить
             </button>
             <ResultQuery
