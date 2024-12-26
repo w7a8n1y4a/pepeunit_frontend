@@ -21,7 +21,7 @@ export default function UnitContent(){
   const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
 
   const { activeModal, setActiveModal } = useModalStore();
-  const { currentNodeData, setCurrentNodeData } = useNodeStore();
+  const { currentNodeData } = useNodeStore();
   const { removeNodesAndLinks } = useGraphStore();
   const [currentRepoData, setCurrentRepoData] = useState<RepoType | null>(null);
   const [targetVersion, setTargetVersion] = useState<string | null>(null);
@@ -247,7 +247,6 @@ export default function UnitContent(){
         {
           currentNodeData && (
             <PermissionForm
-              currentNodeData={currentNodeData}
               currentNodeType={PermissionEntities.Unit}
             />
           )
@@ -283,10 +282,7 @@ export default function UnitContent(){
       >
         {
           currentNodeData && (
-            <UpdateUnitForm
-              currentNodeData={currentNodeData}
-              setCurrentNodeData={setCurrentNodeData}
-            />
+            <UpdateUnitForm/>
           )
         }
       </BaseModal>
@@ -297,9 +293,7 @@ export default function UnitContent(){
       >
         {
           currentNodeData && (
-            <UpdateUnitEnvForm
-              currentNodeData={currentNodeData}
-            />
+            <UpdateUnitEnvForm/>
           )
         }
       </BaseModal>
