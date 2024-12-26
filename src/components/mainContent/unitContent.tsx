@@ -62,7 +62,6 @@ export default function UnitContent(){
           mode: 'cors'
         }
       ).then(resp => resp.ok ? resp.blob() : Promise.reject(resp)).then(blob => {
-        setIsLoaderActive(false)
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
@@ -74,7 +73,6 @@ export default function UnitContent(){
         link.click();
       }).catch((error) => {
         error.json().then( function (data: any) {
-            setIsLoaderActive(false)
             setResultData({ type: ResultType.Angry, message: data.detail})
           }
         )
