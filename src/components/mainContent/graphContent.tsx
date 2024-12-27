@@ -8,6 +8,7 @@ import DomainContent from './domainContent'
 import RepoContent from './repoContent'
 import UnitContent from './unitContent';
 import UnitNodeContent from './unitNodeContent';
+import GraphSearch from './graphSearch'
 
 import { useGraphStore } from '@stores/graphStore';
 import { useNodeStore } from '@stores/baseStore';
@@ -160,7 +161,7 @@ export default function GraphContent(){
         cooldownTicks={100}
         onEngineStop={() => fgRef.current.zoomToFit(500)}
       />
-      
+      <GraphSearch/>
       <DomainContent/>
       <RepoContent/>
       <UnitContent/>

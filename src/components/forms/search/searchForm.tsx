@@ -24,7 +24,7 @@ interface PermissionCreateFormProps {
     setSelectedEntityType: (show: PermissionEntities) => void;
 }
 
-export default function PermissionCreateForm({ currentNodeType, selectedEntityType, setSelectedEntityType }: PermissionCreateFormProps) {
+export default function SearchForm({ currentNodeType, selectedEntityType, setSelectedEntityType }: PermissionCreateFormProps) {
     const { resultData, setResultData, handleError, handleSuccess } = useResultHandler();
     const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
 
