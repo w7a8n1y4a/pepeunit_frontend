@@ -3,7 +3,12 @@ import SearchForm from '../forms/search/searchForm';
 
 import { useModalStore } from '@stores/baseStore';
 
-export default function GraphSearch(){
+
+interface GraphSearchProps {
+  onFocusNode?: (uuid: string) => void
+}
+
+export default function GraphSearch({ onFocusNode }: GraphSearchProps){
 
   const { activeModal } = useModalStore();
 
@@ -13,7 +18,7 @@ export default function GraphSearch(){
         modalName={"Node Search"}
         open={activeModal === 'graphSearch'}
       >
-        <SearchForm/>
+        <SearchForm onFocusNode={onFocusNode} />
       </BaseModal>
     </>
   )

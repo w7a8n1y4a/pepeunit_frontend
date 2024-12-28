@@ -134,6 +134,21 @@ export default function GraphContent(){
     }
   }, []);
 
+  function focusNode(uuid: string) {
+    const node: any = processedData.nodes.find((n: any) => n.id === uuid);
+    if (!node || !fgRef.current) return;
+  
+    const distance = 400; // Расстояние до ноды
+    const distRatio = 1 + distance / Math.hypot(node.x, node.y, node.z);
+  
+    fgRef.current.cameraPosition(
+      { x: node.x * distRatio, y: node.y * distRatio, z: node.z * distRatio },
+      node,
+      1500
+    );
+    console.log(uuid)
+  }
+
   return (
     <>
       <ForceGraph3D
@@ -161,7 +176,7 @@ export default function GraphContent(){
         cooldownTicks={100}
         onEngineStop={() => fgRef.current.zoomToFit(500)}
       />
-      <GraphSearch/>
+      <GraphSearch onFocusNode={focusNode} />
       <DomainContent/>
       <RepoContent/>
       <UnitContent/>

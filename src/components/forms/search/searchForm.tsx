@@ -16,7 +16,12 @@ import {
   
   import { useNodeStore } from '@stores/baseStore';
   
-  export default function SearchForm(){
+  interface SearchFormProps {
+    onFocusNode?: (uuid: string) => void
+  }
+  
+
+  export default function SearchForm({ onFocusNode }: SearchFormProps){
     const { resultData, setResultData, handleError } = useResultHandler();
     const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
   
@@ -25,7 +30,6 @@ import {
     const { currentNodeData } = useNodeStore();
     
     const [ searchString, setSearchString ] = useState('');
-    const [ typeList, setTypeList ] = useState<'button' | 'collapse'>('button');
     const [nodeOutputs, setNodeOutputs] = useState<Array<any> | null>(null);
   
     const { fetchEntitiesByFilter } = useFetchEntitiesByFilter();
@@ -44,7 +48,6 @@ import {
             if (result?.data) {
                 let formattedData: Array<any> = [];
                 let count: number = 0;
-                setTypeList('button')
                 if ('getRepos' in result.data && result.data.getRepos) {
                     formattedData = result.data.getRepos.repos;
                     count = result.data.getRepos.count
@@ -58,10 +61,6 @@ import {
                 } else if ('getUnits' in result.data && selectedEntityType == PermissionEntities.Unit) {
                     formattedData = result.data.getUnits.units;
                     count = result.data.getUnits.count
-                } else if ('getUnits' in result.data && selectedEntityType == PermissionEntities.UnitNode) {
-                    formattedData = result.data.getUnits.units;
-                    count = result.data.getUnits.count
-                    setTypeList('collapse')
                 }
                 
                 setNodeOutputs(formattedData);
@@ -87,10 +86,6 @@ import {
         }));
     };
   
-    const handleCreatePermission = (entityUuid: string) => {
-      console.log(entityUuid)
-    };
-  
     const totalPages = Math.ceil(totalCount / itemsPerPage);
   
     return (
@@ -112,16 +107,16 @@ import {
         </form>
 
         <EntityTypeSelector
-            entities={[PermissionEntities.User, PermissionEntities.Repo, PermissionEntities.Unit, PermissionEntities.UnitNode]}
+            entities={[PermissionEntities.User, PermissionEntities.Repo, PermissionEntities.Unit]}
             selectedEntityType={selectedEntityType}
             setSelectedEntityType={setSelectedEntityType}
         />
 
         <IterationList
             items={nodeOutputs}
-            renderType={typeList}
-            handleCreate={handleCreatePermission}
+            renderType={'button'}
             openModalName={null}
+            onFocusNode={onFocusNode}
         />
 
         <PaginationControls

@@ -5,10 +5,11 @@ import './primitives.css'
 
 interface IterationProps<T> {
     items: T[] | null;
-    renderType: 'button' | 'collapse';
+    renderType: string;
     handleDelete?: (uuid: string) => void;
     handleCreate?: (uuid: string) => void;
     openModalName?: string | null;
+    onFocusNode?: (uuid: string) => void;
 }
 
 const IterationList = <T extends { uuid: string }>({
@@ -17,6 +18,7 @@ const IterationList = <T extends { uuid: string }>({
     openModalName,
     handleDelete,
     handleCreate,
+    onFocusNode
 }: IterationProps<T>) => {
 
     const { openModal } = useModalHandlers();
@@ -39,6 +41,11 @@ const IterationList = <T extends { uuid: string }>({
             {handleCreate && (
                 <button className="iteration-node-add-button" onClick={() => handleCreate(uuid)}>
                     add
+                </button>
+            )}
+            {onFocusNode && (
+                <button className="iteration-node-add-button" onClick={() => onFocusNode(uuid)}>
+                    pickme
                 </button>
             )}
         </>
