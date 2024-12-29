@@ -1,23 +1,22 @@
 import {
     PermissionEntities
-  
-  } from '@rootTypes/compositionFunctions';
-  import { useResultHandler } from '@rootTypes/useResultHandler';
-  import { useAsyncHandler } from '@rootTypes/useAsyncHandler';
-  import { useState, useEffect } from 'react';
-  import DefaultInput from '@primitives/defaultInput'
-  import Spinner from '@primitives/spinner';
-  import ResultQuery from '@primitives/resultQuery';
-  import PaginationControls from '@primitives/pagination';
-  import IterationList from '@primitives/iterationList'
-  import EntityTypeSelector from '@primitives/entityTypeSelector';
-  import useFetchEntitiesByFilter from '../utils/useFetchEntitiesByFilter';
-  import '../form.css';
-  
-  import { useNodeStore } from '@stores/baseStore';
+} from '@rootTypes/compositionFunctions';
+import { useResultHandler } from '@rootTypes/useResultHandler';
+import { useAsyncHandler } from '@rootTypes/useAsyncHandler';
+import { useState, useEffect } from 'react';
+import DefaultInput from '@primitives/defaultInput'
+import Spinner from '@primitives/spinner';
+import ResultQuery from '@primitives/resultQuery';
+import PaginationControls from '@primitives/pagination';
+import IterationList from '@primitives/iterationList'
+import EntityTypeSelector from '@primitives/entityTypeSelector';
+import useFetchEntitiesByFilter from '../utils/useFetchEntitiesByFilter';
+import '../form.css';
+import { useNodeStore } from '@stores/baseStore';
+
   
   interface SearchFormProps {
-    onFocusNode?: (uuid: string) => void
+    onFocusNode?: (uuid: string, nodeType: string) => void
   }
   
 
@@ -56,6 +55,7 @@ import {
                         uuid: user.uuid,
                         name: user.login,
                         visibilityLevel: user.role + ' ' + user.status,
+                        __typename: 'UserType'
                     }));
                     count = result.data.getUsers.count
                 } else if ('getUnits' in result.data && selectedEntityType == PermissionEntities.Unit) {
