@@ -14,7 +14,7 @@ import ResultQuery from '@primitives/resultQuery';
 import PaginationControls from '@primitives/pagination';
 import EntityTypeSelector from '@primitives/entityTypeSelector';
 import PermissionCreateForm from '../../forms/permission/permissionCreateFrom';
-import useFetchEntitiesByResourceAgents from './useFetchEntitiesByResourceAgents';
+import useFetchEntitiesByResourceAgents from '../utils/useFetchEntitiesByResourceAgents';
 import IterationList from '@primitives/iterationList'
 import '../form.css';
 

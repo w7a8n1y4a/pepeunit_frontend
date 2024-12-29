@@ -5,10 +5,11 @@ import './primitives.css'
 
 interface IterationProps<T> {
     items: T[] | null;
-    renderType: 'button' | 'collapse';
+    renderType: string;
     handleDelete?: (uuid: string) => void;
     handleCreate?: (uuid: string) => void;
     openModalName?: string | null;
+    onFocusNode?: (uuid: string, nodeType: string) => void;
 }
 
 const IterationList = <T extends { uuid: string }>({
@@ -17,6 +18,7 @@ const IterationList = <T extends { uuid: string }>({
     openModalName,
     handleDelete,
     handleCreate,
+    onFocusNode
 }: IterationProps<T>) => {
 
     const { openModal } = useModalHandlers();
@@ -29,7 +31,7 @@ const IterationList = <T extends { uuid: string }>({
         }));
     };
 
-    const renderActionButtons = (uuid: string) => (
+    const renderActionButtons = (uuid: string, nodeType?: string) => (
         <>
             {handleDelete && (
                 <button className="iteration-node-del-button" onClick={() => handleDelete(uuid)}>
@@ -39,6 +41,11 @@ const IterationList = <T extends { uuid: string }>({
             {handleCreate && (
                 <button className="iteration-node-add-button" onClick={() => handleCreate(uuid)}>
                     add
+                </button>
+            )}
+            {onFocusNode && nodeType && (
+                <button className="iteration-node-add-button" onClick={() => onFocusNode(uuid, nodeType)}>
+                    pickme
                 </button>
             )}
         </>
@@ -66,7 +73,7 @@ const IterationList = <T extends { uuid: string }>({
         <>
             <button className="iteration-header">
                 <h3>{permission.name} {permission.visibilityLevel}</h3>
-                {renderActionButtons(permission.uuid)}
+                { renderActionButtons(permission.uuid, permission.__typename) }
             </button>
         </>
     );
