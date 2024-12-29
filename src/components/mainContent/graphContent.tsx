@@ -1,6 +1,16 @@
 import { NodeType } from '@rootTypes/nodeTypeEnum'
 import { getNodeColor } from '@utils/getNodeColor'
-import { useGetReposLazyQuery, useGetUnitsLazyQuery, useGetUnitNodesLazyQuery, UnitNodeTypeEnum} from '@rootTypes/compositionFunctions'
+import { useResultHandler } from '@rootTypes/useResultHandler';
+import { useAsyncHandler } from '@rootTypes/useAsyncHandler';
+import {
+  useGetReposLazyQuery,
+  useGetUnitsLazyQuery,
+  useGetUnitNodesLazyQuery,
+  useGetUserLazyQuery,
+  useGetRepoLazyQuery,
+  useGetUnitLazyQuery,
+  UnitNodeTypeEnum
+} from '@rootTypes/compositionFunctions'
 import { ForceGraph3D } from 'react-force-graph';
 import SpriteText from 'three-spritetext';
 import { useState, useMemo, useEffect, useRef } from 'react';
@@ -17,6 +27,9 @@ import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPa
 import { Vector2 } from 'three'; 
 
 export default function GraphContent(){
+  const { handleError } = useResultHandler();
+  const { runAsync } = useAsyncHandler(handleError);
+
   const { openModal } = useModalHandlers();
   const { setCurrentNodeData } = useNodeStore();
   const { graphData, setGraphData, removeNodesAndLinks } = useGraphStore();
@@ -31,44 +44,47 @@ export default function GraphContent(){
     };
   }, [graphData]);
 
-  useEffect(() => {
-    getRepos().then(reposData => {
-      if (reposData.data?.getRepos){
-        getUnits().then(unitsData => {
-          if (unitsData.data?.getUnits && reposData.data?.getRepos){
-            setGraphData({
-                nodes: [
-                  ...graphData.nodes,
-                  ...reposData.data.getRepos.repos.map((repo) => ({
-                    id: repo.uuid,
-                    type: NodeType.Repo,
-                    color: getNodeColor(NodeType.Repo),
-                    data: repo
-                  }
-                )),
-                  ...unitsData.data.getUnits.units.map((unit) => ({
-                    id: unit.uuid,
-                    type: NodeType.Unit,
-                    color: getNodeColor(NodeType.Unit),
-                    data: unit
-                  }
-                ))],
-                links: [
-                  ...graphData.links,
-                  ...reposData.data.getRepos.repos.map((repo) => ({source: import.meta.env.VITE_INSTANCE_NAME, target: repo.uuid, value: 1})),
-                  ...unitsData.data.getUnits.units.map((unit) => ({source: unit.repoUuid, target: unit.uuid, value: 1}))
-                ]
-              }
-            )
-          }
-        })
-      }
-    })
-  }, []);
-
   const [getRepos] = useGetReposLazyQuery();
   const [getUnits] = useGetUnitsLazyQuery();
   const [getUnitNodes] = useGetUnitNodesLazyQuery();
+
+  const [getRepo] = useGetRepoLazyQuery();
+  const [getUnit] = useGetUnitLazyQuery();
+  const [getUser] = useGetUserLazyQuery();
+
+  useEffect(() => {
+    runAsync(async () => {
+      let reposData = await getRepos()
+      if (reposData.data?.getRepos){
+        let unitsData = await getUnits()
+        if (unitsData.data?.getUnits && reposData.data?.getRepos){
+          setGraphData({
+            nodes: [
+              ...graphData.nodes,
+              ...reposData.data.getRepos.repos.map((repo) => ({
+                id: repo.uuid,
+                type: NodeType.Repo,
+                color: getNodeColor(NodeType.Repo),
+                data: repo
+              }
+            )),
+              ...unitsData.data.getUnits.units.map((unit) => ({
+                id: unit.uuid,
+                type: NodeType.Unit,
+                color: getNodeColor(NodeType.Unit),
+                data: unit
+              }
+            ))],
+            links: [
+              ...graphData.links,
+              ...reposData.data.getRepos.repos.map((repo) => ({source: import.meta.env.VITE_INSTANCE_NAME, target: repo.uuid, value: 1})),
+              ...unitsData.data.getUnits.units.map((unit) => ({source: unit.repoUuid, target: unit.uuid, value: 1}))
+            ]
+          })
+        }
+      }
+    })
+  }, []);
 
   function handleNodeRightClick(node: any) {
     if (node.type == NodeType.Unit) {
@@ -81,33 +97,30 @@ export default function GraphContent(){
       if (relatedNodes.length > 0) {
         removeNodesAndLinks(relatedNodes)
       } else {
-        getUnitNodes(
-          {
+        runAsync(async () => {
+          let result = await getUnitNodes({
             variables: {
               unitUuid: node.id
             }
-          }
-        )
-        .then((unitNodesData) => {
-          if (unitNodesData.data?.getUnitNodes){
+          })
+          if (result.data?.getUnitNodes){
             setGraphData({
-                nodes: [
-                  ...graphData.nodes,
-                  ...unitNodesData.data.getUnitNodes.unitNodes.map((unitNode) => ({
-                    id: unitNode.uuid,
-                    type: unitNode.type == UnitNodeTypeEnum.Input ? NodeType.Input : NodeType.Output,
-                    color: getNodeColor(unitNode.type == UnitNodeTypeEnum.Input ? NodeType.Input : NodeType.Output),
-                    data: {...unitNode, name: unitNode.topicName}
-                  }
-                ))],
-                links: [
-                  ...graphData.links,
-                  ...unitNodesData.data.getUnitNodes.unitNodes.map((unitNode) => ({source: unitNode.unitUuid, target: unitNode.uuid, value: 1})),
-                ]
-              }
-            )
+              nodes: [
+                ...graphData.nodes,
+                ...result.data.getUnitNodes.unitNodes.map((unitNode) => ({
+                  id: unitNode.uuid,
+                  type: unitNode.type == UnitNodeTypeEnum.Input ? NodeType.Input : NodeType.Output,
+                  color: getNodeColor(unitNode.type == UnitNodeTypeEnum.Input ? NodeType.Input : NodeType.Output),
+                  data: {...unitNode, name: unitNode.topicName}
+                }
+              ))],
+              links: [
+                ...graphData.links,
+                ...result.data.getUnitNodes.unitNodes.map((unitNode) => ({source: unitNode.unitUuid, target: unitNode.uuid, value: 1})),
+              ]
+            })
           }
-        });
+        })
       }
     }
   }
@@ -134,11 +147,164 @@ export default function GraphContent(){
     }
   }, []);
 
-  function focusNode(uuid: string) {
+  function focusNode(uuid: string, nodeType: string) {
+    console.log(nodeType)
+
+    if (nodeType == 'UserType') {
+      runAsync(async () => {
+        let user = await getUser({
+          variables: {
+            uuid: uuid
+          }
+        })
+        if (user.data?.getUser){
+          let reposData = await getRepos({
+            variables: {
+              creatorUuid: uuid
+            }
+          })
+          if (reposData.data?.getRepos){
+            let userResult = user.data.getUser
+            setGraphData({
+              nodes: [
+                {
+                  id: userResult.uuid,
+                  type: NodeType.User,
+                  color: getNodeColor(NodeType.User),
+                  data: userResult
+                },
+                {
+                  id: import.meta.env.VITE_INSTANCE_NAME,
+                  type: NodeType.Domain,
+                  color: getNodeColor(NodeType.Domain),
+                  data: {
+                    name: import.meta.env.VITE_INSTANCE_NAME
+                  }
+                },
+                ...reposData.data.getRepos.repos.map((repo) => ({
+                  id: repo.uuid,
+                  type: NodeType.Repo,
+                  color: getNodeColor(NodeType.Repo),
+                  data: repo
+                }))
+              ],
+              links: [
+                {source: import.meta.env.VITE_INSTANCE_NAME, target: userResult.uuid},
+                ...reposData.data.getRepos.repos.map((repo) => ({source: userResult.uuid, target: repo.uuid})),
+              ]
+            })
+          }
+        }
+      })
+    }
+
+    if (nodeType == 'RepoType') {
+      runAsync(async () => {
+        let repo = await getRepo({
+          variables: {
+            uuid: uuid
+          }
+        })
+        if (repo.data?.getRepo){
+          let unitsData = await getUnits({
+            variables: {
+              repoUuid: uuid
+            }
+          })
+          if (unitsData.data?.getUnits){
+            let repoResult = repo.data.getRepo
+            setGraphData({
+              nodes: [
+                {
+                  id: repoResult.uuid,
+                  type: NodeType.Repo,
+                  color: getNodeColor(NodeType.Repo),
+                  data: repoResult
+                },
+                {
+                  id: import.meta.env.VITE_INSTANCE_NAME,
+                  type: NodeType.Domain,
+                  color: getNodeColor(NodeType.Domain),
+                  data: {
+                    name: import.meta.env.VITE_INSTANCE_NAME
+                  }
+                },
+                ...unitsData.data.getUnits.units.map((unit) => ({
+                  id: unit.uuid,
+                  type: NodeType.Unit,
+                  color: getNodeColor(NodeType.Unit),
+                  data: unit
+                }))
+              ],
+              links: [
+                {source: import.meta.env.VITE_INSTANCE_NAME, target: repoResult.uuid},
+                ...unitsData.data.getUnits.units.map((unit) => ({source: repoResult.uuid, target: unit.uuid, value: 1}))
+              ]
+            })
+          }
+        }
+      })
+    }
+
+    if (nodeType == 'UnitType') {
+      runAsync(async () => {
+        let unit = await getUnit({
+          variables: {
+            uuid: uuid
+          }
+        })
+        
+        if (unit.data?.getUnit){
+          let unitResult = unit.data.getUnit
+          let repo = await getRepo({
+            variables: {
+              uuid: unitResult.repoUuid
+            }
+          })
+          if (repo.data?.getRepo){
+            let repoResult = repo.data.getRepo
+
+            let unitNodesData = await getUnitNodes({
+              variables: {
+                unitUuid: uuid
+              }
+            })
+            if (unitNodesData.data?.getUnitNodes){
+              setGraphData({
+                nodes: [
+                  {
+                    id: unitResult.uuid,
+                    type: NodeType.Unit,
+                    color: getNodeColor(NodeType.Unit),
+                    data: unitResult
+                  },
+                  {
+                    id: repoResult.uuid,
+                    type: NodeType.Repo,
+                    color: getNodeColor(NodeType.Repo),
+                    data: repoResult
+                  },
+                  ...unitNodesData.data.getUnitNodes.unitNodes.map((unitNode) => ({
+                    id: unitNode.uuid,
+                    type: unitNode.type == UnitNodeTypeEnum.Input ? NodeType.Input : NodeType.Output,
+                    color: getNodeColor(unitNode.type == UnitNodeTypeEnum.Input ? NodeType.Input : NodeType.Output),
+                    data: {...unitNode, name: unitNode.topicName}
+                  }))
+                ],
+                links: [
+                  {source: repoResult.uuid, target: unitResult.uuid},
+                  ...unitNodesData.data.getUnitNodes.unitNodes.map((unitNode) => ({source: unitNode.unitUuid, target: unitNode.uuid, value: 1})),
+                ]
+              })
+            }
+          }
+        }
+      })
+    }
+
+    
     const node: any = processedData.nodes.find((n: any) => n.id === uuid);
-    if (!node || !fgRef.current) return;
-  
-    const distance = 400; // Расстояние до ноды
+    const distance = 200;
     const distRatio = 1 + distance / Math.hypot(node.x, node.y, node.z);
   
     fgRef.current.cameraPosition(
@@ -146,7 +312,6 @@ export default function GraphContent(){
       node,
       1500
     );
-    console.log(uuid)
   }
 
   return (
@@ -159,7 +324,7 @@ export default function GraphContent(){
         graphData={processedData}
         enableNodeDrag={false}
         nodeThreeObject={(node: any) => {
-          const sprite = new SpriteText(node.data.name) as any;
+          const sprite = new SpriteText(node.data.name ? node.data.name : node.data.login ) as any;
           sprite.color = "#fff";
           sprite.textHeight = 4;
           sprite.position.y = 10;

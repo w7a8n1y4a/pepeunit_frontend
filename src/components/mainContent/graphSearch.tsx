@@ -5,7 +5,7 @@ import { useModalStore } from '@stores/baseStore';
 
 
 interface GraphSearchProps {
-  onFocusNode?: (uuid: string) => void
+  onFocusNode?: (uuid: string, nodeType: string) => void
 }
 
 export default function GraphSearch({ onFocusNode }: GraphSearchProps){
