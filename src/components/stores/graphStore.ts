@@ -1,6 +1,5 @@
 import { create } from 'zustand';
 import { NodeType } from '@rootTypes/nodeTypeEnum'
-import { getNodeColor } from '@utils/getNodeColor'
 
 type NodeTypeStorage = {
   id: string | number;
@@ -12,6 +11,7 @@ type NodeTypeStorage = {
 type LinkTypeStorage = {
   source: NodeTypeStorage | string;
   target: NodeTypeStorage | string;
+  value?: number;
 };
 
 type GraphDataType = {
@@ -27,16 +27,7 @@ type GraphStoreType = {
 
 export const useGraphStore = create<GraphStoreType>((set, get) => ({
   graphData: {
-    nodes: [
-      {
-        id: import.meta.env.VITE_INSTANCE_NAME,
-        type: NodeType.Domain,
-        color: getNodeColor(NodeType.Domain),
-        data: {
-          name: import.meta.env.VITE_INSTANCE_NAME
-        }
-      }
-    ],
+    nodes: [],
     links: [],
   },
   setGraphData: (data: GraphDataType) => set(() => ({ graphData: data })),
