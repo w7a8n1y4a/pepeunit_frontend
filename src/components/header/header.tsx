@@ -9,9 +9,10 @@ import ChangeLoginForm from '../forms/user/changeLoginForm';
 import ChangePassForm from '../forms/user/changePassForm';
 import RightMenu from '../rightMenu/rightMenu';
 import './header.css'
+import back_img from '/images/back.svg'
 import { useState, useCallback, useReducer, useEffect } from 'react';
 
-import { useModalStore } from '@stores/baseStore';
+import { useModalStore, useSearchNodeStore, useReloadBaseGraphDataStore, useNodeStore } from '@stores/baseStore';
 import useModalHandlers from '@handlers/useModalHandlers';
 import { useUserStore } from '@stores/userStore';
 
@@ -19,6 +20,9 @@ export default function Header(){
     const { activeModal } = useModalStore();
     const { openModal, closeModal } = useModalHandlers();
 
+    const { setCurrentNodeData } = useNodeStore();
+    const { currentSearchNodeData } = useSearchNodeStore();
+    const { reloadState, setReloadState } = useReloadBaseGraphDataStore();
     const { user, clearUser } = useUserStore();
 
     const [, forceUpdate] = useReducer(x => x + 1, 0);
@@ -54,6 +58,22 @@ export default function Header(){
                 </svg>
                 Search
             </button>
+
+            {
+                currentSearchNodeData && (
+                    <div >
+                        <button className="search-button" onClick={() => {setReloadState(!reloadState)}}>
+                            <img src={back_img} width="20" height="20" alt="Back"/>
+                        </button>
+                        <button className="search-button" onClick={() => {
+                                setCurrentNodeData(currentSearchNodeData)
+                                openModal(currentSearchNodeData.__typename.toLowerCase().slice(0,-4) + 'Menu')
+                            }}>
+                            {currentSearchNodeData.name || currentSearchNodeData.login}
+                        </button>
+                    </div>
+                )
+            }
 
             <div className='user_controls'>
                 {login ? (

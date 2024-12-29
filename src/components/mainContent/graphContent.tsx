@@ -21,7 +21,7 @@ import UnitNodeContent from './unitNodeContent';
 import GraphSearch from './graphSearch'
 
 import { useGraphStore } from '@stores/graphStore';
-import { useNodeStore } from '@stores/baseStore';
+import { useNodeStore, useSearchNodeStore, useReloadBaseGraphDataStore, useModalStore } from '@stores/baseStore';
 import useModalHandlers from '@handlers/useModalHandlers';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import { Vector2 } from 'three'; 
@@ -31,8 +31,11 @@ export default function GraphContent(){
   const { runAsync } = useAsyncHandler(handleError);
 
   const { openModal } = useModalHandlers();
+  const { setActiveModal } = useModalStore();
   const { setCurrentNodeData } = useNodeStore();
+  const { setCurrentSearchNodeData } = useSearchNodeStore();
   const { graphData, setGraphData, removeNodesAndLinks } = useGraphStore();
+  const { reloadState } = useReloadBaseGraphDataStore();
 
   const [displayWidth, setDisplayWidth] = useState(window.innerWidth);
   const [displayHeight, setDisplayHeight] = useState(window.innerHeight);
@@ -60,7 +63,15 @@ export default function GraphContent(){
         if (unitsData.data?.getUnits && reposData.data?.getRepos){
           setGraphData({
             nodes: [
-              ...graphData.nodes,
+              {
+                id: import.meta.env.VITE_INSTANCE_NAME,
+                type: NodeType.Domain,
+                color: getNodeColor(NodeType.Domain),
+                data: {
+                  name: import.meta.env.VITE_INSTANCE_NAME,
+                  __typename: 'DomainType'
+                }
+              },
               ...reposData.data.getRepos.repos.map((repo) => ({
                 id: repo.uuid,
                 type: NodeType.Repo,
@@ -76,15 +87,15 @@ export default function GraphContent(){
               }
             ))],
             links: [
-              ...graphData.links,
               ...reposData.data.getRepos.repos.map((repo) => ({source: import.meta.env.VITE_INSTANCE_NAME, target: repo.uuid, value: 1})),
               ...unitsData.data.getUnits.units.map((unit) => ({source: unit.repoUuid, target: unit.uuid, value: 1}))
             ]
           })
         }
       }
+      setCurrentSearchNodeData(null)
     })
-  }, []);
+  }, [reloadState]);
 
   function handleNodeRightClick(node: any) {
     if (node.type == NodeType.Unit) {
@@ -164,21 +175,23 @@ export default function GraphContent(){
             }
           })
           if (reposData.data?.getRepos){
-            let userResult = user.data.getUser
+            let searchTarget = user.data.getUser
+            setCurrentSearchNodeData(searchTarget)
             setGraphData({
               nodes: [
                 {
-                  id: userResult.uuid,
+                  id: searchTarget.uuid,
                   type: NodeType.User,
                   color: getNodeColor(NodeType.User),
-                  data: userResult
+                  data: searchTarget
                 },
                 {
                   id: import.meta.env.VITE_INSTANCE_NAME,
                   type: NodeType.Domain,
                   color: getNodeColor(NodeType.Domain),
                   data: {
-                    name: import.meta.env.VITE_INSTANCE_NAME
+                    name: import.meta.env.VITE_INSTANCE_NAME,
+                    __typename: 'DomainType'
                   }
                 },
                 ...reposData.data.getRepos.repos.map((repo) => ({
@@ -189,8 +202,8 @@ export default function GraphContent(){
                 }))
               ],
               links: [
-                {source: import.meta.env.VITE_INSTANCE_NAME, target: userResult.uuid},
-                ...reposData.data.getRepos.repos.map((repo) => ({source: userResult.uuid, target: repo.uuid})),
+                {source: import.meta.env.VITE_INSTANCE_NAME, target: searchTarget.uuid, value: 1},
+                ...reposData.data.getRepos.repos.map((repo) => ({source: searchTarget.uuid, target: repo.uuid, value: 1})),
               ]
             })
           }
@@ -212,21 +225,23 @@ export default function GraphContent(){
             }
           })
           if (unitsData.data?.getUnits){
-            let repoResult = repo.data.getRepo
+            let searchTarget = repo.data.getRepo
+            setCurrentSearchNodeData(searchTarget)
             setGraphData({
               nodes: [
                 {
-                  id: repoResult.uuid,
+                  id: searchTarget.uuid,
                   type: NodeType.Repo,
                   color: getNodeColor(NodeType.Repo),
-                  data: repoResult
+                  data: searchTarget
                 },
                 {
                   id: import.meta.env.VITE_INSTANCE_NAME,
                   type: NodeType.Domain,
                   color: getNodeColor(NodeType.Domain),
                   data: {
-                    name: import.meta.env.VITE_INSTANCE_NAME
+                    name: import.meta.env.VITE_INSTANCE_NAME,
+                    __typename: 'DomainType'
                   }
                 },
                 ...unitsData.data.getUnits.units.map((unit) => ({
@@ -237,8 +252,8 @@ export default function GraphContent(){
                 }))
               ],
               links: [
-                {source: import.meta.env.VITE_INSTANCE_NAME, target: repoResult.uuid},
-                ...unitsData.data.getUnits.units.map((unit) => ({source: repoResult.uuid, target: unit.uuid, value: 1}))
+                {source: import.meta.env.VITE_INSTANCE_NAME, target: searchTarget.uuid, value: 1},
+                ...unitsData.data.getUnits.units.map((unit) => ({source: unit.repoUuid, target: unit.uuid, value: 1}))
               ]
             })
           }
@@ -255,10 +270,11 @@ export default function GraphContent(){
         })
         
         if (unit.data?.getUnit){
-          let unitResult = unit.data.getUnit
+          let searchTarget = unit.data.getUnit
+          setCurrentSearchNodeData(searchTarget)
           let repo = await getRepo({
             variables: {
-              uuid: unitResult.repoUuid
+              uuid: searchTarget.repoUuid
             }
           })
           if (repo.data?.getRepo){
@@ -273,16 +289,25 @@ export default function GraphContent(){
               setGraphData({
                 nodes: [
                   {
-                    id: unitResult.uuid,
+                    id: searchTarget.uuid,
                     type: NodeType.Unit,
                     color: getNodeColor(NodeType.Unit),
-                    data: unitResult
+                    data: searchTarget
                   },
                   {
                     id: repoResult.uuid,
                     type: NodeType.Repo,
                     color: getNodeColor(NodeType.Repo),
                     data: repoResult
+                  },
+                  {
+                    id: import.meta.env.VITE_INSTANCE_NAME,
+                    type: NodeType.Domain,
+                    color: getNodeColor(NodeType.Domain),
+                    data: {
+                      name: import.meta.env.VITE_INSTANCE_NAME,
+                      __typename: 'DomainType'
+                    }
                   },
                   ...unitNodesData.data.getUnitNodes.unitNodes.map((unitNode) => ({
                     id: unitNode.uuid,
@@ -292,7 +317,8 @@ export default function GraphContent(){
                   }))
                 ],
                 links: [
-                  {source: repoResult.uuid, target: unitResult.uuid},
+                  {source: import.meta.env.VITE_INSTANCE_NAME, target: repoResult.uuid, value: 1},
+                  {source: repoResult.uuid, target: searchTarget.uuid, value: 1},
                   ...unitNodesData.data.getUnitNodes.unitNodes.map((unitNode) => ({source: unitNode.unitUuid, target: unitNode.uuid, value: 1})),
                 ]
               })
@@ -301,17 +327,7 @@ export default function GraphContent(){
         }
       })
     }
-
-    
-    const node: any = processedData.nodes.find((n: any) => n.id === uuid);
-    const distance = 200;
-    const distRatio = 1 + distance / Math.hypot(node.x, node.y, node.z);
-  
-    fgRef.current.cameraPosition(
-      { x: node.x * distRatio, y: node.y * distRatio, z: node.z * distRatio },
-      node,
-      1500
-    );
+    setActiveModal(null)
   }
 
   return (
@@ -336,7 +352,7 @@ export default function GraphContent(){
         onNodeRightClick={(node) => handleNodeRightClick(node)}
         nodeResolution={15}
         linkDirectionalParticles="value"
-        linkDirectionalParticleSpeed={d => d.value * 0.001}
+        linkDirectionalParticleSpeed={d => (d.value === undefined ? 1 : d.value) * 0.001}
         linkDirectionalParticleWidth={1}
         cooldownTicks={100}
         onEngineStop={() => fgRef.current.zoomToFit(500)}
