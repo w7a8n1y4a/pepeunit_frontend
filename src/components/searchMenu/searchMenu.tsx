@@ -1,9 +1,8 @@
 import back_img from '/images/back.svg'
 import './searchMenu.css'
-
+import ButtonModifiers from './buttonModifiers'
 import { useSearchNodeStore, useReloadBaseGraphDataStore, useNodeStore } from '@stores/baseStore';
 import useModalHandlers from '@handlers/useModalHandlers';
-
 
 
 export default function SearchMenu() {
@@ -12,6 +11,7 @@ export default function SearchMenu() {
     const { setCurrentNodeData } = useNodeStore();
     const { currentSearchNodeData } = useSearchNodeStore();
     const { reloadState, setReloadState } = useReloadBaseGraphDataStore();
+    const initialActiveIds = [1,2,3,4,5];
 
     return (
         <>
@@ -36,6 +36,7 @@ export default function SearchMenu() {
                             }}>
                             {currentSearchNodeData.name || currentSearchNodeData.login}
                         </button>
+                        <ButtonModifiers initialActiveIds={initialActiveIds} />
                     </div>
                 )
             }

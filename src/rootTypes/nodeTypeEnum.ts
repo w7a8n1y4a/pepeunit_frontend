@@ -3,6 +3,7 @@ export enum NodeType {
     User = "user",
     Repo = "repo",
     Unit = "unit",
+    UnitNode = 'unitNode',
     Input = "input",
     Output = "output",
 }
