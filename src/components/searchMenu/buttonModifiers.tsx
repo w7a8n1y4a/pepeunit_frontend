@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import useButtonStore from '@stores/modifiersStore';
+import useButtonStore, {useButtonHandlers} from '@stores/modifiersStore';
 import {getNodeColor} from '@utils/getNodeColor'
 import './searchMenu.css'
 
@@ -8,7 +8,8 @@ interface ButtonModifiersProps {
 }
 
 const ButtonModifiers = ({ initialActiveIds }: ButtonModifiersProps) => {
-  const { buttons, initialize, toggleButton } = useButtonStore();
+  const { buttons, initialize } = useButtonStore();
+  const { toggleButton } = useButtonHandlers();
 
   useEffect(() => {
     initialize(initialActiveIds);
@@ -21,7 +22,7 @@ const ButtonModifiers = ({ initialActiveIds }: ButtonModifiersProps) => {
           <button
             className="search-button"
             key={button.id}
-            onClick={() => toggleButton(button.id)}
+            onClick={() =>  toggleButton(button.id)}
             style={{
               border: '2px solid ' + (button.isActive ? getNodeColor(button.nodeType) : '#282828')
             }}
