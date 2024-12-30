@@ -4,22 +4,29 @@ import { useSearchNodeStore } from '@stores/baseStore';
 import {getNodeColor} from '@utils/getNodeColor'
 import './searchMenu.css'
 
-interface ButtonModifiersProps {
-    initialActiveIds: number[];
-}
 
-const ButtonModifiers = ({ initialActiveIds }: ButtonModifiersProps) => {
+const ButtonModifiers = () => {
   const { buttons, initialize } = useButtonStore();
   const { toggleButton } = useButtonHandlers();
 
   const { currentSearchNodeData } = useSearchNodeStore();
 
+  const predefinedLists: { [key: string]: number[] } = {
+      'UserType': [1, 2, 3],
+      'RepoType': [2, 3, 4],
+      'UnitType': [3, 4, 5],
+    };
+    
+  function transformStringToList(input: string): number[] {
+      return predefinedLists[input];
+  }
+
   useEffect(() => {
-    initialize(initialActiveIds);
-  }, [initialize, initialActiveIds]);
+    initialize(transformStringToList(currentSearchNodeData.__typename));
+  }, [initialize, currentSearchNodeData]);
 
   return (
-    <div style={{ display: 'flex', gap: '8px' }}>
+    <div style={{ display: 'flex' }}>
       {buttons.map((button) =>
         button.isVisible ? (
           <button
