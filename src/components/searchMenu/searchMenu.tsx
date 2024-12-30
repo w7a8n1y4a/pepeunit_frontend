@@ -1,17 +1,25 @@
 import back_img from '/images/back.svg'
 import './searchMenu.css'
 import ButtonModifiers from './buttonModifiers'
-import { useSearchNodeStore, useReloadBaseGraphDataStore, useNodeStore } from '@stores/baseStore';
+import { useSearchNodeStore, useReloadBaseGraphDataStore } from '@stores/baseStore';
 import useModalHandlers from '@handlers/useModalHandlers';
 
 
 export default function SearchMenu() {
     const { openModal } = useModalHandlers();
 
-    const { setCurrentNodeData } = useNodeStore();
     const { currentSearchNodeData } = useSearchNodeStore();
     const { reloadState, setReloadState } = useReloadBaseGraphDataStore();
-    const initialActiveIds = [1,2,3,4,5];
+
+    const predefinedLists: { [key: string]: number[] } = {
+        'UserType': [1, 2, 3],
+        'RepoType': [2, 3, 4],
+        'UnitType': [3, 4, 5],
+      };
+      
+      function transformStringToList(input: string): number[] {
+        return predefinedLists[input];
+      }
 
     return (
         <>
@@ -30,13 +38,7 @@ export default function SearchMenu() {
                         <button className="search-button" onClick={() => {setReloadState(!reloadState)}}>
                             <img src={back_img} width="20" height="20" alt="Back"/>
                         </button>
-                        <button className="search-button" onClick={() => {
-                                setCurrentNodeData(currentSearchNodeData)
-                                openModal(currentSearchNodeData.__typename.toLowerCase().slice(0,-4) + 'Menu')
-                            }}>
-                            {currentSearchNodeData.name || currentSearchNodeData.login}
-                        </button>
-                        <ButtonModifiers initialActiveIds={initialActiveIds} />
+                        <ButtonModifiers initialActiveIds={transformStringToList(currentSearchNodeData.__typename)} />
                     </div>
                 )
             }

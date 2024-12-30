@@ -1,6 +1,7 @@
-import {create} from 'zustand';
-import { NodeType } from '@rootTypes/nodeTypeEnum'
-
+import { create } from 'zustand';
+import { NodeType } from '@rootTypes/nodeTypeEnum';
+import { useSearchNodeStore, useNodeStore } from '@stores/baseStore';
+import useModalHandlers from '@handlers/useModalHandlers';
 
 interface Button {
     id: number;
@@ -12,7 +13,7 @@ interface Button {
 interface ButtonStore {
     buttons: Button[];
     initialize: (initialActiveIds: number[]) => void;
-    toggleButton: (id: number) => void;
+    toggleButtonState: (id: number) => void;
 }
 
 const useButtonStore = create<ButtonStore>((set) => ({
@@ -26,32 +27,55 @@ const useButtonStore = create<ButtonStore>((set) => ({
 
     initialize: (initialActiveIds) => set((state) => {
         const buttons = state.buttons.map((button) => {
-        const isActive = initialActiveIds.includes(button.id);
-        const isVisible = isActive || initialActiveIds.some((id) => Math.abs(id - button.id) === 1);
-        return { ...button, isActive, isVisible };
+            const isActive = initialActiveIds.includes(button.id);
+            const isVisible = isActive || initialActiveIds.some((id) => Math.abs(id - button.id) === 1);
+            return { ...button, isActive, isVisible };
         });
         return { buttons };
     }),
 
-    toggleButton: (id) => set((state) => {
+    toggleButtonState: (id) => set((state) => {
         const buttons = state.buttons.map((button) => {
-        if (button.id === id) {
-            const isActive = !button.isActive;
-            return { ...button, isActive };
-        }
-        return button;
+            if (button.id === id) {
+                const isActive = !button.isActive;
+                return { ...button, isActive };
+            }
+            return button;
         });
 
         const updatedButtons = buttons.map((button) => {
-        const isNeighbor = buttons.some(
-            (b) => b.isActive && Math.abs(b.id - button.id) === 1
-        );
-        const isVisible = button.isActive || isNeighbor;
-        return { ...button, isVisible };
+            const isNeighbor = buttons.some(
+                (b) => b.isActive && Math.abs(b.id - button.id) === 1
+            );
+            const isVisible = button.isActive || isNeighbor;
+            return { ...button, isVisible };
         });
 
         return { buttons: updatedButtons };
     }),
 }));
+
+export const useButtonHandlers = () => {
+    const { toggleButtonState } = useButtonStore();
+    const { openModal } = useModalHandlers();
+    const { setCurrentNodeData } = useNodeStore();
+    const { currentSearchNodeData } = useSearchNodeStore();
+
+    const toggleButton = (id: number) => {
+        const button = useButtonStore.getState().buttons.find((btn) => btn.id === id);
+        if (!button) return;
+
+        console.log(button.nodeType, currentSearchNodeData.__typename.toLowerCase().slice(0, -4))
+
+        if (button.nodeType === currentSearchNodeData.__typename.toLowerCase().slice(0, -4)) {
+            setCurrentNodeData(currentSearchNodeData);
+            openModal(currentSearchNodeData.__typename.toLowerCase().slice(0, -4) + 'Menu');
+        }
+
+        toggleButtonState(id);
+    };
+
+    return { toggleButton };
+};
 
 export default useButtonStore;
