@@ -11,16 +11,6 @@ export default function SearchMenu() {
     const { currentSearchNodeData } = useSearchNodeStore();
     const { reloadState, setReloadState } = useReloadBaseGraphDataStore();
 
-    const predefinedLists: { [key: string]: number[] } = {
-        'UserType': [1, 2, 3],
-        'RepoType': [2, 3, 4],
-        'UnitType': [3, 4, 5],
-      };
-      
-      function transformStringToList(input: string): number[] {
-        return predefinedLists[input];
-      }
-
     return (
         <>
             <div className="search-div">
@@ -38,7 +28,7 @@ export default function SearchMenu() {
                         <button className="search-button" onClick={() => {setReloadState(!reloadState)}}>
                             <img src={back_img} width="20" height="20" alt="Back"/>
                         </button>
-                        <ButtonModifiers initialActiveIds={transformStringToList(currentSearchNodeData.__typename)} />
+                        <ButtonModifiers/>
                     </div>
                 )
             }
