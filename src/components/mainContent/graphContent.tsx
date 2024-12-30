@@ -219,30 +219,33 @@ export default function GraphContent(){
           }
         })
         if (repo.data?.getRepo){
+          let user = await getUser({
+            variables: {
+              uuid: repo.data?.getRepo.creatorUuid
+            }
+          })
           let unitsData = await getUnits({
             variables: {
               repoUuid: uuid
             }
           })
-          if (unitsData.data?.getUnits){
+          if (unitsData.data?.getUnits && user.data?.getUser){
             let searchTarget = repo.data.getRepo
+            let userData = user.data.getUser
             setCurrentSearchNodeData(searchTarget)
             setGraphData({
               nodes: [
+                {
+                  id: userData.uuid,
+                  type: NodeType.User,
+                  color: getNodeColor(NodeType.User),
+                  data: userData
+                },
                 {
                   id: searchTarget.uuid,
                   type: NodeType.Repo,
                   color: getNodeColor(NodeType.Repo),
                   data: searchTarget
-                },
-                {
-                  id: import.meta.env.VITE_INSTANCE_NAME,
-                  type: NodeType.Domain,
-                  color: getNodeColor(NodeType.Domain),
-                  data: {
-                    name: import.meta.env.VITE_INSTANCE_NAME,
-                    __typename: 'DomainType'
-                  }
                 },
                 ...unitsData.data.getUnits.units.map((unit) => ({
                   id: unit.uuid,
@@ -252,7 +255,7 @@ export default function GraphContent(){
                 }))
               ],
               links: [
-                {source: import.meta.env.VITE_INSTANCE_NAME, target: searchTarget.uuid, value: 1},
+                {source: userData.uuid, target: searchTarget.uuid, value: 1},
                 ...unitsData.data.getUnits.units.map((unit) => ({source: unit.repoUuid, target: unit.uuid, value: 1}))
               ]
             })
@@ -300,15 +303,6 @@ export default function GraphContent(){
                     color: getNodeColor(NodeType.Repo),
                     data: repoResult
                   },
-                  {
-                    id: import.meta.env.VITE_INSTANCE_NAME,
-                    type: NodeType.Domain,
-                    color: getNodeColor(NodeType.Domain),
-                    data: {
-                      name: import.meta.env.VITE_INSTANCE_NAME,
-                      __typename: 'DomainType'
-                    }
-                  },
                   ...unitNodesData.data.getUnitNodes.unitNodes.map((unitNode) => ({
                     id: unitNode.uuid,
                     type: unitNode.type == UnitNodeTypeEnum.Input ? NodeType.Input : NodeType.Output,
@@ -317,7 +311,6 @@ export default function GraphContent(){
                   }))
                 ],
                 links: [
-                  {source: import.meta.env.VITE_INSTANCE_NAME, target: repoResult.uuid, value: 1},
                   {source: repoResult.uuid, target: searchTarget.uuid, value: 1},
                   ...unitNodesData.data.getUnitNodes.unitNodes.map((unitNode) => ({source: unitNode.unitUuid, target: unitNode.uuid, value: 1})),
                 ]
