@@ -7,7 +7,6 @@ import {
     useGetUnitsWithUnitNodesLazyQuery,
     useGetUserLazyQuery,
     useGetRepoLazyQuery,
-    useGetUnitLazyQuery,
     UnitNodeTypeEnum
 } from '@rootTypes/compositionFunctions'
 import { useSearchNodeStore, useNodeStore } from '@stores/baseStore';
@@ -82,12 +81,36 @@ export const useButtonHandlers = () => {
     const [getUnitWithNodes] = useGetUnitsWithUnitNodesLazyQuery();
 
     const [getRepo] = useGetRepoLazyQuery();
-    const [getUnit] = useGetUnitLazyQuery();
     const [getUser] = useGetUserLazyQuery();
+
+    function isButtonConditionMet(id: number) {
+        const buttons = useButtonStore.getState().buttons;
+    
+        const targetIndex = buttons.findIndex((button) => button.id === id);
+        if (targetIndex === -1) return false;
+    
+        const targetButton = buttons[targetIndex];
+        const prevButton = buttons[targetIndex - 1];
+        const nextButton = buttons[targetIndex + 1];
+    
+        if (!targetButton.isActive) return false;
+    
+        if (!prevButton || !nextButton) return false;
+    
+        const prevIsActive = prevButton.isActive;
+        const nextIsActive = nextButton.isActive;
+    
+        if (prevIsActive && nextIsActive) return true;
+    
+        return false;
+    }
+    
 
     const toggleButton = (id: number) => {
         const button = useButtonStore.getState().buttons.find((btn) => btn.id === id);
         if (!button) return;
+
+        if (isButtonConditionMet(id)) return;
 
         console.log(button.nodeType, currentSearchNodeData.__typename.toLowerCase().slice(0, -4))
 
