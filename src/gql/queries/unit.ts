@@ -37,6 +37,7 @@ gql`
         $uuids: [UUID!]
         $creatorUuid: UUID
         $repoUuid: UUID
+        $reposUuids: [UUID!]
         $searchString: String
         $isAutoUpdateFromRepoUnit: Boolean
         $visibilityLevel: [VisibilityLevel!]
@@ -51,6 +52,7 @@ gql`
                 uuids: $uuids
                 creatorUuid: $creatorUuid
                 repoUuid: $repoUuid
+                reposUuids: $reposUuids
                 searchString: $searchString
                 isAutoUpdateFromRepoUnit: $isAutoUpdateFromRepoUnit
                 visibilityLevel: $visibilityLevel
@@ -91,8 +93,10 @@ gql`
         }
     }
     query getUnitsWithUnitNodes(
+        $uuids: [UUID!]
         $creatorUuid: UUID
         $repoUuid: UUID
+        $reposUuids: [UUID!]
         $searchString: String
         $isAutoUpdateFromRepoUnit: Boolean
         $visibilityLevel: [VisibilityLevel!]
@@ -105,8 +109,10 @@ gql`
     ) {
         getUnits(
             filters: {
+                uuids: $uuids
                 creatorUuid: $creatorUuid
                 repoUuid: $repoUuid
+                reposUuids: $reposUuids
                 searchString: $searchString
                 isAutoUpdateFromRepoUnit: $isAutoUpdateFromRepoUnit
                 visibilityLevel: $visibilityLevel
