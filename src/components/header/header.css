@@ -18,8 +18,17 @@
     margin-right: 20px;
   }
 
+  .search-div {
+    margin-left: 17px;
+  }
+
+  .search-mod-menu {
+    display: flex;
+    flex-direction: row;
+  }
+
   .search-button {
-    margin-left: 20px;
+    margin-left: 3px;
     display: flex;
     align-items: center;
     justify-content: center;
