@@ -110,15 +110,13 @@ export const useButtonHandlers = () => {
         const button = useButtonStore.getState().buttons.find((btn) => btn.id === id);
         if (!button) return;
 
-        if (isButtonConditionMet(id)) return;
-
-        console.log(button.nodeType, currentSearchNodeData.__typename.toLowerCase().slice(0, -4))
-
         if (button.nodeType === currentSearchNodeData.__typename.toLowerCase().slice(0, -4)) {
             setCurrentNodeData(currentSearchNodeData);
             openModal(currentSearchNodeData.__typename.toLowerCase().slice(0, -4) + 'Menu');
             return;
         }
+
+        if (isButtonConditionMet(id)) return;
 
         if (button.isVisible && button.isActive){
             let targetTypes: NodeType[] = button.nodeType === NodeType.UnitNode ? [NodeType.Input, NodeType.Output] : [button.nodeType]
