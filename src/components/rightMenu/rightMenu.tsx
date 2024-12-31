@@ -1,4 +1,4 @@
-import add_repo_icon from '/images/add_repo_icon.svg'
+import micro from '/images/micro.svg'
 import BaseModal from '../modal/baseModal'
 import CreateRepoForm from '../forms/repo/createRepoForm'
 import './rightMenu.css'
@@ -13,7 +13,7 @@ export default function RightMenu() {
     return (
         <div className='right_menu_base'>
             <button className="signin_button" onClick={() => openModal('createRepo')}>
-                <img src={add_repo_icon} width="32" height="32" alt="AddRepoImg" />
+                <img src={micro} width="32" height="32" alt="AddRepoImg" />
             </button>
             <BaseModal modalName='Создание Repo' open={activeModal === 'createRepo'}>
                 <CreateRepoForm/>
