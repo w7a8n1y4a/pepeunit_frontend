@@ -22,7 +22,9 @@ type GraphDataType = {
 type GraphStoreType = {
   graphData: GraphDataType;
   setGraphData: (data: GraphDataType) => void;
+  removeNodesByTypes: (types: NodeType[]) => void;
   removeNodesAndLinks: (uuids: string | string[]) => void;
+  getNodesByType: (type: NodeType) => NodeTypeStorage[];
 };
 
 export const useGraphStore = create<GraphStoreType>((set, get) => ({
@@ -31,6 +33,28 @@ export const useGraphStore = create<GraphStoreType>((set, get) => ({
     links: [],
   },
   setGraphData: (data: GraphDataType) => set(() => ({ graphData: data })),
+  removeNodesByTypes: (types: NodeType[]) => set((state) => {
+    const typeSet = new Set(types);
+
+    const nodesToRemove = state.graphData.nodes.filter(node => typeSet.has(node.type));
+    const nodesToRemoveIds = new Set(nodesToRemove.map(node => String(node.id)));
+
+    const newNodes = state.graphData.nodes.filter(node => !nodesToRemoveIds.has(String(node.id)));
+
+    const newLinks = state.graphData.links.filter(link => {
+      const sourceId = typeof link.source === 'object' ? String(link.source.id) : String(link.source);
+      const targetId = typeof link.target === 'object' ? String(link.target.id) : String(link.target);
+
+      return !nodesToRemoveIds.has(sourceId) && !nodesToRemoveIds.has(targetId);
+    });
+
+    return {
+      graphData: {
+        nodes: newNodes,
+        links: newLinks,
+      },
+    };
+  }),
   removeNodesAndLinks: (uuids: string | string[]) => set((state) => {
     const uuidArray = Array.isArray(uuids) ? uuids : [uuids];
 
@@ -64,5 +88,9 @@ export const useGraphStore = create<GraphStoreType>((set, get) => ({
   getNodeByUuid: (uuid: string) => {
     const state = get();
     return state.graphData.nodes.find((node: any) => String(node.id) === uuid);
+  },
+  getNodesByType: (type: NodeType): NodeTypeStorage[] => {
+    const state = get();
+    return state.graphData.nodes.filter(node => node.type === type);
   },
 }));

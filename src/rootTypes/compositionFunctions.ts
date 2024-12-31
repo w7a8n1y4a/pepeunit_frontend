@@ -444,6 +444,7 @@ export type UnitFilterInput = {
   orderByLastUpdate?: InputMaybe<OrderByDate>;
   orderByUnitName?: InputMaybe<OrderByText>;
   repoUuid?: InputMaybe<Scalars["UUID"]["input"]>;
+  reposUuids?: InputMaybe<Array<Scalars["UUID"]["input"]>>;
   searchString?: InputMaybe<Scalars["String"]["input"]>;
   unitNodeInputUuid?: InputMaybe<Scalars["UUID"]["input"]>;
   unitNodeType?: InputMaybe<Array<UnitNodeTypeEnum>>;
@@ -1206,6 +1207,9 @@ export type GetUnitsQueryVariables = Exact<{
   >;
   creatorUuid?: InputMaybe<Scalars["UUID"]["input"]>;
   repoUuid?: InputMaybe<Scalars["UUID"]["input"]>;
+  reposUuids?: InputMaybe<
+    Array<Scalars["UUID"]["input"]> | Scalars["UUID"]["input"]
+  >;
   searchString?: InputMaybe<Scalars["String"]["input"]>;
   isAutoUpdateFromRepoUnit?: InputMaybe<Scalars["Boolean"]["input"]>;
   visibilityLevel?: InputMaybe<Array<VisibilityLevel> | VisibilityLevel>;
@@ -1253,8 +1257,14 @@ export type GetUnitsQuery = {
 };
 
 export type GetUnitsWithUnitNodesQueryVariables = Exact<{
+  uuids?: InputMaybe<
+    Array<Scalars["UUID"]["input"]> | Scalars["UUID"]["input"]
+  >;
   creatorUuid?: InputMaybe<Scalars["UUID"]["input"]>;
   repoUuid?: InputMaybe<Scalars["UUID"]["input"]>;
+  reposUuids?: InputMaybe<
+    Array<Scalars["UUID"]["input"]> | Scalars["UUID"]["input"]
+  >;
   searchString?: InputMaybe<Scalars["String"]["input"]>;
   isAutoUpdateFromRepoUnit?: InputMaybe<Scalars["Boolean"]["input"]>;
   visibilityLevel?: InputMaybe<Array<VisibilityLevel> | VisibilityLevel>;
@@ -3648,6 +3658,7 @@ export const GetUnitsDocument = gql`
     $uuids: [UUID!]
     $creatorUuid: UUID
     $repoUuid: UUID
+    $reposUuids: [UUID!]
     $searchString: String
     $isAutoUpdateFromRepoUnit: Boolean
     $visibilityLevel: [VisibilityLevel!]
@@ -3662,6 +3673,7 @@ export const GetUnitsDocument = gql`
         uuids: $uuids
         creatorUuid: $creatorUuid
         repoUuid: $repoUuid
+        reposUuids: $reposUuids
         searchString: $searchString
         isAutoUpdateFromRepoUnit: $isAutoUpdateFromRepoUnit
         visibilityLevel: $visibilityLevel
@@ -3718,6 +3730,7 @@ export const GetUnitsDocument = gql`
  *      uuids: // value for 'uuids'
  *      creatorUuid: // value for 'creatorUuid'
  *      repoUuid: // value for 'repoUuid'
+ *      reposUuids: // value for 'reposUuids'
  *      searchString: // value for 'searchString'
  *      isAutoUpdateFromRepoUnit: // value for 'isAutoUpdateFromRepoUnit'
  *      visibilityLevel: // value for 'visibilityLevel'
@@ -3775,8 +3788,10 @@ export type GetUnitsQueryResult = Apollo.QueryResult<
 >;
 export const GetUnitsWithUnitNodesDocument = gql`
   query getUnitsWithUnitNodes(
+    $uuids: [UUID!]
     $creatorUuid: UUID
     $repoUuid: UUID
+    $reposUuids: [UUID!]
     $searchString: String
     $isAutoUpdateFromRepoUnit: Boolean
     $visibilityLevel: [VisibilityLevel!]
@@ -3789,8 +3804,10 @@ export const GetUnitsWithUnitNodesDocument = gql`
   ) {
     getUnits(
       filters: {
+        uuids: $uuids
         creatorUuid: $creatorUuid
         repoUuid: $repoUuid
+        reposUuids: $reposUuids
         searchString: $searchString
         isAutoUpdateFromRepoUnit: $isAutoUpdateFromRepoUnit
         visibilityLevel: $visibilityLevel
@@ -3856,8 +3873,10 @@ export const GetUnitsWithUnitNodesDocument = gql`
  * @example
  * const { data, loading, error } = useGetUnitsWithUnitNodesQuery({
  *   variables: {
+ *      uuids: // value for 'uuids'
  *      creatorUuid: // value for 'creatorUuid'
  *      repoUuid: // value for 'repoUuid'
+ *      reposUuids: // value for 'reposUuids'
  *      searchString: // value for 'searchString'
  *      isAutoUpdateFromRepoUnit: // value for 'isAutoUpdateFromRepoUnit'
  *      visibilityLevel: // value for 'visibilityLevel'

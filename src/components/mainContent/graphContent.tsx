@@ -159,8 +159,6 @@ export default function GraphContent(){
   }, []);
 
   function focusNode(uuid: string, nodeType: string) {
-    console.log(nodeType)
-
     if (nodeType == 'UserType') {
       runAsync(async () => {
         let user = await getUser({
