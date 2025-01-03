@@ -7,7 +7,6 @@ import UnitNodeSetStateForm from '../forms/unitNode/unitNodeSetStateForm';
 import UnitNodeEdgeForm from '../forms/unitNode/unitNodeEdgeForm'
 import PermissionForm from '../forms/permission/permissionForm';
 import useModalHandlers from '@handlers/useModalHandlers';
-
 import { useUserStore } from '@stores/userStore';
 
 export default function UnitNodeContent(){
@@ -23,6 +22,7 @@ export default function UnitNodeContent(){
       <BaseModal
         modalName={currentNodeData?.type}
         open={activeModal === 'inputMenu' || activeModal === 'outputMenu'}
+        reloadEntityType={currentNodeData?.type}
       >
         <div className="modal_menu_content">
           <div>
