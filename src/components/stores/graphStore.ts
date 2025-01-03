@@ -25,6 +25,7 @@ type GraphStoreType = {
   removeNodesByTypes: (types: NodeType[]) => void;
   removeNodesAndLinks: (uuids: string | string[]) => void;
   getNodesByType: (type: NodeType) => NodeTypeStorage[];
+  updateNodeDataById: (id: string, newData: any) => void;
 };
 
 export const useGraphStore = create<GraphStoreType>((set, get) => ({
@@ -74,23 +75,18 @@ export const useGraphStore = create<GraphStoreType>((set, get) => ({
       }
     };
   }),
-  updateNodeData: (uuid: string, newData: any) => set((state) => {
-    const updatedNodes = state.graphData.nodes.map((node) =>
-      String(node.id) === uuid ? { ...node, ...newData } : node
-    );
-    return {
-      graphData: {
-        ...state.graphData,
-        nodes: updatedNodes,
-      },
-    };
-  }),
-  getNodeByUuid: (uuid: string) => {
-    const state = get();
-    return state.graphData.nodes.find((node: any) => String(node.id) === uuid);
-  },
   getNodesByType: (type: NodeType): NodeTypeStorage[] => {
     const state = get();
     return state.graphData.nodes.filter(node => node.type === type);
   },
+  updateNodeDataById: (id: string, newData: any) => set((state) => {
+    const node = state.graphData.nodes.find(node => node.id === id);
+    if (node) {
+      node.data = newData;
+    }
+  
+    return {
+      graphData: { ...state.graphData },
+    };
+  }),
 }));
