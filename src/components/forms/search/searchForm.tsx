@@ -24,7 +24,7 @@ import { useNodeStore } from '@stores/baseStore';
     const { resultData, setResultData, handleError } = useResultHandler();
     const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
   
-    const [selectedEntityType, setSelectedEntityType] = useState<PermissionEntities>(PermissionEntities.User);
+    const [selectedEntityType, setSelectedEntityType] = useState<PermissionEntities>(PermissionEntities.Unit);
   
     const { currentNodeData } = useNodeStore();
     
@@ -107,7 +107,7 @@ import { useNodeStore } from '@stores/baseStore';
         </form>
 
         <EntityTypeSelector
-            entities={[PermissionEntities.User, PermissionEntities.Repo, PermissionEntities.Unit]}
+            entities={[PermissionEntities.Unit, PermissionEntities.Repo, PermissionEntities.User]}
             selectedEntityType={selectedEntityType}
             setSelectedEntityType={setSelectedEntityType}
         />

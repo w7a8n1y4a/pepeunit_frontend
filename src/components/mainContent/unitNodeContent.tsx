@@ -2,12 +2,14 @@ import BaseModal from '../modal/baseModal'
 
 import { UnitNodeTypeEnum, PermissionEntities } from '@rootTypes/compositionFunctions'
 import { useModalStore, useNodeStore } from '@stores/baseStore';
+import { useResultHandler } from '@rootTypes/useResultHandler';
+import { useAsyncHandler } from '@rootTypes/useAsyncHandler';
 import UpdateUnitNodeForm from '../forms/unitNode/updateUnitNodeForm';
 import UnitNodeSetStateForm from '../forms/unitNode/unitNodeSetStateForm';
 import UnitNodeEdgeForm from '../forms/unitNode/unitNodeEdgeForm'
 import PermissionForm from '../forms/permission/permissionForm';
 import useModalHandlers from '@handlers/useModalHandlers';
-
+import Spinner from '@primitives/spinner'
 import { useUserStore } from '@stores/userStore';
 
 export default function UnitNodeContent(){
@@ -15,6 +17,8 @@ export default function UnitNodeContent(){
   const { currentNodeData } = useNodeStore();
   const { openModal } = useModalHandlers();
   const { user } = useUserStore();
+  const { handleError } = useResultHandler();
+  const { isLoaderActive } = useAsyncHandler(handleError);
 
   let nodeType = PermissionEntities.UnitNode
 
@@ -23,8 +27,12 @@ export default function UnitNodeContent(){
       <BaseModal
         modalName={currentNodeData?.type}
         open={activeModal === 'inputMenu' || activeModal === 'outputMenu'}
+        reloadEntityType={currentNodeData?.type}
       >
         <div className="modal_menu_content">
+          {
+            isLoaderActive && (<Spinner/>)
+          }
           <div>
             {currentNodeData?.name}
           </div>

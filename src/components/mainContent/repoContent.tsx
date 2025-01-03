@@ -19,6 +19,7 @@ import useModalHandlers from '@handlers/useModalHandlers';
 import {
   GetVersionsQuery
 } from '@rootTypes/compositionFunctions';
+import { NodeType } from '@src/rootTypes/nodeTypeEnum';
 
 export default function RepoContent(){
   const { resultData, handleError, handleSuccess } = useResultHandler();
@@ -111,6 +112,7 @@ export default function RepoContent(){
       <BaseModal
         modalName={'Repo ' + currentNodeData?.name}
         open={activeModal === 'repoMenu'}
+        reloadEntityType={NodeType.Repo}
       >
         <div className="modal_menu_content">
           {

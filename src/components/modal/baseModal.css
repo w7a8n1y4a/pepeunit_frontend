@@ -4,25 +4,24 @@ dialog {
     border-color: #282828;
 }
 
+.modal_header {
+    display: flex;
+}
+
 .modal_name {
     padding-bottom: 10px;
     font-size: 22px;
 }
 
-.back_modal,
-.close_modal {
-    position: absolute;
-    top: 15px;
+.modal_menu_button {
     background: transparent;
     border: none;
     cursor: pointer;
+    padding-left: 0px;
 }
 
-.close_modal {
-    right: 15px;
-}
-
-.back_modal {
-    top: 12px;
-    right: 40px;
+.div_modal_buttons {
+    display: flex;
+    margin-left: auto;
+    padding-left: 10px;
 }
