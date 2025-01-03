@@ -1,5 +1,6 @@
 import {
-    PermissionEntities
+    PermissionEntities,
+    UserRole
 } from '@rootTypes/compositionFunctions';
 import { useResultHandler } from '@rootTypes/useResultHandler';
 import { useAsyncHandler } from '@rootTypes/useAsyncHandler';
@@ -13,6 +14,7 @@ import EntityTypeSelector from '@primitives/entityTypeSelector';
 import useFetchEntitiesByFilter from '../utils/useFetchEntitiesByFilter';
 import '../form.css';
 import { useNodeStore } from '@stores/baseStore';
+import { useUserStore } from '@stores/userStore';
 
   
   interface SearchFormProps {
@@ -27,10 +29,11 @@ import { useNodeStore } from '@stores/baseStore';
     const [selectedEntityType, setSelectedEntityType] = useState<PermissionEntities>(PermissionEntities.Unit);
   
     const { currentNodeData } = useNodeStore();
+    const { user } = useUserStore();
     
     const [ searchString, setSearchString ] = useState('');
     const [nodeOutputs, setNodeOutputs] = useState<Array<any> | null>(null);
-  
+
     const { fetchEntitiesByFilter } = useFetchEntitiesByFilter();
   
     const [errorState, setErrorState] = useState({
@@ -70,15 +73,15 @@ import { useNodeStore } from '@stores/baseStore';
             }
         })
     };
-  
+    
     useEffect(() => {
         loadEntities('', selectedEntityType, currentPage);
     }, [currentNodeData]);
-  
+    
     useEffect(() => {
         loadEntities(searchString, selectedEntityType, currentPage);
     }, [searchString, currentPage, selectedEntityType]);
-  
+
     const updateErrorState = (field: keyof typeof errorState, hasError: boolean) => {
         setErrorState(prevState => ({
             ...prevState,
@@ -107,7 +110,11 @@ import { useNodeStore } from '@stores/baseStore';
         </form>
 
         <EntityTypeSelector
-            entities={[PermissionEntities.Unit, PermissionEntities.Repo, PermissionEntities.User]}
+            entities={
+                user && user.role in [UserRole.Admin, UserRole.User]
+                ? [PermissionEntities.Unit, PermissionEntities.Repo, PermissionEntities.User]
+                : [PermissionEntities.Unit, PermissionEntities.Repo]
+            }
             selectedEntityType={selectedEntityType}
             setSelectedEntityType={setSelectedEntityType}
         />
