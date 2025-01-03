@@ -131,7 +131,7 @@ export default function PermissionCreateForm({ currentNodeType, selectedEntityTy
             </form>
 
             <EntityTypeSelector
-                entities={[PermissionEntities.User, PermissionEntities.Unit, PermissionEntities.UnitNode]}
+                entities={[PermissionEntities.User, PermissionEntities.Unit]}
                 selectedEntityType={selectedEntityType}
                 setSelectedEntityType={setSelectedEntityType}
             />
