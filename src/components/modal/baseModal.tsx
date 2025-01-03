@@ -28,7 +28,7 @@ export default function BaseModal({modalName, children, open, openModalType, rel
     const { runAsync } = useAsyncHandler(handleError);
     const { currentNodeData, setCurrentNodeData } = useNodeStore();
 
-    const {graphData, updateNodeDataById } = useGraphStore();
+    const { updateNodeDataById } = useGraphStore();
 
     const [getRepo] = useGetRepoLazyQuery();
     const [getUnit] = useGetUnitLazyQuery();
@@ -38,7 +38,6 @@ export default function BaseModal({modalName, children, open, openModalType, rel
         runAsync(async () => {
             let targetdata = null
             if (reloadEntityType == NodeType.Repo){
-                console.log(reloadEntityType)
                 let result = await getRepo({
                     variables: {uuid: currentNodeData.uuid}
                 })
@@ -62,7 +61,6 @@ export default function BaseModal({modalName, children, open, openModalType, rel
 
             if (targetdata?.uuid){
                 updateNodeDataById(targetdata.uuid, targetdata)
-                console.log(graphData)
                 setCurrentNodeData(targetdata)
             }
 
