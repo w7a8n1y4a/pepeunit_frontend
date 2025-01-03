@@ -227,6 +227,29 @@ export default function GraphContent(){
               repoUuid: uuid
             }
           })
+          if (unitsData.data?.getUnits){
+            let searchTarget = repo.data.getRepo
+            setCurrentSearchNodeData(searchTarget)
+            setGraphData({
+              nodes: [
+                {
+                  id: searchTarget.uuid,
+                  type: NodeType.Repo,
+                  color: getNodeColor(NodeType.Repo),
+                  data: searchTarget
+                },
+                ...unitsData.data.getUnits.units.map((unit) => ({
+                  id: unit.uuid,
+                  type: NodeType.Unit,
+                  color: getNodeColor(NodeType.Unit),
+                  data: unit
+                }))
+              ],
+              links: [
+                ...unitsData.data.getUnits.units.map((unit) => ({source: unit.repoUuid, target: unit.uuid, value: 1}))
+              ]
+            })
+          }
           if (unitsData.data?.getUnits && user.data?.getUser){
             let searchTarget = repo.data.getRepo
             let userData = user.data.getUser

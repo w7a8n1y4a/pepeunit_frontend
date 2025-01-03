@@ -124,7 +124,6 @@ export const useButtonHandlers = () => {
         }
 
         if (button.isVisible && !button.isActive){
-            console.log('test')
             if (button.nodeType === NodeType.Domain){
                 let user = getNodesByType(NodeType.User)[0]
                 setGraphData({
