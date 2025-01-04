@@ -1,5 +1,6 @@
 import GraphContent from './components/mainContent/graphContent'
 import './App.css'
+import { useParams } from "react-router-dom";
 import { onError } from '@apollo/client/link/error';
 import { setContext } from '@apollo/client/link/context';
 import { createUploadLink } from 'apollo-upload-client';
@@ -64,7 +65,7 @@ const client = new ApolloClient({
 });
 
 function App() {
-
+  const { routerType, routerUuid } = useParams();
   const { setUser } = useUserStore();
 
   useEffect(() => {
@@ -79,7 +80,7 @@ function App() {
     <>
       <ApolloProvider client={client}>
         <Header/>
-        <GraphContent/>
+        <GraphContent routerType={routerType} routerUuid={routerUuid}/>
       </ApolloProvider>
     </>
   )

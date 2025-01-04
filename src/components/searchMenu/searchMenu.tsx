@@ -1,12 +1,15 @@
 import back_img from '/images/back.svg'
 import './searchMenu.css'
 import ButtonModifiers from './buttonModifiers'
+import { useNavigate } from 'react-router-dom';
 import { useSearchNodeStore, useReloadBaseGraphDataStore } from '@stores/baseStore';
 import useModalHandlers from '@handlers/useModalHandlers';
 
 
 export default function SearchMenu() {
     const { openModal } = useModalHandlers();
+
+    const navigate = useNavigate();
 
     const { currentSearchNodeData } = useSearchNodeStore();
     const { reloadState, setReloadState } = useReloadBaseGraphDataStore();
@@ -25,7 +28,10 @@ export default function SearchMenu() {
             {
                 currentSearchNodeData && (
                     <div className="search-mod-menu">
-                        <button className="search-button" onClick={() => {setReloadState(!reloadState)}}>
+                        <button className="search-button" onClick={() => {
+                            navigate('/');
+                            setReloadState(!reloadState)
+                        }}>
                             <img src={back_img} width="20" height="20" alt="Back"/>
                         </button>
                         <ButtonModifiers/>

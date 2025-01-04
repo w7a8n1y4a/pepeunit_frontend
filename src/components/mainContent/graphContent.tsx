@@ -2,6 +2,7 @@ import { NodeType } from '@rootTypes/nodeTypeEnum'
 import { getNodeColor } from '@utils/getNodeColor'
 import { useResultHandler } from '@rootTypes/useResultHandler';
 import { useAsyncHandler } from '@rootTypes/useAsyncHandler';
+import { useNavigate } from 'react-router-dom';
 import {
   useGetReposLazyQuery,
   useGetUnitsLazyQuery,
@@ -26,9 +27,16 @@ import useModalHandlers from '@handlers/useModalHandlers';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import { Vector2 } from 'three'; 
 
-export default function GraphContent(){
+interface GraphContentProps {
+  routerType: any;
+  routerUuid: any;
+}
+
+export default function GraphContent({routerType, routerUuid}: GraphContentProps){
   const { handleError } = useResultHandler();
   const { runAsync } = useAsyncHandler(handleError);
+
+  const navigate = useNavigate();
 
   const { openModal } = useModalHandlers();
   const { setActiveModal } = useModalStore();
@@ -56,46 +64,48 @@ export default function GraphContent(){
   const [getUser] = useGetUserLazyQuery();
 
   useEffect(() => {
-    runAsync(async () => {
-      let reposData = await getRepos()
-      if (reposData.data?.getRepos){
-        let unitsData = await getUnits()
-        if (unitsData.data?.getUnits && reposData.data?.getRepos){
-          setGraphData({
-            nodes: [
-              {
-                id: import.meta.env.VITE_INSTANCE_NAME,
-                type: NodeType.Domain,
-                color: getNodeColor(NodeType.Domain),
-                data: {
-                  name: import.meta.env.VITE_INSTANCE_NAME,
-                  __typename: 'DomainType'
+    if (!routerType && !routerUuid){
+      runAsync(async () => {
+        let reposData = await getRepos()
+        if (reposData.data?.getRepos){
+          let unitsData = await getUnits()
+          if (unitsData.data?.getUnits && reposData.data?.getRepos){
+            setGraphData({
+              nodes: [
+                {
+                  id: import.meta.env.VITE_INSTANCE_NAME,
+                  type: NodeType.Domain,
+                  color: getNodeColor(NodeType.Domain),
+                  data: {
+                    name: import.meta.env.VITE_INSTANCE_NAME,
+                    __typename: 'DomainType'
+                  }
+                },
+                ...reposData.data.getRepos.repos.map((repo) => ({
+                  id: repo.uuid,
+                  type: NodeType.Repo,
+                  color: getNodeColor(NodeType.Repo),
+                  data: repo
                 }
-              },
-              ...reposData.data.getRepos.repos.map((repo) => ({
-                id: repo.uuid,
-                type: NodeType.Repo,
-                color: getNodeColor(NodeType.Repo),
-                data: repo
-              }
-            )),
-              ...unitsData.data.getUnits.units.map((unit) => ({
-                id: unit.uuid,
-                type: NodeType.Unit,
-                color: getNodeColor(NodeType.Unit),
-                data: unit
-              }
-            ))],
-            links: [
-              ...reposData.data.getRepos.repos.map((repo) => ({source: import.meta.env.VITE_INSTANCE_NAME, target: repo.uuid, value: 1})),
-              ...unitsData.data.getUnits.units.map((unit) => ({source: unit.repoUuid, target: unit.uuid, value: 1}))
-            ]
-          })
+              )),
+                ...unitsData.data.getUnits.units.map((unit) => ({
+                  id: unit.uuid,
+                  type: NodeType.Unit,
+                  color: getNodeColor(NodeType.Unit),
+                  data: unit
+                }
+              ))],
+              links: [
+                ...reposData.data.getRepos.repos.map((repo) => ({source: import.meta.env.VITE_INSTANCE_NAME, target: repo.uuid, value: 1})),
+                ...unitsData.data.getUnits.units.map((unit) => ({source: unit.repoUuid, target: unit.uuid, value: 1}))
+              ]
+            })
+          }
         }
-      }
-      setCurrentSearchNodeData(null)
-    })
-  }, [reloadState]);
+        setCurrentSearchNodeData(null)
+      })
+    }
+  }, [reloadState, routerType, routerUuid]);
 
   function handleNodeRightClick(node: any) {
     if (node.type == NodeType.Unit) {
@@ -159,6 +169,9 @@ export default function GraphContent(){
   }, []);
 
   function focusNode(uuid: string, nodeType: string) {
+
+    navigate('/' + nodeType + '/' + uuid);
+
     if (nodeType == 'UserType') {
       runAsync(async () => {
         let user = await getUser({
@@ -343,6 +356,12 @@ export default function GraphContent(){
     }
     setActiveModal(null)
   }
+
+  useEffect(() => {
+    if (routerType && routerUuid){
+      focusNode(routerUuid, routerType)
+    }
+  }, [routerUuid, routerType])
 
   return (
     <>
