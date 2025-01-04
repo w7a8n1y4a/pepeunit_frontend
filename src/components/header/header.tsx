@@ -1,3 +1,5 @@
+import { useResultHandler } from '@rootTypes/useResultHandler';
+import { useAsyncHandler } from '@rootTypes/useAsyncHandler';
 import BaseModal from '../modal/baseModal'
 import logo from '/images/logo_32_32.png'
 import signin_icon from '/images/signin.svg'
@@ -8,23 +10,31 @@ import VerificationForm from '../forms/user/verificationForm';
 import ChangeLoginForm from '../forms/user/changeLoginForm';
 import ChangePassForm from '../forms/user/changePassForm';
 import RightMenu from '../rightMenu/rightMenu';
+import Spinner from '@primitives/spinner'
+import ResultQuery from '@primitives/resultQuery'
+import { UserRole, useBlockUserMutation, useUnblockUserMutation } from '@rootTypes/compositionFunctions'
 import './header.css'
 import { useState, useCallback, useReducer, useEffect } from 'react';
 
-import { useModalStore } from '@stores/baseStore';
+import { useModalStore, useNodeStore } from '@stores/baseStore';
 import useModalHandlers from '@handlers/useModalHandlers';
 import { useUserStore } from '@stores/userStore';
 import SearchMenu from '../searchMenu/searchMenu';
 
 export default function Header(){
+    const { resultData, handleError, handleSuccess } = useResultHandler();
+    const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
+
     const { activeModal } = useModalStore();
     const { openModal, closeModal } = useModalHandlers();
-
+    const { currentNodeData, setCurrentNodeData } = useNodeStore();
     const { user, clearUser } = useUserStore();
-
     const [, forceUpdate] = useReducer(x => x + 1, 0);
 
     const [login, setLogin ] = useState(user?.login)
+
+    const [blockUser] = useBlockUserMutation();
+    const [unblockUser] = useUnblockUserMutation();
 
     useEffect(() => {
         setLogin(user?.login)
@@ -36,6 +46,32 @@ export default function Header(){
         closeModal();
         forceUpdate();
     }, [closeModal]);
+
+    const handleBlockUser = () => {
+        runAsync(async () => {
+            let result = await blockUser({
+                variables: {
+                    uuid: currentNodeData.uuid,
+                }
+            })
+            if (result.data){
+                handleSuccess("User " + currentNodeData.login + " success blocked")
+            }
+        })
+    };
+
+    const handleUnblockUser = () => {
+        runAsync(async () => {
+            let result = await unblockUser({
+                variables: {
+                    uuid: currentNodeData.uuid,
+                }
+            })
+            if (result.data){
+                handleSuccess("User " + currentNodeData.login + " success unblocked")
+            }
+        })
+    };
 
     return (
         <header className='app-header'>
@@ -55,7 +91,11 @@ export default function Header(){
             <div className='user_controls'>
                 {login ? (
                     <div>
-                        <button className="user_menu_button" onClick={() => openModal('userMenu')}>
+                        <button className="user_menu_button" onClick={() => {
+                            setCurrentNodeData(null)
+                            openModal('userMenu')
+                        
+                        }}>
                             {login}
                         </button>
                         <button className="signout_button" onClick={signout}>
@@ -82,17 +122,59 @@ export default function Header(){
                         openModalSignIn={() => openModal('signin')}
                     />
                 </BaseModal>
-                <BaseModal modalName='Меню' open={activeModal === 'userMenu'}>
+                <BaseModal modalName='User' open={activeModal === 'userMenu'}>
                     <div className="modal_menu_content">
-                        <button className="button_open_alter" onClick={() => openModal('verification')}>
-                            Верификация в Telegram
-                        </button>
-                        <button className="button_open_alter" onClick={() => openModal('changeLogin')}>
-                            Смена Логина
-                        </button>
-                        <button className="button_open_alter" onClick={() => openModal('changePass')}>
-                            Смена Пароля
-                        </button>
+                        {
+                            isLoaderActive && (<Spinner/>)
+                        }
+                        {
+                            user && (!currentNodeData || currentNodeData && currentNodeData.uuid == user.uuid) && (
+                                <>
+                                    <button className="button_open_alter" onClick={() => openModal('verification')}>
+                                        Верификация в Telegram
+                                    </button>
+                                    <button className="button_open_alter" onClick={() => openModal('changeLogin')}>
+                                        Смена Логина
+                                    </button>
+                                    <button className="button_open_alter" onClick={() => openModal('changePass')}>
+                                        Смена Пароля
+                                    </button>
+                                </>
+                            )
+                        }
+                        {
+                            user && currentNodeData && currentNodeData.uuid != user.uuid && (
+                                <>
+                                    <div>
+                                        {currentNodeData.login}
+                                    </div>
+                                    <div>
+                                        {currentNodeData.role}
+                                    </div>
+                                    <div>
+                                        {currentNodeData.status}
+                                    </div>
+                                    <div>
+                                        {currentNodeData.createDatetime}
+                                    </div>
+                                    {
+                                        user.role == UserRole.Admin && (
+                                            <>
+                                                <button className="button_open_alter" onClick={() => handleBlockUser()}>
+                                                    Заблокировать
+                                                </button>
+                                                <button className="button_open_alter" onClick={() => handleUnblockUser()}>
+                                                    Разблокировать
+                                                </button>
+                                            </>
+                                        )
+                                    }
+                                </>
+                            )
+                        }
+                        <ResultQuery
+                            resultData={resultData}
+                        />
                     </div>
                 </BaseModal>
                 <BaseModal
