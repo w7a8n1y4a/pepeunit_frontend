@@ -1,6 +1,5 @@
 import {
-    PermissionEntities,
-    UserRole
+    PermissionEntities
 } from '@rootTypes/compositionFunctions';
 import { useResultHandler } from '@rootTypes/useResultHandler';
 import { useAsyncHandler } from '@rootTypes/useAsyncHandler';
