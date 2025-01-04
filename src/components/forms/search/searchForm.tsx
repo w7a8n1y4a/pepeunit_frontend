@@ -31,6 +31,7 @@ import { useUserStore } from '@stores/userStore';
     const { user } = useUserStore();
     
     const [ searchString, setSearchString ] = useState('');
+    const [ isCreatorSearchOnly, setIsCreatorSearchOnly] = useState<boolean>(false);
     const [nodeOutputs, setNodeOutputs] = useState<Array<any> | null>(null);
 
     const { fetchEntitiesByFilter } = useFetchEntitiesByFilter();
@@ -43,9 +44,21 @@ import { useUserStore } from '@stores/userStore';
     const [totalCount, setTotalCount] = useState(0);
     const itemsPerPage = 6;
   
-    const loadEntities = async (searchString: string, selectedEntityType: PermissionEntities, currentPage: number) => {
+    const loadEntities = async (
+        searchString: string,
+        selectedEntityType: PermissionEntities,
+        currentPage: number,
+        isCreatorSearchOnly?: boolean,
+    ) => {
         runAsync(async () => {
-            let result = await fetchEntitiesByFilter(searchString, selectedEntityType, itemsPerPage, currentPage * itemsPerPage)
+            let result = await fetchEntitiesByFilter(
+                searchString,
+                selectedEntityType,
+                itemsPerPage,
+                currentPage * itemsPerPage,
+                undefined,
+                user && isCreatorSearchOnly ? user.uuid : undefined  
+            )
             if (result?.data) {
                 let formattedData: Array<any> = [];
                 let count: number = 0;
@@ -74,12 +87,12 @@ import { useUserStore } from '@stores/userStore';
     };
     
     useEffect(() => {
-        loadEntities('', selectedEntityType, currentPage);
+        loadEntities('', selectedEntityType, currentPage, isCreatorSearchOnly);
     }, [currentNodeData]);
     
     useEffect(() => {
-        loadEntities(searchString, selectedEntityType, currentPage);
-    }, [searchString, currentPage, selectedEntityType]);
+        loadEntities(searchString, selectedEntityType, currentPage, isCreatorSearchOnly);
+    }, [searchString, currentPage, selectedEntityType, isCreatorSearchOnly]);
 
     const updateErrorState = (field: keyof typeof errorState, hasError: boolean) => {
         setErrorState(prevState => ({
@@ -106,6 +119,24 @@ import { useUserStore } from '@stores/userStore';
                 setIsErrorExist={(hasError) => updateErrorState('searchString', hasError)}
                 setResultData={setResultData}
             />
+            {
+                user && selectedEntityType != PermissionEntities.User && (
+                    <div className='toggle_container'>
+                        <label className="toggle">
+                            <input 
+                                type="checkbox" 
+                                checked={isCreatorSearchOnly}
+                                onChange={(e) => { setIsCreatorSearchOnly(e.target.checked)}
+                                } 
+                            />
+                            <span className="slider"></span>
+                        </label>
+                        <div className="toggle_text">
+                            Только свои ?
+                        </div>
+                    </div>
+                )
+            }
         </form>
 
         <EntityTypeSelector

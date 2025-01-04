@@ -1,7 +1,7 @@
 import {
     PermissionEntities,
-    useCreatePermissionMutation
-
+    useCreatePermissionMutation,
+    VisibilityLevel
  } from '@rootTypes/compositionFunctions';
 import { useResultHandler } from '@rootTypes/useResultHandler';
 import { useAsyncHandler } from '@rootTypes/useAsyncHandler';
@@ -16,6 +16,7 @@ import useFetchEntitiesByFilter from '../utils/useFetchEntitiesByFilter';
 import '../form.css';
 
 import { useNodeStore } from '@stores/baseStore';
+import { useUserStore } from '@stores/userStore';
 
 
 interface PermissionCreateFormProps {
@@ -29,10 +30,13 @@ export default function PermissionCreateForm({ currentNodeType, selectedEntityTy
     const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
 
     const { currentNodeData } = useNodeStore();
+    const { user } = useUserStore();
     
     const [ searchString, setSearchString ] = useState('');
+    const [ isCreatorSearchOnly, setIsCreatorSearchOnly] = useState<boolean>(false);
+
     const [ typeList, setTypeList ] = useState<'button' | 'collapse'>('button');
-    const [nodeOutputs, setNodeOutputs] = useState<Array<any> | null>(null);
+    const [ nodeOutputs, setNodeOutputs ] = useState<Array<any> | null>(null);
 
     const [createPermissionMutation] = useCreatePermissionMutation();
     const { fetchEntitiesByFilter } = useFetchEntitiesByFilter();
@@ -45,9 +49,21 @@ export default function PermissionCreateForm({ currentNodeType, selectedEntityTy
     const [totalCount, setTotalCount] = useState(0);
     const itemsPerPage = 6;
 
-    const loadEntities = async (searchString: string, selectedEntityType: PermissionEntities, currentPage: number) => {
+    const loadEntities = async (
+        searchString: string,
+        selectedEntityType: PermissionEntities,
+        currentPage: number,
+        isCreatorSearchOnly?: boolean,
+    ) => {
         runAsync(async () => {
-            let result = await fetchEntitiesByFilter(searchString, selectedEntityType, itemsPerPage, currentPage * itemsPerPage)
+            let result = await fetchEntitiesByFilter(
+                searchString,
+                selectedEntityType,
+                itemsPerPage,
+                currentPage * itemsPerPage,
+                undefined,
+                user && isCreatorSearchOnly ? user.uuid : undefined  
+            )
             if (result?.data) {
                 let formattedData: Array<any> = [];
                 let count: number = 0;
@@ -80,12 +96,12 @@ export default function PermissionCreateForm({ currentNodeType, selectedEntityTy
     };
 
     useEffect(() => {
-        loadEntities('', selectedEntityType, currentPage);
+        loadEntities('', selectedEntityType, currentPage, isCreatorSearchOnly);
     }, [currentNodeData]);
 
     useEffect(() => {
-        loadEntities(searchString, selectedEntityType, currentPage);
-    }, [searchString, currentPage, selectedEntityType]);
+        loadEntities(searchString, selectedEntityType, currentPage, isCreatorSearchOnly);
+    }, [searchString, currentPage, selectedEntityType, isCreatorSearchOnly]);
 
     const updateErrorState = (field: keyof typeof errorState, hasError: boolean) => {
         setErrorState(prevState => ({
@@ -128,6 +144,24 @@ export default function PermissionCreateForm({ currentNodeType, selectedEntityTy
                     setIsErrorExist={(hasError) => updateErrorState('searchString', hasError)}
                     setResultData={setResultData}
                 />
+                {
+                    user && selectedEntityType != PermissionEntities.User && (
+                        <div className='toggle_container'>
+                            <label className="toggle">
+                                <input 
+                                    type="checkbox" 
+                                    checked={isCreatorSearchOnly}
+                                    onChange={(e) => { setIsCreatorSearchOnly(e.target.checked)}
+                                    } 
+                                />
+                                <span className="slider"></span>
+                            </label>
+                            <div className="toggle_text">
+                                Только свои ?
+                            </div>
+                        </div>
+                    )
+                }
             </form>
 
             <EntityTypeSelector
