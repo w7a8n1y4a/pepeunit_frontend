@@ -111,7 +111,7 @@ import { useUserStore } from '@stores/userStore';
 
         <EntityTypeSelector
             entities={
-                user && user.role in [UserRole.Admin, UserRole.User]
+                user
                 ? [PermissionEntities.Unit, PermissionEntities.Repo, PermissionEntities.User]
                 : [PermissionEntities.Unit, PermissionEntities.Repo]
             }
