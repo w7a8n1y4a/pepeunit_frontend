@@ -7,6 +7,7 @@ import BaseModal from '../modal/baseModal'
 import { useState, useEffect } from 'react';
 import Spinner from '@primitives/spinner'
 import ResultQuery from '@primitives/resultQuery'
+import UnitUpdateState from '@primitives/unitUpdateState'
 import UpdateUnitForm from '../forms/unit/updateUnitForm';
 import PermissionForm from '../forms/permission/permissionForm';
 import UpdateUnitEnvForm from '../forms/unit/updateUnitEnvForm'
@@ -179,21 +180,8 @@ export default function UnitContent(){
             isLoaderActive && (<Spinner/>)
           }
 
-          <div>
-            Status - {currentNodeData?.firmwareUpdateStatus}
-          </div>
-          <div>
-            Error - {currentNodeData?.firmwareUpdateError}
-          </div>
-          <div>
-            Query time - {currentNodeData?.lastFirmwareUpdateDatetime}
-          </div>
-          <div>
-            Current Version - {currentNodeData?.currentCommitVersion}
-          </div>
-          <div>
-            Target Version - {targetVersion ? (targetVersion) : (<></>)}
-          </div>
+          <UnitUpdateState targetVersion={targetVersion}/>
+
           {
             currentNodeData?.unitState ? (
               <pre>

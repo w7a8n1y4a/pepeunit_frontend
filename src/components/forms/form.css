@@ -261,7 +261,7 @@ input:checked+.slider:before {
     padding-bottom: 7px;
 }
 
-.div_unit_message {
+.div_unit_message, .div_unit_error_message {
     background-color: transparent;
     border-radius: 10px;
     border: solid 3px;
@@ -269,4 +269,9 @@ input:checked+.slider:before {
     padding: 4px;
     text-align: center;
     font-size: 15px;
+}
+
+.div_unit_error_message {
+    border-color: #ff3c00cc;
+    color: #ff3c00cc;
 }

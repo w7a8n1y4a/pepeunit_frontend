@@ -113,8 +113,6 @@ export default function RepoContent(){
 const handleCopy = async () => {
   try {
     await navigator.clipboard.writeText(currentNodeData.repoUrl);
-
-    // Сбрасываем состояние "скопировано" через 2 секунды
   } catch (error) {
     console.error('Failed to copy text:', error);
   }
