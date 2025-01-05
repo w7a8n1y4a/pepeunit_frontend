@@ -20,7 +20,7 @@ export default function useFetchEntitiesByFilter() {
       agentType: PermissionEntities,
       limit: number,
       offset: number,
-      visibilityLevel?: VisibilityLevel,
+      visibilityLevel?: VisibilityLevel[],
       creatorUuid?: string
     ) => {
     try {
