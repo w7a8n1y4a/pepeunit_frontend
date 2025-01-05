@@ -271,7 +271,7 @@ export default function UnitContent(){
           <button className="button_open_alter" onClick={() => openModal('updateUnit')}>
             Options
           </button>
-          <button className="button_open_alter" onClick={handleDeleteUnit}>
+          <button className="button_del_alter" onClick={handleDeleteUnit}>
             Delete Unit
           </button>
           <ResultQuery

@@ -150,7 +150,7 @@ const handleCopy = async () => {
           }
           {
             user ? (
-              <button className="button_open_alter" onClick={() => openModal('createUnit')}>
+              <button className="button_add_alter" onClick={() => openModal('createUnit')}>
                 Create Unit
               </button>
             ) : (<></>)
@@ -219,7 +219,7 @@ const handleCopy = async () => {
               </button>
             )
           }
-          <button className="button_open_alter" onClick={handleDeleteRepo}>
+          <button className="button_del_alter" onClick={handleDeleteRepo}>
             Delete Repo
           </button>
           <ResultQuery
