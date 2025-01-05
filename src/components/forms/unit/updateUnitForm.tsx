@@ -1,5 +1,5 @@
-import { useResultHandler } from '@rootTypes/useResultHandler';
-import { useAsyncHandler } from '@rootTypes/useAsyncHandler';
+import { useResultHandler } from '@handlers/useResultHandler';
+import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import { VisibilityLevel, useGetBranchCommitsLazyQuery, useUpdateUnitMutation, useGetRepoLazyQuery, RepoType, useGetAvailablePlatformsLazyQuery } from '@rootTypes/compositionFunctions'
 import { useState, useEffect } from 'react';
 import { getCommitSummary } from '@utils/getCommitSummary';

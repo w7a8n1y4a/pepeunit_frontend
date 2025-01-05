@@ -1,6 +1,6 @@
 import { NodeType } from '@rootTypes/nodeTypeEnum'
-import { useResultHandler } from '@rootTypes/useResultHandler';
-import { useAsyncHandler } from '@rootTypes/useAsyncHandler';
+import { useResultHandler } from '@handlers/useResultHandler';
+import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import { getNodeColor } from '@utils/getNodeColor'
 import { useCreateRepoMutation, VisibilityLevel, CreateRepoMutationVariables, GitPlatform } from '@rootTypes/compositionFunctions'
 import { useState } from 'react';

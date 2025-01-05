@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { useResultHandler } from '@rootTypes/useResultHandler';
-import { useAsyncHandler } from '@rootTypes/useAsyncHandler';
+import { useResultHandler } from '@handlers/useResultHandler';
+import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import { useUpdateRepoCredentialsMutation } from '@rootTypes/compositionFunctions'
 import isValidString from '@utils/isValidString'
 import DefaultInput from '@primitives/defaultInput'

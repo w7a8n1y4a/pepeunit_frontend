@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { useResultHandler } from '@rootTypes/useResultHandler';
-import { useAsyncHandler } from '@rootTypes/useAsyncHandler';
+import { useResultHandler } from '@handlers/useResultHandler';
+import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import ResultQuery from '@primitives/resultQuery'
 import { useGetVerificationUserLazyQuery } from '@rootTypes/compositionFunctions';
 import Spinner from '@primitives/spinner'
