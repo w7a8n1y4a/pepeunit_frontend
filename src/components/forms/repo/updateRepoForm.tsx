@@ -54,6 +54,12 @@ export default function UpdateRepoForm() {
         })
     }, [currentNodeData.defaultBranch, currentNodeData.isAutoUpdateRepo]);
 
+    useEffect(() => {
+        if ( currentNodeData.__typename == 'RepoType' && !(currentNodeData.branches.includes(currentNodeData.defaultBranch)) && currentNodeData.defaultBranch != currentNodeData.branches[0]) {
+            currentNodeData.defaultBranch = currentNodeData.branches[0]
+        }
+    }, [currentNodeData.defaultBranch]);
+
     const handleUpdateRepo = () => {
         runAsync(async () => {
             let updateRepoData = await updateRepoMutation({
