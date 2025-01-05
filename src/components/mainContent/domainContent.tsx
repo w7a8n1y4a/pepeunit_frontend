@@ -54,13 +54,13 @@ export default function DomainContent(){
             isLoaderActive && (<Spinner/>)
           }
           <button className="button_open_alter" onClick={() => openModal('statistics')}>
-            Статистики
+            Instance statistics
           </button>
 
           {
             user?.role === UserRole.Admin ? (
               <button className="button_open_alter" onClick={handleBulkUpdate}>
-                Обновить все Repo и связанные Unit
+                Update all Repo and Unit
               </button>
             ) : (<></>)
           }
@@ -69,22 +69,22 @@ export default function DomainContent(){
           />
         </div>
       </BaseModal>
-      <BaseModal modalName='Метрики' open={activeModal === 'statistics'} openModalType='domainMenu'>
+      <BaseModal modalName='Statistics' open={activeModal === 'statistics'} openModalType='domainMenu'>
           <div>
             <div>
-              Число User: {baseMetrics?.userCount}
+              User: {baseMetrics?.userCount}
             </div>
             <div>
-              Число Repo: {baseMetrics?.repoCount}
+              Repo: {baseMetrics?.repoCount}
             </div>
             <div>
-              Число Unit: {baseMetrics?.unitCount}
+              Unit: {baseMetrics?.unitCount}
             </div>
             <div>
-              Число UnitNode: {baseMetrics?.unitNodeCount}
+              UnitNode: {baseMetrics?.unitNodeCount}
             </div>
             <div>
-              Число UnitNodeEdge: {baseMetrics?.unitNodeEdgeCount}
+              UnitNodeEdge: {baseMetrics?.unitNodeEdgeCount}
             </div>
           </div>
       </BaseModal>

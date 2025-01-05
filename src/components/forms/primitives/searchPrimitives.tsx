@@ -157,7 +157,7 @@ import { useUserStore } from '@stores/userStore';
                             <span className="slider"></span>
                         </label>
                         <div className="toggle_text">
-                            Только свои ?
+                            You Owner ?
                         </div>
                     </div>
                 )

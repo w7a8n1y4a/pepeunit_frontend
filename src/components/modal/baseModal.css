@@ -2,6 +2,7 @@ dialog {
     border-radius: 16px;
     border: solid 3px;
     border-color: #282828;
+    width: 400px;
 }
 
 .modal_header {

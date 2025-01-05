@@ -129,17 +129,15 @@ export default function UnitContent(){
   useEffect(() => {
     runAsync(async () => {
       if (currentNodeData){
-        setCurrentRepoData(null); // Сброс репозитория
-        setRepoAvailablePlatforms(null); // Сброс платформ
+        setCurrentRepoData(null);
+        setRepoAvailablePlatforms(null);
   
-        // 1. Получение данных репозитория
         const repoResponse = await getRepo({ variables: { uuid: currentNodeData.repoUuid } });
         const repo = repoResponse.data?.getRepo;
   
         if (repo) {
           setCurrentRepoData(repo);
   
-          // 2. Проверка и загрузка платформ
           if (repo.isCompilableRepo) {
             const platformsResponse = await getAvailablePlatforms(
               { variables: { uuid: currentNodeData.repoUuid, targetCommit: currentNodeData.repoCommit } }
@@ -179,19 +177,19 @@ export default function UnitContent(){
           }
 
           <div>
-            Статус - {currentNodeData?.firmwareUpdateStatus}
+            Status - {currentNodeData?.firmwareUpdateStatus}
           </div>
           <div>
-            Ошибка - {currentNodeData?.firmwareUpdateError}
+            Error - {currentNodeData?.firmwareUpdateError}
           </div>
           <div>
-            Запрос был в - {currentNodeData?.lastFirmwareUpdateDatetime}
+            Query time - {currentNodeData?.lastFirmwareUpdateDatetime}
           </div>
           <div>
-            Текущая версия - {currentNodeData?.currentCommitVersion}
+            Current Version - {currentNodeData?.currentCommitVersion}
           </div>
           <div>
-            Target версия - {targetVersion ? (targetVersion) : (<></>)}
+            Target Version - {targetVersion ? (targetVersion) : (<></>)}
           </div>
           {
             currentNodeData?.unitState ? (
@@ -204,28 +202,28 @@ export default function UnitContent(){
             user && currentNodeData && user.uuid == currentNodeData.creatorUuid ? (
               <>
                 <button className="button_open_alter" onClick={() => handleSendUnitCommand(BackendTopicCommand.Update)}>
-                  Обновить Firmware
+                  Firmware Update
                 </button>
 
                 <button className="button_open_alter" onClick={() => handleSendUnitCommand(BackendTopicCommand.SchemaUpdate)}>
-                  Обновить Schema
+                  Schema Update
                 </button>
 
                 <button className="button_open_alter" onClick={() => handleSendUnitCommand(BackendTopicCommand.EnvUpdate)}>
-                  Обновить Env
+                  Env Update
                 </button>
 
                 <button className="button_open_alter" onClick={() => openModal('permissionMenu' + nodeType)}>
-                  Доступы
+                  Permission
                 </button>
                 <button className="button_open_alter" onClick={() => fileUpload("tar")}>
-                  Скачать tar
+                  tar
                 </button>
                 <button className="button_open_alter" onClick={() => fileUpload("tgz")}>
-                  Скачать tgz
+                  tgz
                 </button>
                 <button className="button_open_alter" onClick={() => fileUpload("zip")}>
-                  Скачать zip
+                  zip
                 </button>
 
                 {currentRepoData?.isCompilableRepo && repoAvailablePlatforms?.map(item => (
@@ -235,7 +233,7 @@ export default function UnitContent(){
                 ))}
 
                 <button className="button_open_alter" onClick={() => openModal('unitSettingsMenu')}>
-                  Настройки
+                  Settings
                 </button>
               </>
             ) : (<></>)
@@ -255,7 +253,7 @@ export default function UnitContent(){
         }
       </BaseModal>
       <BaseModal
-        modalName='Настройки'
+        modalName='Settings'
         open={activeModal === 'unitSettingsMenu'}
         openModalType='unitMenu'
         >
@@ -264,13 +262,13 @@ export default function UnitContent(){
             isLoaderActive && (<Spinner/>)
           }
           <button className="button_open_alter" onClick={() => openModal('unitSetEnv')}>
-            Установить окружение
+            Set ENV
           </button>
           <button className="button_open_alter" onClick={() => openModal('updateUnit')}>
-            Параметры
+            Options
           </button>
           <button className="button_open_alter" onClick={handleDeleteUnit}>
-            Удалить
+            Delete
           </button>
           <ResultQuery
             resultData={resultData}
@@ -278,7 +276,7 @@ export default function UnitContent(){
         </div>
       </BaseModal>
       <BaseModal
-        modalName='Параметры Unit'
+        modalName='Options Unit'
         open={activeModal === 'updateUnit'}
         openModalType='unitSettingsMenu'
       >

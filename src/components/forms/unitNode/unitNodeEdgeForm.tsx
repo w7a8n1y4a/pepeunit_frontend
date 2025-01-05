@@ -85,7 +85,7 @@ export default function UnitNodeEdgeForm() {
             />
 
             <BaseModal
-                modalName={'Поиск по Unit'}
+                modalName={'Search by Unit'}
                 open={activeModal === 'unitNodeEdgeCreate'}
                 openModalType={"unitNodeAddOutputToInput"} 
             >
