@@ -55,7 +55,7 @@ export default function UnitNodeSetStateForm() {
                     <ResultQuery
                         resultData={{
                             type: ResultType.Angry,
-                            message: 'Заполните ветку по умолчанию'
+                            message: 'Fill in the default branch'
                         }}
                     />
                 )
