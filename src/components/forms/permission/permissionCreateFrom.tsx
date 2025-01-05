@@ -12,6 +12,7 @@ import ResultQuery from '@primitives/resultQuery';
 import PaginationControls from '@primitives/pagination';
 import IterationList from '@primitives/iterationList'
 import EntityTypeSelector from '@primitives/entityTypeSelector';
+import VisibilitySelector from '@primitives/visibilitySelector';
 import useFetchEntitiesByFilter from '../utils/useFetchEntitiesByFilter';
 import '../form.css';
 
@@ -34,6 +35,9 @@ export default function PermissionCreateForm({ currentNodeType, selectedEntityTy
     
     const [ searchString, setSearchString ] = useState('');
     const [ isCreatorSearchOnly, setIsCreatorSearchOnly] = useState<boolean>(false);
+    const [selectedVisibilityLevels, setSelectedVisibilityLevels] = useState<VisibilityLevel[]>(
+        [VisibilityLevel.Public, VisibilityLevel.Internal, VisibilityLevel.Private]
+    );
 
     const [ typeList, setTypeList ] = useState<'button' | 'collapse'>('button');
     const [ nodeOutputs, setNodeOutputs ] = useState<Array<any> | null>(null);
@@ -53,6 +57,7 @@ export default function PermissionCreateForm({ currentNodeType, selectedEntityTy
         searchString: string,
         selectedEntityType: PermissionEntities,
         currentPage: number,
+        visibilityLevel?: VisibilityLevel[],
         isCreatorSearchOnly?: boolean,
     ) => {
         runAsync(async () => {
@@ -61,7 +66,7 @@ export default function PermissionCreateForm({ currentNodeType, selectedEntityTy
                 selectedEntityType,
                 itemsPerPage,
                 currentPage * itemsPerPage,
-                undefined,
+                visibilityLevel,
                 user && isCreatorSearchOnly ? user.uuid : undefined  
             )
             if (result?.data) {
@@ -96,12 +101,12 @@ export default function PermissionCreateForm({ currentNodeType, selectedEntityTy
     };
 
     useEffect(() => {
-        loadEntities('', selectedEntityType, currentPage, isCreatorSearchOnly);
+        loadEntities('', selectedEntityType, currentPage, selectedVisibilityLevels, isCreatorSearchOnly);
     }, [currentNodeData]);
-
+    
     useEffect(() => {
-        loadEntities(searchString, selectedEntityType, currentPage, isCreatorSearchOnly);
-    }, [searchString, currentPage, selectedEntityType, isCreatorSearchOnly]);
+        loadEntities(searchString, selectedEntityType, currentPage, selectedVisibilityLevels, isCreatorSearchOnly);
+    }, [searchString, currentPage, selectedEntityType, selectedVisibilityLevels, isCreatorSearchOnly]);
 
     const updateErrorState = (field: keyof typeof errorState, hasError: boolean) => {
         setErrorState(prevState => ({
@@ -163,12 +168,15 @@ export default function PermissionCreateForm({ currentNodeType, selectedEntityTy
                     )
                 }
             </form>
-
-            <EntityTypeSelector
-                entities={[PermissionEntities.User, PermissionEntities.Unit]}
-                selectedEntityType={selectedEntityType}
-                setSelectedEntityType={setSelectedEntityType}
-            />
+            {
+                user && selectedEntityType != PermissionEntities.User && (
+                    <VisibilitySelector
+                        levels={[VisibilityLevel.Public, VisibilityLevel.Internal, VisibilityLevel.Private]}
+                        selectedVisibilityLevels={selectedVisibilityLevels}
+                        setSelectedVisibilityLevels={setSelectedVisibilityLevels}
+                    />
+                )
+            }
 
             <IterationList
                 items={nodeOutputs}

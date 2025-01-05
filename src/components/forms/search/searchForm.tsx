@@ -1,5 +1,6 @@
 import {
-    PermissionEntities
+    PermissionEntities,
+    VisibilityLevel
 } from '@rootTypes/compositionFunctions';
 import { useResultHandler } from '@rootTypes/useResultHandler';
 import { useAsyncHandler } from '@rootTypes/useAsyncHandler';
@@ -10,6 +11,7 @@ import ResultQuery from '@primitives/resultQuery';
 import PaginationControls from '@primitives/pagination';
 import IterationList from '@primitives/iterationList'
 import EntityTypeSelector from '@primitives/entityTypeSelector';
+import VisibilitySelector from '@primitives/visibilitySelector';
 import useFetchEntitiesByFilter from '../utils/useFetchEntitiesByFilter';
 import '../form.css';
 import { useNodeStore } from '@stores/baseStore';
@@ -19,13 +21,15 @@ import { useUserStore } from '@stores/userStore';
   interface SearchFormProps {
     onFocusNode?: (uuid: string, nodeType: string) => void
   }
-  
 
   export default function SearchForm({ onFocusNode }: SearchFormProps){
     const { resultData, setResultData, handleError } = useResultHandler();
     const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
   
     const [selectedEntityType, setSelectedEntityType] = useState<PermissionEntities>(PermissionEntities.Unit);
+    const [selectedVisibilityLevels, setSelectedVisibilityLevels] = useState<VisibilityLevel[]>(
+        [VisibilityLevel.Public, VisibilityLevel.Internal, VisibilityLevel.Private]
+    );
   
     const { currentNodeData } = useNodeStore();
     const { user } = useUserStore();
@@ -48,6 +52,7 @@ import { useUserStore } from '@stores/userStore';
         searchString: string,
         selectedEntityType: PermissionEntities,
         currentPage: number,
+        visibilityLevel?: VisibilityLevel[], 
         isCreatorSearchOnly?: boolean,
     ) => {
         runAsync(async () => {
@@ -56,7 +61,7 @@ import { useUserStore } from '@stores/userStore';
                 selectedEntityType,
                 itemsPerPage,
                 currentPage * itemsPerPage,
-                undefined,
+                visibilityLevel,
                 user && isCreatorSearchOnly ? user.uuid : undefined  
             )
             if (result?.data) {
@@ -87,12 +92,12 @@ import { useUserStore } from '@stores/userStore';
     };
     
     useEffect(() => {
-        loadEntities('', selectedEntityType, currentPage, isCreatorSearchOnly);
+        loadEntities('', selectedEntityType, currentPage, selectedVisibilityLevels, isCreatorSearchOnly);
     }, [currentNodeData]);
     
     useEffect(() => {
-        loadEntities(searchString, selectedEntityType, currentPage, isCreatorSearchOnly);
-    }, [searchString, currentPage, selectedEntityType, isCreatorSearchOnly]);
+        loadEntities(searchString, selectedEntityType, currentPage, selectedVisibilityLevels, isCreatorSearchOnly);
+    }, [searchString, currentPage, selectedEntityType, selectedVisibilityLevels, isCreatorSearchOnly]);
 
     const updateErrorState = (field: keyof typeof errorState, hasError: boolean) => {
         setErrorState(prevState => ({
@@ -138,6 +143,15 @@ import { useUserStore } from '@stores/userStore';
                 )
             }
         </form>
+        {
+            user && selectedEntityType != PermissionEntities.User && (
+                <VisibilitySelector
+                    levels={[VisibilityLevel.Public, VisibilityLevel.Internal, VisibilityLevel.Private]}
+                    selectedVisibilityLevels={selectedVisibilityLevels}
+                    setSelectedVisibilityLevels={setSelectedVisibilityLevels}
+                />
+            )
+        }
 
         <EntityTypeSelector
             entities={
