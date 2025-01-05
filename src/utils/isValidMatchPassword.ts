@@ -2,7 +2,7 @@ export default function isValidMatchPassword(data: {password: string, confirmPas
     let errorMessage: null | string = null
 
     if (data.password !== data.confirmPassword){
-        errorMessage = "Пароли не совпадают"
+        errorMessage = "Passwords do not match"
     }
 
     return errorMessage;

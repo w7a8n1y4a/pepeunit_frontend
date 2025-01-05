@@ -37,28 +37,28 @@ export default function UnitNodeContent(){
             {currentNodeData?.name}
           </div>
           <div>
-            Состояние: {currentNodeData?.state || "Данных нет"}
+            State: {currentNodeData?.state || "No Data"}
           </div>
           {
             user && currentNodeData && user.uuid == currentNodeData.creatorUuid ? (
               <>
                 <button className="button_open_alter" onClick={() => openModal('permissionMenu' + nodeType)}>
-                  Доступы
+                  Permission
                 </button>
                 {
                   currentNodeData?.type == UnitNodeTypeEnum.Input ? (
                     <>
                       <button className="button_open_alter" onClick={() => openModal('unitNodeSetState')}>
-                        Установить значение
+                        Set State
                       </button>
                       <button className="button_open_alter" onClick={() => openModal('unitNodeAddOutputToInput')}>
-                        Связи
+                        Related Output
                       </button>
                     </>
                   ) : (<></>)
                 }
                 <button className="button_open_alter" onClick={() => openModal('unitNodeUpdate')}>
-                  Настройки
+                  Options
                 </button>
               </>
             ) : (<></>)
@@ -66,7 +66,7 @@ export default function UnitNodeContent(){
         </div>
       </BaseModal>
 
-      <BaseModal modalName={'Доступы ' + currentNodeData?.name} open={activeModal === 'permissionMenu' + nodeType} openModalType='inputMenu'>
+      <BaseModal modalName={'Permission ' + currentNodeData?.name} open={activeModal === 'permissionMenu' + nodeType} openModalType='inputMenu'>
         {
           currentNodeData && (
             <PermissionForm
@@ -77,7 +77,7 @@ export default function UnitNodeContent(){
       </BaseModal>
 
       <BaseModal
-        modalName={'Подключенные выходы'}
+        modalName={'Related Output'}
         open={activeModal === 'unitNodeAddOutputToInput'}
         openModalType={"outputMenu"} 
       >
@@ -89,7 +89,7 @@ export default function UnitNodeContent(){
       </BaseModal>
 
       <BaseModal
-        modalName={'Настройки ' + currentNodeData?.type}
+        modalName={'Options ' + currentNodeData?.type}
         open={activeModal === 'unitNodeUpdate'}
         openModalType={"outputMenu"} 
       >
@@ -101,7 +101,7 @@ export default function UnitNodeContent(){
       </BaseModal>
 
       <BaseModal
-        modalName={'Установить ' + currentNodeData?.type}
+        modalName={'Set State ' + currentNodeData?.type}
         open={activeModal === 'unitNodeSetState'}
         openModalType={"inputMenu"} 
       >

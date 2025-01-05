@@ -29,14 +29,14 @@ export default function VerificationForm() {
                 isLoaderActive && (<Spinner/>)
             }
             <p>
-                1. Сгенерируйте уникальную ссылку
+                1. Generate a unique Telegram verification link
             </p>
             <div className='code_view'>
                 <a style={{color: "#0077ff"}} href={verificationCode} target="_blank">
                 {verificationCode}</a>
             </div>
             <button className="button_main_action" onClick={handleVerification}>
-                Сгенерировать
+                Generate
             </button>
             <ResultQuery
                 resultData={resultData}

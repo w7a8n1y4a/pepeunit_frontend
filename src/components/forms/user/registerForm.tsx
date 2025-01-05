@@ -113,10 +113,10 @@ export default function RegisterForm({ openModalSignIn }: RegisterFormProps) {
                 />
             </form>
             <button className="button_main_action" onClick={handleRegister} disabled={Object.values(errorState).some(isError => isError)}>
-                Создать
+                Sign Up
             </button>
             <button className="button_open_alter_auth" onClick={openModalSignIn}>
-                Авторизация
+                Authorization
             </button>
             <ResultQuery
                 resultData={resultData}

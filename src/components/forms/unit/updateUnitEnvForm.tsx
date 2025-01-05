@@ -88,7 +88,7 @@ export default function UpdateUnitEnvForm() {
                 </div>
             </div>
             <button className="button_main_action" onClick={handleUpdateUnitEnv}>
-                Обновить
+                Update
             </button>
             <ResultQuery
                 resultData={resultData}

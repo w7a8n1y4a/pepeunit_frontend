@@ -80,7 +80,7 @@ export default function UnitNodeSetStateForm() {
                 </form>
             </div>
             <button className="button_main_action" onClick={handleUnitNodeSetState} disabled={Object.values(errorState).some(isError => isError)}>
-                Обновить
+                Update
             </button>
             <ResultQuery
                 resultData={resultData}

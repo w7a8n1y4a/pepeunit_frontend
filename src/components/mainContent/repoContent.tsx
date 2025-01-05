@@ -124,7 +124,7 @@ export default function RepoContent(){
           {
             user ? (
               <button className="button_open_alter" onClick={() => openModal('createUnit')}>
-              Создать Unit
+              Create Unit
             </button>
             ) : (<></>)
           }
@@ -133,16 +133,16 @@ export default function RepoContent(){
             user && user.uuid == currentNodeData?.creatorUuid ? (
               <>
                 <button className="button_open_alter" onClick={() => openModal('permissionMenu' + nodeType)}>
-                  Доступы
+                  Permission
                 </button>
                 <button className="button_open_alter" onClick={() => openModal('repoSettingsMenu')}>
-                  Настройки
+                  Settings
                 </button>
                 <button className="button_open_alter" onClick={handleUpdateLocalRepo}>
-                  Обновить доступные версии
+                  Update branch and commits
                 </button>
                 <button className="button_open_alter" onClick={handleUpdateUnitsFirmware}>
-                  Обновить связанные Unit
+                  Update related Unit
                 </button>
               </>
             ) : (<></>)
@@ -152,14 +152,14 @@ export default function RepoContent(){
           />
         </div>
       </BaseModal>
-      <BaseModal modalName='Создание Unit' open={activeModal === 'createUnit'} openModalType='repoMenu'>
+      <BaseModal modalName='Create Unit' open={activeModal === 'createUnit'} openModalType='repoMenu'>
         {
           currentNodeData && (
             <CreateUnitForm/>
           )
         }
       </BaseModal>
-      <BaseModal modalName={'Доступы ' + currentNodeData?.name} open={activeModal === 'permissionMenu' + nodeType} openModalType='repoMenu'>
+      <BaseModal modalName={'Permission ' + currentNodeData?.name} open={activeModal === 'permissionMenu' + nodeType} openModalType='repoMenu'>
         {
           currentNodeData && (
             <PermissionForm
@@ -169,7 +169,7 @@ export default function RepoContent(){
         }
       </BaseModal>
       <BaseModal
-        modalName='Настройки'
+        modalName='Settings'
         open={activeModal === 'repoSettingsMenu'}
         openModalType='repoMenu'
         >
@@ -178,17 +178,17 @@ export default function RepoContent(){
             isLoaderActive && (<Spinner/>)
           }
           <button className="button_open_alter" onClick={() => openModal('updateRepo')}>
-            Параметры
+            Options
           </button>
           {
             currentNodeData && !currentNodeData.isPublicRepository && (
               <button className="button_open_alter" onClick={() => openModal('changeCredentials')}>
-                Авторизация GIT
+                Change GIT Credentials
               </button>
             )
           }
           <button className="button_open_alter" onClick={handleDeleteRepo}>
-            Удалить
+            Delete Repo
           </button>
           <ResultQuery
             resultData={resultData}
@@ -196,7 +196,7 @@ export default function RepoContent(){
         </div>
       </BaseModal>
       <BaseModal
-        modalName='Параметры Repo'
+        modalName='Options Repo'
         open={activeModal === 'updateRepo'}
         openModalType='repoSettingsMenu'  
       >
@@ -207,7 +207,7 @@ export default function RepoContent(){
         }
       </BaseModal>
       <BaseModal
-        modalName='Авторизация GIT'
+        modalName='External Auth GIT'
         open={activeModal === 'changeCredentials'}
         openModalType='repoSettingsMenu'
       >

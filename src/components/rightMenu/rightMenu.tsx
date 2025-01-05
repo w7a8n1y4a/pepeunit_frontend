@@ -15,7 +15,7 @@ export default function RightMenu() {
             <button className="signin_button" onClick={() => openModal('createRepo')}>
                 <img src={micro} width="32" height="32" alt="AddRepoImg" />
             </button>
-            <BaseModal modalName='Создание Repo' open={activeModal === 'createRepo'}>
+            <BaseModal modalName='Create Repo' open={activeModal === 'createRepo'}>
                 <CreateRepoForm/>
             </BaseModal>
         </div>
