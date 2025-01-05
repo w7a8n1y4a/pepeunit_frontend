@@ -71,21 +71,21 @@ export default function DomainContent(){
         </div>
       </BaseModal>
       <BaseModal modalName='Statistics' subName={currentNodeData?.name} open={activeModal === 'statistics'} openModalType='domainMenu'>
-          <div>
-            <div>
-              User: {baseMetrics?.userCount}
+          <div className='div_statistics'>
+            <div className='div_statistics_text'>
+              User - {baseMetrics?.userCount}
             </div>
-            <div>
-              Repo: {baseMetrics?.repoCount}
+            <div className='div_statistics_text'>
+              Repo - {baseMetrics?.repoCount}
             </div>
-            <div>
-              Unit: {baseMetrics?.unitCount}
+            <div className='div_statistics_text'>
+              Unit - {baseMetrics?.unitCount}
             </div>
-            <div>
-              UnitNode: {baseMetrics?.unitNodeCount}
+            <div className='div_statistics_text'>
+              UnitNode - {baseMetrics?.unitNodeCount}
             </div>
-            <div>
-              UnitNodeEdge: {baseMetrics?.unitNodeEdgeCount}
+            <div className='div_statistics_text'>
+              UnitNodeEdge - {baseMetrics?.unitNodeEdgeCount}
             </div>
           </div>
       </BaseModal>
