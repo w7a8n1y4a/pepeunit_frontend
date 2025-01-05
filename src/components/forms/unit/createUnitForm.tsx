@@ -225,7 +225,7 @@ export default function CreateUnitForm() {
                                 >
                                     <option value="" disabled selected>Выберите ветку</option>
                                     {   
-                                        currentNodeData.branches.map(
+                                        currentNodeData.__typename == 'RepoType' && currentNodeData.branches.map(
                                             (item: string) => (
                                                 <option value={item}>
                                                     {item}
