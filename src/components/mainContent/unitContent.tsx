@@ -204,17 +204,20 @@ export default function UnitContent(){
           {
             user && currentNodeData && user.uuid == currentNodeData.creatorUuid ? (
               <>
+                <button className="button_add_alter" onClick={() => openModal('unitSetEnv')}>
+                  Set Env Variable
+                </button>
                 <div className='div_unit_message'>
                   Firmware with env.json and schema.json
                 </div>
                 <div className='buttons_load_firmware'>
-                  <button className="button_load_firmware" onClick={() => fileUpload("tar")}>
+                  <button className="button_load_data_grid" onClick={() => fileUpload("tar")}>
                     tar
                   </button>
-                  <button className="button_load_firmware" onClick={() => fileUpload("tgz")}>
+                  <button className="button_load_data_grid" onClick={() => fileUpload("tgz")}>
                     tgz
                   </button>
-                  <button className="button_load_firmware" onClick={() => fileUpload("zip")}>
+                  <button className="button_load_data_grid" onClick={() => fileUpload("zip")}>
                     zip
                   </button>
                 </div>
@@ -228,7 +231,7 @@ export default function UnitContent(){
                       <div className='buttons_platforms'>
                         {
                           repoAvailablePlatforms?.slice().reverse().map(item => (
-                            <a className="button_load_compiled" key={item.name} href={item.link}>
+                            <a className="button_load_data_grid" key={item.name} href={item.link}>
                                 {item.name}
                             </a>
                           ))
@@ -240,19 +243,16 @@ export default function UnitContent(){
                   Send update MQTT message
                 </div>
                 <div className='buttons_load_firmware'>
-                  <button className="button_send_commnd" onClick={() => handleSendUnitCommand(BackendTopicCommand.Update)}>
+                  <button className="button_load_data_grid" onClick={() => handleSendUnitCommand(BackendTopicCommand.Update)}>
                     Firmware
                   </button>
-                  <button className="button_send_commnd" onClick={() => handleSendUnitCommand(BackendTopicCommand.SchemaUpdate)}>
+                  <button className="button_load_data_grid" onClick={() => handleSendUnitCommand(BackendTopicCommand.SchemaUpdate)}>
                     Schema
                   </button>
-                  <button className="button_send_commnd" onClick={() => handleSendUnitCommand(BackendTopicCommand.EnvUpdate)}>
+                  <button className="button_load_data_grid" onClick={() => handleSendUnitCommand(BackendTopicCommand.EnvUpdate)}>
                     Env
                   </button>
                 </div>
-                <button className="button_add_alter" onClick={() => openModal('unitSetEnv')}>
-                  Set Env Variable
-                </button>
                 <div className='div_statistics'>
                   <button className="button_open_alter" onClick={() => openModal('permissionMenu' + nodeType)}>
                     Permission
