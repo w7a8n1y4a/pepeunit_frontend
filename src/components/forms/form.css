@@ -74,6 +74,7 @@ form {
 }
 
 .button_open_alter_auth,
+.button_open_alter_send,
 .button_open_alter {
     background-color: transparent;
     border-radius: 10px;
@@ -120,6 +121,11 @@ form {
 .button_open_alter:hover {
     border-color: #666;
     outline: none;
+}
+
+.button_open_alter_send:hover {
+    background-color: #2196F3;
+    color: #ffffff;
 }
 
 .code_view {
@@ -228,11 +234,11 @@ input:checked+.slider:before {
 .buttons_load_firmware {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
-    gap: 5px;
+    gap: 1px;
     padding-bottom: 7px;
 }
 
-.button_send_commnd, .button_load_firmware, .button_load_compiled {
+.button_load_data_grid {
     background-color: transparent;
     border-radius: 10px;
     border: solid 3px;
@@ -243,17 +249,7 @@ input:checked+.slider:before {
     margin: 1px;
 }
 
-.button_load_firmware:hover {
-    background-color: #EF6C00;
-    color: #ffffff;
-}
-
-.button_load_compiled:hover {
-    background-color: #4CAF50;
-    color: #ffffff;
-}
-
-.button_send_commnd:hover {
+.button_load_data_grid:hover {
     background-color: #2196F3;
     color: #ffffff;
 }
@@ -261,7 +257,7 @@ input:checked+.slider:before {
 .buttons_platforms {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-    gap: 5px;
+    gap: 1px;
     padding-bottom: 7px;
 }
 

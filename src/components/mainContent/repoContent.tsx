@@ -167,10 +167,10 @@ const handleCopy = async () => {
                   </button>
                 </div>
                 <div className='div_statistics'>
-                  <button className="button_open_alter" onClick={handleUpdateLocalRepo}>
+                  <button className="button_open_alter_send" onClick={handleUpdateLocalRepo}>
                     Update local Repo
                   </button>
-                  <button className="button_open_alter" onClick={handleUpdateUnitsFirmware}>
+                  <button className="button_open_alter_send" onClick={handleUpdateUnitsFirmware}>
                     Update related Unit
                   </button>
                 </div>
