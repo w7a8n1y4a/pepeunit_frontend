@@ -26,6 +26,7 @@ export default function UnitNodeContent(){
     <>
       <BaseModal
         modalName={currentNodeData?.type}
+        subName={currentNodeData?.name}
         open={activeModal === 'inputMenu' || activeModal === 'outputMenu'}
         reloadEntityType={currentNodeData?.type}
       >
@@ -33,9 +34,6 @@ export default function UnitNodeContent(){
           {
             isLoaderActive && (<Spinner/>)
           }
-          <div>
-            {currentNodeData?.name}
-          </div>
           <div>
             State: {currentNodeData?.state || "No Data"}
           </div>
@@ -66,7 +64,7 @@ export default function UnitNodeContent(){
         </div>
       </BaseModal>
 
-      <BaseModal modalName={'Permission ' + currentNodeData?.name} open={activeModal === 'permissionMenu' + nodeType} openModalType='inputMenu'>
+      <BaseModal modalName={'Permission'} subName={currentNodeData?.name} open={activeModal === 'permissionMenu' + nodeType} openModalType='inputMenu'>
         {
           currentNodeData && (
             <PermissionForm
@@ -78,6 +76,7 @@ export default function UnitNodeContent(){
 
       <BaseModal
         modalName={'Related Output'}
+        subName={currentNodeData?.name}
         open={activeModal === 'unitNodeAddOutputToInput'}
         openModalType={"outputMenu"} 
       >
@@ -90,6 +89,7 @@ export default function UnitNodeContent(){
 
       <BaseModal
         modalName={'Options ' + currentNodeData?.type}
+        subName={currentNodeData?.name}
         open={activeModal === 'unitNodeUpdate'}
         openModalType={"outputMenu"} 
       >
@@ -102,6 +102,7 @@ export default function UnitNodeContent(){
 
       <BaseModal
         modalName={'Set State ' + currentNodeData?.type}
+        subName={currentNodeData?.name}
         open={activeModal === 'unitNodeSetState'}
         openModalType={"inputMenu"} 
       >

@@ -122,7 +122,11 @@ export default function Header(){
                         openModalSignIn={() => openModal('signin')}
                     />
                 </BaseModal>
-                <BaseModal modalName='User' open={activeModal === 'userMenu'}>
+                <BaseModal
+                    modalName='User'
+                    subName={user && !currentNodeData ? user.login : ( currentNodeData ? currentNodeData.login : '')}
+                    open={activeModal === 'userMenu'}
+                >
                     <div className="modal_menu_content">
                         {
                             isLoaderActive && (<Spinner/>)
@@ -145,9 +149,6 @@ export default function Header(){
                         {
                             user && currentNodeData && currentNodeData.uuid != user.uuid && (
                                 <>
-                                    <div>
-                                        {currentNodeData.login}
-                                    </div>
                                     <div>
                                         {currentNodeData.role}
                                     </div>
@@ -179,6 +180,7 @@ export default function Header(){
                 </BaseModal>
                 <BaseModal
                     modalName='Verification'
+                    subName={user && !currentNodeData ? user.login : ( currentNodeData ? currentNodeData.login : '')}
                     open={activeModal === 'verification'}
                     openModalType='userMenu'
                 >
@@ -186,6 +188,7 @@ export default function Header(){
                 </BaseModal>
                 <BaseModal
                     modalName='Change Login'
+                    subName={user && !currentNodeData ? user.login : ( currentNodeData ? currentNodeData.login : '')}
                     open={activeModal === 'changeLogin'}
                     openModalType='userMenu'
                 >
@@ -193,6 +196,7 @@ export default function Header(){
                 </BaseModal>
                 <BaseModal
                     modalName='Change Password'
+                    subName={user && !currentNodeData ? user.login : ( currentNodeData ? currentNodeData.login : '')}
                     open={activeModal === 'changePass'}
                     openModalType='userMenu'
                 >

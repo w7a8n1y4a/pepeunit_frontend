@@ -110,7 +110,8 @@ export default function RepoContent(){
   return (
     <>
       <BaseModal
-        modalName={'Repo ' + currentNodeData?.name}
+        modalName={'Repo'}
+        subName={currentNodeData?.name}
         open={activeModal === 'repoMenu'}
         reloadEntityType={NodeType.Repo}
       >
@@ -152,14 +153,19 @@ export default function RepoContent(){
           />
         </div>
       </BaseModal>
-      <BaseModal modalName='Create Unit' open={activeModal === 'createUnit'} openModalType='repoMenu'>
+      <BaseModal
+        modalName='Create Unit'
+        subName={currentNodeData?.name}
+        open={activeModal === 'createUnit'}
+        openModalType='repoMenu'
+      >
         {
           currentNodeData && (
             <CreateUnitForm/>
           )
         }
       </BaseModal>
-      <BaseModal modalName={'Permission ' + currentNodeData?.name} open={activeModal === 'permissionMenu' + nodeType} openModalType='repoMenu'>
+      <BaseModal modalName={'Permission'} subName={currentNodeData?.name} open={activeModal === 'permissionMenu' + nodeType} openModalType='repoMenu'>
         {
           currentNodeData && (
             <PermissionForm
@@ -170,6 +176,7 @@ export default function RepoContent(){
       </BaseModal>
       <BaseModal
         modalName='Settings'
+        subName={currentNodeData?.name}
         open={activeModal === 'repoSettingsMenu'}
         openModalType='repoMenu'
         >
@@ -197,6 +204,7 @@ export default function RepoContent(){
       </BaseModal>
       <BaseModal
         modalName='Options Repo'
+        subName={currentNodeData?.name}
         open={activeModal === 'updateRepo'}
         openModalType='repoSettingsMenu'  
       >
@@ -208,6 +216,7 @@ export default function RepoContent(){
       </BaseModal>
       <BaseModal
         modalName='External Auth GIT'
+        subName={currentNodeData?.name}
         open={activeModal === 'changeCredentials'}
         openModalType='repoSettingsMenu'
       >

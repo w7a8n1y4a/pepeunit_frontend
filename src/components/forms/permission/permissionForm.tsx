@@ -171,7 +171,8 @@ export default function PermissionForm({ currentNodeType }: PermissionFormProps)
             />
 
             <BaseModal
-                modalName={'Pick Agent ' + currentNodeData?.name}
+                modalName={'Pick Agent'}
+                subName={currentNodeData?.name}
                 open={activeModal === 'permissionCreate' + currentNodeType}
                 openModalType={"permissionMenu"  + currentNodeType} 
             >
