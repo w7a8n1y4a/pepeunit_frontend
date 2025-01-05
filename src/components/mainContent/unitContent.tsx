@@ -189,6 +189,7 @@ export default function UnitContent(){
               </pre>
             ) : (<></>)
           }
+          
           {
             user && currentNodeData && user.uuid == currentNodeData.creatorUuid ? (
               <>
