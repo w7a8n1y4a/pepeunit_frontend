@@ -1,5 +1,5 @@
-import { useResultHandler } from '@rootTypes/useResultHandler';
-import { useAsyncHandler } from '@rootTypes/useAsyncHandler';
+import { useResultHandler } from '@handlers/useResultHandler';
+import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import BaseModal from '../modal/baseModal'
 import logo from '/images/logo_32_32.png'
 import signin_icon from '/images/signin.svg'

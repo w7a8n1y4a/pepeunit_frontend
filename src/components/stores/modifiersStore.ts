@@ -11,8 +11,8 @@ import {
 } from '@rootTypes/compositionFunctions'
 import { useSearchNodeStore, useNodeStore } from '@stores/baseStore';
 import { useGraphStore } from '@stores/graphStore';
-import { useResultHandler } from '@rootTypes/useResultHandler';
-import { useAsyncHandler } from '@rootTypes/useAsyncHandler';
+import { useResultHandler } from '@handlers/useResultHandler';
+import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import useModalHandlers from '@handlers/useModalHandlers';
 
 interface Button {

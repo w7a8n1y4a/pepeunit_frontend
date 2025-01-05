@@ -2,8 +2,8 @@ import BaseModal from '../modal/baseModal'
 
 import { UnitNodeTypeEnum, PermissionEntities } from '@rootTypes/compositionFunctions'
 import { useModalStore, useNodeStore } from '@stores/baseStore';
-import { useResultHandler } from '@rootTypes/useResultHandler';
-import { useAsyncHandler } from '@rootTypes/useAsyncHandler';
+import { useResultHandler } from '@handlers/useResultHandler';
+import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import UpdateUnitNodeForm from '../forms/unitNode/updateUnitNodeForm';
 import UnitNodeSetStateForm from '../forms/unitNode/unitNodeSetStateForm';
 import UnitNodeEdgeForm from '../forms/unitNode/unitNodeEdgeForm'
