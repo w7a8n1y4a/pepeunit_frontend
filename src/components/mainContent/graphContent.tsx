@@ -27,6 +27,8 @@ import useModalHandlers from '@handlers/useModalHandlers';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import { Vector2 } from 'three'; 
 
+import { useUserStore } from '@stores/userStore';
+
 interface GraphContentProps {
   routerType: any;
   routerUuid: any;
@@ -35,6 +37,8 @@ interface GraphContentProps {
 export default function GraphContent({routerType, routerUuid}: GraphContentProps){
   const { handleError } = useResultHandler();
   const { runAsync } = useAsyncHandler(handleError);
+
+  const { user } = useUserStore();
 
   const navigate = useNavigate();
 
@@ -105,7 +109,7 @@ export default function GraphContent({routerType, routerUuid}: GraphContentProps
         setCurrentSearchNodeData(null)
       })
     }
-  }, [reloadState, routerType, routerUuid]);
+  }, [reloadState, routerType, routerUuid, user]);
 
   function handleNodeRightClick(node: any) {
     if (node.type == NodeType.Unit) {
