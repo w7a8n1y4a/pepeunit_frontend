@@ -11,6 +11,7 @@ import PermissionForm from '../forms/permission/permissionForm';
 import useModalHandlers from '@handlers/useModalHandlers';
 import Spinner from '@primitives/spinner'
 import { useUserStore } from '@stores/userStore';
+import {stringToFormat} from '@utils/stringToFormat'
 
 export default function UnitNodeContent(){
   const { activeModal } = useModalStore();
@@ -27,6 +28,7 @@ export default function UnitNodeContent(){
       <BaseModal
         modalName={currentNodeData?.type}
         subName={currentNodeData?.name}
+        visibilityLevel={stringToFormat(currentNodeData?.visibilityLevel)}
         open={activeModal === 'inputMenu' || activeModal === 'outputMenu'}
         reloadEntityType={currentNodeData?.type}
       >

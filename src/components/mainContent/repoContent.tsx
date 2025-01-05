@@ -10,6 +10,9 @@ import { useState, useEffect } from 'react';
 import Spinner from '@primitives/spinner'
 import ResultQuery from '@primitives/resultQuery'
 import VersionChart from '@primitives/versionChart'
+import {stringToFormat} from '@utils/stringToFormat'
+
+import copy_img from '/images/copy.svg'
 
 import { useGraphStore } from '@stores/graphStore';
 import { useModalStore, useNodeStore } from '@stores/baseStore';
@@ -107,11 +110,22 @@ export default function RepoContent(){
     })
 }, [currentNodeData]);
 
+const handleCopy = async () => {
+  try {
+    await navigator.clipboard.writeText(currentNodeData.repoUrl);
+
+    // Сбрасываем состояние "скопировано" через 2 секунды
+  } catch (error) {
+    console.error('Failed to copy text:', error);
+  }
+};
+
   return (
     <>
       <BaseModal
         modalName={'Repo'}
         subName={currentNodeData?.name}
+        visibilityLevel={stringToFormat(currentNodeData?.visibilityLevel)}
         open={activeModal === 'repoMenu'}
         reloadEntityType={NodeType.Repo}
       >
@@ -123,13 +137,24 @@ export default function RepoContent(){
             versions && versions.unitCount > 0 ? (<VersionChart data={versions} />) : (<></>)
           }
           {
+            currentNodeData && (
+              <>
+                <div className='repo_link'>
+                  <a style={{color: "#0077ff"}} target="_blank" href={currentNodeData.repoUrl}>{stringToFormat(currentNodeData.platform)} {currentNodeData.isPublicRepository ? 'public' : 'private'} Link</a>
+                  <button className='repo_link_button' onClick={handleCopy}>
+                    <img src={copy_img} width="24" height="24" alt="Back"/>
+                  </button>
+                </div>
+              </>
+            )
+          }
+          {
             user ? (
               <button className="button_open_alter" onClick={() => openModal('createUnit')}>
-              Create Unit
-            </button>
+                Create Unit
+              </button>
             ) : (<></>)
           }
-
           {
             user && user.uuid == currentNodeData?.creatorUuid ? (
               <>

@@ -17,13 +17,14 @@ import { useNodeStore } from '@stores/baseStore';
 interface ModalProps {
     modalName: string
     subName?: string
+    visibilityLevel?: string
     children: React.ReactNode
     open: boolean
     openModalType?: string
     reloadEntityType?: NodeType | UnitNodeTypeEnum
 }
 
-export default function BaseModal({modalName, subName, children, open, openModalType, reloadEntityType}: ModalProps) {
+export default function BaseModal({modalName, subName, visibilityLevel, children, open, openModalType, reloadEntityType}: ModalProps) {
     const { openModal, closeModal } = useModalHandlers();
     const { handleError } = useResultHandler();
     const { runAsync } = useAsyncHandler(handleError);
@@ -70,7 +71,6 @@ export default function BaseModal({modalName, subName, children, open, openModal
     
     return ReactDOM.createPortal(
         <dialog open={open}>
-            {}
             <div className="modal_header">
                 <div className="modal_name">
                     {modalName}
@@ -100,6 +100,13 @@ export default function BaseModal({modalName, subName, children, open, openModal
                     <button className="modal_menu_button" onClick={closeModal}>
                         <img src={close_img} width="18" height="18" alt="Close"/>
                     </button>
+                    {
+                        visibilityLevel && (
+                            <div className="modal_sub_name">
+                                {visibilityLevel}
+                            </div>
+                        )
+                    }
                 </div>
             </div>
             {children}

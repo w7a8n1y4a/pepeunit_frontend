@@ -10,6 +10,7 @@ import ResultQuery from '@primitives/resultQuery'
 import UpdateUnitForm from '../forms/unit/updateUnitForm';
 import PermissionForm from '../forms/permission/permissionForm';
 import UpdateUnitEnvForm from '../forms/unit/updateUnitEnvForm'
+import {stringToFormat} from '@utils/stringToFormat'
 
 import { useGraphStore } from '@stores/graphStore';
 import { useModalStore, useNodeStore } from '@stores/baseStore';
@@ -169,6 +170,7 @@ export default function UnitContent(){
       <BaseModal
         modalName={'Unit'}
         subName={currentNodeData?.name}
+        visibilityLevel={stringToFormat(currentNodeData?.visibilityLevel)}
         open={activeModal === 'unitMenu'}
         reloadEntityType={NodeType.Unit}
       >
@@ -270,7 +272,7 @@ export default function UnitContent(){
             Options
           </button>
           <button className="button_open_alter" onClick={handleDeleteUnit}>
-            Delete
+            Delete Unit
           </button>
           <ResultQuery
             resultData={resultData}
