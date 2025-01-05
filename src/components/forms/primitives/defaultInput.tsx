@@ -1,5 +1,5 @@
 import attention_img from '/images/attention.svg'
-import { useState, useEffect, useRef } from 'react';
+import { RefObject, useState, useEffect, useRef } from 'react';
 import { ResultType } from '@rootTypes/resultEnum'
 
 import './primitives.css'
@@ -7,6 +7,7 @@ import './primitives.css'
 interface DefaultInputProps {
     id: string;
     type: string;
+    inputRef?: RefObject<HTMLInputElement>;
     placeholder: string;
     value: string;
     validateState: any;
@@ -16,7 +17,7 @@ interface DefaultInputProps {
     setResultData: (value: { type: ResultType; message: string | null }) => void;
 }
 
-export default function DefaultInput({id, type, placeholder, value, validateState, onChange, validateFunc, setIsErrorExist, setResultData}: DefaultInputProps) {
+export default function DefaultInput({id, type, inputRef, placeholder, value, validateState, onChange, validateFunc, setIsErrorExist, setResultData}: DefaultInputProps) {
     const [isValid, setIsValid] = useState(true);
     const [errorMessage, setErrorMessage] = useState<null | string>(null);
     const firstRender = useRef(true);
@@ -40,6 +41,7 @@ export default function DefaultInput({id, type, placeholder, value, validateStat
             <input
                 id={id}
                 type={type}
+                ref={inputRef}
                 placeholder={placeholder}
                 value={value}
                 onChange={(e) => {
