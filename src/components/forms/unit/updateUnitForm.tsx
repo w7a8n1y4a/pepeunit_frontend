@@ -61,11 +61,11 @@ export default function UpdateUnitForm() {
         })
     }, [currentNodeData.repoBranch, currentNodeData.isAutoUpdateFromRepoUnit]);
 
-    useEffect(() => {
-        if ( currentNodeData.__typename == 'UnitType' && currentRepoData && !(currentRepoData.branches.includes(currentNodeData.repoBranch)) && currentNodeData.repoBranch != currentRepoData.branches[0]) {
-            currentNodeData.repoBranch = currentRepoData.branches[0]
-        }
-    }, [currentRepoData, currentNodeData.repoBranch]);
+    // useEffect(() => {
+    //     if ( currentNodeData.__typename == 'UnitType' && currentRepoData && !(currentRepoData.branches.includes(currentNodeData.repoBranch)) && currentNodeData.repoBranch != currentRepoData.branches[0]) {
+    //         currentNodeData.repoBranch = currentRepoData.branches[0]
+    //     }
+    // }, [currentRepoData, currentNodeData.repoBranch]);
 
     useEffect(() => {
         runAsync(async () => {
@@ -193,6 +193,13 @@ export default function UpdateUnitForm() {
                                     }}
                                 >
                                     <option value="" disabled selected>Выберите ветку</option>
+                                    {
+                                        currentRepoData && !(currentRepoData.branches.includes(currentNodeData.repoBranch)) && (
+                                            <option value={currentNodeData.repoBranch}>
+                                                {currentNodeData.repoBranch}
+                                            </option>
+                                        )
+                                    }
                                     {   
                                         currentRepoData?.branches.map(
                                             item => (
