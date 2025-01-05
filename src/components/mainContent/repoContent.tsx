@@ -158,7 +158,7 @@ const handleCopy = async () => {
           {
             user && user.uuid == currentNodeData?.creatorUuid ? (
               <>
-                <div className='div_buttons'>
+                <div className='div_statistics'>
                   <button className="button_open_alter" onClick={() => openModal('permissionMenu' + nodeType)}>
                     Permission
                   </button>
@@ -166,7 +166,7 @@ const handleCopy = async () => {
                     Settings
                   </button>
                 </div>
-                <div className='div_buttons'>
+                <div className='div_statistics'>
                   <button className="button_open_alter" onClick={handleUpdateLocalRepo}>
                     Update local Repo
                   </button>

@@ -204,40 +204,63 @@ export default function UnitContent(){
           {
             user && currentNodeData && user.uuid == currentNodeData.creatorUuid ? (
               <>
-                <button className="button_open_alter" onClick={() => handleSendUnitCommand(BackendTopicCommand.Update)}>
-                  Firmware Update
-                </button>
+                <div className='div_unit_message'>
+                  Firmware with env.json and schema.json
+                </div>
+                <div className='buttons_load_firmware'>
+                  <button className="button_load_firmware" onClick={() => fileUpload("tar")}>
+                    tar
+                  </button>
+                  <button className="button_load_firmware" onClick={() => fileUpload("tgz")}>
+                    tgz
+                  </button>
+                  <button className="button_load_firmware" onClick={() => fileUpload("zip")}>
+                    zip
+                  </button>
+                </div>
 
-                <button className="button_open_alter" onClick={() => handleSendUnitCommand(BackendTopicCommand.SchemaUpdate)}>
-                  Schema Update
+                {
+                  currentRepoData?.isCompilableRepo && (
+                    <>
+                      <div className='div_unit_message'>
+                        Compiled Firmware Platforms
+                      </div>
+                      <div className='buttons_platforms'>
+                        {
+                          repoAvailablePlatforms?.slice().reverse().map(item => (
+                            <a className="button_load_compiled" key={item.name} href={item.link}>
+                                {item.name}
+                            </a>
+                          ))
+                        }
+                      </div>
+                    </>
+                )}
+                <div className='div_unit_message'>
+                  Send update MQTT message
+                </div>
+                <div className='buttons_load_firmware'>
+                  <button className="button_send_commnd" onClick={() => handleSendUnitCommand(BackendTopicCommand.Update)}>
+                    Firmware
+                  </button>
+                  <button className="button_send_commnd" onClick={() => handleSendUnitCommand(BackendTopicCommand.SchemaUpdate)}>
+                    Schema
+                  </button>
+                  <button className="button_send_commnd" onClick={() => handleSendUnitCommand(BackendTopicCommand.EnvUpdate)}>
+                    Env
+                  </button>
+                </div>
+                <button className="button_add_alter" onClick={() => openModal('unitSetEnv')}>
+                  Set Env Variable
                 </button>
-
-                <button className="button_open_alter" onClick={() => handleSendUnitCommand(BackendTopicCommand.EnvUpdate)}>
-                  Env Update
-                </button>
-
-                <button className="button_open_alter" onClick={() => openModal('permissionMenu' + nodeType)}>
-                  Permission
-                </button>
-                <button className="button_open_alter" onClick={() => fileUpload("tar")}>
-                  tar
-                </button>
-                <button className="button_open_alter" onClick={() => fileUpload("tgz")}>
-                  tgz
-                </button>
-                <button className="button_open_alter" onClick={() => fileUpload("zip")}>
-                  zip
-                </button>
-
-                {currentRepoData?.isCompilableRepo && repoAvailablePlatforms?.map(item => (
-                  <a key={item.name} href={item.link}>
-                    <button className="button_open_alter">Platform - {item.name}</button>
-                  </a>
-                ))}
-
-                <button className="button_open_alter" onClick={() => openModal('unitSettingsMenu')}>
-                  Settings
-                </button>
+                <div className='div_statistics'>
+                  <button className="button_open_alter" onClick={() => openModal('permissionMenu' + nodeType)}>
+                    Permission
+                  </button>
+                  <button className="button_open_alter" onClick={() => openModal('unitSettingsMenu')}>
+                    Settings
+                  </button>
+                </div>
               </>
             ) : (<></>)
           }
@@ -265,9 +288,6 @@ export default function UnitContent(){
           {
             isLoaderActive && (<Spinner/>)
           }
-          <button className="button_open_alter" onClick={() => openModal('unitSetEnv')}>
-            Set Env Variable
-          </button>
           <button className="button_open_alter" onClick={() => openModal('updateUnit')}>
             Options
           </button>
@@ -295,7 +315,7 @@ export default function UnitContent(){
         modalName='Env Variable'
         subName={currentNodeData?.name}
         open={activeModal === 'unitSetEnv'}
-        openModalType='unitSettingsMenu'
+        openModalType='unitMenu'
       >
         {
           currentNodeData && (
