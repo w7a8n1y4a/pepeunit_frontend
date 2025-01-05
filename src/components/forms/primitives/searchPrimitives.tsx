@@ -4,7 +4,7 @@ import {
 } from '@rootTypes/compositionFunctions';
 import { useResultHandler } from '@handlers/useResultHandler';
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
-import { useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useLayoutEffect } from 'react';
 import DefaultInput from '@primitives/defaultInput'
 import Spinner from '@primitives/spinner';
 import ResultQuery from '@primitives/resultQuery';
@@ -14,7 +14,7 @@ import EntityTypeSelector from '@primitives/entityTypeSelector';
 import VisibilitySelector from '@primitives/visibilitySelector';
 import useFetchEntitiesByFilter from '../utils/useFetchEntitiesByFilter';
 import '../form.css';
-import { useNodeStore } from '@stores/baseStore';
+import { useNodeStore, useModalStore } from '@stores/baseStore';
 import { useUserStore } from '@stores/userStore';
 
   
@@ -29,6 +29,7 @@ import { useUserStore } from '@stores/userStore';
   export default function SearchPrimitives({ availableEntities, handleCreatePermission, onFocusNode }: SearchProps){
     const { resultData, setResultData, handleError } = useResultHandler();
     const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
+    const { activeModal } = useModalStore();
 
     const { currentNodeData } = useNodeStore();
     const { user } = useUserStore();
@@ -52,7 +53,15 @@ import { useUserStore } from '@stores/userStore';
     const [currentPage, setCurrentPage] = useState(0);
     const [totalCount, setTotalCount] = useState(0);
     const itemsPerPage = 6;
-  
+    
+    const searchInputRef = useRef<HTMLInputElement>(null);
+
+    useLayoutEffect(() => {
+        if (activeModal && searchInputRef.current) {
+            searchInputRef.current.focus();
+        }
+    }, [activeModal]);
+
     const loadEntities = async (
         searchString: string,
         selectedEntityType: PermissionEntities,
@@ -126,6 +135,7 @@ import { useUserStore } from '@stores/userStore';
             <DefaultInput
                 id="name_set"
                 type="text"
+                inputRef={searchInputRef}
                 placeholder="Search name"
                 value={searchString}
                 validateState={searchString}
