@@ -3,7 +3,8 @@ import {
   useGetReposLazyQuery, 
   useGetUnitsLazyQuery,
   useGetUsersLazyQuery,
-  useGetUnitsWithUnitNodesLazyQuery
+  useGetUnitsWithUnitNodesLazyQuery,
+  VisibilityLevel
 } from '@rootTypes/compositionFunctions';
 import { PermissionEntities } from '@rootTypes/compositionFunctions';
 
@@ -13,9 +14,23 @@ export default function useFetchEntitiesByFilter() {
   const [getUnits] = useGetUnitsLazyQuery();
   const [getUsers] = useGetUsersLazyQuery();
 
-  const fetchEntitiesByFilter = useCallback(async (searchString: string, agentType: PermissionEntities, limit: number, offset: number) => {
+  const fetchEntitiesByFilter = useCallback(
+    async (
+      searchString: string,
+      agentType: PermissionEntities,
+      limit: number,
+      offset: number,
+      visibilityLevel?: VisibilityLevel[],
+      creatorUuid?: string
+    ) => {
     try {
-      const queryVariables = { searchString: searchString, limit: limit, offset: offset };
+      const queryVariables = {
+        searchString: searchString,
+        limit: limit,
+        offset: offset,
+        visibilityLevel: visibilityLevel,
+        creatorUuid: creatorUuid
+      };
 
       switch (agentType) {
         case PermissionEntities.Repo:
