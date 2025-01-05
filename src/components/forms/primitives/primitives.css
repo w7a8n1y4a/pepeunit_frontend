@@ -108,17 +108,7 @@
 .iteration-item {
     margin-bottom: 8px;
     max-width: 400px;
-    border: 2px solid #282828;
-    border-radius: 4px;
-    background-color: #101010;
-    padding: 8px;
-    cursor: pointer;
-}
-
-.iteration-item {
-    margin-bottom: 8px;
-    max-width: 400px;
-    border: 2px solid #282828;
+    border: 3px solid #282828;
     border-radius: 4px;
     background-color: #101010;
     padding: 8px;
@@ -126,9 +116,8 @@
 }
 
 .iteration-item:hover {
-    border: 2px solid #666;
+    border: 3px solid #666;
 }
-
 
 .iteration-item h3 {
     font-size: 16px;

@@ -87,6 +87,35 @@ form {
     float: right;
 }
 
+.button_del_alter, .button_add_alter {
+    background-color: transparent;
+    border-radius: 10px;
+    border: solid 3px;
+    border-color: #ff3c00cc;
+    color: #ff3c00cc;
+    padding: 10px 20px;
+    text-align: center;
+    font-size: 16px;
+    margin: 1px;
+    cursor: pointer;
+    float: right;
+}
+
+.button_add_alter {
+    border: solid 2px #45a049;
+    color: #45a049;
+}
+
+.button_add_alter:hover {
+    background-color: #45a049;
+    color: #ffffff;
+}
+
+.button_del_alter:hover {
+    background-color: #ff3c00cc;
+    color: #ffffff;
+}
+
 .button_open_alter {
     min-width: 270px;
 }
