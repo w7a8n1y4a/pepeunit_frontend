@@ -158,18 +158,22 @@ const handleCopy = async () => {
           {
             user && user.uuid == currentNodeData?.creatorUuid ? (
               <>
-                <button className="button_open_alter" onClick={() => openModal('permissionMenu' + nodeType)}>
-                  Permission
-                </button>
-                <button className="button_open_alter" onClick={() => openModal('repoSettingsMenu')}>
-                  Settings
-                </button>
-                <button className="button_open_alter" onClick={handleUpdateLocalRepo}>
-                  Update branch and commits
-                </button>
-                <button className="button_open_alter" onClick={handleUpdateUnitsFirmware}>
-                  Update related Unit
-                </button>
+                <div className='div_buttons'>
+                  <button className="button_open_alter" onClick={() => openModal('permissionMenu' + nodeType)}>
+                    Permission
+                  </button>
+                  <button className="button_open_alter" onClick={() => openModal('repoSettingsMenu')}>
+                    Settings
+                  </button>
+                </div>
+                <div className='div_buttons'>
+                  <button className="button_open_alter" onClick={handleUpdateLocalRepo}>
+                    Update local Repo
+                  </button>
+                  <button className="button_open_alter" onClick={handleUpdateUnitsFirmware}>
+                    Update related Unit
+                  </button>
+                </div>
               </>
             ) : (<></>)
           }

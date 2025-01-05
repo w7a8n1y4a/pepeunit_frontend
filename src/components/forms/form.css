@@ -37,6 +37,12 @@ form {
     gap: 5px;
 }
 
+.div_buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 5px;
+}
+
 .div_statistics_text {
     background-color: transparent;
     border-radius: 10px;
@@ -116,9 +122,6 @@ form {
     color: #ffffff;
 }
 
-.button_open_alter {
-    min-width: 270px;
-}
 
 .button_open_alter:hover {
     border-color: #666;
