@@ -16,13 +16,14 @@ import { useNodeStore } from '@stores/baseStore';
 
 interface ModalProps {
     modalName: string
+    subName?: string
     children: React.ReactNode
     open: boolean
     openModalType?: string
     reloadEntityType?: NodeType | UnitNodeTypeEnum
 }
 
-export default function BaseModal({modalName, children, open, openModalType, reloadEntityType}: ModalProps) {
+export default function BaseModal({modalName, subName, children, open, openModalType, reloadEntityType}: ModalProps) {
     const { openModal, closeModal } = useModalHandlers();
     const { handleError } = useResultHandler();
     const { runAsync } = useAsyncHandler(handleError);
@@ -73,6 +74,13 @@ export default function BaseModal({modalName, children, open, openModalType, rel
             <div className="modal_header">
                 <div className="modal_name">
                     {modalName}
+                    {
+                        subName && (
+                            <div className="modal_sub_name">
+                                {subName}
+                            </div>
+                        )
+                    }
                 </div>
                 <div className="div_modal_buttons">
                     {

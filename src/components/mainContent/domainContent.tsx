@@ -46,7 +46,8 @@ export default function DomainContent(){
   return (
     <>
       <BaseModal
-        modalName={'' + currentNodeData?.name}
+        modalName={'Instance'}
+        subName={currentNodeData?.name}
         open={activeModal === 'domainMenu'}
       >
         <div className="modal_menu_content">
@@ -54,7 +55,7 @@ export default function DomainContent(){
             isLoaderActive && (<Spinner/>)
           }
           <button className="button_open_alter" onClick={() => openModal('statistics')}>
-            Instance statistics
+            Statistics
           </button>
 
           {
@@ -69,7 +70,7 @@ export default function DomainContent(){
           />
         </div>
       </BaseModal>
-      <BaseModal modalName='Statistics' open={activeModal === 'statistics'} openModalType='domainMenu'>
+      <BaseModal modalName='Statistics' subName={currentNodeData?.name} open={activeModal === 'statistics'} openModalType='domainMenu'>
           <div>
             <div>
               User: {baseMetrics?.userCount}

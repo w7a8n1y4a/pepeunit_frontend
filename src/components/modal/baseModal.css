@@ -14,15 +14,22 @@ dialog {
     font-size: 22px;
 }
 
+.modal_sub_name {
+    margin-top: -5px;
+    font-size: 14px;
+}
+
 .modal_menu_button {
     background: transparent;
     border: none;
     cursor: pointer;
     padding-left: 0px;
+    padding-top: 0px;
+    margin-top: 0px;
 }
 
 .div_modal_buttons {
-    display: flex;
     margin-left: auto;
     padding-left: 10px;
+    padding-top: 4px;
 }

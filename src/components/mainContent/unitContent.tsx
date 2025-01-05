@@ -167,7 +167,8 @@ export default function UnitContent(){
   return (
     <>
       <BaseModal
-        modalName={'Unit ' + currentNodeData?.name}
+        modalName={'Unit'}
+        subName={currentNodeData?.name}
         open={activeModal === 'unitMenu'}
         reloadEntityType={NodeType.Unit}
       >
@@ -243,7 +244,7 @@ export default function UnitContent(){
           />
         </div>
       </BaseModal>
-      <BaseModal modalName={'Permissions ' + currentNodeData?.name } open={activeModal === 'permissionMenu' + nodeType} openModalType='unitMenu'>
+      <BaseModal modalName={'Permissions'} subName={currentNodeData?.name} open={activeModal === 'permissionMenu' + nodeType} openModalType='unitMenu'>
         {
           currentNodeData && (
             <PermissionForm
@@ -254,6 +255,7 @@ export default function UnitContent(){
       </BaseModal>
       <BaseModal
         modalName='Settings'
+        subName={currentNodeData?.name}
         open={activeModal === 'unitSettingsMenu'}
         openModalType='unitMenu'
         >
@@ -262,7 +264,7 @@ export default function UnitContent(){
             isLoaderActive && (<Spinner/>)
           }
           <button className="button_open_alter" onClick={() => openModal('unitSetEnv')}>
-            Set ENV
+            Set Env Variable
           </button>
           <button className="button_open_alter" onClick={() => openModal('updateUnit')}>
             Options
@@ -277,6 +279,7 @@ export default function UnitContent(){
       </BaseModal>
       <BaseModal
         modalName='Options Unit'
+        subName={currentNodeData?.name}
         open={activeModal === 'updateUnit'}
         openModalType='unitSettingsMenu'
       >
@@ -287,7 +290,8 @@ export default function UnitContent(){
         }
       </BaseModal>
       <BaseModal
-        modalName='Env Unit'
+        modalName='Env Variable'
+        subName={currentNodeData?.name}
         open={activeModal === 'unitSetEnv'}
         openModalType='unitSettingsMenu'
       >
