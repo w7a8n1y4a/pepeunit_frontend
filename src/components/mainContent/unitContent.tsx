@@ -243,7 +243,7 @@ export default function UnitContent(){
           />
         </div>
       </BaseModal>
-      <BaseModal modalName={'Доступы ' + currentNodeData?.name } open={activeModal === 'permissionMenu' + nodeType} openModalType='unitMenu'>
+      <BaseModal modalName={'Permissions ' + currentNodeData?.name } open={activeModal === 'permissionMenu' + nodeType} openModalType='unitMenu'>
         {
           currentNodeData && (
             <PermissionForm
