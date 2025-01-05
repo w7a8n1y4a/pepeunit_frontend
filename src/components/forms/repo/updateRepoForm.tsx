@@ -128,7 +128,7 @@ export default function UpdateRepoForm() {
                     >
                         <option value="" disabled selected>Выберите ветку</option>
                         {
-                            !(currentNodeData.branches.includes(currentNodeData.defaultBranch)) && (
+                            currentNodeData.__typename == 'RepoType' && !(currentNodeData.branches.includes(currentNodeData.defaultBranch)) && (
                                 <option value={currentNodeData.defaultBranch}>
                                     {currentNodeData.defaultBranch}
                                 </option>
