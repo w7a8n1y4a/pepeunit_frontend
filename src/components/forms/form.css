@@ -9,7 +9,7 @@ input {
 }
 
 input:focus {
-    border-color: #777;
+    border-color: #666;
     outline: none;
 }
 
@@ -47,6 +47,11 @@ form {
 
 .button_open_alter {
     min-width: 270px;
+}
+
+.button_open_alter:hover {
+    border-color: #666;
+    outline: none;
 }
 
 .code_view {
