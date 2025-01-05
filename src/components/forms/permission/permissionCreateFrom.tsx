@@ -2,8 +2,8 @@ import {
     PermissionEntities,
     useCreatePermissionMutation,
  } from '@rootTypes/compositionFunctions';
-import { useResultHandler } from '@rootTypes/useResultHandler';
-import { useAsyncHandler } from '@rootTypes/useAsyncHandler';
+import { useResultHandler } from '@handlers/useResultHandler';
+import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import SearchPrimitives from '@primitives/searchPrimitives';
 import '../form.css';
 

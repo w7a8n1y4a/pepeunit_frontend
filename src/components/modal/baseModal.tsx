@@ -2,8 +2,8 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { NodeType } from '@rootTypes/nodeTypeEnum'
 import { UnitNodeTypeEnum, useGetRepoLazyQuery, useGetUnitLazyQuery, useGetUnitNodeLazyQuery } from '@rootTypes/compositionFunctions'
-import { useResultHandler } from '@rootTypes/useResultHandler';
-import { useAsyncHandler } from '@rootTypes/useAsyncHandler';
+import { useResultHandler } from '@handlers/useResultHandler';
+import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import close_img from '/images/close.svg'
 import back_img from '/images/back.svg'
 import reload_img from '/images/reload.svg'
