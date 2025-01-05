@@ -8,6 +8,11 @@ input {
     box-sizing: border-box;
 }
 
+input:focus {
+    border-color: #777;
+    outline: none;
+}
+
 form {
     display: flex;
     flex-direction: column;
