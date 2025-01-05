@@ -1,5 +1,5 @@
 .spinner {
-    animation: spin 1s linear infinite; /* Добавляем анимацию */
+    animation: spin 1s linear infinite;
 }
 
 .info_error,
@@ -161,8 +161,8 @@
 
 .iteration-nodes {
     display: flex;
-    flex-direction: column; /* Align children vertically */
-    gap: 5px; /* Adds 5px gap between each iteration-nodes element */
+    flex-direction: column;
+    gap: 5px;
 }
 
 .iteration-item:hover .iteration-node:hover {
@@ -195,7 +195,7 @@
     padding: 5px 10px;
     font-size: 14px;
     cursor: pointer;
-    margin-left: auto; /* Push button to the right */
+    margin-left: auto;
     text-align: center;
 }
 
