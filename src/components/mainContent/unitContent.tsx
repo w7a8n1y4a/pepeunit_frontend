@@ -8,6 +8,7 @@ import { useState, useEffect } from 'react';
 import Spinner from '@primitives/spinner'
 import ResultQuery from '@primitives/resultQuery'
 import UnitUpdateState from '@primitives/unitUpdateState'
+import UnitMicroState from '@primitives/unitMicroState'
 import UpdateUnitForm from '../forms/unit/updateUnitForm';
 import PermissionForm from '../forms/permission/permissionForm';
 import UpdateUnitEnvForm from '../forms/unit/updateUnitEnvForm'
@@ -119,15 +120,6 @@ export default function UnitContent(){
     })
   };
 
-  function getStateData() {
-    if (currentNodeData) {
-      let state: any = currentNodeData.unitState
-      return JSON.stringify(state, null, 4)
-    } else {
-      return ''
-    }
-  }
-
   useEffect(() => {
     runAsync(async () => {
       if (currentNodeData){
@@ -182,14 +174,8 @@ export default function UnitContent(){
 
           <UnitUpdateState targetVersion={targetVersion}/>
 
-          {
-            currentNodeData?.unitState ? (
-              <pre>
-                {getStateData()}
-              </pre>
-            ) : (<></>)
-          }
-          
+          <UnitMicroState/>
+
           {
             user && currentNodeData && user.uuid == currentNodeData.creatorUuid ? (
               <>
