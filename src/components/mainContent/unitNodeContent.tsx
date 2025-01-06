@@ -36,8 +36,8 @@ export default function UnitNodeContent(){
           {
             isLoaderActive && (<Spinner/>)
           }
-          <div>
-            State: {currentNodeData?.state || "No Data"}
+          <div className='div_unit_message'>
+            {currentNodeData?.state || "No Data"}
           </div>
           {
             user && currentNodeData && user.uuid == currentNodeData.creatorUuid ? (
@@ -45,10 +45,10 @@ export default function UnitNodeContent(){
                 {
                   currentNodeData?.type == UnitNodeTypeEnum.Input ? (
                     <>
-                      <button className="button_open_alter" onClick={() => openModal('unitNodeSetState')}>
+                      <button className="button_add_alter" onClick={() => openModal('unitNodeSetState')}>
                         Set State
                       </button>
-                      <button className="button_open_alter" onClick={() => openModal('unitNodeAddOutputToInput')}>
+                      <button className="button_add_alter" onClick={() => openModal('unitNodeAddOutputToInput')}>
                         Related Output
                       </button>
                     </>
