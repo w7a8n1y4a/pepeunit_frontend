@@ -33,6 +33,8 @@ import { useUserStore } from '@stores/userStore';
 
     const { currentNodeData } = useNodeStore();
     const { user } = useUserStore();
+
+    const [isModifiersVisible, setIsModifiersVisible] = useState(false);
     
     const [ searchString, setSearchString ] = useState('');
     const [ isCreatorSearchOnly, setIsCreatorSearchOnly] = useState<boolean>(false);
@@ -144,12 +146,19 @@ import { useUserStore } from '@stores/userStore';
                 setIsErrorExist={(hasError) => updateErrorState('searchString', hasError)}
                 setResultData={setResultData}
             />
+            <button
+                type="button"
+                className="toggle_visibility_button"
+                onClick={() => setIsModifiersVisible(!isModifiersVisible)}
+            >
+                {isModifiersVisible ? 'Hide Options' : 'Show Options'}
+            </button>
             {
-                user && selectedEntityType != PermissionEntities.User && (
+                isModifiersVisible && user && selectedEntityType != PermissionEntities.User && (
                     <div className='toggle_container'>
                         <label className="toggle">
                             <input 
-                                type="checkbox" 
+                              type="checkbox" 
                                 checked={isCreatorSearchOnly}
                                 onChange={(e) => { setIsCreatorSearchOnly(e.target.checked)}
                                 } 
@@ -164,7 +173,7 @@ import { useUserStore } from '@stores/userStore';
             }
         </form>
         {
-            user && selectedEntityType != PermissionEntities.User && (
+            isModifiersVisible && user && selectedEntityType != PermissionEntities.User && (
                 <VisibilitySelector
                     levels={[VisibilityLevel.Public, VisibilityLevel.Internal, VisibilityLevel.Private]}
                     selectedVisibilityLevels={selectedVisibilityLevels}
