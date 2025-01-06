@@ -96,10 +96,10 @@ export default function SignInForm({openModalRegister}: SignInFormProps) {
                 />
             </form>
             <button className="button_main_action" onClick={handleLogin} disabled={Object.values(errorState).some(isError => isError)}>
-                Войти
+                Sign In
             </button>
             <button className="button_open_alter_auth" onClick={openModalRegister}>
-                Регистрация
+                Registration
             </button>
             <ResultQuery
                 resultData={resultData}

@@ -112,17 +112,21 @@ export default function Header(){
                 )}
             </div>
             <div>
-                <BaseModal modalName='Авторизация' open={activeModal === 'signin'}>
+                <BaseModal modalName='Authorization' open={activeModal === 'signin'}>
                     <SignInForm
                         openModalRegister={() => openModal('register')}
                     />
                 </BaseModal>
-                <BaseModal modalName='Регистрация' open={activeModal === 'register'}>
+                <BaseModal modalName='Registration' open={activeModal === 'register'}>
                     <RegisterForm
                         openModalSignIn={() => openModal('signin')}
                     />
                 </BaseModal>
-                <BaseModal modalName='User' open={activeModal === 'userMenu'}>
+                <BaseModal
+                    modalName='User'
+                    subName={user && !currentNodeData ? user.login : ( currentNodeData ? currentNodeData.login : '')}
+                    open={activeModal === 'userMenu'}
+                >
                     <div className="modal_menu_content">
                         {
                             isLoaderActive && (<Spinner/>)
@@ -131,13 +135,13 @@ export default function Header(){
                             user && (!currentNodeData || currentNodeData && currentNodeData.uuid == user.uuid) && (
                                 <>
                                     <button className="button_open_alter" onClick={() => openModal('verification')}>
-                                        Верификация в Telegram
+                                        Telegram Verification
                                     </button>
                                     <button className="button_open_alter" onClick={() => openModal('changeLogin')}>
-                                        Смена Логина
+                                        Change Login
                                     </button>
                                     <button className="button_open_alter" onClick={() => openModal('changePass')}>
-                                        Смена Пароля
+                                        Change Password
                                     </button>
                                 </>
                             )
@@ -145,9 +149,6 @@ export default function Header(){
                         {
                             user && currentNodeData && currentNodeData.uuid != user.uuid && (
                                 <>
-                                    <div>
-                                        {currentNodeData.login}
-                                    </div>
                                     <div>
                                         {currentNodeData.role}
                                     </div>
@@ -161,10 +162,10 @@ export default function Header(){
                                         user.role == UserRole.Admin && (
                                             <>
                                                 <button className="button_open_alter" onClick={() => handleBlockUser()}>
-                                                    Заблокировать
+                                                    Block
                                                 </button>
                                                 <button className="button_open_alter" onClick={() => handleUnblockUser()}>
-                                                    Разблокировать
+                                                    Unblock
                                                 </button>
                                             </>
                                         )
@@ -178,21 +179,24 @@ export default function Header(){
                     </div>
                 </BaseModal>
                 <BaseModal
-                    modalName='Верификация'
+                    modalName='Verification'
+                    subName={user && !currentNodeData ? user.login : ( currentNodeData ? currentNodeData.login : '')}
                     open={activeModal === 'verification'}
                     openModalType='userMenu'
                 >
                     <VerificationForm />
                 </BaseModal>
                 <BaseModal
-                    modalName='Смена Логина'
+                    modalName='Change Login'
+                    subName={user && !currentNodeData ? user.login : ( currentNodeData ? currentNodeData.login : '')}
                     open={activeModal === 'changeLogin'}
                     openModalType='userMenu'
                 >
                     <ChangeLoginForm currentLogin={login}/>
                 </BaseModal>
                 <BaseModal
-                    modalName='Смена Пароля'
+                    modalName='Change Password'
+                    subName={user && !currentNodeData ? user.login : ( currentNodeData ? currentNodeData.login : '')}
                     open={activeModal === 'changePass'}
                     openModalType='userMenu'
                 >

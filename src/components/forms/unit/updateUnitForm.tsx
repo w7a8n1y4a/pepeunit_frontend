@@ -61,12 +61,6 @@ export default function UpdateUnitForm() {
         })
     }, [currentNodeData.repoBranch, currentNodeData.isAutoUpdateFromRepoUnit]);
 
-    // useEffect(() => {
-    //     if ( currentNodeData.__typename == 'UnitType' && currentRepoData && !(currentRepoData.branches.includes(currentNodeData.repoBranch)) && currentNodeData.repoBranch != currentRepoData.branches[0]) {
-    //         currentNodeData.repoBranch = currentRepoData.branches[0]
-    //     }
-    // }, [currentRepoData, currentNodeData.repoBranch]);
-
     useEffect(() => {
         runAsync(async () => {
             setCurrentRepoData(null)
@@ -175,7 +169,7 @@ export default function UpdateUnitForm() {
                             <span className="slider"></span>
                         </label>
                         <div className="toggle_text">
-                            Автообновляемый ?
+                            Auto-update ?
                         </div>
                     </div>
                     {
@@ -192,7 +186,7 @@ export default function UpdateUnitForm() {
                                         )
                                     }}
                                 >
-                                    <option value="" disabled selected>Выберите ветку</option>
+                                    <option value="" disabled selected>Pick branch</option>
                                     {
                                         currentRepoData && !(currentRepoData.branches.includes(currentNodeData.repoBranch)) && (
                                             <option value={currentNodeData.repoBranch}>
@@ -221,7 +215,7 @@ export default function UpdateUnitForm() {
                                         )
                                     }}
                                 >   
-                                    <option value="" disabled selected>Выберите коммит</option>
+                                    <option value="" disabled selected>Pick commit</option>
                                     {   
                                         repoAvailableCommits?.map(
                                             item => (
@@ -251,7 +245,7 @@ export default function UpdateUnitForm() {
                                         )
                                     }}
                                 >   
-                                    <option value="" disabled selected>Выберите платформу</option>
+                                    <option value="" disabled selected>Pick platform</option>
                                     {   
                                         repoAvailablePlatforms?.map(
                                             item => (
@@ -268,7 +262,7 @@ export default function UpdateUnitForm() {
                 </form>
             </div>
             <button className="button_main_action" onClick={handleUpdateUnit} disabled={Object.values(errorState).some(isError => isError)}>
-                Обновить
+                Update
             </button>
             <ResultQuery
                 resultData={resultData}

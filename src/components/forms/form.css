@@ -8,6 +8,11 @@ input {
     box-sizing: border-box;
 }
 
+input:focus {
+    border-color: #666;
+    outline: none;
+}
+
 form {
     display: flex;
     flex-direction: column;
@@ -26,10 +31,53 @@ form {
     cursor: pointer;
 }
 
+.div_statistics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 5px;
+}
+
+.div_statistics_text {
+    background-color: transparent;
+    border-radius: 10px;
+    border: solid 3px;
+    border-color: #282828;
+    padding: 10px 20px;
+    text-align: center;
+    font-size: 16px;
+    margin: 1px;
+    cursor: pointer;
+    float: left;
+}
+
+.repo_link {
+    display: flex;
+    border-radius: 10px;
+    border: solid 3px;
+    border-color: #282828;
+    padding: 5px 10px;
+    text-align: center;
+    font-size: 20px;
+    margin: 1px;
+    cursor: pointer;
+    float: right;
+}
+
+.repo_link_button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    margin-left: auto;
+    padding-left: 0px;
+    padding-top: 0px;
+    margin-top: 4px;
+}
+
 .button_open_alter_auth,
+.button_open_alter_send,
 .button_open_alter {
     background-color: transparent;
-    border-radius: 4px;
+    border-radius: 10px;
     border: solid 3px;
     border-color: #282828;
     padding: 10px 20px;
@@ -40,8 +88,44 @@ form {
     float: right;
 }
 
-.button_open_alter {
-    min-width: 270px;
+.button_del_alter, .button_add_alter {
+    background-color: transparent;
+    border-radius: 10px;
+    border: solid 3px;
+    border-color: #ff3c00cc;
+    color: #ff3c00cc;
+    padding: 10px 20px;
+    text-align: center;
+    font-size: 16px;
+    margin: 1px;
+    cursor: pointer;
+    float: right;
+}
+
+.button_add_alter {
+    border: solid 2px #45a049;
+    color: #45a049;
+}
+
+.button_add_alter:hover {
+    background-color: #45a049;
+    color: #ffffff;
+}
+
+.button_del_alter:hover {
+    background-color: #ff3c00cc;
+    color: #ffffff;
+}
+
+
+.button_open_alter:hover {
+    border-color: #666;
+    outline: none;
+}
+
+.button_open_alter_send:hover {
+    background-color: #2196F3;
+    color: #ffffff;
 }
 
 .code_view {
@@ -145,4 +229,49 @@ input:checked+.slider:before {
 .unit-env-form {
     display: flex;
     flex-direction: column;
+}
+
+.buttons_load_firmware {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+    gap: 1px;
+    padding-bottom: 7px;
+}
+
+.button_load_data_grid {
+    background-color: transparent;
+    border-radius: 10px;
+    border: solid 3px;
+    border-color: #282828;
+    padding: 2px 10px;
+    text-align: center;
+    font-size: 16px;
+    margin: 1px;
+}
+
+.button_load_data_grid:hover {
+    background-color: #2196F3;
+    color: #ffffff;
+}
+
+.buttons_platforms {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 1px;
+    padding-bottom: 7px;
+}
+
+.div_unit_message, .div_unit_error_message {
+    background-color: transparent;
+    border-radius: 10px;
+    border: solid 3px;
+    border-color: #282828;
+    padding: 4px;
+    text-align: center;
+    font-size: 15px;
+}
+
+.div_unit_error_message {
+    border-color: #ff3c00cc;
+    color: #ff3c00cc;
 }

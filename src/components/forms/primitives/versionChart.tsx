@@ -73,6 +73,7 @@ const VersionPieChart: React.FC<VersionPieChartProps> = ({ data }) => {
       },
     },
     animation: false,
+    cutout: "80%",
   };
 
   return <Pie data={chartData} options={options} />;

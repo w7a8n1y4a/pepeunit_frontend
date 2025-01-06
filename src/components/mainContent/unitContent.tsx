@@ -7,9 +7,12 @@ import BaseModal from '../modal/baseModal'
 import { useState, useEffect } from 'react';
 import Spinner from '@primitives/spinner'
 import ResultQuery from '@primitives/resultQuery'
+import UnitUpdateState from '@primitives/unitUpdateState'
+import UnitMicroState from '@primitives/unitMicroState'
 import UpdateUnitForm from '../forms/unit/updateUnitForm';
 import PermissionForm from '../forms/permission/permissionForm';
 import UpdateUnitEnvForm from '../forms/unit/updateUnitEnvForm'
+import {stringToFormat} from '@utils/stringToFormat'
 
 import { useGraphStore } from '@stores/graphStore';
 import { useModalStore, useNodeStore } from '@stores/baseStore';
@@ -117,29 +120,18 @@ export default function UnitContent(){
     })
   };
 
-  function getStateData() {
-    if (currentNodeData) {
-      let state: any = currentNodeData.unitState
-      return JSON.stringify(state, null, 4)
-    } else {
-      return ''
-    }
-  }
-
   useEffect(() => {
     runAsync(async () => {
       if (currentNodeData){
-        setCurrentRepoData(null); // Сброс репозитория
-        setRepoAvailablePlatforms(null); // Сброс платформ
+        setCurrentRepoData(null);
+        setRepoAvailablePlatforms(null);
   
-        // 1. Получение данных репозитория
         const repoResponse = await getRepo({ variables: { uuid: currentNodeData.repoUuid } });
         const repo = repoResponse.data?.getRepo;
   
         if (repo) {
           setCurrentRepoData(repo);
   
-          // 2. Проверка и загрузка платформ
           if (repo.isCompilableRepo) {
             const platformsResponse = await getAvailablePlatforms(
               { variables: { uuid: currentNodeData.repoUuid, targetCommit: currentNodeData.repoCommit } }
@@ -169,7 +161,9 @@ export default function UnitContent(){
   return (
     <>
       <BaseModal
-        modalName={'Unit ' + currentNodeData?.name}
+        modalName={'Unit'}
+        subName={currentNodeData?.name}
+        visibilityLevel={stringToFormat(currentNodeData?.visibilityLevel)}
         open={activeModal === 'unitMenu'}
         reloadEntityType={NodeType.Unit}
       >
@@ -178,65 +172,70 @@ export default function UnitContent(){
             isLoaderActive && (<Spinner/>)
           }
 
-          <div>
-            Статус - {currentNodeData?.firmwareUpdateStatus}
-          </div>
-          <div>
-            Ошибка - {currentNodeData?.firmwareUpdateError}
-          </div>
-          <div>
-            Запрос был в - {currentNodeData?.lastFirmwareUpdateDatetime}
-          </div>
-          <div>
-            Текущая версия - {currentNodeData?.currentCommitVersion}
-          </div>
-          <div>
-            Target версия - {targetVersion ? (targetVersion) : (<></>)}
-          </div>
-          {
-            currentNodeData?.unitState ? (
-              <pre>
-                {getStateData()}
-              </pre>
-            ) : (<></>)
-          }
+          <UnitUpdateState targetVersion={targetVersion}/>
+
+          <UnitMicroState/>
+
           {
             user && currentNodeData && user.uuid == currentNodeData.creatorUuid ? (
               <>
-                <button className="button_open_alter" onClick={() => handleSendUnitCommand(BackendTopicCommand.Update)}>
-                  Обновить Firmware
+                <button className="button_add_alter" onClick={() => openModal('unitSetEnv')}>
+                  Set Env Variable
                 </button>
+                <div className='div_unit_message'>
+                  Firmware with env.json and schema.json
+                </div>
+                <div className='buttons_load_firmware'>
+                  <button className="button_load_data_grid" onClick={() => fileUpload("tar")}>
+                    tar
+                  </button>
+                  <button className="button_load_data_grid" onClick={() => fileUpload("tgz")}>
+                    tgz
+                  </button>
+                  <button className="button_load_data_grid" onClick={() => fileUpload("zip")}>
+                    zip
+                  </button>
+                </div>
 
-                <button className="button_open_alter" onClick={() => handleSendUnitCommand(BackendTopicCommand.SchemaUpdate)}>
-                  Обновить Schema
-                </button>
-
-                <button className="button_open_alter" onClick={() => handleSendUnitCommand(BackendTopicCommand.EnvUpdate)}>
-                  Обновить Env
-                </button>
-
-                <button className="button_open_alter" onClick={() => openModal('permissionMenu' + nodeType)}>
-                  Доступы
-                </button>
-                <button className="button_open_alter" onClick={() => fileUpload("tar")}>
-                  Скачать tar
-                </button>
-                <button className="button_open_alter" onClick={() => fileUpload("tgz")}>
-                  Скачать tgz
-                </button>
-                <button className="button_open_alter" onClick={() => fileUpload("zip")}>
-                  Скачать zip
-                </button>
-
-                {currentRepoData?.isCompilableRepo && repoAvailablePlatforms?.map(item => (
-                  <a key={item.name} href={item.link}>
-                    <button className="button_open_alter">Platform - {item.name}</button>
-                  </a>
-                ))}
-
-                <button className="button_open_alter" onClick={() => openModal('unitSettingsMenu')}>
-                  Настройки
-                </button>
+                {
+                  currentRepoData?.isCompilableRepo && (
+                    <>
+                      <div className='div_unit_message'>
+                        Compiled Firmware Platforms
+                      </div>
+                      <div className='buttons_platforms'>
+                        {
+                          repoAvailablePlatforms?.slice().reverse().map(item => (
+                            <a className="button_load_data_grid" key={item.name} href={item.link}>
+                                {item.name}
+                            </a>
+                          ))
+                        }
+                      </div>
+                    </>
+                )}
+                <div className='div_unit_message'>
+                  Send update MQTT message
+                </div>
+                <div className='buttons_load_firmware'>
+                  <button className="button_load_data_grid" onClick={() => handleSendUnitCommand(BackendTopicCommand.Update)}>
+                    Firmware
+                  </button>
+                  <button className="button_load_data_grid" onClick={() => handleSendUnitCommand(BackendTopicCommand.SchemaUpdate)}>
+                    Schema
+                  </button>
+                  <button className="button_load_data_grid" onClick={() => handleSendUnitCommand(BackendTopicCommand.EnvUpdate)}>
+                    Env
+                  </button>
+                </div>
+                <div className='div_statistics'>
+                  <button className="button_open_alter" onClick={() => openModal('permissionMenu' + nodeType)}>
+                    Permission
+                  </button>
+                  <button className="button_open_alter" onClick={() => openModal('unitSettingsMenu')}>
+                    Settings
+                  </button>
+                </div>
               </>
             ) : (<></>)
           }
@@ -245,7 +244,7 @@ export default function UnitContent(){
           />
         </div>
       </BaseModal>
-      <BaseModal modalName={'Доступы ' + currentNodeData?.name } open={activeModal === 'permissionMenu' + nodeType} openModalType='unitMenu'>
+      <BaseModal modalName={'Permissions'} subName={currentNodeData?.name} open={activeModal === 'permissionMenu' + nodeType} openModalType='unitMenu'>
         {
           currentNodeData && (
             <PermissionForm
@@ -255,7 +254,8 @@ export default function UnitContent(){
         }
       </BaseModal>
       <BaseModal
-        modalName='Настройки'
+        modalName='Settings'
+        subName={currentNodeData?.name}
         open={activeModal === 'unitSettingsMenu'}
         openModalType='unitMenu'
         >
@@ -263,14 +263,11 @@ export default function UnitContent(){
           {
             isLoaderActive && (<Spinner/>)
           }
-          <button className="button_open_alter" onClick={() => openModal('unitSetEnv')}>
-            Установить окружение
-          </button>
           <button className="button_open_alter" onClick={() => openModal('updateUnit')}>
-            Параметры
+            Options
           </button>
-          <button className="button_open_alter" onClick={handleDeleteUnit}>
-            Удалить
+          <button className="button_del_alter" onClick={handleDeleteUnit}>
+            Delete Unit
           </button>
           <ResultQuery
             resultData={resultData}
@@ -278,7 +275,8 @@ export default function UnitContent(){
         </div>
       </BaseModal>
       <BaseModal
-        modalName='Параметры Unit'
+        modalName='Options Unit'
+        subName={currentNodeData?.name}
         open={activeModal === 'updateUnit'}
         openModalType='unitSettingsMenu'
       >
@@ -289,9 +287,10 @@ export default function UnitContent(){
         }
       </BaseModal>
       <BaseModal
-        modalName='Env Unit'
+        modalName='Env Variable'
+        subName={currentNodeData?.name}
         open={activeModal === 'unitSetEnv'}
-        openModalType='unitSettingsMenu'
+        openModalType='unitMenu'
       >
         {
           currentNodeData && (
