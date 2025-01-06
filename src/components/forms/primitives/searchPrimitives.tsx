@@ -146,13 +146,17 @@ import { useUserStore } from '@stores/userStore';
                 setIsErrorExist={(hasError) => updateErrorState('searchString', hasError)}
                 setResultData={setResultData}
             />
-            <button
-                type="button"
-                className="toggle_visibility_button"
-                onClick={() => setIsModifiersVisible(!isModifiersVisible)}
-            >
-                {isModifiersVisible ? 'Hide Options' : 'Show Options'}
-            </button>
+            {
+                selectedEntityType != PermissionEntities.User && (
+                    <button
+                        type="button"
+                        className="toggle_visibility_button"
+                        onClick={() => setIsModifiersVisible(!isModifiersVisible)}
+                    >
+                        {isModifiersVisible ? 'Hide Options' : 'Show Options'}
+                    </button>
+                )
+            }
             {
                 isModifiersVisible && user && selectedEntityType != PermissionEntities.User && (
                     <div className='toggle_container'>
