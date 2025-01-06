@@ -244,3 +244,21 @@
     font-size: 16px;
     margin: 1px;
 }
+
+.state_network {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1px;
+}
+
+.state_network_div {
+    background-color: transparent;
+    border-radius: 10px;
+    border: solid 3px;
+    border-color: #282828;
+    padding: 2px 10px;
+    text-align: center;
+    font-size: 14px;
+    margin: 1px;
+    text-align: left;
+}
