@@ -163,7 +163,7 @@ export default function CreateUnitForm() {
                     <ResultQuery
                         resultData={{
                             type: ResultType.Angry,
-                            message: 'Заполните ветку по умолчанию для Repo - без неё нельзя сделать Unit автообновляемым'
+                            message: 'Fill in the default branch for Repo - you can\'t make Unit auto-update without it'
                         }}
                     />
                 )
@@ -213,7 +213,7 @@ export default function CreateUnitForm() {
                             <span className="slider"></span>
                         </label>
                         <div className="toggle_text">
-                            Автообновляемый ?
+                            Auto-update ?
                         </div>
                     </div>
                     {
@@ -223,7 +223,7 @@ export default function CreateUnitForm() {
                                         setRepoBranch(e.target.value)
                                     }}
                                 >
-                                    <option value="" disabled selected>Выберите ветку</option>
+                                    <option value="" disabled selected>Pick branch</option>
                                     {   
                                         currentNodeData.__typename == 'RepoType' && currentNodeData.branches.map(
                                             (item: string) => (
@@ -238,7 +238,7 @@ export default function CreateUnitForm() {
                                         setRepoCommit(e.target.value)
                                     }}
                                 >   
-                                    <option value="" disabled selected>Выберите коммит</option>
+                                    <option value="" disabled selected>Pick commit</option>
                                     {   
                                         repoAvailableCommits?.map(
                                             item => (
@@ -256,7 +256,7 @@ export default function CreateUnitForm() {
                             setTargetPlatform(e.target.value)
                         }}
                     >   
-                        <option value="" disabled selected>Выберите платформу</option>
+                        <option value="" disabled selected>Pick platform</option>
                         {   
                             repoAvailablePlatforms?.map(
                                 item => (
@@ -270,7 +270,7 @@ export default function CreateUnitForm() {
                 </form>
             </div>
             <button className="button_main_action" onClick={handleCreateUnit} disabled={Object.values(errorState).some(isError => isError)}>
-                Создать
+                Create
             </button>
             <ResultQuery
                 resultData={resultData}

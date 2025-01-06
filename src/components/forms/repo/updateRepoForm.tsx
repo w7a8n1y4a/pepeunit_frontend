@@ -83,7 +83,7 @@ export default function UpdateRepoForm() {
                     <ResultQuery
                         resultData={{
                             type: ResultType.Angry,
-                            message: 'Заполните ветку по умолчанию'
+                            message: 'Fill in the default branch'
                         }}
                     />
                 )
@@ -126,7 +126,7 @@ export default function UpdateRepoForm() {
                             )
                         }}
                     >
-                        <option value="" disabled selected>Выберите ветку</option>
+                        <option value="" disabled selected>Pick branch</option>
                         {
                             currentNodeData.__typename == 'RepoType' && !(currentNodeData.branches.includes(currentNodeData.defaultBranch)) && (
                                 <option value={currentNodeData.defaultBranch}>
@@ -159,7 +159,7 @@ export default function UpdateRepoForm() {
                             <span className="slider"></span>
                         </label>
                         <div className="toggle_text">
-                            Компилируемый ?
+                            Compilable ?
                         </div>
                     </div>
 
@@ -179,7 +179,7 @@ export default function UpdateRepoForm() {
                             <span className="slider"></span>
                         </label>
                         <div className="toggle_text">
-                            Автообновляемый ?
+                            Auto-update ?
                         </div>
                     </div>
                     {
@@ -199,7 +199,7 @@ export default function UpdateRepoForm() {
                                 <span className="slider"></span>
                             </label>
                             <div className="toggle_text">
-                                Только Теги ?
+                                Tags only ?
                             </div>
                         </div>
                         ) : (
@@ -210,7 +210,7 @@ export default function UpdateRepoForm() {
                                 })
                             }}
                         >   
-                            <option value="" disabled selected>Выберите коммит</option>
+                            <option value="" disabled selected>Pick commit</option>
                             {   
                                 repoAvailableCommits?.map(
                                     item => (
@@ -226,7 +226,7 @@ export default function UpdateRepoForm() {
                 </form>
             </div>
             <button className="button_main_action" onClick={handleUpdateRepo} disabled={Object.values(errorState).some(isError => isError)}>
-                Обновить
+                Update
             </button>
             <ResultQuery
                 resultData={resultData}

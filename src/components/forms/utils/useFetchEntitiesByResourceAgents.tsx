@@ -24,7 +24,6 @@ export default function useFetchEntitiesByResourceAgents() {
 
         const queryVariables = { uuids: agentUuids, limit: limit, offset: offset};
 
-        // Определяем функцию запроса на основе entityType
         switch (agentType) {
           case PermissionEntities.Repo:
             return getRepos({ variables: queryVariables });

@@ -153,7 +153,7 @@ export default function CreateRepoForm() {
                             <span className="slider"></span>
                         </label>
                         <div className="toggle_text">
-                            Компилируемый ?
+                            Compilable ?
                         </div>
                     </div>
 
@@ -178,7 +178,7 @@ export default function CreateRepoForm() {
                             <span className="slider"></span>
                         </label>
                         <div className="toggle_text">
-                            Приватный ?
+                            Private ?
                         </div>
                     </div>
                     {
@@ -212,7 +212,7 @@ export default function CreateRepoForm() {
                 </form>
             </div>
             <button className="button_main_action" onClick={handleCreateRepo} disabled={Object.values(errorState).some(isError => isError)}>
-                Создать
+                Create
             </button>
             <ResultQuery
                 resultData={resultData}

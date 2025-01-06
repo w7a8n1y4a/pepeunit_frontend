@@ -11,6 +11,7 @@ import PermissionForm from '../forms/permission/permissionForm';
 import useModalHandlers from '@handlers/useModalHandlers';
 import Spinner from '@primitives/spinner'
 import { useUserStore } from '@stores/userStore';
+import {stringToFormat} from '@utils/stringToFormat'
 
 export default function UnitNodeContent(){
   const { activeModal } = useModalStore();
@@ -26,6 +27,8 @@ export default function UnitNodeContent(){
     <>
       <BaseModal
         modalName={currentNodeData?.type}
+        subName={currentNodeData?.name}
+        visibilityLevel={stringToFormat(currentNodeData?.visibilityLevel)}
         open={activeModal === 'inputMenu' || activeModal === 'outputMenu'}
         reloadEntityType={currentNodeData?.type}
       >
@@ -33,40 +36,39 @@ export default function UnitNodeContent(){
           {
             isLoaderActive && (<Spinner/>)
           }
-          <div>
-            {currentNodeData?.name}
-          </div>
-          <div>
-            Состояние: {currentNodeData?.state || "Данных нет"}
+          <div className='div_unit_message'>
+            {currentNodeData?.state || "No Data"}
           </div>
           {
             user && currentNodeData && user.uuid == currentNodeData.creatorUuid ? (
               <>
-                <button className="button_open_alter" onClick={() => openModal('permissionMenu' + nodeType)}>
-                  Доступы
-                </button>
                 {
                   currentNodeData?.type == UnitNodeTypeEnum.Input ? (
                     <>
-                      <button className="button_open_alter" onClick={() => openModal('unitNodeSetState')}>
-                        Установить значение
+                      <button className="button_add_alter" onClick={() => openModal('unitNodeSetState')}>
+                        Set State
                       </button>
-                      <button className="button_open_alter" onClick={() => openModal('unitNodeAddOutputToInput')}>
-                        Связи
+                      <button className="button_add_alter" onClick={() => openModal('unitNodeAddOutputToInput')}>
+                        Related Output
                       </button>
                     </>
                   ) : (<></>)
                 }
-                <button className="button_open_alter" onClick={() => openModal('unitNodeUpdate')}>
-                  Настройки
-                </button>
+                <div className='div_statistics'>
+                  <button className="button_open_alter" onClick={() => openModal('permissionMenu' + nodeType)}>
+                    Permission
+                  </button>
+                  <button className="button_open_alter" onClick={() => openModal('unitNodeUpdate')}>
+                    Options
+                  </button>
+                </div>
               </>
             ) : (<></>)
           }
         </div>
       </BaseModal>
 
-      <BaseModal modalName={'Доступы ' + currentNodeData?.name} open={activeModal === 'permissionMenu' + nodeType} openModalType='inputMenu'>
+      <BaseModal modalName={'Permission'} subName={currentNodeData?.name} open={activeModal === 'permissionMenu' + nodeType} openModalType='inputMenu'>
         {
           currentNodeData && (
             <PermissionForm
@@ -77,7 +79,8 @@ export default function UnitNodeContent(){
       </BaseModal>
 
       <BaseModal
-        modalName={'Подключенные выходы'}
+        modalName={'Related Output'}
+        subName={currentNodeData?.name}
         open={activeModal === 'unitNodeAddOutputToInput'}
         openModalType={"outputMenu"} 
       >
@@ -89,7 +92,8 @@ export default function UnitNodeContent(){
       </BaseModal>
 
       <BaseModal
-        modalName={'Настройки ' + currentNodeData?.type}
+        modalName={'Options ' + currentNodeData?.type}
+        subName={currentNodeData?.name}
         open={activeModal === 'unitNodeUpdate'}
         openModalType={"outputMenu"} 
       >
@@ -101,7 +105,8 @@ export default function UnitNodeContent(){
       </BaseModal>
 
       <BaseModal
-        modalName={'Установить ' + currentNodeData?.type}
+        modalName={'Set State ' + currentNodeData?.type}
+        subName={currentNodeData?.name}
         open={activeModal === 'unitNodeSetState'}
         openModalType={"inputMenu"} 
       >

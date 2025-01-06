@@ -8,9 +8,9 @@ export default defineConfig({
   plugins: [
     react(),
     visualizer({
-      open: true, // Открыть отчет в браузере после сборки
-      filename: 'dist/stats.html', // Путь к HTML-отчету
-      template: 'treemap', // Формат визуализации: treemap, sunburst, или network
+      open: true,
+      filename: 'dist/stats.html',
+      template: 'treemap',
     }),
   ],
   resolve: {

@@ -81,7 +81,7 @@ export default function ChangePassForm() {
                 </form>
             </div>
             <button className="button_main_action" onClick={handleChangeLogin} disabled={Object.values(errorState).some(isError => isError)}>
-                Изменить
+                Change
             </button>
             <ResultQuery
                 resultData={resultData}

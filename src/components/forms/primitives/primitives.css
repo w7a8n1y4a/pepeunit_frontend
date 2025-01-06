@@ -1,5 +1,5 @@
 .spinner {
-    animation: spin 1s linear infinite; /* Добавляем анимацию */
+    animation: spin 1s linear infinite;
 }
 
 .info_error,
@@ -13,7 +13,7 @@
     padding: 5px;
     margin-bottom: 10px;
     margin-top: 3px;
-    min-width: 255px;
+    max-width: 400px;
 }
 
 .result_happy,
@@ -107,18 +107,8 @@
 
 .iteration-item {
     margin-bottom: 8px;
-    width: 400px;
-    border: 2px solid #282828;
-    border-radius: 4px;
-    background-color: #101010;
-    padding: 8px;
-    cursor: pointer;
-}
-
-.iteration-item {
-    margin-bottom: 8px;
-    width: 400px;
-    border: 2px solid #282828;
+    max-width: 400px;
+    border: 3px solid #282828;
     border-radius: 4px;
     background-color: #101010;
     padding: 8px;
@@ -126,9 +116,8 @@
 }
 
 .iteration-item:hover {
-    border: 2px solid #666;
+    border: 3px solid #666;
 }
-
 
 .iteration-item h3 {
     font-size: 16px;
@@ -161,8 +150,8 @@
 
 .iteration-nodes {
     display: flex;
-    flex-direction: column; /* Align children vertically */
-    gap: 5px; /* Adds 5px gap between each iteration-nodes element */
+    flex-direction: column;
+    gap: 5px;
 }
 
 .iteration-item:hover .iteration-node:hover {
@@ -195,7 +184,7 @@
     padding: 5px 10px;
     font-size: 14px;
     cursor: pointer;
-    margin-left: auto; /* Push button to the right */
+    margin-left: auto;
     text-align: center;
 }
 
@@ -237,4 +226,39 @@
 
 .entity-button:hover {
     background-color: #282828;
+}
+
+.update_info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1px;
+}
+
+.div_load_data_grid {
+    background-color: transparent;
+    border-radius: 10px;
+    border: solid 3px;
+    border-color: #282828;
+    padding: 2px 10px;
+    text-align: center;
+    font-size: 16px;
+    margin: 1px;
+}
+
+.state_network {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1px;
+}
+
+.state_network_div {
+    background-color: transparent;
+    border-radius: 10px;
+    border: solid 3px;
+    border-color: #282828;
+    padding: 2px 10px;
+    text-align: center;
+    font-size: 14px;
+    margin: 1px;
+    text-align: left;
 }

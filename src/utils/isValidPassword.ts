@@ -3,7 +3,7 @@ export default function isValidPassword(password: string) {
     let errorMessage: null | string = null
 
     if (!regex.test(password)){
-        errorMessage = "От 8 до 100 символов: a-z, A-Z, 0-9 и !\"#$%&'()*+,\-./:;<=>?@[\]\\^_`{|}~"
+        errorMessage = "From 8 to 100 characters: a-z, A-Z, 0-9 and !\"#$%&'()*+,\-./:;<=>?@[\]\\^_`{|}~"
     }
 
     return errorMessage;

@@ -3,7 +3,7 @@ export default function isValidLogin(login: string) {
     let errorMessage: null | string = null
 
     if (!regex.test(login)){
-        errorMessage = "От 4 до 20 символов: a-z, A-Z, 0-9 и _.-"
+        errorMessage = "From 4 to 20 characters: a-z, A-Z, 0-9 and _.-"
     }
 
     return errorMessage;

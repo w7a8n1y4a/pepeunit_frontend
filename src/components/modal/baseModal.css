@@ -2,15 +2,21 @@ dialog {
     border-radius: 16px;
     border: solid 3px;
     border-color: #282828;
+    width: 400px;
 }
 
 .modal_header {
     display: flex;
 }
 
-.modal_name {
+.modal_name { 
     padding-bottom: 10px;
     font-size: 22px;
+}
+
+.modal_sub_name {
+    margin-top: -2px;
+    font-size: 14px;
 }
 
 .modal_menu_button {
@@ -18,10 +24,12 @@ dialog {
     border: none;
     cursor: pointer;
     padding-left: 0px;
+    padding-top: 0px;
+    margin-top: 0px;
 }
 
 .div_modal_buttons {
-    display: flex;
     margin-left: auto;
     padding-left: 10px;
+    padding-top: 4px;
 }

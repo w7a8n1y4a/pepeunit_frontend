@@ -90,13 +90,13 @@ const IterationList = <T extends { uuid: string }>({
                         </div>
                     ))
                 ) : (
-                    <h3>Нет данных</h3>
+                    <h3>No Agent</h3>
                 )
             }
             {
                 openModalName ? (
                     <div className="iteration-item" onClick={() => openModal(openModalName)}>
-                        <h3>Добавить ресурс</h3>
+                        <h3>Pick Agent</h3>
                     </div>
                 ) : (<></>)
             }

@@ -66,7 +66,7 @@ export default function UpdateUnitNodeForm() {
                                     <span className="slider"></span>
                                 </label>
                                 <div className="toggle_text">
-                                    Перезаписываемый ?
+                                    Rewritable ?
                                 </div>
                             </div>
                         ) : (<></>)
@@ -74,7 +74,7 @@ export default function UpdateUnitNodeForm() {
                 </form>
             </div>
             <button className="button_main_action" onClick={handleUpdateUnitNode}>
-                Обновить
+                Update
             </button>
             <ResultQuery
                 resultData={resultData}

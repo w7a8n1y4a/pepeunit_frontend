@@ -46,7 +46,8 @@ export default function DomainContent(){
   return (
     <>
       <BaseModal
-        modalName={'' + currentNodeData?.name}
+        modalName={'Instance'}
+        subName={currentNodeData?.name}
         open={activeModal === 'domainMenu'}
       >
         <div className="modal_menu_content">
@@ -54,13 +55,13 @@ export default function DomainContent(){
             isLoaderActive && (<Spinner/>)
           }
           <button className="button_open_alter" onClick={() => openModal('statistics')}>
-            Статистики
+            Statistics
           </button>
 
           {
             user?.role === UserRole.Admin ? (
-              <button className="button_open_alter" onClick={handleBulkUpdate}>
-                Обновить все Repo и связанные Unit
+              <button className="button_open_alter_send" onClick={handleBulkUpdate}>
+                Update all Repo and Unit
               </button>
             ) : (<></>)
           }
@@ -69,22 +70,22 @@ export default function DomainContent(){
           />
         </div>
       </BaseModal>
-      <BaseModal modalName='Метрики' open={activeModal === 'statistics'} openModalType='domainMenu'>
-          <div>
-            <div>
-              Число User: {baseMetrics?.userCount}
+      <BaseModal modalName='Statistics' subName={currentNodeData?.name} open={activeModal === 'statistics'} openModalType='domainMenu'>
+          <div className='div_statistics'>
+            <div className='div_statistics_text'>
+              User - {baseMetrics?.userCount}
             </div>
-            <div>
-              Число Repo: {baseMetrics?.repoCount}
+            <div className='div_statistics_text'>
+              Repo - {baseMetrics?.repoCount}
             </div>
-            <div>
-              Число Unit: {baseMetrics?.unitCount}
+            <div className='div_statistics_text'>
+              Unit - {baseMetrics?.unitCount}
             </div>
-            <div>
-              Число UnitNode: {baseMetrics?.unitNodeCount}
+            <div className='div_statistics_text'>
+              UnitNode - {baseMetrics?.unitNodeCount}
             </div>
-            <div>
-              Число UnitNodeEdge: {baseMetrics?.unitNodeEdgeCount}
+            <div className='div_statistics_text'>
+              UnitNodeEdge - {baseMetrics?.unitNodeEdgeCount}
             </div>
           </div>
       </BaseModal>
