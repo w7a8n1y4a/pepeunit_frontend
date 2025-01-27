@@ -41,7 +41,7 @@ export default function UnitNodeContent(){
             {currentNodeData?.state || "No Data"}
           </div>
           {
-            user && currentNodeData && user.uuid == currentNodeData.creatorUuid ? (
+            user && currentNodeData ? (
               <>
                 {
                   currentNodeData?.type == UnitNodeTypeEnum.Input ? (
@@ -55,14 +55,18 @@ export default function UnitNodeContent(){
                     </>
                   ) : (<></>)
                 }
-                <div className='div_statistics'>
-                  <button className="button_open_alter" onClick={() => openModal('permissionMenu' + nodeType)}>
-                    Permission
-                  </button>
-                  <button className="button_open_alter" onClick={() => openModal('unitNodeUpdate')}>
-                    Options
-                  </button>
-                </div>
+                {
+                  user.uuid == currentNodeData.creatorUuid ? (
+                    <div className='div_statistics'>
+                      <button className="button_open_alter" onClick={() => openModal('permissionMenu' + nodeType)}>
+                        Permission
+                      </button>
+                      <button className="button_open_alter" onClick={() => openModal('unitNodeUpdate')}>
+                        Options
+                      </button>
+                    </div>
+                  ) : (<></>)
+                }
               </>
             ) : (<></>)
           }
