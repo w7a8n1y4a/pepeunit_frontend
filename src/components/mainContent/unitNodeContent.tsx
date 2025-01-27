@@ -1,6 +1,6 @@
 import BaseModal from '../modal/baseModal'
 
-import { UnitNodeTypeEnum, PermissionEntities } from '@rootTypes/compositionFunctions'
+import { UnitNodeTypeEnum, PermissionEntities, VisibilityLevel } from '@rootTypes/compositionFunctions'
 import { useModalStore, useNodeStore } from '@stores/baseStore';
 import { useResultHandler } from '@handlers/useResultHandler';
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
@@ -58,9 +58,13 @@ export default function UnitNodeContent(){
                 {
                   user.uuid == currentNodeData.creatorUuid ? (
                     <div className='div_statistics'>
-                      <button className="button_open_alter" onClick={() => openModal('permissionMenu' + nodeType)}>
-                        Permission
-                      </button>
+                      {
+                        currentNodeData.visibilityLevel == VisibilityLevel.Private && (
+                          <button className="button_open_alter" onClick={() => openModal('permissionMenu' + nodeType)}>
+                            Permission
+                          </button>
+                        )
+                      }
                       <button className="button_open_alter" onClick={() => openModal('unitNodeUpdate')}>
                         Options
                       </button>
