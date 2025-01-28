@@ -2,8 +2,7 @@ import {
     PermissionEntities,
     VisibilityLevel
 } from '@rootTypes/compositionFunctions';
-import { useResultHandler } from '@handlers/useResultHandler';
-import { useAsyncHandler } from '@handlers/useAsyncHandler';
+import { ResultState } from '@handlers/useResultHandler';
 import { useRef, useState, useEffect, useLayoutEffect } from 'react';
 import DefaultInput from '@primitives/defaultInput'
 import Spinner from '@primitives/spinner';
@@ -19,6 +18,10 @@ import { useUserStore } from '@stores/userStore';
 
   
   interface SearchProps {
+    isLoaderActive: boolean
+    runAsync: any
+    resultData: ResultState
+    setResultData: React.Dispatch<React.SetStateAction<ResultState>>
     availableEntities: PermissionEntities[]
     selectedEntityType: PermissionEntities
     setSelectedEntityType: (show: PermissionEntities) => void
@@ -26,9 +29,7 @@ import { useUserStore } from '@stores/userStore';
     onFocusNode?: (uuid: string, nodeType: string) => void
   }
 
-  export default function SearchPrimitives({ availableEntities, handleCreatePermission, onFocusNode }: SearchProps){
-    const { resultData, setResultData, handleError } = useResultHandler();
-    const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
+  export default function SearchPrimitives({isLoaderActive, runAsync, resultData, setResultData, availableEntities, handleCreatePermission, onFocusNode }: SearchProps){
     const { activeModal } = useModalStore();
 
     const { currentNodeData } = useNodeStore();

@@ -17,8 +17,8 @@ interface PermissionCreateFormProps {
 }
 
 export default function PermissionCreateForm({ currentNodeType, selectedEntityType, setSelectedEntityType }: PermissionCreateFormProps) {
-    const { handleError, handleSuccess } = useResultHandler();
-    const { runAsync } = useAsyncHandler(handleError);
+    const { resultData, setResultData, handleError, handleSuccess } = useResultHandler();
+    const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
 
     const { currentNodeData } = useNodeStore();
 
@@ -41,7 +41,11 @@ export default function PermissionCreateForm({ currentNodeType, selectedEntityTy
     };
 
     return (
-        <SearchPrimitives 
+        <SearchPrimitives
+            isLoaderActive={isLoaderActive}
+            runAsync={runAsync}
+            resultData={resultData}
+            setResultData={setResultData}
             availableEntities={[PermissionEntities.Unit, PermissionEntities.User]}
             selectedEntityType={selectedEntityType}
             setSelectedEntityType={setSelectedEntityType}
