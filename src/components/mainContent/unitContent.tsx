@@ -2,7 +2,7 @@ import { ResultType } from '@rootTypes/resultEnum'
 import { NodeType } from '@rootTypes/nodeTypeEnum'
 import { useResultHandler } from '@handlers/useResultHandler';
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
-import { useDeleteUnitMutation, PermissionEntities, useGetAvailablePlatformsLazyQuery, useGetRepoLazyQuery, RepoType, useSendCommandToInputBaseTopicMutation, BackendTopicCommand, useGetTargetVersionLazyQuery } from '@rootTypes/compositionFunctions'
+import { useDeleteUnitMutation, PermissionEntities, useGetAvailablePlatformsLazyQuery, useGetRepoLazyQuery, RepoType, useSendCommandToInputBaseTopicMutation, BackendTopicCommand, useGetTargetVersionLazyQuery, VisibilityLevel } from '@rootTypes/compositionFunctions'
 import BaseModal from '../modal/baseModal'
 import { useState, useEffect } from 'react';
 import Spinner from '@primitives/spinner'
@@ -230,9 +230,13 @@ export default function UnitContent(){
                   </button>
                 </div>
                 <div className='div_statistics'>
-                  <button className="button_open_alter" onClick={() => openModal('permissionMenu' + nodeType)}>
-                    Permission
-                  </button>
+                  {
+                    currentNodeData.visibilityLevel == VisibilityLevel.Private && (
+                      <button className="button_open_alter" onClick={() => openModal('permissionMenu' + nodeType)}>
+                        Permission
+                      </button>
+                    )
+                  }
                   <button className="button_open_alter" onClick={() => openModal('unitSettingsMenu')}>
                     Settings
                   </button>

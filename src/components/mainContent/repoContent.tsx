@@ -1,6 +1,6 @@
 import { useResultHandler } from '@handlers/useResultHandler';
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
-import { useUpdateLocalRepoMutation, PermissionEntities, useUpdateUnitsFirmwareMutation, useDeleteRepoMutation, useGetVersionsLazyQuery } from '@rootTypes/compositionFunctions'
+import { useUpdateLocalRepoMutation, PermissionEntities, useUpdateUnitsFirmwareMutation, useDeleteRepoMutation, useGetVersionsLazyQuery, VisibilityLevel } from '@rootTypes/compositionFunctions'
 import BaseModal from '../modal/baseModal'
 import CreateUnitForm from '../forms/unit/createUnitForm';
 import UpdateRepoForm from '../forms/repo/updateRepoForm';
@@ -157,9 +157,13 @@ const handleCopy = async () => {
             user && user.uuid == currentNodeData?.creatorUuid ? (
               <>
                 <div className='div_statistics'>
-                  <button className="button_open_alter" onClick={() => openModal('permissionMenu' + nodeType)}>
-                    Permission
-                  </button>
+                  {
+                    currentNodeData.visibilityLevel == VisibilityLevel.Private && (
+                      <button className="button_open_alter" onClick={() => openModal('permissionMenu' + nodeType)}>
+                        Permission
+                      </button>
+                    )
+                  }
                   <button className="button_open_alter" onClick={() => openModal('repoSettingsMenu')}>
                     Settings
                   </button>
