@@ -230,7 +230,7 @@ export default function UpdateUnitForm() {
                         )
                     }
                     {
-                        currentRepoData && currentRepoData.isCompilableRepo && (
+                        currentRepoData && currentRepoData.isCompilableRepo && currentNodeData.repoUuid == currentRepoData.uuid && (
                             <div>
                                 <select
                                     id='base_enum'
