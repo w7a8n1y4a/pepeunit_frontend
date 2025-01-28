@@ -1,71 +1,58 @@
 import './primitives.css'
-import { useState, useEffect } from 'react';
-import { UnitStateType } from '@rootTypes/compositionFunctions'
 import { useNodeStore } from '@stores/baseStore'
 import byteConverter from '@utils/byteConverter'
 import calculateFlashMem from '@utils/calculateFlashMem'
 import formatMillis from '@utils/formatMillis'
 
+
 export default function UnitMicroState() {
 
     const { currentNodeData } = useNodeStore();
-    const [ currentState, setCurrentState] = useState<UnitStateType | null>(null);
 
-    function getStateData() {
-        let state: UnitStateType = currentNodeData.unitState
-        return state
-    }
-
-    useEffect(() => {
-        if (currentNodeData && currentNodeData.__typename == "UnitType" && currentNodeData.unitState){
-            setCurrentState(getStateData())
-        }
-    }, [currentNodeData]);
-      
     return (
-        currentState && (
+        currentNodeData?.unitState && (
             <>
-                {currentState.ifconfig && currentState.ifconfig.length > 0 && (
+                {currentNodeData.unitState.ifconfig && currentNodeData.unitState.ifconfig.length > 0 && (
                     <div className='state_network'>
                         <div className='state_network_div'>
-                            IP - {currentState.ifconfig[0]}
+                            IP - {currentNodeData.unitState.ifconfig[0]}
                         </div>
                         <div className='state_network_div'>
-                            Sub - {currentState.ifconfig[1]}
+                            Sub - {currentNodeData.unitState.ifconfig[1]}
                         </div>
                         <div className='state_network_div'>
-                            Gate - {currentState.ifconfig[2]}
+                            Gate - {currentNodeData.unitState.ifconfig[2]}
                         </div>
                         <div className='state_network_div'>
-                            DNS - {currentState.ifconfig[3]}
+                            DNS - {currentNodeData.unitState.ifconfig[3]}
                         </div>
                     </div>
                 )}
 
                 <div className='state_network'>
-                    {currentState.freq && (
+                    {currentNodeData.unitState.freq && (
                         <div className='state_network_div'>
-                            Freq {Math.round(currentState.freq)}
+                            Freq {Math.round(currentNodeData.unitState.freq)}
                         </div>
                     )}
-                    {currentState.millis && (
+                    {currentNodeData.unitState.millis && (
                         <div className='state_network_div'>
-                            Up - {formatMillis(currentState.millis)}
+                            Up - {formatMillis(currentNodeData.unitState.millis)}
                         </div>
                     )}
-                    {currentState.memAlloc && (
+                    {currentNodeData.unitState.memAlloc && (
                         <div className='state_network_div'>
-                            Alloc RAM {byteConverter(currentState.memAlloc)}
+                            Alloc RAM {byteConverter(currentNodeData.unitState.memAlloc)}
                         </div>
                     )}
-                    {currentState.memFree && (
+                    {currentNodeData.unitState.memFree && (
                         <div className='state_network_div'>
-                            Free RAM {byteConverter(currentState.memFree)}
+                            Free RAM {byteConverter(currentNodeData.unitState.memFree)}
                         </div>
                     )}
                 </div>
                 
-                {currentState.statvfs && currentState.statvfs.length == 10 && (
+                {currentNodeData.unitState.statvfs && currentNodeData.unitState.statvfs.length == 10 && (
                         <div className='update_info'>
                             {
                                 ['Total', 'Free', 'Used'].map((mem) => (
@@ -75,7 +62,7 @@ export default function UnitMicroState() {
                                 ))
                             }
                             {
-                                calculateFlashMem(currentState.statvfs).map((mem) => (
+                                calculateFlashMem(currentNodeData.unitState.statvfs).map((mem) => (
                                     <div className='div_load_data_grid'>
                                         {byteConverter(mem)}
                                     </div>
