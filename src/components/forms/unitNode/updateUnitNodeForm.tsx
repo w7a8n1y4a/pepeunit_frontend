@@ -50,7 +50,7 @@ export default function UpdateUnitNodeForm() {
                         <option value={VisibilityLevel.Private}>Private</option>
                     </select>
                     {
-                        currentNodeData.type == UnitNodeTypeEnum.Input ? (
+                        currentNodeData.type == UnitNodeTypeEnum.Input && (
                             <div className='toggle_container'>
                                 <label className="toggle">
                                     <input 
@@ -69,7 +69,7 @@ export default function UpdateUnitNodeForm() {
                                     Rewritable ?
                                 </div>
                             </div>
-                        ) : (<></>)
+                        )
                     }
                 </form>
             </div>

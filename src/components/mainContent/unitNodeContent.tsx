@@ -41,10 +41,10 @@ export default function UnitNodeContent(){
             {currentNodeData?.state || "No Data"}
           </div>
           {
-            user && currentNodeData ? (
+            user && currentNodeData && (
               <>
                 {
-                  currentNodeData?.type == UnitNodeTypeEnum.Input ? (
+                  currentNodeData?.type == UnitNodeTypeEnum.Input && (
                     <>
                       <button className="button_add_alter" onClick={() => openModal('unitNodeSetState')}>
                         Set State
@@ -53,10 +53,10 @@ export default function UnitNodeContent(){
                         Related Output
                       </button>
                     </>
-                  ) : (<></>)
+                  )
                 }
                 {
-                  user.uuid == currentNodeData.creatorUuid ? (
+                  user.uuid == currentNodeData.creatorUuid && (
                     <div className='div_statistics'>
                       {
                         currentNodeData.visibilityLevel == VisibilityLevel.Private && (
@@ -69,10 +69,10 @@ export default function UnitNodeContent(){
                         Options
                       </button>
                     </div>
-                  ) : (<></>)
+                  )
                 }
               </>
-            ) : (<></>)
+            )
           }
         </div>
       </BaseModal>

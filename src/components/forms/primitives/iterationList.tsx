@@ -94,11 +94,11 @@ const IterationList = <T extends { uuid: string }>({
                 )
             }
             {
-                openModalName ? (
+                openModalName && (
                     <div className="iteration-item" onClick={() => openModal(openModalName)}>
                         <h3>Pick Agent</h3>
                     </div>
-                ) : (<></>)
+                )
             }
         </>
     );
