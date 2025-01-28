@@ -18,13 +18,14 @@ interface ModalProps {
     modalName: string
     subName?: string
     visibilityLevel?: string
+    lastUpdateDatetime?: string
     children: React.ReactNode
     open: boolean
     openModalType?: string
     reloadEntityType?: NodeType | UnitNodeTypeEnum
 }
 
-export default function BaseModal({modalName, subName, visibilityLevel, children, open, openModalType, reloadEntityType}: ModalProps) {
+export default function BaseModal({modalName, subName, visibilityLevel, lastUpdateDatetime, children, open, openModalType, reloadEntityType}: ModalProps) {
     const { openModal, closeModal } = useModalHandlers();
     const { handleError } = useResultHandler();
     const { runAsync } = useAsyncHandler(handleError);
@@ -68,7 +69,6 @@ export default function BaseModal({modalName, subName, visibilityLevel, children
 
         })
     }
-    
     return ReactDOM.createPortal(
         <dialog open={open}>
             <div className="modal_header">
@@ -110,6 +110,13 @@ export default function BaseModal({modalName, subName, visibilityLevel, children
                 </div>
             </div>
             {children}
+            {
+                lastUpdateDatetime && (
+                    <div className="modal_last_update">
+                        last update: {lastUpdateDatetime.replace("T", " ").split(".")[0]}
+                    </div>
+                )
+            }
         </dialog>,
         document.body
     )

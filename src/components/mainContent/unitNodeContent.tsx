@@ -29,6 +29,7 @@ export default function UnitNodeContent(){
         modalName={currentNodeData?.type}
         subName={currentNodeData?.name}
         visibilityLevel={stringToFormat(currentNodeData?.visibilityLevel)}
+        lastUpdateDatetime={currentNodeData?.lastUpdateDatetime}
         open={activeModal === 'inputMenu' || activeModal === 'outputMenu'}
         reloadEntityType={currentNodeData?.type}
       >

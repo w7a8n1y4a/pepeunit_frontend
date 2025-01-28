@@ -492,6 +492,7 @@ export type UnitNodeType = {
   createDatetime: Scalars["DateTime"]["output"];
   creatorUuid: Scalars["UUID"]["output"];
   isRewritableInput: Scalars["Boolean"]["output"];
+  lastUpdateDatetime: Scalars["DateTime"]["output"];
   state?: Maybe<Scalars["String"]["output"]>;
   topicName: Scalars["String"]["output"];
   type: UnitNodeTypeEnum;
@@ -908,6 +909,8 @@ export type UpdateUnitNodeMutation = {
     visibilityLevel: VisibilityLevel;
     isRewritableInput: boolean;
     topicName: string;
+    lastUpdateDatetime: string;
+    createDatetime: string;
     state?: string | null;
     unitUuid: string;
   };
@@ -927,6 +930,8 @@ export type SetStateUnitNodeInputMutation = {
     visibilityLevel: VisibilityLevel;
     isRewritableInput: boolean;
     topicName: string;
+    lastUpdateDatetime: string;
+    createDatetime: string;
     state?: string | null;
     unitUuid: string;
   };
@@ -1315,6 +1320,7 @@ export type GetUnitsWithUnitNodesQuery = {
         visibilityLevel: VisibilityLevel;
         isRewritableInput: boolean;
         topicName: string;
+        lastUpdateDatetime: string;
         createDatetime: string;
         state?: string | null;
         unitUuid: string;
@@ -1374,6 +1380,7 @@ export type GetUnitsOutputByInputQuery = {
         visibilityLevel: VisibilityLevel;
         isRewritableInput: boolean;
         topicName: string;
+        lastUpdateDatetime: string;
         createDatetime: string;
         state?: string | null;
         unitUuid: string;
@@ -1424,6 +1431,8 @@ export type GetUnitNodeQuery = {
     visibilityLevel: VisibilityLevel;
     isRewritableInput: boolean;
     topicName: string;
+    lastUpdateDatetime: string;
+    createDatetime: string;
     state?: string | null;
     unitUuid: string;
     creatorUuid: string;
@@ -1455,6 +1464,8 @@ export type GetUnitNodesQuery = {
       visibilityLevel: VisibilityLevel;
       isRewritableInput: boolean;
       topicName: string;
+      lastUpdateDatetime: string;
+      createDatetime: string;
       state?: string | null;
       unitUuid: string;
       creatorUuid: string;
@@ -2496,6 +2507,8 @@ export const UpdateUnitNodeDocument = gql`
       visibilityLevel
       isRewritableInput
       topicName
+      lastUpdateDatetime
+      createDatetime
       state
       unitUuid
     }
@@ -2554,6 +2567,8 @@ export const SetStateUnitNodeInputDocument = gql`
       visibilityLevel
       isRewritableInput
       topicName
+      lastUpdateDatetime
+      createDatetime
       state
       unitUuid
     }
@@ -3851,6 +3866,7 @@ export const GetUnitsWithUnitNodesDocument = gql`
           visibilityLevel
           isRewritableInput
           topicName
+          lastUpdateDatetime
           createDatetime
           state
           unitUuid
@@ -3993,6 +4009,7 @@ export const GetUnitsOutputByInputDocument = gql`
           visibilityLevel
           isRewritableInput
           topicName
+          lastUpdateDatetime
           createDatetime
           state
           unitUuid
@@ -4309,6 +4326,8 @@ export const GetUnitNodeDocument = gql`
       visibilityLevel
       isRewritableInput
       topicName
+      lastUpdateDatetime
+      createDatetime
       state
       unitUuid
       creatorUuid
@@ -4413,6 +4432,8 @@ export const GetUnitNodesDocument = gql`
         visibilityLevel
         isRewritableInput
         topicName
+        lastUpdateDatetime
+        createDatetime
         state
         unitUuid
         creatorUuid

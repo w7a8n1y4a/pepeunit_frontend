@@ -12,6 +12,8 @@ gql`
             visibilityLevel
             isRewritableInput
             topicName
+            lastUpdateDatetime
+            createDatetime
             state
             unitUuid
             creatorUuid
@@ -46,6 +48,8 @@ gql`
                 visibilityLevel
                 isRewritableInput
                 topicName
+                lastUpdateDatetime
+                createDatetime
                 state
                 unitUuid
                 creatorUuid
