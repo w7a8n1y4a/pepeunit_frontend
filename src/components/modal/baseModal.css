@@ -19,6 +19,11 @@ dialog {
     font-size: 14px;
 }
 
+.modal_last_update {
+    padding-top: 10px;
+    font-size: 12px;
+}
+
 .modal_menu_button {
     background: transparent;
     border: none;
