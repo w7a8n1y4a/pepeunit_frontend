@@ -59,11 +59,11 @@ export default function DomainContent(){
           </button>
 
           {
-            user?.role === UserRole.Admin ? (
+            user?.role === UserRole.Admin && (
               <button className="button_open_alter_send" onClick={handleBulkUpdate}>
                 Update all Repo and Unit
               </button>
-            ) : (<></>)
+            )
           }
           <ResultQuery
             resultData={resultData}

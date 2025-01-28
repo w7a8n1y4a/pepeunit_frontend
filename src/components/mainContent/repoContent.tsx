@@ -132,7 +132,7 @@ const handleCopy = async () => {
             isLoaderActive && (<Spinner/>)
           }
           {
-            versions && versions.unitCount > 0 ? (<VersionChart data={versions} />) : (<></>)
+            versions && versions.unitCount > 0 && (<VersionChart data={versions} />)
           }
           {
             currentNodeData && (
@@ -147,14 +147,14 @@ const handleCopy = async () => {
             )
           }
           {
-            user ? (
+            user && (
               <button className="button_add_alter" onClick={() => openModal('createUnit')}>
                 Create Unit
               </button>
-            ) : (<></>)
+            )
           }
           {
-            user && user.uuid == currentNodeData?.creatorUuid ? (
+            user && user.uuid == currentNodeData?.creatorUuid && (
               <>
                 <div className='div_statistics'>
                   {
@@ -177,7 +177,7 @@ const handleCopy = async () => {
                   </button>
                 </div>
               </>
-            ) : (<></>)
+            )
           }
           <ResultQuery
             resultData={resultData}

@@ -178,7 +178,7 @@ export default function UnitContent(){
           <UnitMicroState/>
 
           {
-            user && currentNodeData && user.uuid == currentNodeData.creatorUuid ? (
+            user && currentNodeData && user.uuid == currentNodeData.creatorUuid && (
               <>
                 <button className="button_add_alter" onClick={() => openModal('unitSetEnv')}>
                   Set Env Variable
@@ -242,7 +242,7 @@ export default function UnitContent(){
                   </button>
                 </div>
               </>
-            ) : (<></>)
+            )
           }
           <ResultQuery
             resultData={resultData}
