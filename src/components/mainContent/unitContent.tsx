@@ -243,34 +243,36 @@ export default function UnitContent(){
                       </div>
                     </>
                 )}
-                <div className='div_unit_message'>
-                  Send update MQTT message
-                </div>
                 {
                   availableCommand && (
-                    <div className='buttons_load_firmware'>
-                      {
-                        availableCommand['Firmware'] && (
-                          <button className="button_load_data_grid" onClick={() => handleSendUnitCommand(BackendTopicCommand.Update)}>
-                            Firmware
-                          </button>
-                        )
-                      }
-                      {
-                        availableCommand['Schema'] && (
-                          <button className="button_load_data_grid" onClick={() => handleSendUnitCommand(BackendTopicCommand.SchemaUpdate)}>
-                            Schema
-                          </button>
-                        )
-                      }
-                      {
-                        availableCommand['Env'] && (
-                          <button className="button_load_data_grid" onClick={() => handleSendUnitCommand(BackendTopicCommand.EnvUpdate)}>
-                            Env
-                          </button>
-                        )
-                      }
-                    </div>
+                    <>
+                      <div className='div_unit_message'>
+                        Send update MQTT message
+                      </div>
+                      <div className='buttons_load_firmware'>
+                        {
+                          availableCommand['Firmware'] && (
+                            <button className="button_load_data_grid" onClick={() => handleSendUnitCommand(BackendTopicCommand.Update)}>
+                              Firmware
+                            </button>
+                          )
+                        }
+                        {
+                          availableCommand['Schema'] && (
+                            <button className="button_load_data_grid" onClick={() => handleSendUnitCommand(BackendTopicCommand.SchemaUpdate)}>
+                              Schema
+                            </button>
+                          )
+                        }
+                        {
+                          availableCommand['Env'] && (
+                            <button className="button_load_data_grid" onClick={() => handleSendUnitCommand(BackendTopicCommand.EnvUpdate)}>
+                              Env
+                            </button>
+                          )
+                        }
+                      </div>
+                    </>
                   )
                 }
                 <div className='div_statistics'>
