@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import truncateString from '@utils/truncateString'
 import useButtonStore, {useButtonHandlers} from '@stores/modifiersStore';
 import { useSearchNodeStore } from '@stores/baseStore';
 import {getNodeColor} from '@utils/getNodeColor'
@@ -39,7 +40,11 @@ const ButtonModifiers = () => {
               border: '2px solid ' + (button.isActive ? getNodeColor(button.nodeType) : '#282828')
             }}
           >
-            {button.nodeType == currentSearchNodeData.__typename.slice(0, -4) ? currentSearchNodeData.name || currentSearchNodeData.login || currentSearchNodeData.topicName : button.nodeType}
+            {
+              button.nodeType == currentSearchNodeData.__typename.slice(0, -4) 
+              ? truncateString(currentSearchNodeData.name || currentSearchNodeData.login || currentSearchNodeData.topicName, 14)
+              : button.nodeType
+            }
           </button>
         ) : null
       )}

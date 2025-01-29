@@ -7,7 +7,8 @@ import {
     useGetUnitsWithUnitNodesLazyQuery,
     useGetUserLazyQuery,
     useGetRepoLazyQuery,
-    UnitNodeTypeEnum
+    UnitNodeTypeEnum,
+    useGetUnitLazyQuery
 } from '@rootTypes/compositionFunctions'
 import { useSearchNodeStore, useNodeStore } from '@stores/baseStore';
 import { useGraphStore } from '@stores/graphStore';
@@ -82,6 +83,7 @@ export const useButtonHandlers = () => {
 
     const [getRepo] = useGetRepoLazyQuery();
     const [getUser] = useGetUserLazyQuery();
+    const [getUnit] = useGetUnitLazyQuery();
 
     function isButtonConditionMet(id: number) {
         const buttons = useButtonStore.getState().buttons;
@@ -112,8 +114,9 @@ export const useButtonHandlers = () => {
 
         if (button.nodeType === currentSearchNodeData.__typename.slice(0, -4)) {
             setCurrentNodeData(currentSearchNodeData);
+            console.log(currentSearchNodeData)
             if (currentSearchNodeData.__typename === 'UnitNodeType'){
-                openModal(currentSearchNodeData.type == UnitNodeTypeEnum.Input ? NodeType.Input : NodeType.Output + 'Menu')
+                openModal((currentSearchNodeData.type == UnitNodeTypeEnum.Input ? NodeType.Input : NodeType.Output) + 'Menu')
             } else {
                 openModal(currentSearchNodeData.__typename.slice(0, -4) + 'Menu');
             }
@@ -264,32 +267,69 @@ export const useButtonHandlers = () => {
             }
             if (button.nodeType === NodeType.Unit){
                 let repos = getNodesByType(NodeType.Repo)
-                runAsync(async () => {
-                    let units = await getUnits({
-                        variables: {
-                            reposUuids: repos.map((repo) => (repo.data.uuid))
+
+                if (repos.length > 0){
+                    runAsync(async () => {
+                        let units = await getUnits({
+                            variables: {
+                                reposUuids: repos.map((repo) => (repo.data.uuid))
+                            }
+                        })
+                        if (units.data?.getUnits){
+                            let unitsData = units.data.getUnits
+                            setGraphData({
+                                nodes: [
+                                    ...graphData.nodes,
+                                    ...unitsData.units.map((unit) => ({
+                                        id: unit.uuid,
+                                        type: NodeType.Unit,
+                                        color: getNodeColor(NodeType.Unit),
+                                        data: unit
+                                    }
+                                    ))
+                                ],
+                                links: [
+                                    ...graphData.links,
+                                    ...unitsData.units.map((unit) => ({source: unit.repoUuid, target: unit.uuid, value: 1}))
+                                ]
+                            })
                         }
                     })
-                    if (units.data?.getUnits){
-                        let unitsData = units.data.getUnits
-                        setGraphData({
-                            nodes: [
-                                ...graphData.nodes,
-                                ...unitsData.units.map((unit) => ({
-                                    id: unit.uuid,
-                                    type: NodeType.Unit,
-                                    color: getNodeColor(NodeType.Unit),
-                                    data: unit
-                                }
-                                ))
-                            ],
-                            links: [
-                                ...graphData.links,
-                                ...unitsData.units.map((unit) => ({source: unit.repoUuid, target: unit.uuid, value: 1}))
-                            ]
+                }
+
+                let unitInputs = getNodesByType(NodeType.Input)
+                let unitOutputs = getNodesByType(NodeType.Output)
+
+                if (unitInputs.length > 0 || unitOutputs.length > 0){
+                    const targetUnitUuid = unitInputs.length > 0 ? unitInputs[0].data.unitUuid : unitOutputs[0].data.unitUuid
+                    const targetUnitNodeUuid = unitInputs.length > 0 ? unitInputs[0].data.uuid : unitOutputs[0].data.uuid
+
+                    runAsync(async () => {
+                        let unit = await getUnit({
+                            variables: {
+                                uuid: targetUnitUuid
+                            }
                         })
-                    }
-                })
+                        if (unit.data?.getUnit){
+                            let unitData = unit.data.getUnit
+                            setGraphData({
+                                nodes: [
+                                    ...graphData.nodes,
+                                    {
+                                        id: unitData.uuid,
+                                        type: NodeType.Unit,
+                                        color: getNodeColor(NodeType.Unit),
+                                        data: unitData
+                                    }
+                                ],
+                                links: [
+                                    ...graphData.links,
+                                    {source: unitData.uuid, target: targetUnitNodeUuid, value: 1}
+                                ]
+                            })
+                        }
+                    })
+                }
             }
             if (button.nodeType === NodeType.UnitNode){
                 let units = getNodesByType(NodeType.Unit)
