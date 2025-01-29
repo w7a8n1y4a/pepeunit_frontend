@@ -1396,6 +1396,15 @@ export type GetUnitEnvQueryVariables = Exact<{
 
 export type GetUnitEnvQuery = { __typename?: "Query"; getUnitEnv: string };
 
+export type GetUnitCurrentSchemaQueryVariables = Exact<{
+  uuid: Scalars["UUID"]["input"];
+}>;
+
+export type GetUnitCurrentSchemaQuery = {
+  __typename?: "Query";
+  getUnitCurrentSchema: string;
+};
+
 export type GetTargetVersionQueryVariables = Exact<{
   uuid: Scalars["UUID"]["input"];
 }>;
@@ -4164,6 +4173,81 @@ export type GetUnitEnvSuspenseQueryHookResult = ReturnType<
 export type GetUnitEnvQueryResult = Apollo.QueryResult<
   GetUnitEnvQuery,
   GetUnitEnvQueryVariables
+>;
+export const GetUnitCurrentSchemaDocument = gql`
+  query getUnitCurrentSchema($uuid: UUID!) {
+    getUnitCurrentSchema(uuid: $uuid)
+  }
+`;
+
+/**
+ * __useGetUnitCurrentSchemaQuery__
+ *
+ * To run a query within a React component, call `useGetUnitCurrentSchemaQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUnitCurrentSchemaQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUnitCurrentSchemaQuery({
+ *   variables: {
+ *      uuid: // value for 'uuid'
+ *   },
+ * });
+ */
+export function useGetUnitCurrentSchemaQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GetUnitCurrentSchemaQuery,
+    GetUnitCurrentSchemaQueryVariables
+  > &
+    (
+      | { variables: GetUnitCurrentSchemaQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    GetUnitCurrentSchemaQuery,
+    GetUnitCurrentSchemaQueryVariables
+  >(GetUnitCurrentSchemaDocument, options);
+}
+export function useGetUnitCurrentSchemaLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetUnitCurrentSchemaQuery,
+    GetUnitCurrentSchemaQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    GetUnitCurrentSchemaQuery,
+    GetUnitCurrentSchemaQueryVariables
+  >(GetUnitCurrentSchemaDocument, options);
+}
+export function useGetUnitCurrentSchemaSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    GetUnitCurrentSchemaQuery,
+    GetUnitCurrentSchemaQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<
+    GetUnitCurrentSchemaQuery,
+    GetUnitCurrentSchemaQueryVariables
+  >(GetUnitCurrentSchemaDocument, options);
+}
+export type GetUnitCurrentSchemaQueryHookResult = ReturnType<
+  typeof useGetUnitCurrentSchemaQuery
+>;
+export type GetUnitCurrentSchemaLazyQueryHookResult = ReturnType<
+  typeof useGetUnitCurrentSchemaLazyQuery
+>;
+export type GetUnitCurrentSchemaSuspenseQueryHookResult = ReturnType<
+  typeof useGetUnitCurrentSchemaSuspenseQuery
+>;
+export type GetUnitCurrentSchemaQueryResult = Apollo.QueryResult<
+  GetUnitCurrentSchemaQuery,
+  GetUnitCurrentSchemaQueryVariables
 >;
 export const GetTargetVersionDocument = gql`
   query getTargetVersion($uuid: UUID!) {

@@ -2,7 +2,7 @@ import { ResultType } from '@rootTypes/resultEnum'
 import { NodeType } from '@rootTypes/nodeTypeEnum'
 import { useResultHandler } from '@handlers/useResultHandler';
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
-import { useDeleteUnitMutation, PermissionEntities, useGetAvailablePlatformsLazyQuery, useGetRepoLazyQuery, RepoType, useSendCommandToInputBaseTopicMutation, BackendTopicCommand, useGetTargetVersionLazyQuery, VisibilityLevel } from '@rootTypes/compositionFunctions'
+import { useDeleteUnitMutation, PermissionEntities, useGetAvailablePlatformsLazyQuery, useGetRepoLazyQuery, RepoType, useSendCommandToInputBaseTopicMutation, BackendTopicCommand, useGetTargetVersionLazyQuery, VisibilityLevel, useGetUnitCurrentSchemaLazyQuery } from '@rootTypes/compositionFunctions'
 import BaseModal from '../modal/baseModal'
 import { useState, useEffect } from 'react';
 import Spinner from '@primitives/spinner'
@@ -31,6 +31,7 @@ export default function UnitContent(){
   const { removeNodesAndLinks } = useGraphStore();
   const [currentRepoData, setCurrentRepoData] = useState<RepoType | null>(null);
   const [targetVersion, setTargetVersion] = useState<string | null>(null);
+  const [availableCommand, setAvailableCommand] = useState<any | null>(null);
   
   const { openModal } = useModalHandlers();
   const { user } = useUserStore();
@@ -48,6 +49,7 @@ export default function UnitContent(){
   const [getAvailablePlatforms] = useGetAvailablePlatformsLazyQuery();
   const [sendCommandToInputBaseTopic] = useSendCommandToInputBaseTopicMutation();
   const [getTargetVersion] = useGetTargetVersionLazyQuery();
+  const [getUnitCurrentSchema] = useGetUnitCurrentSchemaLazyQuery();
 
   const fileUpload = (type: string) => {
     let url = import.meta.env.VITE_BACKEND_URI.replace('graphql', '') + 'api/v1/units/firmware/' + type + '/' + currentNodeData?.uuid
@@ -156,6 +158,22 @@ export default function UnitContent(){
         if (result.data?.getTargetVersion){
           setTargetVersion(result.data.getTargetVersion.commit)
         }
+
+        let currentSchema = await getUnitCurrentSchema({variables: {uuid: currentNodeData.uuid}})
+
+        if (currentSchema.data?.getUnitCurrentSchema){
+
+          const inputCommand = JSON.parse(currentSchema.data?.getUnitCurrentSchema)['input_base_topic']
+
+          let state = {
+            'Firmware': "update/pepeunit" in inputCommand,
+            'Schema': "schema_update/pepeunit" in inputCommand,
+            'Env': "env_update/pepeunit" in inputCommand
+          }
+          console.log(state)
+          setAvailableCommand(state)
+        }
+
       }
     })
   }, [currentNodeData]);
@@ -228,17 +246,33 @@ export default function UnitContent(){
                 <div className='div_unit_message'>
                   Send update MQTT message
                 </div>
-                <div className='buttons_load_firmware'>
-                  <button className="button_load_data_grid" onClick={() => handleSendUnitCommand(BackendTopicCommand.Update)}>
-                    Firmware
-                  </button>
-                  <button className="button_load_data_grid" onClick={() => handleSendUnitCommand(BackendTopicCommand.SchemaUpdate)}>
-                    Schema
-                  </button>
-                  <button className="button_load_data_grid" onClick={() => handleSendUnitCommand(BackendTopicCommand.EnvUpdate)}>
-                    Env
-                  </button>
-                </div>
+                {
+                  availableCommand && (
+                    <div className='buttons_load_firmware'>
+                      {
+                        availableCommand['Firmware'] && (
+                          <button className="button_load_data_grid" onClick={() => handleSendUnitCommand(BackendTopicCommand.Update)}>
+                            Firmware
+                          </button>
+                        )
+                      }
+                      {
+                        availableCommand['Schema'] && (
+                          <button className="button_load_data_grid" onClick={() => handleSendUnitCommand(BackendTopicCommand.SchemaUpdate)}>
+                            Schema
+                          </button>
+                        )
+                      }
+                      {
+                        availableCommand['Env'] && (
+                          <button className="button_load_data_grid" onClick={() => handleSendUnitCommand(BackendTopicCommand.EnvUpdate)}>
+                            Env
+                          </button>
+                        )
+                      }
+                    </div>
+                  )
+                }
                 <div className='div_statistics'>
                   {
                     currentNodeData.visibilityLevel == VisibilityLevel.Private && (
