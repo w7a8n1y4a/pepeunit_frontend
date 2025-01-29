@@ -48,6 +48,7 @@ export default function DomainContent(){
       <BaseModal
         modalName={'Instance'}
         subName={currentNodeData?.name}
+        copyLink={window.location.origin + '/domain/' + import.meta.env.VITE_INSTANCE_NAME}
         open={activeModal === 'DomainMenu'}
       >
         <div className="modal_menu_content">

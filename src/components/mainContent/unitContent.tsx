@@ -13,6 +13,7 @@ import UpdateUnitForm from '../forms/unit/updateUnitForm';
 import PermissionForm from '../forms/permission/permissionForm';
 import UpdateUnitEnvForm from '../forms/unit/updateUnitEnvForm'
 import {stringToFormat} from '@utils/stringToFormat'
+import copyToClipboard from '@utils/copyToClipboard'
 
 import { useGraphStore } from '@stores/graphStore';
 import { useModalStore, useNodeStore } from '@stores/baseStore';
@@ -177,14 +178,6 @@ export default function UnitContent(){
     })
   }, [currentNodeData]);
   
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(currentNodeData.repoUrl);
-    } catch (error) {
-      console.error('Failed to copy text:', error);
-    }
-  };
-
   return (
     <>
       <BaseModal
@@ -193,6 +186,7 @@ export default function UnitContent(){
         visibilityLevel={stringToFormat(currentNodeData?.visibilityLevel)}
         lastUpdateDatetime={currentNodeData?.lastUpdateDatetime}
         open={activeModal === 'UnitMenu'}
+        copyLink={window.location.origin + '/unit/' + currentNodeData?.uuid}
         reloadEntityType={NodeType.Unit}
       >
         <div className="modal_menu_content">
@@ -347,7 +341,7 @@ export default function UnitContent(){
           <>
             <div className='repo_link'>
               <a style={{color: "#0077ff"}} target="_blank" href={currentRepoData.repoUrl}>Documentation Link</a>
-              <button className='repo_link_button' onClick={handleCopy}>
+              <button className='repo_link_button' onClick={() => (copyToClipboard(currentRepoData.repoUrl))}>
                 <img src={copy_img} width="24" height="24" alt="Back"/>
               </button>
             </div>

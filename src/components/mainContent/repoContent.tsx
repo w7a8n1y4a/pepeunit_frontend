@@ -12,6 +12,7 @@ import ResultQuery from '@primitives/resultQuery'
 import VersionChart from '@primitives/versionChart'
 import {stringToFormat} from '@utils/stringToFormat'
 
+import copyToClipboard from '@utils/copyToClipboard'
 import copy_img from '/images/copy.svg'
 
 import { useGraphStore } from '@stores/graphStore';
@@ -110,21 +111,14 @@ export default function RepoContent(){
     })
 }, [currentNodeData]);
 
-const handleCopy = async () => {
-  try {
-    await navigator.clipboard.writeText(currentNodeData.repoUrl);
-  } catch (error) {
-    console.error('Failed to copy text:', error);
-  }
-};
-
-  return (
+return (
     <>
       <BaseModal
         modalName={'Repo'}
         subName={currentNodeData?.name}
         visibilityLevel={stringToFormat(currentNodeData?.visibilityLevel)}
         open={activeModal === 'RepoMenu'}
+        copyLink={window.location.origin + '/repo/' + currentNodeData?.uuid}
         reloadEntityType={NodeType.Repo}
       >
         <div className="modal_menu_content">
@@ -139,7 +133,7 @@ const handleCopy = async () => {
               <>
                 <div className='repo_link'>
                   <a style={{color: "#0077ff"}} target="_blank" href={currentNodeData.repoUrl}>{stringToFormat(currentNodeData.platform)} {currentNodeData.isPublicRepository ? 'public' : 'private'} Link</a>
-                  <button className='repo_link_button' onClick={handleCopy}>
+                  <button className='repo_link_button' onClick={() => (copyToClipboard(currentNodeData.repoUrl))}>
                     <img src={copy_img} width="24" height="24" alt="Back"/>
                   </button>
                 </div>

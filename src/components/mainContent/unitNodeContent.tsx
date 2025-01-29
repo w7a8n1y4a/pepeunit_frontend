@@ -31,14 +31,12 @@ export default function UnitNodeContent(){
         visibilityLevel={stringToFormat(currentNodeData?.visibilityLevel)}
         lastUpdateDatetime={currentNodeData?.lastUpdateDatetime}
         open={activeModal === 'InputMenu' || activeModal === 'OutputMenu'}
+        copyLink={window.location.origin + '/unit-node/' + currentNodeData?.uuid}
         reloadEntityType={currentNodeData?.type}
       >
         <div className="modal_menu_content">
           {
             isLoaderActive && (<Spinner/>)
-          }
-          {
-            "http://localhost:5173/unit-node/" + currentNodeData?.uuid
           }
           <div className='div_unit_message'>
             {currentNodeData?.state || "No Data"}
