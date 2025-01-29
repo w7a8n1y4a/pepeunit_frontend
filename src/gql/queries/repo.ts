@@ -27,6 +27,7 @@ gql`
     query getRepos(
         $uuids: [UUID!]
         $creatorUuid: UUID
+        $creatorsUuids: [UUID!]
         $searchString: String
         $isPublicRepository: Boolean
         $isAutoUpdateRepo: Boolean
@@ -40,6 +41,7 @@ gql`
             filters: {
                 uuids: $uuids
                 creatorUuid: $creatorUuid
+                creatorsUuids: $creatorsUuids
                 searchString: $searchString
                 isPublicRepository: $isPublicRepository
                 isAutoUpdateRepo: $isAutoUpdateRepo

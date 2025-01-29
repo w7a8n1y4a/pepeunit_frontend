@@ -1,6 +1,6 @@
 import BaseModal from '../modal/baseModal'
 
-import { UnitNodeTypeEnum, PermissionEntities } from '@rootTypes/compositionFunctions'
+import { UnitNodeTypeEnum, PermissionEntities, VisibilityLevel } from '@rootTypes/compositionFunctions'
 import { useModalStore, useNodeStore } from '@stores/baseStore';
 import { useResultHandler } from '@handlers/useResultHandler';
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
@@ -27,9 +27,11 @@ export default function UnitNodeContent(){
     <>
       <BaseModal
         modalName={currentNodeData?.type}
-        subName={currentNodeData?.name}
+        subName={currentNodeData?.topicName}
         visibilityLevel={stringToFormat(currentNodeData?.visibilityLevel)}
-        open={activeModal === 'inputMenu' || activeModal === 'outputMenu'}
+        lastUpdateDatetime={currentNodeData?.lastUpdateDatetime}
+        open={activeModal === 'InputMenu' || activeModal === 'OutputMenu'}
+        copyLink={window.location.origin + '/unit-node/' + currentNodeData?.uuid}
         reloadEntityType={currentNodeData?.type}
       >
         <div className="modal_menu_content">
@@ -40,10 +42,10 @@ export default function UnitNodeContent(){
             {currentNodeData?.state || "No Data"}
           </div>
           {
-            user && currentNodeData && user.uuid == currentNodeData.creatorUuid ? (
+            user && currentNodeData && (
               <>
                 {
-                  currentNodeData?.type == UnitNodeTypeEnum.Input ? (
+                  currentNodeData?.type == UnitNodeTypeEnum.Input && (
                     <>
                       <button className="button_add_alter" onClick={() => openModal('unitNodeSetState')}>
                         Set State
@@ -52,18 +54,26 @@ export default function UnitNodeContent(){
                         Related Output
                       </button>
                     </>
-                  ) : (<></>)
+                  )
                 }
-                <div className='div_statistics'>
-                  <button className="button_open_alter" onClick={() => openModal('permissionMenu' + nodeType)}>
-                    Permission
-                  </button>
-                  <button className="button_open_alter" onClick={() => openModal('unitNodeUpdate')}>
-                    Options
-                  </button>
-                </div>
+                {
+                  user.uuid == currentNodeData.creatorUuid && (
+                    <div className='div_statistics'>
+                      {
+                        currentNodeData.visibilityLevel == VisibilityLevel.Private && (
+                          <button className="button_open_alter" onClick={() => openModal('permissionMenu' + nodeType)}>
+                            Permission
+                          </button>
+                        )
+                      }
+                      <button className="button_open_alter" onClick={() => openModal('unitNodeUpdate')}>
+                        Options
+                      </button>
+                    </div>
+                  )
+                }
               </>
-            ) : (<></>)
+            )
           }
         </div>
       </BaseModal>

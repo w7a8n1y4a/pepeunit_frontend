@@ -48,7 +48,8 @@ export default function DomainContent(){
       <BaseModal
         modalName={'Instance'}
         subName={currentNodeData?.name}
-        open={activeModal === 'domainMenu'}
+        copyLink={window.location.origin + '/domain/' + import.meta.env.VITE_INSTANCE_NAME}
+        open={activeModal === 'DomainMenu'}
       >
         <div className="modal_menu_content">
           {
@@ -59,18 +60,18 @@ export default function DomainContent(){
           </button>
 
           {
-            user?.role === UserRole.Admin ? (
+            user?.role === UserRole.Admin && (
               <button className="button_open_alter_send" onClick={handleBulkUpdate}>
                 Update all Repo and Unit
               </button>
-            ) : (<></>)
+            )
           }
           <ResultQuery
             resultData={resultData}
           />
         </div>
       </BaseModal>
-      <BaseModal modalName='Statistics' subName={currentNodeData?.name} open={activeModal === 'statistics'} openModalType='domainMenu'>
+      <BaseModal modalName='Statistics' subName={currentNodeData?.name} open={activeModal === 'statistics'} openModalType='DomainMenu'>
           <div className='div_statistics'>
             <div className='div_statistics_text'>
               User - {baseMetrics?.userCount}

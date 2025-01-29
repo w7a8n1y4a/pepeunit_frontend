@@ -10,7 +10,9 @@ import {
   useGetUserLazyQuery,
   useGetRepoLazyQuery,
   useGetUnitLazyQuery,
-  UnitNodeTypeEnum
+  UnitNodeTypeEnum,
+  useGetUnitNodeLazyQuery,
+  useGetUsersLazyQuery
 } from '@rootTypes/compositionFunctions'
 import { ForceGraph3D } from 'react-force-graph';
 import SpriteText from 'three-spritetext';
@@ -59,13 +61,15 @@ export default function GraphContent({routerType, routerUuid}: GraphContentProps
     };
   }, [graphData]);
 
+  const [getUsers] = useGetUsersLazyQuery();
   const [getRepos] = useGetReposLazyQuery();
   const [getUnits] = useGetUnitsLazyQuery();
   const [getUnitNodes] = useGetUnitNodesLazyQuery();
 
+  const [getUser] = useGetUserLazyQuery();
   const [getRepo] = useGetRepoLazyQuery();
   const [getUnit] = useGetUnitLazyQuery();
-  const [getUser] = useGetUserLazyQuery();
+  const [getUnitNode] = useGetUnitNodeLazyQuery();
 
   useEffect(() => {
     if (!routerType && !routerUuid){
@@ -176,7 +180,45 @@ export default function GraphContent({routerType, routerUuid}: GraphContentProps
 
     navigate('/' + nodeType + '/' + uuid);
 
-    if (nodeType == 'UserType') {
+    if (nodeType == 'domain') {
+      const currentDomain = {
+        name: import.meta.env.VITE_INSTANCE_NAME,
+        __typename: 'DomainType'
+      }
+      runAsync(async () => {
+        let users = await getUsers({
+          variables: {
+              offset: 0
+          }
+        })
+        if (users.data?.getUsers){
+          let usersData = users.data?.getUsers
+          setCurrentSearchNodeData(currentDomain)
+          setGraphData({
+            nodes: [
+              {
+                id: import.meta.env.VITE_INSTANCE_NAME,
+                type: NodeType.Domain,
+                color: getNodeColor(NodeType.Domain),
+                data: currentDomain
+              },
+              ...usersData.users.map((user) => ({
+                  id: user.uuid,
+                  type: NodeType.User,
+                  color: getNodeColor(NodeType.User),
+                  data: user
+              }))
+            ],
+            links: [
+              ...graphData.links,
+              ...usersData.users.map((user)  => ({source: import.meta.env.VITE_INSTANCE_NAME, target: user.uuid, value: 1})),
+            ]
+          })
+        }
+      })
+    }
+
+    if (nodeType == 'user') {
       runAsync(async () => {
         let user = await getUser({
           variables: {
@@ -226,7 +268,7 @@ export default function GraphContent({routerType, routerUuid}: GraphContentProps
       })
     }
 
-    if (nodeType == 'RepoType') {
+    if (nodeType == 'repo') {
       runAsync(async () => {
         let repo = await getRepo({
           variables: {
@@ -302,7 +344,7 @@ export default function GraphContent({routerType, routerUuid}: GraphContentProps
       })
     }
 
-    if (nodeType == 'UnitType') {
+    if (nodeType == 'unit') {
       runAsync(async () => {
         let unit = await getUnit({
           variables: {
@@ -354,6 +396,50 @@ export default function GraphContent({routerType, routerUuid}: GraphContentProps
                 ]
               })
             }
+          }
+        }
+      })
+    }
+    if (nodeType == 'unit-node') {
+      runAsync(async () => {
+        let unitNode = await getUnitNode({
+          variables: {
+            uuid: uuid
+          }
+        })
+        
+        if (unitNode.data?.getUnitNode){
+          let searchTarget = unitNode.data.getUnitNode
+          setCurrentSearchNodeData(searchTarget)
+
+          let unit = await getUnit({
+            variables: {
+              uuid: searchTarget.unitUuid
+            }
+          })
+          
+          if (unit.data?.getUnit){
+            let unitResult = unit.data.getUnit
+
+            setGraphData({
+              nodes: [
+                {
+                  id: searchTarget.uuid,
+                  type: searchTarget.type == UnitNodeTypeEnum.Input ? NodeType.Input : NodeType.Output,
+                  color: getNodeColor(searchTarget.type == UnitNodeTypeEnum.Input ? NodeType.Input : NodeType.Output),
+                  data: {...searchTarget, name: searchTarget.topicName}
+                },
+                {
+                  id: unitResult.uuid,
+                  type: NodeType.Unit,
+                  color: getNodeColor(NodeType.Unit),
+                  data: unitResult
+                }
+              ],
+              links: [
+                {source: unitResult.uuid, target: searchTarget.uuid, value: 1},
+              ]
+            })
           }
         }
       })

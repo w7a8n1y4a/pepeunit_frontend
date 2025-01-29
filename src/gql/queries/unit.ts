@@ -156,6 +156,7 @@ gql`
                     visibilityLevel
                     isRewritableInput
                     topicName
+                    lastUpdateDatetime
                     createDatetime
                     state
                     unitUuid
@@ -218,6 +219,7 @@ gql`
                     visibilityLevel
                     isRewritableInput
                     topicName
+                    lastUpdateDatetime
                     createDatetime
                     state
                     unitUuid
@@ -230,6 +232,14 @@ gql`
         $uuid: UUID!
     ) {
         getUnitEnv (
+            uuid: $uuid
+        )
+    }
+
+    query getUnitCurrentSchema(
+        $uuid: UUID!
+    ) {
+        getUnitCurrentSchema (
             uuid: $uuid
         )
     }

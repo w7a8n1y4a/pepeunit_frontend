@@ -2,7 +2,7 @@ import { ResultType } from '@rootTypes/resultEnum'
 import { NodeType } from '@rootTypes/nodeTypeEnum'
 import { useResultHandler } from '@handlers/useResultHandler';
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
-import { useDeleteUnitMutation, PermissionEntities, useGetAvailablePlatformsLazyQuery, useGetRepoLazyQuery, RepoType, useSendCommandToInputBaseTopicMutation, BackendTopicCommand, useGetTargetVersionLazyQuery } from '@rootTypes/compositionFunctions'
+import { useDeleteUnitMutation, PermissionEntities, useGetAvailablePlatformsLazyQuery, useGetRepoLazyQuery, RepoType, useSendCommandToInputBaseTopicMutation, BackendTopicCommand, useGetTargetVersionLazyQuery, VisibilityLevel, useGetUnitCurrentSchemaLazyQuery } from '@rootTypes/compositionFunctions'
 import BaseModal from '../modal/baseModal'
 import { useState, useEffect } from 'react';
 import Spinner from '@primitives/spinner'
@@ -13,11 +13,14 @@ import UpdateUnitForm from '../forms/unit/updateUnitForm';
 import PermissionForm from '../forms/permission/permissionForm';
 import UpdateUnitEnvForm from '../forms/unit/updateUnitEnvForm'
 import {stringToFormat} from '@utils/stringToFormat'
+import copyToClipboard from '@utils/copyToClipboard'
 
 import { useGraphStore } from '@stores/graphStore';
 import { useModalStore, useNodeStore } from '@stores/baseStore';
 import { useUserStore } from '@stores/userStore';
 import useModalHandlers from '@handlers/useModalHandlers';
+
+import copy_img from '/images/copy.svg'
 
 
 export default function UnitContent(){
@@ -29,6 +32,7 @@ export default function UnitContent(){
   const { removeNodesAndLinks } = useGraphStore();
   const [currentRepoData, setCurrentRepoData] = useState<RepoType | null>(null);
   const [targetVersion, setTargetVersion] = useState<string | null>(null);
+  const [availableCommand, setAvailableCommand] = useState<any | null>(null);
   
   const { openModal } = useModalHandlers();
   const { user } = useUserStore();
@@ -46,6 +50,7 @@ export default function UnitContent(){
   const [getAvailablePlatforms] = useGetAvailablePlatformsLazyQuery();
   const [sendCommandToInputBaseTopic] = useSendCommandToInputBaseTopicMutation();
   const [getTargetVersion] = useGetTargetVersionLazyQuery();
+  const [getUnitCurrentSchema] = useGetUnitCurrentSchemaLazyQuery();
 
   const fileUpload = (type: string) => {
     let url = import.meta.env.VITE_BACKEND_URI.replace('graphql', '') + 'api/v1/units/firmware/' + type + '/' + currentNodeData?.uuid
@@ -154,6 +159,21 @@ export default function UnitContent(){
         if (result.data?.getTargetVersion){
           setTargetVersion(result.data.getTargetVersion.commit)
         }
+
+        let currentSchema = await getUnitCurrentSchema({variables: {uuid: currentNodeData.uuid}})
+
+        if (currentSchema.data?.getUnitCurrentSchema){
+
+          const inputCommand = JSON.parse(currentSchema.data?.getUnitCurrentSchema)['input_base_topic']
+
+          let state = {
+            'Firmware': "update/pepeunit" in inputCommand,
+            'Schema': "schema_update/pepeunit" in inputCommand,
+            'Env': "env_update/pepeunit" in inputCommand
+          }
+          setAvailableCommand(state)
+        }
+
       }
     })
   }, [currentNodeData]);
@@ -164,7 +184,9 @@ export default function UnitContent(){
         modalName={'Unit'}
         subName={currentNodeData?.name}
         visibilityLevel={stringToFormat(currentNodeData?.visibilityLevel)}
-        open={activeModal === 'unitMenu'}
+        lastUpdateDatetime={currentNodeData?.lastUpdateDatetime}
+        open={activeModal === 'UnitMenu'}
+        copyLink={window.location.origin + '/unit/' + currentNodeData?.uuid}
         reloadEntityType={NodeType.Unit}
       >
         <div className="modal_menu_content">
@@ -177,7 +199,7 @@ export default function UnitContent(){
           <UnitMicroState/>
 
           {
-            user && currentNodeData && user.uuid == currentNodeData.creatorUuid ? (
+            user && currentNodeData && user.uuid == currentNodeData.creatorUuid && (
               <>
                 <button className="button_add_alter" onClick={() => openModal('unitSetEnv')}>
                   Set Env Variable
@@ -214,37 +236,59 @@ export default function UnitContent(){
                       </div>
                     </>
                 )}
-                <div className='div_unit_message'>
-                  Send update MQTT message
-                </div>
-                <div className='buttons_load_firmware'>
-                  <button className="button_load_data_grid" onClick={() => handleSendUnitCommand(BackendTopicCommand.Update)}>
-                    Firmware
-                  </button>
-                  <button className="button_load_data_grid" onClick={() => handleSendUnitCommand(BackendTopicCommand.SchemaUpdate)}>
-                    Schema
-                  </button>
-                  <button className="button_load_data_grid" onClick={() => handleSendUnitCommand(BackendTopicCommand.EnvUpdate)}>
-                    Env
-                  </button>
-                </div>
+                {
+                  availableCommand && (
+                    <>
+                      <div className='div_unit_message'>
+                        Send update MQTT message
+                      </div>
+                      <div className='buttons_load_firmware'>
+                        {
+                          availableCommand['Firmware'] && (
+                            <button className="button_load_data_grid" onClick={() => handleSendUnitCommand(BackendTopicCommand.Update)}>
+                              Firmware
+                            </button>
+                          )
+                        }
+                        {
+                          availableCommand['Schema'] && (
+                            <button className="button_load_data_grid" onClick={() => handleSendUnitCommand(BackendTopicCommand.SchemaUpdate)}>
+                              Schema
+                            </button>
+                          )
+                        }
+                        {
+                          availableCommand['Env'] && (
+                            <button className="button_load_data_grid" onClick={() => handleSendUnitCommand(BackendTopicCommand.EnvUpdate)}>
+                              Env
+                            </button>
+                          )
+                        }
+                      </div>
+                    </>
+                  )
+                }
                 <div className='div_statistics'>
-                  <button className="button_open_alter" onClick={() => openModal('permissionMenu' + nodeType)}>
-                    Permission
-                  </button>
+                  {
+                    currentNodeData.visibilityLevel == VisibilityLevel.Private && (
+                      <button className="button_open_alter" onClick={() => openModal('permissionMenu' + nodeType)}>
+                        Permission
+                      </button>
+                    )
+                  }
                   <button className="button_open_alter" onClick={() => openModal('unitSettingsMenu')}>
                     Settings
                   </button>
                 </div>
               </>
-            ) : (<></>)
+            )
           }
           <ResultQuery
             resultData={resultData}
           />
         </div>
       </BaseModal>
-      <BaseModal modalName={'Permissions'} subName={currentNodeData?.name} open={activeModal === 'permissionMenu' + nodeType} openModalType='unitMenu'>
+      <BaseModal modalName={'Permissions'} subName={currentNodeData?.name} open={activeModal === 'permissionMenu' + nodeType} openModalType='UnitMenu'>
         {
           currentNodeData && (
             <PermissionForm
@@ -257,7 +301,7 @@ export default function UnitContent(){
         modalName='Settings'
         subName={currentNodeData?.name}
         open={activeModal === 'unitSettingsMenu'}
-        openModalType='unitMenu'
+        openModalType='UnitMenu'
         >
         <div className="modal_menu_content">
           {
@@ -290,8 +334,20 @@ export default function UnitContent(){
         modalName='Env Variable'
         subName={currentNodeData?.name}
         open={activeModal === 'unitSetEnv'}
-        openModalType='unitMenu'
-      >
+        openModalType='UnitMenu'
+      > 
+      {
+        currentRepoData && (
+          <>
+            <div className='repo_link'>
+              <a style={{color: "#0077ff"}} target="_blank" href={currentRepoData.repoUrl}>Documentation Link</a>
+              <button className='repo_link_button' onClick={() => (copyToClipboard(currentRepoData.repoUrl))}>
+                <img src={copy_img} width="24" height="24" alt="Back"/>
+              </button>
+            </div>
+          </>
+        )
+      }
         {
           currentNodeData && (
             <UpdateUnitEnvForm/>

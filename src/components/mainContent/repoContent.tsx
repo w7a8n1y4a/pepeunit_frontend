@@ -1,6 +1,6 @@
 import { useResultHandler } from '@handlers/useResultHandler';
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
-import { useUpdateLocalRepoMutation, PermissionEntities, useUpdateUnitsFirmwareMutation, useDeleteRepoMutation, useGetVersionsLazyQuery } from '@rootTypes/compositionFunctions'
+import { useUpdateLocalRepoMutation, PermissionEntities, useUpdateUnitsFirmwareMutation, useDeleteRepoMutation, useGetVersionsLazyQuery, VisibilityLevel } from '@rootTypes/compositionFunctions'
 import BaseModal from '../modal/baseModal'
 import CreateUnitForm from '../forms/unit/createUnitForm';
 import UpdateRepoForm from '../forms/repo/updateRepoForm';
@@ -12,6 +12,7 @@ import ResultQuery from '@primitives/resultQuery'
 import VersionChart from '@primitives/versionChart'
 import {stringToFormat} from '@utils/stringToFormat'
 
+import copyToClipboard from '@utils/copyToClipboard'
 import copy_img from '/images/copy.svg'
 
 import { useGraphStore } from '@stores/graphStore';
@@ -110,21 +111,14 @@ export default function RepoContent(){
     })
 }, [currentNodeData]);
 
-const handleCopy = async () => {
-  try {
-    await navigator.clipboard.writeText(currentNodeData.repoUrl);
-  } catch (error) {
-    console.error('Failed to copy text:', error);
-  }
-};
-
-  return (
+return (
     <>
       <BaseModal
         modalName={'Repo'}
         subName={currentNodeData?.name}
         visibilityLevel={stringToFormat(currentNodeData?.visibilityLevel)}
-        open={activeModal === 'repoMenu'}
+        open={activeModal === 'RepoMenu'}
+        copyLink={window.location.origin + '/repo/' + currentNodeData?.uuid}
         reloadEntityType={NodeType.Repo}
       >
         <div className="modal_menu_content">
@@ -132,14 +126,14 @@ const handleCopy = async () => {
             isLoaderActive && (<Spinner/>)
           }
           {
-            versions && versions.unitCount > 0 ? (<VersionChart data={versions} />) : (<></>)
+            versions && versions.unitCount > 0 && (<VersionChart data={versions} />)
           }
           {
             currentNodeData && (
               <>
                 <div className='repo_link'>
                   <a style={{color: "#0077ff"}} target="_blank" href={currentNodeData.repoUrl}>{stringToFormat(currentNodeData.platform)} {currentNodeData.isPublicRepository ? 'public' : 'private'} Link</a>
-                  <button className='repo_link_button' onClick={handleCopy}>
+                  <button className='repo_link_button' onClick={() => (copyToClipboard(currentNodeData.repoUrl))}>
                     <img src={copy_img} width="24" height="24" alt="Back"/>
                   </button>
                 </div>
@@ -147,19 +141,23 @@ const handleCopy = async () => {
             )
           }
           {
-            user ? (
+            user && (
               <button className="button_add_alter" onClick={() => openModal('createUnit')}>
                 Create Unit
               </button>
-            ) : (<></>)
+            )
           }
           {
-            user && user.uuid == currentNodeData?.creatorUuid ? (
+            user && user.uuid == currentNodeData?.creatorUuid && (
               <>
                 <div className='div_statistics'>
-                  <button className="button_open_alter" onClick={() => openModal('permissionMenu' + nodeType)}>
-                    Permission
-                  </button>
+                  {
+                    currentNodeData.visibilityLevel == VisibilityLevel.Private && (
+                      <button className="button_open_alter" onClick={() => openModal('permissionMenu' + nodeType)}>
+                        Permission
+                      </button>
+                    )
+                  }
                   <button className="button_open_alter" onClick={() => openModal('repoSettingsMenu')}>
                     Settings
                   </button>
@@ -173,7 +171,7 @@ const handleCopy = async () => {
                   </button>
                 </div>
               </>
-            ) : (<></>)
+            )
           }
           <ResultQuery
             resultData={resultData}
@@ -184,7 +182,7 @@ const handleCopy = async () => {
         modalName='Create Unit'
         subName={currentNodeData?.name}
         open={activeModal === 'createUnit'}
-        openModalType='repoMenu'
+        openModalType='RepoMenu'
       >
         {
           currentNodeData && (
@@ -192,7 +190,7 @@ const handleCopy = async () => {
           )
         }
       </BaseModal>
-      <BaseModal modalName={'Permission'} subName={currentNodeData?.name} open={activeModal === 'permissionMenu' + nodeType} openModalType='repoMenu'>
+      <BaseModal modalName={'Permission'} subName={currentNodeData?.name} open={activeModal === 'permissionMenu' + nodeType} openModalType='RepoMenu'>
         {
           currentNodeData && (
             <PermissionForm
@@ -205,7 +203,7 @@ const handleCopy = async () => {
         modalName='Settings'
         subName={currentNodeData?.name}
         open={activeModal === 'repoSettingsMenu'}
-        openModalType='repoMenu'
+        openModalType='RepoMenu'
         >
         <div className="modal_menu_content">
           {
