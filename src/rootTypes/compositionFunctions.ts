@@ -360,6 +360,7 @@ export type RepoCreateInput = {
 
 export type RepoFilterInput = {
   creatorUuid?: InputMaybe<Scalars["UUID"]["input"]>;
+  creatorsUuids?: InputMaybe<Array<Scalars["UUID"]["input"]>>;
   isAutoUpdateRepo?: InputMaybe<Scalars["Boolean"]["input"]>;
   isPublicRepository?: InputMaybe<Scalars["Boolean"]["input"]>;
   limit?: InputMaybe<Scalars["Int"]["input"]>;
@@ -1083,6 +1084,9 @@ export type GetReposQueryVariables = Exact<{
     Array<Scalars["UUID"]["input"]> | Scalars["UUID"]["input"]
   >;
   creatorUuid?: InputMaybe<Scalars["UUID"]["input"]>;
+  creatorsUuids?: InputMaybe<
+    Array<Scalars["UUID"]["input"]> | Scalars["UUID"]["input"]
+  >;
   searchString?: InputMaybe<Scalars["String"]["input"]>;
   isPublicRepository?: InputMaybe<Scalars["Boolean"]["input"]>;
   isAutoUpdateRepo?: InputMaybe<Scalars["Boolean"]["input"]>;
@@ -3208,6 +3212,7 @@ export const GetReposDocument = gql`
   query getRepos(
     $uuids: [UUID!]
     $creatorUuid: UUID
+    $creatorsUuids: [UUID!]
     $searchString: String
     $isPublicRepository: Boolean
     $isAutoUpdateRepo: Boolean
@@ -3221,6 +3226,7 @@ export const GetReposDocument = gql`
       filters: {
         uuids: $uuids
         creatorUuid: $creatorUuid
+        creatorsUuids: $creatorsUuids
         searchString: $searchString
         isPublicRepository: $isPublicRepository
         isAutoUpdateRepo: $isAutoUpdateRepo
@@ -3267,6 +3273,7 @@ export const GetReposDocument = gql`
  *   variables: {
  *      uuids: // value for 'uuids'
  *      creatorUuid: // value for 'creatorUuid'
+ *      creatorsUuids: // value for 'creatorsUuids'
  *      searchString: // value for 'searchString'
  *      isPublicRepository: // value for 'isPublicRepository'
  *      isAutoUpdateRepo: // value for 'isAutoUpdateRepo'

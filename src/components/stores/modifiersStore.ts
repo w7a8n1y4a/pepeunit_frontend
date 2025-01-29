@@ -223,7 +223,7 @@ export const useButtonHandlers = () => {
                         if (users.length > 0) {
                             let reposData = await getRepos({
                                 variables: {
-                                  creatorUuid: users[0].data.uuid
+                                  creatorsUuids: users.map((user) => (user.data.uuid))
                                 }
                             })
                             if (reposData.data?.getRepos){
@@ -239,7 +239,7 @@ export const useButtonHandlers = () => {
                                     ],
                                     links: [
                                         ...graphData.links,
-                                        ...reposData.data.getRepos.repos.map((repo) => ({source: users[0].data.uuid, target: repo.uuid, value: 1})),
+                                        ...reposData.data.getRepos.repos.map((repo) => ({source: repo.uuid, target: repo.creatorUuid, value: 1})),
                                     ]
                                 })
                             }
