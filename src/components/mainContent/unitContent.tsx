@@ -19,6 +19,8 @@ import { useModalStore, useNodeStore } from '@stores/baseStore';
 import { useUserStore } from '@stores/userStore';
 import useModalHandlers from '@handlers/useModalHandlers';
 
+import copy_img from '/images/copy.svg'
+
 
 export default function UnitContent(){
   const { resultData, setResultData, handleError, handleSuccess } = useResultHandler();
@@ -158,6 +160,14 @@ export default function UnitContent(){
     })
   }, [currentNodeData]);
   
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(currentNodeData.repoUrl);
+    } catch (error) {
+      console.error('Failed to copy text:', error);
+    }
+  };
+
   return (
     <>
       <BaseModal
@@ -296,7 +306,19 @@ export default function UnitContent(){
         subName={currentNodeData?.name}
         open={activeModal === 'unitSetEnv'}
         openModalType='unitMenu'
-      >
+      > 
+      {
+        currentRepoData && (
+          <>
+            <div className='repo_link'>
+              <a style={{color: "#0077ff"}} target="_blank" href={currentRepoData.repoUrl}>Documentation Link</a>
+              <button className='repo_link_button' onClick={handleCopy}>
+                <img src={copy_img} width="24" height="24" alt="Back"/>
+              </button>
+            </div>
+          </>
+        )
+      }
         {
           currentNodeData && (
             <UpdateUnitEnvForm/>
