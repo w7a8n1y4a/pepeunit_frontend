@@ -7,6 +7,8 @@ import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import close_img from '/images/close.svg'
 import back_img from '/images/back.svg'
 import reload_img from '/images/reload.svg'
+import copy_img from '/images/copy.svg'
+import copyToClipboard from '@utils/copyToClipboard'
 import './baseModal.css'
 
 import { useGraphStore } from '@stores/graphStore';
@@ -23,9 +25,10 @@ interface ModalProps {
     open: boolean
     openModalType?: string
     reloadEntityType?: NodeType | UnitNodeTypeEnum
+    copyLink?: string
 }
 
-export default function BaseModal({modalName, subName, visibilityLevel, lastUpdateDatetime, children, open, openModalType, reloadEntityType}: ModalProps) {
+export default function BaseModal({modalName, subName, visibilityLevel, lastUpdateDatetime, children, open, openModalType, reloadEntityType, copyLink}: ModalProps) {
     const { openModal, closeModal } = useModalHandlers();
     const { handleError } = useResultHandler();
     const { runAsync } = useAsyncHandler(handleError);
@@ -83,6 +86,13 @@ export default function BaseModal({modalName, subName, visibilityLevel, lastUpda
                     }
                 </div>
                 <div className="div_modal_buttons">
+                    {
+                        copyLink && currentNodeData && (
+                            <button className="modal_menu_button" onClick={() => (copyToClipboard(copyLink))}>
+                                <img src={copy_img} width="20" height="20" alt="Reload"/>
+                            </button>
+                        )
+                    }
                     {
                         reloadEntityType && currentNodeData && (
                             <button className="modal_menu_button" onClick={() => updateData(reloadEntityType)}>
