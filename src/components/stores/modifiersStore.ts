@@ -8,7 +8,8 @@ import {
     useGetUserLazyQuery,
     useGetRepoLazyQuery,
     UnitNodeTypeEnum,
-    useGetUnitLazyQuery
+    useGetUnitLazyQuery,
+    useGetUsersLazyQuery
 } from '@rootTypes/compositionFunctions'
 import { useSearchNodeStore, useNodeStore } from '@stores/baseStore';
 import { useGraphStore } from '@stores/graphStore';
@@ -77,6 +78,7 @@ export const useButtonHandlers = () => {
     const { handleError } = useResultHandler();
     const { runAsync } = useAsyncHandler(handleError);
 
+    const [getUsers] = useGetUsersLazyQuery();
     const [getRepos] = useGetReposLazyQuery();
     const [getUnits] = useGetUnitsLazyQuery();
     const [getUnitWithNodes] = useGetUnitsWithUnitNodesLazyQuery();
@@ -154,38 +156,69 @@ export const useButtonHandlers = () => {
             }
             if (button.nodeType === NodeType.User){
                 let repos = getNodesByType(NodeType.Repo)
-                runAsync(async () => {
-                    let user = await getUser({
-                        variables: {
-                            uuid: repos[0].data.creatorUuid
+                if (repos.length > 0) {
+                    runAsync(async () => {
+                        let user = await getUser({
+                            variables: {
+                                uuid: repos[0].data.creatorUuid
+                            }
+                        })
+                        if (user.data?.getUser){
+                            let searchTarget = user.data.getUser
+                            setGraphData({
+                                nodes: [
+                                    ...graphData.nodes,
+                                    {
+                                        id: user.data.getUser.uuid,
+                                        type: NodeType.User,
+                                        color: getNodeColor(NodeType.User),
+                                        data: user.data.getUser
+                                    }
+                                ],
+                                links: [
+                                    ...graphData.links,
+                                    ...repos.map((repo) => ({source: searchTarget.uuid, target: repo.data.uuid, value: 1})),
+                                ]
+                            })
                         }
                     })
-                    if (user.data?.getUser){
-                        let searchTarget = user.data.getUser
-                        setGraphData({
-                            nodes: [
-                                ...graphData.nodes,
-                                {
-                                    id: user.data.getUser.uuid,
-                                    type: NodeType.User,
-                                    color: getNodeColor(NodeType.User),
-                                    data: user.data.getUser
-                                }
-                            ],
-                            links: [
-                                ...graphData.links,
-                                ...repos.map((repo) => ({source: searchTarget.uuid, target: repo.data.uuid, value: 1})),
-                            ]
+                }
+                let domains = getNodesByType(NodeType.Domain)
+
+                if (domains.length > 0){
+                    runAsync(async () => {
+                        let users = await getUsers({
+                            variables: {
+                                offset: 0
+                            }
                         })
-                    }
-                })
+                        if (users.data?.getUsers){
+                            let usersData = users.data?.getUsers
+                            setGraphData({
+                                nodes: [
+                                    ...graphData.nodes,
+                                    ...usersData.users.map((user) => ({
+                                        id: user.uuid,
+                                        type: NodeType.User,
+                                        color: getNodeColor(NodeType.User),
+                                        data: user
+                                    }))
+                                ],
+                                links: [
+                                    ...graphData.links,
+                                    ...usersData.users.map((user)  => ({source: import.meta.env.VITE_INSTANCE_NAME, target: user.uuid, value: 1})),
+                                ]
+                            })
+                        }
+                    })
+                }
             }
             if (button.nodeType === NodeType.Repo){
 
                 let users = getNodesByType(NodeType.User)
                 let units = getNodesByType(NodeType.Unit)
 
-                if (users || units){
+                if (users.length > 0 || units.length > 0){
                     runAsync(async () => {
                         if (users.length > 0) {
                             let reposData = await getRepos({
@@ -333,38 +366,40 @@ export const useButtonHandlers = () => {
             }
             if (button.nodeType === NodeType.UnitNode){
                 let units = getNodesByType(NodeType.Unit)
-                runAsync(async () => {
-                    let unitsWithNodes = await getUnitWithNodes({
-                        variables: {
-                            uuids: units.map((unit) => (unit.data.uuid))
+                if (units.length > 0) {
+                    runAsync(async () => {
+                        let unitsWithNodes = await getUnitWithNodes({
+                            variables: {
+                                uuids: units.map((unit) => (unit.data.uuid))
+                            }
+                        })
+                        if (unitsWithNodes.data?.getUnits){
+                            let unitsWithNodesData = unitsWithNodes.data.getUnits
+
+                            setGraphData({
+                                nodes: [
+                                    ...graphData.nodes,
+                                    ...unitsWithNodesData.units.flatMap((unit) => (unit.unitNodes.map((unitNode) => ({
+                                                id: unitNode.uuid,
+                                                type: unitNode.type == UnitNodeTypeEnum.Input ? NodeType.Input : NodeType.Output,
+                                                color: getNodeColor(unitNode.type == UnitNodeTypeEnum.Input ? NodeType.Input : NodeType.Output),
+                                                data: {...unitNode, name: unitNode.topicName}
+                                            }
+                                        ))
+                                    ))
+                                ],
+                                links: [
+                                    ...graphData.links,
+                                    ...unitsWithNodesData.units.flatMap(
+                                        (unit) => (unit.unitNodes.map(
+                                            (unitNode) => ({source: unit.uuid, target: unitNode.uuid, value: 1})
+                                        ))
+                                    )
+                                ]
+                            })
                         }
                     })
-                    if (unitsWithNodes.data?.getUnits){
-                        let unitsWithNodesData = unitsWithNodes.data.getUnits
-
-                        setGraphData({
-                            nodes: [
-                                ...graphData.nodes,
-                                ...unitsWithNodesData.units.flatMap((unit) => (unit.unitNodes.map((unitNode) => ({
-                                            id: unitNode.uuid,
-                                            type: unitNode.type == UnitNodeTypeEnum.Input ? NodeType.Input : NodeType.Output,
-                                            color: getNodeColor(unitNode.type == UnitNodeTypeEnum.Input ? NodeType.Input : NodeType.Output),
-                                            data: {...unitNode, name: unitNode.topicName}
-                                        }
-                                    ))
-                                ))
-                            ],
-                            links: [
-                                ...graphData.links,
-                                ...unitsWithNodesData.units.flatMap(
-                                    (unit) => (unit.unitNodes.map(
-                                        (unitNode) => ({source: unit.uuid, target: unitNode.uuid, value: 1})
-                                    ))
-                                )
-                            ]
-                        })
-                    }
-                })
+                }
             }
         }
 

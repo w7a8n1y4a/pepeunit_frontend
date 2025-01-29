@@ -11,7 +11,8 @@ import {
   useGetRepoLazyQuery,
   useGetUnitLazyQuery,
   UnitNodeTypeEnum,
-  useGetUnitNodeLazyQuery
+  useGetUnitNodeLazyQuery,
+  useGetUsersLazyQuery
 } from '@rootTypes/compositionFunctions'
 import { ForceGraph3D } from 'react-force-graph';
 import SpriteText from 'three-spritetext';
@@ -60,6 +61,7 @@ export default function GraphContent({routerType, routerUuid}: GraphContentProps
     };
   }, [graphData]);
 
+  const [getUsers] = useGetUsersLazyQuery();
   const [getRepos] = useGetReposLazyQuery();
   const [getUnits] = useGetUnitsLazyQuery();
   const [getUnitNodes] = useGetUnitNodesLazyQuery();
@@ -177,6 +179,44 @@ export default function GraphContent({routerType, routerUuid}: GraphContentProps
   function focusNode(uuid: string, nodeType: string) {
 
     navigate('/' + nodeType + '/' + uuid);
+
+    if (nodeType == 'domain') {
+      const currentDomain = {
+        name: import.meta.env.VITE_INSTANCE_NAME,
+        __typename: 'DomainType'
+      }
+      runAsync(async () => {
+        let users = await getUsers({
+          variables: {
+              offset: 0
+          }
+        })
+        if (users.data?.getUsers){
+          let usersData = users.data?.getUsers
+          setCurrentSearchNodeData(currentDomain)
+          setGraphData({
+            nodes: [
+              {
+                id: import.meta.env.VITE_INSTANCE_NAME,
+                type: NodeType.Domain,
+                color: getNodeColor(NodeType.Domain),
+                data: currentDomain
+              },
+              ...usersData.users.map((user) => ({
+                  id: user.uuid,
+                  type: NodeType.User,
+                  color: getNodeColor(NodeType.User),
+                  data: user
+              }))
+            ],
+            links: [
+              ...graphData.links,
+              ...usersData.users.map((user)  => ({source: import.meta.env.VITE_INSTANCE_NAME, target: user.uuid, value: 1})),
+            ]
+          })
+        }
+      })
+    }
 
     if (nodeType == 'user') {
       runAsync(async () => {
