@@ -236,6 +236,14 @@ gql`
         )
     }
 
+    query getUnitCurrentSchema(
+        $uuid: UUID!
+    ) {
+        getUnitCurrentSchema (
+            uuid: $uuid
+        )
+    }
+
     query getTargetVersion(
         $uuid: UUID!
     ){
