@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useResultHandler } from '@handlers/useResultHandler';
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import { useGetTokenLazyQuery, useGetUserLazyQuery } from '@rootTypes/compositionFunctions';
@@ -37,6 +37,11 @@ export default function SignInForm({openModalRegister}: SignInFormProps) {
             [field]: hasError
         }));
     };
+
+    useEffect(() => {
+        updateErrorState('login', !!isValidLogin(login));
+        updateErrorState('password', !!isValidPassword(password));
+    }, [login, password]);
 
     const [getToken] = useGetTokenLazyQuery();
     const [getUser] = useGetUserLazyQuery();
