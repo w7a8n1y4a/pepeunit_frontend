@@ -124,7 +124,7 @@ const handleCopy = async () => {
         modalName={'Repo'}
         subName={currentNodeData?.name}
         visibilityLevel={stringToFormat(currentNodeData?.visibilityLevel)}
-        open={activeModal === 'repoMenu'}
+        open={activeModal === 'RepoMenu'}
         reloadEntityType={NodeType.Repo}
       >
         <div className="modal_menu_content">
@@ -188,7 +188,7 @@ const handleCopy = async () => {
         modalName='Create Unit'
         subName={currentNodeData?.name}
         open={activeModal === 'createUnit'}
-        openModalType='repoMenu'
+        openModalType='RepoMenu'
       >
         {
           currentNodeData && (
@@ -196,7 +196,7 @@ const handleCopy = async () => {
           )
         }
       </BaseModal>
-      <BaseModal modalName={'Permission'} subName={currentNodeData?.name} open={activeModal === 'permissionMenu' + nodeType} openModalType='repoMenu'>
+      <BaseModal modalName={'Permission'} subName={currentNodeData?.name} open={activeModal === 'permissionMenu' + nodeType} openModalType='RepoMenu'>
         {
           currentNodeData && (
             <PermissionForm
@@ -209,7 +209,7 @@ const handleCopy = async () => {
         modalName='Settings'
         subName={currentNodeData?.name}
         open={activeModal === 'repoSettingsMenu'}
-        openModalType='repoMenu'
+        openModalType='RepoMenu'
         >
         <div className="modal_menu_content">
           {

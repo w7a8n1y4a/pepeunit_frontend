@@ -170,7 +170,6 @@ export default function UnitContent(){
             'Schema': "schema_update/pepeunit" in inputCommand,
             'Env': "env_update/pepeunit" in inputCommand
           }
-          console.log(state)
           setAvailableCommand(state)
         }
 
@@ -193,7 +192,7 @@ export default function UnitContent(){
         subName={currentNodeData?.name}
         visibilityLevel={stringToFormat(currentNodeData?.visibilityLevel)}
         lastUpdateDatetime={currentNodeData?.lastUpdateDatetime}
-        open={activeModal === 'unitMenu'}
+        open={activeModal === 'UnitMenu'}
         reloadEntityType={NodeType.Unit}
       >
         <div className="modal_menu_content">
@@ -295,7 +294,7 @@ export default function UnitContent(){
           />
         </div>
       </BaseModal>
-      <BaseModal modalName={'Permissions'} subName={currentNodeData?.name} open={activeModal === 'permissionMenu' + nodeType} openModalType='unitMenu'>
+      <BaseModal modalName={'Permissions'} subName={currentNodeData?.name} open={activeModal === 'permissionMenu' + nodeType} openModalType='UnitMenu'>
         {
           currentNodeData && (
             <PermissionForm
@@ -308,7 +307,7 @@ export default function UnitContent(){
         modalName='Settings'
         subName={currentNodeData?.name}
         open={activeModal === 'unitSettingsMenu'}
-        openModalType='unitMenu'
+        openModalType='UnitMenu'
         >
         <div className="modal_menu_content">
           {
@@ -341,7 +340,7 @@ export default function UnitContent(){
         modalName='Env Variable'
         subName={currentNodeData?.name}
         open={activeModal === 'unitSetEnv'}
-        openModalType='unitMenu'
+        openModalType='UnitMenu'
       > 
       {
         currentRepoData && (

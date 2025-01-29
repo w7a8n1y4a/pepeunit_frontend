@@ -27,15 +27,18 @@ export default function UnitNodeContent(){
     <>
       <BaseModal
         modalName={currentNodeData?.type}
-        subName={currentNodeData?.name}
+        subName={currentNodeData?.topicName}
         visibilityLevel={stringToFormat(currentNodeData?.visibilityLevel)}
         lastUpdateDatetime={currentNodeData?.lastUpdateDatetime}
-        open={activeModal === 'inputMenu' || activeModal === 'outputMenu'}
+        open={activeModal === 'InputMenu' || activeModal === 'OutputMenu'}
         reloadEntityType={currentNodeData?.type}
       >
         <div className="modal_menu_content">
           {
             isLoaderActive && (<Spinner/>)
+          }
+          {
+            "http://localhost:5173/unit-node/" + currentNodeData?.uuid
           }
           <div className='div_unit_message'>
             {currentNodeData?.state || "No Data"}

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import nodeTypeToUserNavigation from '@src/utils/nodeTypeToUserNavigation'
 import useModalHandlers from '@handlers/useModalHandlers';
 
 import './primitives.css'
@@ -44,7 +45,7 @@ const IterationList = <T extends { uuid: string }>({
                 </button>
             )}
             {onFocusNode && nodeType && (
-                <button className="iteration-node-add-button" onClick={() => onFocusNode(uuid, nodeType)}>
+                <button className="iteration-node-add-button" onClick={() => onFocusNode(uuid, nodeTypeToUserNavigation(nodeType))}>
                     pickme
                 </button>
             )}

@@ -48,7 +48,7 @@ export default function DomainContent(){
       <BaseModal
         modalName={'Instance'}
         subName={currentNodeData?.name}
-        open={activeModal === 'domainMenu'}
+        open={activeModal === 'DomainMenu'}
       >
         <div className="modal_menu_content">
           {
@@ -70,7 +70,7 @@ export default function DomainContent(){
           />
         </div>
       </BaseModal>
-      <BaseModal modalName='Statistics' subName={currentNodeData?.name} open={activeModal === 'statistics'} openModalType='domainMenu'>
+      <BaseModal modalName='Statistics' subName={currentNodeData?.name} open={activeModal === 'statistics'} openModalType='DomainMenu'>
           <div className='div_statistics'>
             <div className='div_statistics_text'>
               User - {baseMetrics?.userCount}
