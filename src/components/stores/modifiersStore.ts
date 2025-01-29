@@ -110,9 +110,13 @@ export const useButtonHandlers = () => {
         const button = useButtonStore.getState().buttons.find((btn) => btn.id === id);
         if (!button) return;
 
-        if (button.nodeType === currentSearchNodeData.__typename.toLowerCase().slice(0, -4)) {
+        if (button.nodeType === currentSearchNodeData.__typename.slice(0, -4)) {
             setCurrentNodeData(currentSearchNodeData);
-            openModal(currentSearchNodeData.__typename.toLowerCase().slice(0, -4) + 'Menu');
+            if (currentSearchNodeData.__typename === 'UnitNodeType'){
+                openModal(currentSearchNodeData.type == UnitNodeTypeEnum.Input ? NodeType.Input : NodeType.Output + 'Menu')
+            } else {
+                openModal(currentSearchNodeData.__typename.slice(0, -4) + 'Menu');
+            }
             return;
         }
 

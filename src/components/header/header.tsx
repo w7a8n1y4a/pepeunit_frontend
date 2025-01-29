@@ -93,7 +93,7 @@ export default function Header(){
                     <div>
                         <button className="user_menu_button" onClick={() => {
                             setCurrentNodeData(null)
-                            openModal('userMenu')
+                            openModal('UserMenu')
                         
                         }}>
                             {login}
@@ -125,7 +125,7 @@ export default function Header(){
                 <BaseModal
                     modalName='User'
                     subName={user && !currentNodeData ? user.login : ( currentNodeData ? currentNodeData.login : '')}
-                    open={activeModal === 'userMenu'}
+                    open={activeModal === 'UserMenu'}
                 >
                     <div className="modal_menu_content">
                         {
@@ -182,7 +182,7 @@ export default function Header(){
                     modalName='Verification'
                     subName={user && !currentNodeData ? user.login : ( currentNodeData ? currentNodeData.login : '')}
                     open={activeModal === 'verification'}
-                    openModalType='userMenu'
+                    openModalType='UserMenu'
                 >
                     <VerificationForm />
                 </BaseModal>
@@ -190,7 +190,7 @@ export default function Header(){
                     modalName='Change Login'
                     subName={user && !currentNodeData ? user.login : ( currentNodeData ? currentNodeData.login : '')}
                     open={activeModal === 'changeLogin'}
-                    openModalType='userMenu'
+                    openModalType='UserMenu'
                 >
                     <ChangeLoginForm currentLogin={login}/>
                 </BaseModal>
@@ -198,7 +198,7 @@ export default function Header(){
                     modalName='Change Password'
                     subName={user && !currentNodeData ? user.login : ( currentNodeData ? currentNodeData.login : '')}
                     open={activeModal === 'changePass'}
-                    openModalType='userMenu'
+                    openModalType='UserMenu'
                 >
                     <ChangePassForm />
                 </BaseModal>
