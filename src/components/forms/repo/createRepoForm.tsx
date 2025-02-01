@@ -82,7 +82,7 @@ export default function CreateRepoForm() {
                 };
             
                 const newLink = {
-                    source: import.meta.env.VITE_INSTANCE_NAME,
+                    source: import.meta.env.VITE_INSTANCE_NAME || window.env.VITE_INSTANCE_NAME,
                     target: newRepo.uuid,
                     value: 1
                 };
