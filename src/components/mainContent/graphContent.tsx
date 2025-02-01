@@ -81,11 +81,11 @@ export default function GraphContent({routerType, routerUuid}: GraphContentProps
             setGraphData({
               nodes: [
                 {
-                  id: import.meta.env.VITE_INSTANCE_NAME,
+                  id: import.meta.env.VITE_INSTANCE_NAME || window.env.VITE_INSTANCE_NAME,
                   type: NodeType.Domain,
                   color: getNodeColor(NodeType.Domain),
                   data: {
-                    name: import.meta.env.VITE_INSTANCE_NAME,
+                    name: import.meta.env.VITE_INSTANCE_NAME || window.env.VITE_INSTANCE_NAME,
                     __typename: 'DomainType'
                   }
                 },
@@ -104,7 +104,7 @@ export default function GraphContent({routerType, routerUuid}: GraphContentProps
                 }
               ))],
               links: [
-                ...reposData.data.getRepos.repos.map((repo) => ({source: import.meta.env.VITE_INSTANCE_NAME, target: repo.uuid, value: 1})),
+                ...reposData.data.getRepos.repos.map((repo) => ({source: import.meta.env.VITE_INSTANCE_NAME || window.env.VITE_INSTANCE_NAME, target: repo.uuid, value: 1})),
                 ...unitsData.data.getUnits.units.map((unit) => ({source: unit.repoUuid, target: unit.uuid, value: 1}))
               ]
             })
@@ -182,7 +182,7 @@ export default function GraphContent({routerType, routerUuid}: GraphContentProps
 
     if (nodeType == 'domain') {
       const currentDomain = {
-        name: import.meta.env.VITE_INSTANCE_NAME,
+        name: import.meta.env.VITE_INSTANCE_NAME || window.env.VITE_INSTANCE_NAME,
         __typename: 'DomainType'
       }
       runAsync(async () => {
@@ -197,7 +197,7 @@ export default function GraphContent({routerType, routerUuid}: GraphContentProps
           setGraphData({
             nodes: [
               {
-                id: import.meta.env.VITE_INSTANCE_NAME,
+                id: import.meta.env.VITE_INSTANCE_NAME || window.env.VITE_INSTANCE_NAME,
                 type: NodeType.Domain,
                 color: getNodeColor(NodeType.Domain),
                 data: currentDomain
@@ -211,7 +211,7 @@ export default function GraphContent({routerType, routerUuid}: GraphContentProps
             ],
             links: [
               ...graphData.links,
-              ...usersData.users.map((user)  => ({source: import.meta.env.VITE_INSTANCE_NAME, target: user.uuid, value: 1})),
+              ...usersData.users.map((user)  => ({source: import.meta.env.VITE_INSTANCE_NAME || window.env.VITE_INSTANCE_NAME, target: user.uuid, value: 1})),
             ]
           })
         }
@@ -243,11 +243,11 @@ export default function GraphContent({routerType, routerUuid}: GraphContentProps
                   data: searchTarget
                 },
                 {
-                  id: import.meta.env.VITE_INSTANCE_NAME,
+                  id: import.meta.env.VITE_INSTANCE_NAME || window.env.VITE_INSTANCE_NAME,
                   type: NodeType.Domain,
                   color: getNodeColor(NodeType.Domain),
                   data: {
-                    name: import.meta.env.VITE_INSTANCE_NAME,
+                    name: import.meta.env.VITE_INSTANCE_NAME || window.env.VITE_INSTANCE_NAME,
                     __typename: 'DomainType'
                   }
                 },
@@ -259,7 +259,7 @@ export default function GraphContent({routerType, routerUuid}: GraphContentProps
                 }))
               ],
               links: [
-                {source: import.meta.env.VITE_INSTANCE_NAME, target: searchTarget.uuid, value: 1},
+                {source: import.meta.env.VITE_INSTANCE_NAME || window.env.VITE_INSTANCE_NAME, target: searchTarget.uuid, value: 1},
                 ...reposData.data.getRepos.repos.map((repo) => ({source: searchTarget.uuid, target: repo.uuid, value: 1})),
               ]
             })

@@ -44,7 +44,7 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 });
 
 const uploadLink = createUploadLink({
-  uri: `${import.meta.env.VITE_BACKEND_URI}`,
+  uri: `${import.meta.env.VITE_BACKEND_URI || window.env.VITE_BACKEND_URI}`,
 });
 
 const cache = new InMemoryCache();

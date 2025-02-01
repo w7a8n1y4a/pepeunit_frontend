@@ -139,18 +139,18 @@ export const useButtonHandlers = () => {
                     nodes: [
                         ...graphData.nodes,
                         {
-                            id: import.meta.env.VITE_INSTANCE_NAME,
+                            id: import.meta.env.VITE_INSTANCE_NAME || window.env.VITE_INSTANCE_NAME,
                             type: NodeType.Domain,
                             color: getNodeColor(NodeType.Domain),
                             data: {
-                            name: import.meta.env.VITE_INSTANCE_NAME,
+                            name: import.meta.env.VITE_INSTANCE_NAME || window.env.VITE_INSTANCE_NAME,
                             __typename: 'DomainType'
                             }
                         }
                     ],
                     links: [
                         ...graphData.links,
-                        {source: import.meta.env.VITE_INSTANCE_NAME, target: user.data.uuid, value: 1},
+                        {source: import.meta.env.VITE_INSTANCE_NAME || window.env.VITE_INSTANCE_NAME, target: user.data.uuid, value: 1},
                     ]
                 })
             }
@@ -206,7 +206,7 @@ export const useButtonHandlers = () => {
                                 ],
                                 links: [
                                     ...graphData.links,
-                                    ...usersData.users.map((user)  => ({source: import.meta.env.VITE_INSTANCE_NAME, target: user.uuid, value: 1})),
+                                    ...usersData.users.map((user)  => ({source: import.meta.env.VITE_INSTANCE_NAME || window.env.VITE_INSTANCE_NAME, target: user.uuid, value: 1})),
                                 ]
                             })
                         }
