@@ -53,7 +53,7 @@ export default function UnitContent(){
   const [getUnitCurrentSchema] = useGetUnitCurrentSchemaLazyQuery();
 
   const fileUpload = (type: string) => {
-    let url = import.meta.env.VITE_BACKEND_URI.replace('graphql', '') + 'api/v1/units/firmware/' + type + '/' + currentNodeData?.uuid
+    let url = (import.meta.env.VITE_BACKEND_URI || window.env.VITE_BACKEND_URI).replace('graphql', '') + 'api/v1/units/firmware/' + type + '/' + currentNodeData?.uuid
     let token = localStorage.getItem('token')
 
     if (token){
