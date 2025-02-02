@@ -26,11 +26,13 @@ gql`
             name
             createDatetime
             repoUrl
+            platform
             isPublicRepository
             defaultBranch
             isAutoUpdateRepo
             defaultCommit
             isOnlyTagUpdate
+            isCompilableRepo
             lastUpdateDatetime
             branches
             creatorUuid
@@ -63,11 +65,13 @@ gql`
             name
             createDatetime
             repoUrl
+            platform
             isPublicRepository
             defaultBranch
             isAutoUpdateRepo
             defaultCommit
             isOnlyTagUpdate
+            isCompilableRepo
             lastUpdateDatetime
             branches
             creatorUuid
@@ -86,11 +90,13 @@ gql`
             name
             createDatetime
             repoUrl
+            platform
             isPublicRepository
             defaultBranch
             isAutoUpdateRepo
             defaultCommit
             isOnlyTagUpdate
+            isCompilableRepo
             lastUpdateDatetime
             branches
             creatorUuid
