@@ -150,7 +150,7 @@ export default function CreateUnitForm() {
                 }
             })
         }
-    }, [repoCommit, isAutoUpdateFromRepoUnit]);
+    }, [currentNodeData, repoCommit, isAutoUpdateFromRepoUnit]);
 
 
     return (
