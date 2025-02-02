@@ -1,6 +1,8 @@
 import { ResultType } from '@rootTypes/resultEnum'
 import { useResultHandler } from '@handlers/useResultHandler';
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
+import { NodeType } from '@rootTypes/nodeTypeEnum'
+import { getNodeColor } from '@utils/getNodeColor'
 import { VisibilityLevel, useGetBranchCommitsLazyQuery, useUpdateRepoMutation } from '@rootTypes/compositionFunctions'
 import { useState, useEffect } from 'react';
 import { getCommitSummary } from '@utils/getCommitSummary';
@@ -10,6 +12,7 @@ import Spinner from '@primitives/spinner'
 import ResultQuery from '@primitives/resultQuery'
 import '../form.css'
 
+import { useGraphStore } from '@stores/graphStore';
 import { useNodeStore } from '@stores/baseStore';
 
 
@@ -18,6 +21,8 @@ export default function UpdateRepoForm() {
     const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
 
     const { currentNodeData, setCurrentNodeData } = useNodeStore();
+
+    const { graphData, setGraphData } = useGraphStore();
 
     const [repoAvailableCommits, setRepoAvailableCommits] = useState<Array<{
         __typename?: "CommitType";
@@ -61,8 +66,29 @@ export default function UpdateRepoForm() {
             })
 
             if (updateRepoData.data){
+                let updateRepo = updateRepoData.data.updateRepo
+                
+                const newNode = {
+                    id: updateRepo.uuid,
+                    type: NodeType.Repo,
+                    color: getNodeColor(NodeType.Repo),
+                    data: updateRepo
+                };
+            
+                const newLink = {
+                    source: import.meta.env.VITE_INSTANCE_NAME || window.env.VITE_INSTANCE_NAME,
+                    target: updateRepo.uuid,
+                    value: 1
+                };
+
+                setGraphData({
+                    nodes: [...graphData.nodes, newNode],
+                    links: [...graphData.links, newLink],
+                });
+
                 handleSuccess("Repo success update")
             }
+
         })
     };
 

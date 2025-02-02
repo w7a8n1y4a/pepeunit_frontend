@@ -671,11 +671,13 @@ export type CreateRepoMutation = {
     name: string;
     createDatetime: string;
     repoUrl: string;
+    platform: GitPlatform;
     isPublicRepository: boolean;
     defaultBranch?: string | null;
     isAutoUpdateRepo: boolean;
     defaultCommit?: string | null;
     isOnlyTagUpdate: boolean;
+    isCompilableRepo: boolean;
     lastUpdateDatetime: string;
     branches: Array<string>;
     creatorUuid: string;
@@ -702,11 +704,13 @@ export type UpdateRepoMutation = {
     name: string;
     createDatetime: string;
     repoUrl: string;
+    platform: GitPlatform;
     isPublicRepository: boolean;
     defaultBranch?: string | null;
     isAutoUpdateRepo: boolean;
     defaultCommit?: string | null;
     isOnlyTagUpdate: boolean;
+    isCompilableRepo: boolean;
     lastUpdateDatetime: string;
     branches: Array<string>;
     creatorUuid: string;
@@ -727,11 +731,13 @@ export type UpdateRepoCredentialsMutation = {
     name: string;
     createDatetime: string;
     repoUrl: string;
+    platform: GitPlatform;
     isPublicRepository: boolean;
     defaultBranch?: string | null;
     isAutoUpdateRepo: boolean;
     defaultCommit?: string | null;
     isOnlyTagUpdate: boolean;
+    isCompilableRepo: boolean;
     lastUpdateDatetime: string;
     branches: Array<string>;
     creatorUuid: string;
@@ -1690,11 +1696,13 @@ export const CreateRepoDocument = gql`
       name
       createDatetime
       repoUrl
+      platform
       isPublicRepository
       defaultBranch
       isAutoUpdateRepo
       defaultCommit
       isOnlyTagUpdate
+      isCompilableRepo
       lastUpdateDatetime
       branches
       creatorUuid
@@ -1778,11 +1786,13 @@ export const UpdateRepoDocument = gql`
       name
       createDatetime
       repoUrl
+      platform
       isPublicRepository
       defaultBranch
       isAutoUpdateRepo
       defaultCommit
       isOnlyTagUpdate
+      isCompilableRepo
       lastUpdateDatetime
       branches
       creatorUuid
@@ -1847,11 +1857,13 @@ export const UpdateRepoCredentialsDocument = gql`
       name
       createDatetime
       repoUrl
+      platform
       isPublicRepository
       defaultBranch
       isAutoUpdateRepo
       defaultCommit
       isOnlyTagUpdate
+      isCompilableRepo
       lastUpdateDatetime
       branches
       creatorUuid
