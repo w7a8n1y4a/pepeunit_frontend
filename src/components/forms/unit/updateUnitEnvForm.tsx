@@ -52,6 +52,9 @@ export default function UpdateUnitEnvForm() {
             })
             if (result.data?.getUnitEnv){
                 setCurrentUnitEnv(JSON.parse(result.data.getUnitEnv))
+            }else{
+                setCurrentUnitEnv(null)
+                handleError(result)
             }
         })
     }, [currentNodeData]);
@@ -72,24 +75,30 @@ export default function UpdateUnitEnvForm() {
             {
                 isLoaderActive && (<Spinner/>)
             }
-            <div className="unit-env-form-container">
-                <div className="unit-env-form">
-                    {currentUnitEnv &&
-                        Object.entries(currentUnitEnv).map(([key, value]) => (
-                            <div key={key}>
-                                <label>{key}</label>
-                                <input
-                                    type="text"
-                                    value={value}
-                                    onChange={(e) => handleInputChange(key, e.target.value)}
-                                />
-                            </div>
-                        ))}
-                </div>
-            </div>
-            <button className="button_main_action" onClick={handleUpdateUnitEnv}>
-                Update
-            </button>
+            {
+                currentUnitEnv && 
+                <>
+                    <div className="unit-env-form-container">
+                        <div className="unit-env-form">
+                            {
+                                currentUnitEnv &&  Object.entries(currentUnitEnv).map(([key, value]) => (
+                                    <div key={key}>
+                                        <label>{key}</label>
+                                        <input
+                                            type="text"
+                                            value={value}
+                                            onChange={(e) => handleInputChange(key, e.target.value)}
+                                        />
+                                    </div>
+                                ))
+                            }
+                        </div>
+                    </div>
+                    <button className="button_main_action" onClick={handleUpdateUnitEnv}>
+                        Update
+                    </button>
+                </>
+            }
             <ResultQuery
                 resultData={resultData}
             />
