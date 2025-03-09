@@ -67,6 +67,8 @@ export default function SignInForm({openModalRegister}: SignInFormProps) {
                     setUser(userData.data.getUser)
                 }
                 setActiveModal(null)
+            } else {
+                handleError(result)
             }
         })
     };
