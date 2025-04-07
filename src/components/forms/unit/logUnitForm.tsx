@@ -1,6 +1,6 @@
 import { useResultHandler } from '@handlers/useResultHandler';
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
-import { useGetUnitLogsLazyQuery, LogLevel } from '@rootTypes/compositionFunctions'
+import { useGetUnitLogsLazyQuery, LogLevel, OrderByDate } from '@rootTypes/compositionFunctions'
 import PaginationControls from '@primitives/pagination';
 import LogLevelSelector from '@primitives/logLevelSelector';
 import { useState, useEffect } from 'react';
@@ -37,6 +37,7 @@ export default function LogUnitForm() {
                 variables: {
                     uuid: currentNodeData.uuid,
                     level: level,
+                    orderByCreateDate: OrderByDate.Desc,
                     limit: itemsPerPage,
                     offset: currentPage * itemsPerPage
                 }
@@ -91,7 +92,7 @@ export default function LogUnitForm() {
             {
             currentUnitLogs &&
             <div className="unit-env-form">
-                {currentUnitLogs && Object.entries(currentUnitLogs).map(([key, value]: [string, any]) => (
+                {currentUnitLogs && Object.entries(currentUnitLogs).reverse().map(([key, value]: [string, any]) => (
                 <div key={key} className="log-entry">
                     <div className="log-header">
                     <span>{formatLogDateTime(value.createDatetime)}</span>
@@ -109,6 +110,7 @@ export default function LogUnitForm() {
                 totalPages={totalPages}
                 goToNextPage={() => setCurrentPage(prev => prev + 1)}
                 goToPreviousPage={() => setCurrentPage(prev => prev - 1)}
+                inversed={true}
             />
             <ResultQuery
                 resultData={resultData}
