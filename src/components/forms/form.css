@@ -273,3 +273,41 @@ input:checked+.slider:before {
     border-color: #ff3c00cc;
     color: #ff3c00cc;
 }
+
+.log-entry {
+    margin-bottom: 12px;
+    padding: 8px;
+    border-left: 3px solid #282828;
+}
+
+.log-header {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 4px;
+    color: #fff;
+}
+
+.log-level {
+    text-transform: uppercase;
+}
+
+.log-level.INFO, .log-level.DEBUG {
+    color: #45a049;
+}
+
+.log-level.WARNING {
+    color: #ff8f00;
+}
+
+.log-level.ERROR, .log-level.CRITICAL {
+    color: #ff3c00cc;
+}
+
+.log-content {
+    font-size: 0.85rem;
+    line-height: 1.4;
+    color: #aaa;
+}
