@@ -12,6 +12,7 @@ import UnitMicroState from '@primitives/unitMicroState'
 import UpdateUnitForm from '../forms/unit/updateUnitForm';
 import PermissionForm from '../forms/permission/permissionForm';
 import UpdateUnitEnvForm from '../forms/unit/updateUnitEnvForm'
+import LogUnitForm from '../forms/unit/logUnitForm'
 import {stringToFormat} from '@utils/stringToFormat'
 import copyToClipboard from '@utils/copyToClipboard'
 
@@ -169,7 +170,8 @@ export default function UnitContent(){
           let state = {
             'Firmware': "update/pepeunit" in inputCommand,
             'Schema': "schema_update/pepeunit" in inputCommand,
-            'Env': "env_update/pepeunit" in inputCommand
+            'Env': "env_update/pepeunit" in inputCommand,
+            'Log': "log_sync/pepeunit" in inputCommand
           }
           setAvailableCommand(state)
         }
@@ -264,10 +266,20 @@ export default function UnitContent(){
                             </button>
                           )
                         }
+                        {
+                          availableCommand['Log'] && (
+                            <button className="button_load_data_grid" onClick={() => handleSendUnitCommand(BackendTopicCommand.LogSync)}>
+                              Log
+                            </button>
+                          )
+                        }
                       </div>
                     </>
                   )
                 }
+                <button className="button_open_alter" onClick={() => openModal('unitLogsMenu')}>
+                  Logs
+                </button>
                 <div className='div_statistics'>
                   {
                     currentNodeData.visibilityLevel == VisibilityLevel.Private && (
@@ -287,6 +299,18 @@ export default function UnitContent(){
             resultData={resultData}
           />
         </div>
+      </BaseModal>
+      <BaseModal
+        modalName='Logs'
+        subName={currentNodeData?.name}
+        open={activeModal === 'unitLogsMenu'}
+        openModalType='UnitMenu'
+        >
+        {
+          currentNodeData && (
+            <LogUnitForm/>
+          )
+        }
       </BaseModal>
       <BaseModal modalName={'Permissions'} subName={currentNodeData?.name} open={activeModal === 'permissionMenu' + nodeType} openModalType='UnitMenu'>
         {

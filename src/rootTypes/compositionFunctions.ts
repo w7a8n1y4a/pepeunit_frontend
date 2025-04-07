@@ -34,6 +34,7 @@ export type Scalars = {
 
 export enum BackendTopicCommand {
   EnvUpdate = "ENV_UPDATE",
+  LogSync = "LOG_SYNC",
   SchemaUpdate = "SCHEMA_UPDATE",
   Update = "UPDATE",
 }
@@ -69,6 +70,14 @@ export type CredentialsInput = {
 export enum GitPlatform {
   Github = "GITHUB",
   Gitlab = "GITLAB",
+}
+
+export enum LogLevel {
+  Critical = "CRITICAL",
+  Debug = "DEBUG",
+  Error = "ERROR",
+  Info = "INFO",
+  Warning = "WARNING",
 }
 
 export type Mutation = {
@@ -268,6 +277,7 @@ export type Query = {
   getUnit: UnitType;
   getUnitCurrentSchema: Scalars["String"]["output"];
   getUnitEnv: Scalars["String"]["output"];
+  getUnitLogs: UnitLogsResultType;
   getUnitNode: UnitNodeType;
   getUnitNodes: UnitNodesResultType;
   getUnits: UnitsResultType;
@@ -322,6 +332,10 @@ export type QueryGetUnitCurrentSchemaArgs = {
 
 export type QueryGetUnitEnvArgs = {
   uuid: Scalars["UUID"]["input"];
+};
+
+export type QueryGetUnitLogsArgs = {
+  filters: UnitLogFilterInput;
 };
 
 export type QueryGetUnitNodeArgs = {
@@ -460,6 +474,30 @@ export enum UnitFirmwareUpdateStatus {
   Success = "SUCCESS",
 }
 
+export type UnitLogFilterInput = {
+  level?: InputMaybe<Array<LogLevel>>;
+  limit?: InputMaybe<Scalars["Int"]["input"]>;
+  offset?: InputMaybe<Scalars["Int"]["input"]>;
+  orderByCreateDate?: InputMaybe<OrderByDate>;
+  uuid: Scalars["UUID"]["input"];
+};
+
+export type UnitLogType = {
+  __typename?: "UnitLogType";
+  createDatetime: Scalars["DateTime"]["output"];
+  expirationDatetime: Scalars["DateTime"]["output"];
+  level: LogLevel;
+  text: Scalars["String"]["output"];
+  unitUuid: Scalars["UUID"]["output"];
+  uuid: Scalars["UUID"]["output"];
+};
+
+export type UnitLogsResultType = {
+  __typename?: "UnitLogsResultType";
+  count: Scalars["Int"]["output"];
+  unitLogs: Array<UnitLogType>;
+};
+
 export type UnitNodeEdgeCreateInput = {
   nodeInputUuid: Scalars["UUID"]["input"];
   nodeOutputUuid: Scalars["UUID"]["input"];
@@ -587,7 +625,6 @@ export type UserFilterInput = {
 
 export enum UserRole {
   Admin = "ADMIN",
-  Bot = "BOT",
   User = "USER",
 }
 
@@ -1396,6 +1433,31 @@ export type GetUnitsOutputByInputQuery = {
         unitUuid: string;
         creatorUuid: string;
       }>;
+    }>;
+  };
+};
+
+export type GetUnitLogsQueryVariables = Exact<{
+  uuid: Scalars["UUID"]["input"];
+  level?: InputMaybe<Array<LogLevel> | LogLevel>;
+  orderByCreateDate?: InputMaybe<OrderByDate>;
+  offset?: InputMaybe<Scalars["Int"]["input"]>;
+  limit?: InputMaybe<Scalars["Int"]["input"]>;
+}>;
+
+export type GetUnitLogsQuery = {
+  __typename?: "Query";
+  getUnitLogs: {
+    __typename?: "UnitLogsResultType";
+    count: number;
+    unitLogs: Array<{
+      __typename?: "UnitLogType";
+      uuid: string;
+      level: LogLevel;
+      unitUuid: string;
+      text: string;
+      createDatetime: string;
+      expirationDatetime: string;
     }>;
   };
 };
@@ -4119,6 +4181,107 @@ export type GetUnitsOutputByInputSuspenseQueryHookResult = ReturnType<
 export type GetUnitsOutputByInputQueryResult = Apollo.QueryResult<
   GetUnitsOutputByInputQuery,
   GetUnitsOutputByInputQueryVariables
+>;
+export const GetUnitLogsDocument = gql`
+  query getUnitLogs(
+    $uuid: UUID!
+    $level: [LogLevel!]
+    $orderByCreateDate: OrderByDate
+    $offset: Int
+    $limit: Int
+  ) {
+    getUnitLogs(
+      filters: {
+        uuid: $uuid
+        level: $level
+        orderByCreateDate: $orderByCreateDate
+        offset: $offset
+        limit: $limit
+      }
+    ) {
+      count
+      unitLogs {
+        uuid
+        level
+        unitUuid
+        text
+        createDatetime
+        expirationDatetime
+      }
+    }
+  }
+`;
+
+/**
+ * __useGetUnitLogsQuery__
+ *
+ * To run a query within a React component, call `useGetUnitLogsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUnitLogsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUnitLogsQuery({
+ *   variables: {
+ *      uuid: // value for 'uuid'
+ *      level: // value for 'level'
+ *      orderByCreateDate: // value for 'orderByCreateDate'
+ *      offset: // value for 'offset'
+ *      limit: // value for 'limit'
+ *   },
+ * });
+ */
+export function useGetUnitLogsQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GetUnitLogsQuery,
+    GetUnitLogsQueryVariables
+  > &
+    (
+      | { variables: GetUnitLogsQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetUnitLogsQuery, GetUnitLogsQueryVariables>(
+    GetUnitLogsDocument,
+    options,
+  );
+}
+export function useGetUnitLogsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetUnitLogsQuery,
+    GetUnitLogsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetUnitLogsQuery, GetUnitLogsQueryVariables>(
+    GetUnitLogsDocument,
+    options,
+  );
+}
+export function useGetUnitLogsSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    GetUnitLogsQuery,
+    GetUnitLogsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<GetUnitLogsQuery, GetUnitLogsQueryVariables>(
+    GetUnitLogsDocument,
+    options,
+  );
+}
+export type GetUnitLogsQueryHookResult = ReturnType<typeof useGetUnitLogsQuery>;
+export type GetUnitLogsLazyQueryHookResult = ReturnType<
+  typeof useGetUnitLogsLazyQuery
+>;
+export type GetUnitLogsSuspenseQueryHookResult = ReturnType<
+  typeof useGetUnitLogsSuspenseQuery
+>;
+export type GetUnitLogsQueryResult = Apollo.QueryResult<
+  GetUnitLogsQuery,
+  GetUnitLogsQueryVariables
 >;
 export const GetUnitEnvDocument = gql`
   query getUnitEnv($uuid: UUID!) {

@@ -228,6 +228,35 @@ gql`
             }
         }
     }
+
+    query getUnitLogs(
+        $uuid: UUID!
+        $level: [LogLevel!]
+        $orderByCreateDate: OrderByDate
+        $offset: Int
+        $limit: Int
+    ) {
+        getUnitLogs(
+            filters: {
+                uuid: $uuid
+                level: $level
+                orderByCreateDate: $orderByCreateDate
+                offset: $offset
+                limit: $limit
+            }
+        ) {
+            count
+            unitLogs {
+                uuid
+                level
+                unitUuid
+                text
+                createDatetime
+                expirationDatetime
+            }
+        }
+    }
+
     query getUnitEnv(
         $uuid: UUID!
     ) {
