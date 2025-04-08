@@ -34,7 +34,8 @@ export default function UnitContent(){
   const [currentRepoData, setCurrentRepoData] = useState<RepoType | null>(null);
   const [targetVersion, setTargetVersion] = useState<string | null>(null);
   const [availableCommand, setAvailableCommand] = useState<any | null>(null);
-  
+  const [baseOutputTopics, setBaseOutputTopics] = useState<any | null>(null);
+
   const { openModal } = useModalHandlers();
   const { user } = useUserStore();
 
@@ -173,7 +174,17 @@ export default function UnitContent(){
             'Env': "env_update/pepeunit" in inputCommand,
             'Log': "log_sync/pepeunit" in inputCommand
           }
+
+          const outputTopics = JSON.parse(currentSchema.data?.getUnitCurrentSchema)['output_base_topic']
+          
           setAvailableCommand(state)
+
+          let outputState = {
+            'State': "state/pepeunit" in outputTopics,
+            'Log': "log/pepeunit" in outputTopics
+          }
+
+          setBaseOutputTopics(outputState)
         }
 
       }
@@ -195,10 +206,14 @@ export default function UnitContent(){
           {
             isLoaderActive && (<Spinner/>)
           }
-
-          <UnitUpdateState targetVersion={targetVersion}/>
-
-          <UnitMicroState/>
+          {
+            baseOutputTopics && baseOutputTopics['State'] && (
+              <>
+                <UnitUpdateState targetVersion={targetVersion}/>
+                <UnitMicroState/>
+              </>
+            )
+          }
 
           {
             user && currentNodeData && user.uuid == currentNodeData.creatorUuid && (
@@ -277,9 +292,14 @@ export default function UnitContent(){
                     </>
                   )
                 }
-                <button className="button_open_alter" onClick={() => openModal('unitLogsMenu')}>
-                  Logs
-                </button>
+
+                {
+                  baseOutputTopics && baseOutputTopics['Log'] && (
+                    <button className="button_open_alter" onClick={() => openModal('unitLogsMenu')}>
+                      Logs
+                    </button>
+                  )
+                }
                 <div className='div_statistics'>
                   {
                     currentNodeData.visibilityLevel == VisibilityLevel.Private && (
