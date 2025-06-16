@@ -30,6 +30,25 @@ export type Scalars = {
   Float: { input: number; output: number };
   DateTime: { input: string; output: string };
   UUID: { input: string; output: string };
+  Upload: { input: File; output: File };
+};
+
+export enum AggregationFunctions {
+  Avg = "AVG",
+  Max = "MAX",
+  Min = "MIN",
+  Sum = "SUM",
+}
+
+export type AggregationType = {
+  __typename?: "AggregationType";
+  aggregationType: AggregationFunctions;
+  createDatetime: Scalars["DateTime"]["output"];
+  startWindowDatetime: Scalars["DateTime"]["output"];
+  state: Scalars["Float"]["output"];
+  timeWindowSize: Scalars["Int"]["output"];
+  unitNodeUuid: Scalars["UUID"]["output"];
+  uuid: Scalars["UUID"]["output"];
 };
 
 export enum BackendTopicCommand {
@@ -67,6 +86,34 @@ export type CredentialsInput = {
   username: Scalars["String"]["input"];
 };
 
+export type DataPipeFilterInput = {
+  aggregationType?: InputMaybe<Array<AggregationFunctions>>;
+  endAggWindowDatetime?: InputMaybe<Scalars["DateTime"]["input"]>;
+  endCreateDatetime?: InputMaybe<Scalars["DateTime"]["input"]>;
+  limit?: InputMaybe<Scalars["Int"]["input"]>;
+  offset?: InputMaybe<Scalars["Int"]["input"]>;
+  orderByCreateDate?: InputMaybe<OrderByDate>;
+  searchString?: InputMaybe<Scalars["String"]["input"]>;
+  startAggWindowDatetime?: InputMaybe<Scalars["DateTime"]["input"]>;
+  startCreateDatetime?: InputMaybe<Scalars["DateTime"]["input"]>;
+  timeWindowSize?: InputMaybe<Scalars["Int"]["input"]>;
+  type: ProcessingPolicyType;
+  uuid: Scalars["UUID"]["input"];
+};
+
+export enum DataPipeStage {
+  ActivePeriod = "ACTIVE_PERIOD",
+  Filters = "FILTERS",
+  ProcessingPolicy = "PROCESSING_POLICY",
+  Transformations = "TRANSFORMATIONS",
+}
+
+export type DataPipeValidationErrorType = {
+  __typename?: "DataPipeValidationErrorType";
+  message: Scalars["String"]["output"];
+  stage: DataPipeStage;
+};
+
 export enum GitPlatform {
   Github = "GITHUB",
   Gitlab = "GITLAB",
@@ -89,11 +136,13 @@ export type Mutation = {
   createUnit: UnitType;
   createUnitNodeEdge: UnitNodeEdgeType;
   createUser: UserType;
+  deleteDataPipeData: NoneType;
   deletePermission: NoneType;
   deleteRepo: NoneType;
   deleteUnit: NoneType;
   deleteUnitNodeEdge: NoneType;
   sendCommandToInputBaseTopic: NoneType;
+  setDataPipeConfig: NoneType;
   setStateStorage: NoneType;
   setStateUnitNodeInput: UnitNodeType;
   unblockUser: NoneType;
@@ -131,6 +180,10 @@ export type MutationCreateUserArgs = {
   user: UserCreateInput;
 };
 
+export type MutationDeleteDataPipeDataArgs = {
+  uuid: Scalars["UUID"]["input"];
+};
+
 export type MutationDeletePermissionArgs = {
   agentUuid: Scalars["UUID"]["input"];
   resourceUuid: Scalars["UUID"]["input"];
@@ -151,6 +204,11 @@ export type MutationDeleteUnitNodeEdgeArgs = {
 
 export type MutationSendCommandToInputBaseTopicArgs = {
   command: BackendTopicCommand;
+  uuid: Scalars["UUID"]["input"];
+};
+
+export type MutationSetDataPipeConfigArgs = {
+  file: Scalars["Upload"]["input"];
   uuid: Scalars["UUID"]["input"];
 };
 
@@ -205,6 +263,23 @@ export type MutationUpdateUserArgs = {
   user: UserUpdateInput;
 };
 
+export type NRecordsType = {
+  __typename?: "NRecordsType";
+  createDatetime: Scalars["DateTime"]["output"];
+  id: Scalars["Int"]["output"];
+  maxCount: Scalars["Int"]["output"];
+  size: Scalars["Int"]["output"];
+  state: Scalars["String"]["output"];
+  stateType: TypeInputValue;
+  unitNodeUuid: Scalars["UUID"]["output"];
+  uuid: Scalars["UUID"]["output"];
+};
+
+export type NRecordsTypeTimeWindowTypeAggregationType =
+  | AggregationType
+  | NRecordsType
+  | TimeWindowType;
+
 export type NoneType = {
   __typename?: "NoneType";
   isNone: Scalars["Boolean"]["output"];
@@ -257,17 +332,32 @@ export type PermissionsType = {
   permissions: Array<PermissionType>;
 };
 
+export type PipeDataResultType = {
+  __typename?: "PipeDataResultType";
+  count: Scalars["Int"]["output"];
+  pipeData: Array<NRecordsTypeTimeWindowTypeAggregationType>;
+};
+
 export type PlatformType = {
   __typename?: "PlatformType";
   link: Scalars["String"]["output"];
   name: Scalars["String"]["output"];
 };
 
+export enum ProcessingPolicyType {
+  Aggregation = "AGGREGATION",
+  LastValue = "LAST_VALUE",
+  NRecords = "N_RECORDS",
+  TimeWindow = "TIME_WINDOW",
+}
+
 export type Query = {
   __typename?: "Query";
+  checkDataPipeConfig: Array<DataPipeValidationErrorType>;
   getAvailablePlatforms: Array<PlatformType>;
   getBaseMetrics: BaseMetricsType;
   getBranchCommits: Array<CommitType>;
+  getPipeData: PipeDataResultType;
   getRepo: RepoType;
   getRepos: ReposResultType;
   getResourceAgents: PermissionsType;
@@ -287,6 +377,10 @@ export type Query = {
   getVersions: RepoVersionsType;
 };
 
+export type QueryCheckDataPipeConfigArgs = {
+  file: Scalars["Upload"]["input"];
+};
+
 export type QueryGetAvailablePlatformsArgs = {
   targetCommit?: InputMaybe<Scalars["String"]["input"]>;
   targetTag?: InputMaybe<Scalars["String"]["input"]>;
@@ -296,6 +390,10 @@ export type QueryGetAvailablePlatformsArgs = {
 export type QueryGetBranchCommitsArgs = {
   filters: CommitFilterInput;
   uuid: Scalars["UUID"]["input"];
+};
+
+export type QueryGetPipeDataArgs = {
+  filters: DataPipeFilterInput;
 };
 
 export type QueryGetRepoArgs = {
@@ -440,6 +538,22 @@ export type TargetVersionType = {
   tag?: Maybe<Scalars["String"]["output"]>;
 };
 
+export type TimeWindowType = {
+  __typename?: "TimeWindowType";
+  createDatetime: Scalars["DateTime"]["output"];
+  expirationDatetime: Scalars["DateTime"]["output"];
+  size: Scalars["Int"]["output"];
+  state: Scalars["String"]["output"];
+  stateType: TypeInputValue;
+  unitNodeUuid: Scalars["UUID"]["output"];
+  uuid: Scalars["UUID"]["output"];
+};
+
+export enum TypeInputValue {
+  Number = "NUMBER",
+  Text = "TEXT",
+}
+
 export type UnitCreateInput = {
   isAutoUpdateFromRepoUnit: Scalars["Boolean"]["input"];
   name: Scalars["String"]["input"];
@@ -530,6 +644,10 @@ export type UnitNodeType = {
   __typename?: "UnitNodeType";
   createDatetime: Scalars["DateTime"]["output"];
   creatorUuid: Scalars["UUID"]["output"];
+  dataPipeError?: Maybe<Scalars["String"]["output"]>;
+  dataPipeStatus?: Maybe<Scalars["String"]["output"]>;
+  dataPipeYml?: Maybe<Scalars["String"]["output"]>;
+  isDataPipeActive: Scalars["Boolean"]["output"];
   isRewritableInput: Scalars["Boolean"]["output"];
   lastUpdateDatetime: Scalars["DateTime"]["output"];
   state?: Maybe<Scalars["String"]["output"]>;
@@ -546,6 +664,7 @@ export enum UnitNodeTypeEnum {
 }
 
 export type UnitNodeUpdateInput = {
+  isDataPipeActive?: InputMaybe<Scalars["Boolean"]["input"]>;
   isRewritableInput?: InputMaybe<Scalars["Boolean"]["input"]>;
   visibilityLevel?: InputMaybe<VisibilityLevel>;
 };
@@ -942,6 +1061,7 @@ export type UpdateUnitNodeMutationVariables = Exact<{
   uuid: Scalars["UUID"]["input"];
   visibilityLevel?: InputMaybe<VisibilityLevel>;
   isRewritableInput?: InputMaybe<Scalars["Boolean"]["input"]>;
+  isDataPipeActive?: InputMaybe<Scalars["Boolean"]["input"]>;
 }>;
 
 export type UpdateUnitNodeMutation = {
@@ -954,9 +1074,14 @@ export type UpdateUnitNodeMutation = {
     isRewritableInput: boolean;
     topicName: string;
     lastUpdateDatetime: string;
+    isDataPipeActive: boolean;
+    dataPipeYml?: string | null;
+    dataPipeStatus?: string | null;
+    dataPipeError?: string | null;
     createDatetime: string;
     state?: string | null;
     unitUuid: string;
+    creatorUuid: string;
   };
 };
 
@@ -975,9 +1100,14 @@ export type SetStateUnitNodeInputMutation = {
     isRewritableInput: boolean;
     topicName: string;
     lastUpdateDatetime: string;
+    isDataPipeActive: boolean;
+    dataPipeYml?: string | null;
+    dataPipeStatus?: string | null;
+    dataPipeError?: string | null;
     createDatetime: string;
     state?: string | null;
     unitUuid: string;
+    creatorUuid: string;
   };
 };
 
@@ -1004,6 +1134,25 @@ export type DeleteUnitNodeEdgeMutationVariables = Exact<{
 export type DeleteUnitNodeEdgeMutation = {
   __typename?: "Mutation";
   deleteUnitNodeEdge: { __typename?: "NoneType"; isNone: boolean };
+};
+
+export type SetDataPipeConfigMutationVariables = Exact<{
+  uuid: Scalars["UUID"]["input"];
+  file: Scalars["Upload"]["input"];
+}>;
+
+export type SetDataPipeConfigMutation = {
+  __typename?: "Mutation";
+  setDataPipeConfig: { __typename?: "NoneType"; isNone: boolean };
+};
+
+export type DeleteDataPipeDataMutationVariables = Exact<{
+  uuid: Scalars["UUID"]["input"];
+}>;
+
+export type DeleteDataPipeDataMutation = {
+  __typename?: "Mutation";
+  deleteDataPipeData: { __typename?: "NoneType"; isNone: boolean };
 };
 
 export type CreateUserMutationVariables = Exact<{
@@ -1368,6 +1517,10 @@ export type GetUnitsWithUnitNodesQuery = {
         isRewritableInput: boolean;
         topicName: string;
         lastUpdateDatetime: string;
+        isDataPipeActive: boolean;
+        dataPipeYml?: string | null;
+        dataPipeStatus?: string | null;
+        dataPipeError?: string | null;
         createDatetime: string;
         state?: string | null;
         unitUuid: string;
@@ -1428,6 +1581,10 @@ export type GetUnitsOutputByInputQuery = {
         isRewritableInput: boolean;
         topicName: string;
         lastUpdateDatetime: string;
+        isDataPipeActive: boolean;
+        dataPipeYml?: string | null;
+        dataPipeStatus?: string | null;
+        dataPipeError?: string | null;
         createDatetime: string;
         state?: string | null;
         unitUuid: string;
@@ -1513,6 +1670,10 @@ export type GetUnitNodeQuery = {
     isRewritableInput: boolean;
     topicName: string;
     lastUpdateDatetime: string;
+    isDataPipeActive: boolean;
+    dataPipeYml?: string | null;
+    dataPipeStatus?: string | null;
+    dataPipeError?: string | null;
     createDatetime: string;
     state?: string | null;
     unitUuid: string;
@@ -1546,11 +1707,86 @@ export type GetUnitNodesQuery = {
       isRewritableInput: boolean;
       topicName: string;
       lastUpdateDatetime: string;
+      isDataPipeActive: boolean;
+      dataPipeYml?: string | null;
+      dataPipeStatus?: string | null;
+      dataPipeError?: string | null;
       createDatetime: string;
       state?: string | null;
       unitUuid: string;
       creatorUuid: string;
     }>;
+  };
+};
+
+export type CheckDataPipeConfigQueryVariables = Exact<{
+  file: Scalars["Upload"]["input"];
+}>;
+
+export type CheckDataPipeConfigQuery = {
+  __typename?: "Query";
+  checkDataPipeConfig: Array<{
+    __typename?: "DataPipeValidationErrorType";
+    stage: DataPipeStage;
+    message: string;
+  }>;
+};
+
+export type GetPipeDataQueryVariables = Exact<{
+  uuid: Scalars["UUID"]["input"];
+  type: ProcessingPolicyType;
+  searchString?: InputMaybe<Scalars["String"]["input"]>;
+  aggregationType?: InputMaybe<
+    Array<AggregationFunctions> | AggregationFunctions
+  >;
+  timeWindowSize?: InputMaybe<Scalars["Int"]["input"]>;
+  startAggWindowDatetime?: InputMaybe<Scalars["DateTime"]["input"]>;
+  endAggWindowDatetime?: InputMaybe<Scalars["DateTime"]["input"]>;
+  startCreateDatetime?: InputMaybe<Scalars["DateTime"]["input"]>;
+  endCreateDatetime?: InputMaybe<Scalars["DateTime"]["input"]>;
+  orderByCreateDate?: InputMaybe<OrderByDate>;
+  offset?: InputMaybe<Scalars["Int"]["input"]>;
+  limit?: InputMaybe<Scalars["Int"]["input"]>;
+}>;
+
+export type GetPipeDataQuery = {
+  __typename?: "Query";
+  getPipeData: {
+    __typename?: "PipeDataResultType";
+    count: number;
+    pipeData: Array<
+      | {
+          __typename: "AggregationType";
+          uuid: string;
+          unitNodeUuid: string;
+          aggregationType: AggregationFunctions;
+          timeWindowSize: number;
+          createDatetime: string;
+          startWindowDatetime: string;
+          state_float: number;
+        }
+      | {
+          __typename: "NRecordsType";
+          id: number;
+          uuid: string;
+          unitNodeUuid: string;
+          stateType: TypeInputValue;
+          createDatetime: string;
+          maxCount: number;
+          size: number;
+          state: string;
+        }
+      | {
+          __typename: "TimeWindowType";
+          uuid: string;
+          unitNodeUuid: string;
+          stateType: TypeInputValue;
+          createDatetime: string;
+          expirationDatetime: string;
+          size: number;
+          state: string;
+        }
+    >;
   };
 };
 
@@ -2581,12 +2817,14 @@ export const UpdateUnitNodeDocument = gql`
     $uuid: UUID!
     $visibilityLevel: VisibilityLevel
     $isRewritableInput: Boolean
+    $isDataPipeActive: Boolean
   ) {
     updateUnitNode(
       uuid: $uuid
       unitNode: {
         visibilityLevel: $visibilityLevel
         isRewritableInput: $isRewritableInput
+        isDataPipeActive: $isDataPipeActive
       }
     ) {
       uuid
@@ -2595,9 +2833,14 @@ export const UpdateUnitNodeDocument = gql`
       isRewritableInput
       topicName
       lastUpdateDatetime
+      isDataPipeActive
+      dataPipeYml
+      dataPipeStatus
+      dataPipeError
       createDatetime
       state
       unitUuid
+      creatorUuid
     }
   }
 `;
@@ -2622,6 +2865,7 @@ export type UpdateUnitNodeMutationFn = Apollo.MutationFunction<
  *      uuid: // value for 'uuid'
  *      visibilityLevel: // value for 'visibilityLevel'
  *      isRewritableInput: // value for 'isRewritableInput'
+ *      isDataPipeActive: // value for 'isDataPipeActive'
  *   },
  * });
  */
@@ -2655,9 +2899,14 @@ export const SetStateUnitNodeInputDocument = gql`
       isRewritableInput
       topicName
       lastUpdateDatetime
+      isDataPipeActive
+      dataPipeYml
+      dataPipeStatus
+      dataPipeError
       createDatetime
       state
       unitUuid
+      creatorUuid
     }
   }
 `;
@@ -2813,6 +3062,107 @@ export type DeleteUnitNodeEdgeMutationResult =
 export type DeleteUnitNodeEdgeMutationOptions = Apollo.BaseMutationOptions<
   DeleteUnitNodeEdgeMutation,
   DeleteUnitNodeEdgeMutationVariables
+>;
+export const SetDataPipeConfigDocument = gql`
+  mutation setDataPipeConfig($uuid: UUID!, $file: Upload!) {
+    setDataPipeConfig(uuid: $uuid, file: $file) {
+      isNone
+    }
+  }
+`;
+export type SetDataPipeConfigMutationFn = Apollo.MutationFunction<
+  SetDataPipeConfigMutation,
+  SetDataPipeConfigMutationVariables
+>;
+
+/**
+ * __useSetDataPipeConfigMutation__
+ *
+ * To run a mutation, you first call `useSetDataPipeConfigMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSetDataPipeConfigMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [setDataPipeConfigMutation, { data, loading, error }] = useSetDataPipeConfigMutation({
+ *   variables: {
+ *      uuid: // value for 'uuid'
+ *      file: // value for 'file'
+ *   },
+ * });
+ */
+export function useSetDataPipeConfigMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    SetDataPipeConfigMutation,
+    SetDataPipeConfigMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    SetDataPipeConfigMutation,
+    SetDataPipeConfigMutationVariables
+  >(SetDataPipeConfigDocument, options);
+}
+export type SetDataPipeConfigMutationHookResult = ReturnType<
+  typeof useSetDataPipeConfigMutation
+>;
+export type SetDataPipeConfigMutationResult =
+  Apollo.MutationResult<SetDataPipeConfigMutation>;
+export type SetDataPipeConfigMutationOptions = Apollo.BaseMutationOptions<
+  SetDataPipeConfigMutation,
+  SetDataPipeConfigMutationVariables
+>;
+export const DeleteDataPipeDataDocument = gql`
+  mutation deleteDataPipeData($uuid: UUID!) {
+    deleteDataPipeData(uuid: $uuid) {
+      isNone
+    }
+  }
+`;
+export type DeleteDataPipeDataMutationFn = Apollo.MutationFunction<
+  DeleteDataPipeDataMutation,
+  DeleteDataPipeDataMutationVariables
+>;
+
+/**
+ * __useDeleteDataPipeDataMutation__
+ *
+ * To run a mutation, you first call `useDeleteDataPipeDataMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteDataPipeDataMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteDataPipeDataMutation, { data, loading, error }] = useDeleteDataPipeDataMutation({
+ *   variables: {
+ *      uuid: // value for 'uuid'
+ *   },
+ * });
+ */
+export function useDeleteDataPipeDataMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    DeleteDataPipeDataMutation,
+    DeleteDataPipeDataMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    DeleteDataPipeDataMutation,
+    DeleteDataPipeDataMutationVariables
+  >(DeleteDataPipeDataDocument, options);
+}
+export type DeleteDataPipeDataMutationHookResult = ReturnType<
+  typeof useDeleteDataPipeDataMutation
+>;
+export type DeleteDataPipeDataMutationResult =
+  Apollo.MutationResult<DeleteDataPipeDataMutation>;
+export type DeleteDataPipeDataMutationOptions = Apollo.BaseMutationOptions<
+  DeleteDataPipeDataMutation,
+  DeleteDataPipeDataMutationVariables
 >;
 export const CreateUserDocument = gql`
   mutation createUser($login: String!, $password: String!) {
@@ -3957,6 +4307,10 @@ export const GetUnitsWithUnitNodesDocument = gql`
           isRewritableInput
           topicName
           lastUpdateDatetime
+          isDataPipeActive
+          dataPipeYml
+          dataPipeStatus
+          dataPipeError
           createDatetime
           state
           unitUuid
@@ -4100,6 +4454,10 @@ export const GetUnitsOutputByInputDocument = gql`
           isRewritableInput
           topicName
           lastUpdateDatetime
+          isDataPipeActive
+          dataPipeYml
+          dataPipeStatus
+          dataPipeError
           createDatetime
           state
           unitUuid
@@ -4593,6 +4951,10 @@ export const GetUnitNodeDocument = gql`
       isRewritableInput
       topicName
       lastUpdateDatetime
+      isDataPipeActive
+      dataPipeYml
+      dataPipeStatus
+      dataPipeError
       createDatetime
       state
       unitUuid
@@ -4699,6 +5061,10 @@ export const GetUnitNodesDocument = gql`
         isRewritableInput
         topicName
         lastUpdateDatetime
+        isDataPipeActive
+        dataPipeYml
+        dataPipeStatus
+        dataPipeError
         createDatetime
         state
         unitUuid
@@ -4779,6 +5145,229 @@ export type GetUnitNodesSuspenseQueryHookResult = ReturnType<
 export type GetUnitNodesQueryResult = Apollo.QueryResult<
   GetUnitNodesQuery,
   GetUnitNodesQueryVariables
+>;
+export const CheckDataPipeConfigDocument = gql`
+  query checkDataPipeConfig($file: Upload!) {
+    checkDataPipeConfig(file: $file) {
+      stage
+      message
+    }
+  }
+`;
+
+/**
+ * __useCheckDataPipeConfigQuery__
+ *
+ * To run a query within a React component, call `useCheckDataPipeConfigQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCheckDataPipeConfigQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCheckDataPipeConfigQuery({
+ *   variables: {
+ *      file: // value for 'file'
+ *   },
+ * });
+ */
+export function useCheckDataPipeConfigQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    CheckDataPipeConfigQuery,
+    CheckDataPipeConfigQueryVariables
+  > &
+    (
+      | { variables: CheckDataPipeConfigQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    CheckDataPipeConfigQuery,
+    CheckDataPipeConfigQueryVariables
+  >(CheckDataPipeConfigDocument, options);
+}
+export function useCheckDataPipeConfigLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    CheckDataPipeConfigQuery,
+    CheckDataPipeConfigQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    CheckDataPipeConfigQuery,
+    CheckDataPipeConfigQueryVariables
+  >(CheckDataPipeConfigDocument, options);
+}
+export function useCheckDataPipeConfigSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    CheckDataPipeConfigQuery,
+    CheckDataPipeConfigQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<
+    CheckDataPipeConfigQuery,
+    CheckDataPipeConfigQueryVariables
+  >(CheckDataPipeConfigDocument, options);
+}
+export type CheckDataPipeConfigQueryHookResult = ReturnType<
+  typeof useCheckDataPipeConfigQuery
+>;
+export type CheckDataPipeConfigLazyQueryHookResult = ReturnType<
+  typeof useCheckDataPipeConfigLazyQuery
+>;
+export type CheckDataPipeConfigSuspenseQueryHookResult = ReturnType<
+  typeof useCheckDataPipeConfigSuspenseQuery
+>;
+export type CheckDataPipeConfigQueryResult = Apollo.QueryResult<
+  CheckDataPipeConfigQuery,
+  CheckDataPipeConfigQueryVariables
+>;
+export const GetPipeDataDocument = gql`
+  query getPipeData(
+    $uuid: UUID!
+    $type: ProcessingPolicyType!
+    $searchString: String
+    $aggregationType: [AggregationFunctions!]
+    $timeWindowSize: Int
+    $startAggWindowDatetime: DateTime
+    $endAggWindowDatetime: DateTime
+    $startCreateDatetime: DateTime
+    $endCreateDatetime: DateTime
+    $orderByCreateDate: OrderByDate
+    $offset: Int
+    $limit: Int
+  ) {
+    getPipeData(
+      filters: {
+        uuid: $uuid
+        type: $type
+        searchString: $searchString
+        aggregationType: $aggregationType
+        timeWindowSize: $timeWindowSize
+        startAggWindowDatetime: $startAggWindowDatetime
+        endAggWindowDatetime: $endAggWindowDatetime
+        startCreateDatetime: $startCreateDatetime
+        endCreateDatetime: $endCreateDatetime
+        orderByCreateDate: $orderByCreateDate
+        offset: $offset
+        limit: $limit
+      }
+    ) {
+      count
+      pipeData {
+        __typename
+        ... on NRecordsType {
+          id
+          uuid
+          unitNodeUuid
+          state: state
+          stateType
+          createDatetime
+          maxCount
+          size
+        }
+        ... on TimeWindowType {
+          uuid
+          unitNodeUuid
+          state: state
+          stateType
+          createDatetime
+          expirationDatetime
+          size
+        }
+        ... on AggregationType {
+          uuid
+          unitNodeUuid
+          state_float: state
+          aggregationType
+          timeWindowSize
+          createDatetime
+          startWindowDatetime
+        }
+      }
+    }
+  }
+`;
+
+/**
+ * __useGetPipeDataQuery__
+ *
+ * To run a query within a React component, call `useGetPipeDataQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetPipeDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetPipeDataQuery({
+ *   variables: {
+ *      uuid: // value for 'uuid'
+ *      type: // value for 'type'
+ *      searchString: // value for 'searchString'
+ *      aggregationType: // value for 'aggregationType'
+ *      timeWindowSize: // value for 'timeWindowSize'
+ *      startAggWindowDatetime: // value for 'startAggWindowDatetime'
+ *      endAggWindowDatetime: // value for 'endAggWindowDatetime'
+ *      startCreateDatetime: // value for 'startCreateDatetime'
+ *      endCreateDatetime: // value for 'endCreateDatetime'
+ *      orderByCreateDate: // value for 'orderByCreateDate'
+ *      offset: // value for 'offset'
+ *      limit: // value for 'limit'
+ *   },
+ * });
+ */
+export function useGetPipeDataQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GetPipeDataQuery,
+    GetPipeDataQueryVariables
+  > &
+    (
+      | { variables: GetPipeDataQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetPipeDataQuery, GetPipeDataQueryVariables>(
+    GetPipeDataDocument,
+    options,
+  );
+}
+export function useGetPipeDataLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetPipeDataQuery,
+    GetPipeDataQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetPipeDataQuery, GetPipeDataQueryVariables>(
+    GetPipeDataDocument,
+    options,
+  );
+}
+export function useGetPipeDataSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    GetPipeDataQuery,
+    GetPipeDataQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<GetPipeDataQuery, GetPipeDataQueryVariables>(
+    GetPipeDataDocument,
+    options,
+  );
+}
+export type GetPipeDataQueryHookResult = ReturnType<typeof useGetPipeDataQuery>;
+export type GetPipeDataLazyQueryHookResult = ReturnType<
+  typeof useGetPipeDataLazyQuery
+>;
+export type GetPipeDataSuspenseQueryHookResult = ReturnType<
+  typeof useGetPipeDataSuspenseQuery
+>;
+export type GetPipeDataQueryResult = Apollo.QueryResult<
+  GetPipeDataQuery,
+  GetPipeDataQueryVariables
 >;
 export const GetTokenDocument = gql`
   query getToken($credentials: String!, $password: String!) {

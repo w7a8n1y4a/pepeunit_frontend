@@ -157,6 +157,10 @@ gql`
                     isRewritableInput
                     topicName
                     lastUpdateDatetime
+                    isDataPipeActive
+                    dataPipeYml
+                    dataPipeStatus
+                    dataPipeError
                     createDatetime
                     state
                     unitUuid
@@ -220,6 +224,10 @@ gql`
                     isRewritableInput
                     topicName
                     lastUpdateDatetime
+                    isDataPipeActive
+                    dataPipeYml
+                    dataPipeStatus
+                    dataPipeError
                     createDatetime
                     state
                     unitUuid

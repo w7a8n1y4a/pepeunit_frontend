@@ -5,12 +5,14 @@ gql`
         $uuid: UUID!
         $visibilityLevel: VisibilityLevel
         $isRewritableInput: Boolean
+        $isDataPipeActive: Boolean
     ) {
         updateUnitNode (
             uuid: $uuid
             unitNode: {
                 visibilityLevel: $visibilityLevel
                 isRewritableInput: $isRewritableInput
+                isDataPipeActive: $isDataPipeActive
             }
         ){
             uuid
@@ -19,9 +21,14 @@ gql`
             isRewritableInput
             topicName
             lastUpdateDatetime
+            isDataPipeActive
+            dataPipeYml
+            dataPipeStatus
+            dataPipeError
             createDatetime
             state
             unitUuid
+            creatorUuid
         }
     }
     mutation setStateUnitNodeInput(
@@ -40,9 +47,14 @@ gql`
             isRewritableInput
             topicName
             lastUpdateDatetime
+            isDataPipeActive
+            dataPipeYml
+            dataPipeStatus
+            dataPipeError
             createDatetime
             state
             unitUuid
+            creatorUuid
         }
     }
     mutation createUnitNodeEdge(
@@ -67,6 +79,26 @@ gql`
         deleteUnitNodeEdge (
             inputUuid: $inputUuid
             outputUuid: $outputUuid
+        ){
+            isNone
+        }
+    }
+    mutation setDataPipeConfig(
+        $uuid: UUID!
+        $file: Upload!
+    ) {
+        setDataPipeConfig (
+            uuid: $uuid
+            file: $file
+        ){
+            isNone
+        }
+    }
+    mutation deleteDataPipeData(
+        $uuid: UUID!
+    ) {
+        deleteDataPipeData (
+            uuid: $uuid
         ){
             isNone
         }

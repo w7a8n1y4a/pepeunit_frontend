@@ -13,6 +13,10 @@ gql`
             isRewritableInput
             topicName
             lastUpdateDatetime
+            isDataPipeActive
+            dataPipeYml
+            dataPipeStatus
+            dataPipeError
             createDatetime
             state
             unitUuid
@@ -49,10 +53,90 @@ gql`
                 isRewritableInput
                 topicName
                 lastUpdateDatetime
+                isDataPipeActive
+                dataPipeYml
+                dataPipeStatus
+                dataPipeError
                 createDatetime
                 state
                 unitUuid
                 creatorUuid
+            }
+        }
+    }
+    
+    query checkDataPipeConfig(
+        $file: Upload!
+    ) {
+        checkDataPipeConfig(
+            file: $file
+        ) {
+            stage
+            message
+        }
+    }
+
+    query getPipeData(
+        $uuid: UUID!
+        $type: ProcessingPolicyType!
+        $searchString: String
+        $aggregationType: [AggregationFunctions!]
+        $timeWindowSize: Int
+        $startAggWindowDatetime: DateTime
+        $endAggWindowDatetime: DateTime
+        $startCreateDatetime: DateTime
+        $endCreateDatetime: DateTime
+        $orderByCreateDate: OrderByDate
+        $offset: Int
+        $limit: Int
+    ) {
+        getPipeData(
+            filters: {
+                uuid: $uuid
+                type: $type
+                searchString: $searchString
+                aggregationType: $aggregationType
+                timeWindowSize: $timeWindowSize
+                startAggWindowDatetime: $startAggWindowDatetime
+                endAggWindowDatetime: $endAggWindowDatetime
+                startCreateDatetime: $startCreateDatetime
+                endCreateDatetime: $endCreateDatetime
+                orderByCreateDate: $orderByCreateDate
+                offset: $offset
+                limit: $limit
+            }
+        ) {
+            count
+            pipeData {
+                __typename
+                ... on NRecordsType{
+                    id
+                    uuid
+                    unitNodeUuid
+                    state: state
+                    stateType
+                    createDatetime
+                    maxCount
+                    size
+                }
+                ... on TimeWindowType{
+                    uuid
+                    unitNodeUuid
+                    state: state
+                    stateType
+                    createDatetime
+                    expirationDatetime
+                    size
+                }
+                ... on AggregationType{
+                    uuid
+                    unitNodeUuid
+                    state_float: state
+                    aggregationType
+                    timeWindowSize
+                    createDatetime
+                    startWindowDatetime
+                }
             }
         }
     }
