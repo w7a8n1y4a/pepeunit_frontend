@@ -66,6 +66,9 @@ export default function UnitNodeContent(){
                           </button>
                         )
                       }
+                      <button className="button_core_function" onClick={() => openModal('unitNodeDataPipe')}>
+                        Data Pipeline
+                      </button>
                       <button className="button_open_alter" onClick={() => openModal('unitNodeUpdate')}>
                         Options
                       </button>
@@ -92,7 +95,7 @@ export default function UnitNodeContent(){
         modalName={'Related Output'}
         subName={currentNodeData?.name}
         open={activeModal === 'unitNodeAddOutputToInput'}
-        openModalType={"outputMenu"} 
+        openModalType={stringToFormat(currentNodeData?.type) + "Menu"} 
       >
         {
           currentNodeData && (
@@ -102,10 +105,23 @@ export default function UnitNodeContent(){
       </BaseModal>
 
       <BaseModal
+        modalName={'Data Pipeline ' + currentNodeData?.type}
+        subName={currentNodeData?.name}
+        open={activeModal === 'unitNodeDataPipe'}
+        openModalType={stringToFormat(currentNodeData?.type) + "Menu"} 
+      >
+        {
+          currentNodeData && (
+            <UpdateUnitNodeForm/>
+          )
+        }
+      </BaseModal>
+
+      <BaseModal
         modalName={'Options ' + currentNodeData?.type}
         subName={currentNodeData?.name}
         open={activeModal === 'unitNodeUpdate'}
-        openModalType={"outputMenu"} 
+        openModalType={stringToFormat(currentNodeData?.type) + "Menu"}
       >
         {
           currentNodeData && (
@@ -118,7 +134,7 @@ export default function UnitNodeContent(){
         modalName={'Set State ' + currentNodeData?.type}
         subName={currentNodeData?.name}
         open={activeModal === 'unitNodeSetState'}
-        openModalType={"inputMenu"} 
+        openModalType={stringToFormat(currentNodeData?.type) + "Menu"} 
       >
         {
           currentNodeData && (

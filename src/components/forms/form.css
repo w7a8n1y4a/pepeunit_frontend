@@ -87,7 +87,7 @@ form {
     float: right;
 }
 
-.button_del_alter, .button_add_alter {
+.button_del_alter, .button_add_alter, .button_core_function {
     background-color: transparent;
     border-radius: 10px;
     border: solid 3px;
@@ -116,6 +116,15 @@ form {
     color: #ffffff;
 }
 
+.button_core_function {
+    border: solid 2px #ff8f00;
+    color: #ff8f00;
+}
+
+.button_core_function:hover {
+    background-color: #ff8f00;
+    color: #ffffff;
+}
 
 .button_open_alter:hover {
     border-color: #666;
