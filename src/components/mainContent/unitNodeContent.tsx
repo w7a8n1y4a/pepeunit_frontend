@@ -7,6 +7,7 @@ import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import UpdateUnitNodeForm from '../forms/unitNode/updateUnitNodeForm';
 import UnitNodeSetStateForm from '../forms/unitNode/unitNodeSetStateForm';
 import UnitNodeEdgeForm from '../forms/unitNode/unitNodeEdgeForm'
+import DataPipeForm from '../forms/unitNode/dataPipeForm'
 import PermissionForm from '../forms/permission/permissionForm';
 import useModalHandlers from '@handlers/useModalHandlers';
 import Spinner from '@primitives/spinner'
@@ -112,14 +113,14 @@ export default function UnitNodeContent(){
       </BaseModal>
 
       <BaseModal
-        modalName={'Data Pipeline ' + currentNodeData?.type}
+        modalName={'Data Pipeline'}
         subName={currentNodeData?.name}
         open={activeModal === 'unitNodeDataPipe'}
         openModalType={stringToFormat(currentNodeData?.type) + "Menu"} 
       >
         {
           currentNodeData && (
-            <UpdateUnitNodeForm/>
+            <DataPipeForm/>
           )
         }
       </BaseModal>
