@@ -1,10 +1,11 @@
 import { useResultHandler } from '@handlers/useResultHandler';
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
-import { VisibilityLevel, UnitNodeTypeEnum, useUpdateUnitNodeMutation} from '@rootTypes/compositionFunctions'
+import { useGetDataPipeConfigLazyQuery, useSetDataPipeConfigMutation, useUpdateUnitNodeMutation} from '@rootTypes/compositionFunctions'
 import Spinner from '@primitives/spinner'
 import ResultQuery from '@primitives/resultQuery'
+import createYamlFile from '@src/utils/createYamlFile';
 import YAMLEditor from '../../forms/unitNode/ymlEditorForm';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import '../form.css'
 
 import { useNodeStore } from '@stores/baseStore';
@@ -15,54 +16,63 @@ export default function DataPipeForm() {
     const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
 
     const { currentNodeData, setCurrentNodeData } = useNodeStore();
+    const [yamlData, setYamlData] = useState<string | null>(null);
 
+    const [getDataPipeConfig] = useGetDataPipeConfigLazyQuery();
     const [updateUnitNodeMutation] = useUpdateUnitNodeMutation();
+    const [setDataPipeConfigMutation] = useSetDataPipeConfigMutation();
+
+    useEffect(() => {
+        runAsync(async () => {
+            let result = await getDataPipeConfig({
+                variables: {
+                    uuid: currentNodeData.uuid,
+                }
+            })
+            
+            if (result.data) {
+                setYamlData(result.data.getDataPipeConfig)
+            } else {
+                setYamlData('')
+            }
+        })
+    }, [currentNodeData]);
 
     const handleSetDataPipeConfig = () => {
         runAsync(async () => {
-            let result = await updateUnitNodeMutation({
+            let resultUpdateNode = await updateUnitNodeMutation({
                 variables: {
                     uuid: currentNodeData.uuid,
-                    visibilityLevel: currentNodeData.visibilityLevel,
-                    isRewritableInput: currentNodeData.type == UnitNodeTypeEnum.Input ? currentNodeData.isRewritableInput : null
+                    isDataPipeActive: currentNodeData.isDataPipeActive
                 }
             })
-            if (result.data){
-                handleSuccess("UnitNode success update")
+            console.log(yamlData)
+            if (resultUpdateNode.data?.updateUnitNode.isDataPipeActive){
+
+                setCurrentNodeData({
+                    ...currentNodeData,
+                    isDataPipeActive: resultUpdateNode.data?.updateUnitNode.isDataPipeActive
+                })
+
+                let result = await setDataPipeConfigMutation({
+                    variables: {
+                        uuid: currentNodeData.uuid,
+                        file: createYamlFile(yamlData),
+                    }
+                })
+                if (result.data?.setDataPipeConfig){
+                    handleSuccess("Success Set DataPipe")
+                }
+            } else if (!resultUpdateNode.data?.updateUnitNode.isDataPipeActive) {
+                handleSuccess("Success Deactivate DataPipe")
             }
         })
     };
 
-
-    const [yamlData, setYamlData] = useState(null);
-    const [yamlError, setYamlError] = useState(null);
-
-    const initialYaml = `# Пример YAML-документа
-    person:
-    name: John Doe
-    age: 30
-    address:
-        street: 123 Main St
-        city: Anytown
-        zip: 12345
-    hobbies:
-    - reading
-    - hiking
-    - coding
-    `;
-  const handleYamlChange = (yamlText: string, parsedData: any, error: any) => {
-    if (error) {
-        console.log(yamlError)
-        console.log(yamlData)
-        console.log(yamlText)
-      setYamlError(error);
-      setYamlData(null);
-    } else {
-      setYamlError(null);
-      setYamlData(parsedData);
-      console.log('Valid YAML:', parsedData);
-    }
-  };
+    const handleYamlChange = (ymlText: any) => {
+        console.log(ymlText)
+        setYamlData(ymlText);
+    };
 
     return (
         <>  
@@ -72,48 +82,39 @@ export default function DataPipeForm() {
             <div>
                 <form>
                     {
-                        currentNodeData.type == UnitNodeTypeEnum.Input && (
-                            <div className='toggle_container'>
-                                <label className="toggle">
-                                    <input 
-                                        type="checkbox" 
-                                        checked={ currentNodeData.isRewritableInput }
-                                        onChange={(e) => setCurrentNodeData({
-                                                    ...currentNodeData,
-                                                    isRewritableInput: e.target.checked
-                                                }
-                                            )
-                                        } 
-                                    />
-                                    <span className="slider"></span>
-                                </label>
-                                <div className="toggle_text">
-                                    Available ?
-                                </div>
+                        <div className='toggle_container'>
+                            <label className="toggle">
+                                <input 
+                                    type="checkbox" 
+                                    checked={ currentNodeData.isDataPipeActive }
+                                    onChange={(e) => setCurrentNodeData({
+                                                ...currentNodeData,
+                                                isDataPipeActive: e.target.checked
+                                            }
+                                        )
+                                    } 
+                                />
+                                <span className="slider"></span>
+                            </label>
+                            <div className="toggle_text">
+                                Available ?
                             </div>
-                        )
+                        </div>
                     }
-                    <select id='base_enum' value={currentNodeData.visibilityLevel} onChange={(e) => 
-                            setCurrentNodeData({
-                                ...currentNodeData,
-                                visibilityLevel: e.target.value as VisibilityLevel
-                            })
-                        }
-                    >
-                        <option value={VisibilityLevel.Public}>Public</option>
-                        <option value={VisibilityLevel.Internal}>Internal</option>
-                        <option value={VisibilityLevel.Private}>Private</option>
-                    </select>
                 </form>
             </div>
-             <div style={{ padding: '0px', width: '600px', margin: '0 auto' }}>
-                <YAMLEditor 
-                    initialValue={initialYaml}
-                    onChange={handleYamlChange}
-                />
-                
-            </div>
-            <button className="button_main_action" onClick={handleSetDataPipeConfig}>
+            {
+                currentNodeData.isDataPipeActive && (
+                    <div className="data_pipe_editor">
+                        <YAMLEditor 
+                            initialValue={yamlData}
+                            onChange={handleYamlChange}
+                        />
+                    </div>
+                )
+            }
+
+            <button style={{ marginTop: '20px' }} className="button_main_action" onClick={handleSetDataPipeConfig}>
                 Set Config
             </button>
             <ResultQuery

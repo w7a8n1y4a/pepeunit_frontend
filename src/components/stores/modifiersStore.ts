@@ -116,7 +116,6 @@ export const useButtonHandlers = () => {
 
         if (button.nodeType === currentSearchNodeData.__typename.slice(0, -4)) {
             setCurrentNodeData(currentSearchNodeData);
-            console.log(currentSearchNodeData)
             if (currentSearchNodeData.__typename === 'UnitNodeType'){
                 openModal((currentSearchNodeData.type == UnitNodeTypeEnum.Input ? NodeType.Input : NodeType.Output) + 'Menu')
             } else {

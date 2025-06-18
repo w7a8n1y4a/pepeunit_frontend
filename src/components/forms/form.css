@@ -319,4 +319,17 @@ input:checked+.slider:before {
     font-size: 0.85rem;
     line-height: 1.4;
     color: #aaa;
+}   
+
+.data_pipe_editor {
+    padding: 0px;
+    width: 600px;
+    margin: 0 auto;
+}
+
+.data_pipe_error {
+    color: #ff3c00cc;
+    padding: 8px;
+    background-color: transparent;
+    border-top: 1px solid #ff3c00cc;
 }

@@ -357,6 +357,7 @@ export type Query = {
   getAvailablePlatforms: Array<PlatformType>;
   getBaseMetrics: BaseMetricsType;
   getBranchCommits: Array<CommitType>;
+  getDataPipeConfig: Scalars["String"]["output"];
   getPipeData: PipeDataResultType;
   getRepo: RepoType;
   getRepos: ReposResultType;
@@ -389,6 +390,10 @@ export type QueryGetAvailablePlatformsArgs = {
 
 export type QueryGetBranchCommitsArgs = {
   filters: CommitFilterInput;
+  uuid: Scalars["UUID"]["input"];
+};
+
+export type QueryGetDataPipeConfigArgs = {
   uuid: Scalars["UUID"]["input"];
 };
 
@@ -1788,6 +1793,15 @@ export type GetPipeDataQuery = {
         }
     >;
   };
+};
+
+export type GetDataPipeConfigQueryVariables = Exact<{
+  uuid: Scalars["UUID"]["input"];
+}>;
+
+export type GetDataPipeConfigQuery = {
+  __typename?: "Query";
+  getDataPipeConfig: string;
 };
 
 export type GetTokenQueryVariables = Exact<{
@@ -5368,6 +5382,81 @@ export type GetPipeDataSuspenseQueryHookResult = ReturnType<
 export type GetPipeDataQueryResult = Apollo.QueryResult<
   GetPipeDataQuery,
   GetPipeDataQueryVariables
+>;
+export const GetDataPipeConfigDocument = gql`
+  query getDataPipeConfig($uuid: UUID!) {
+    getDataPipeConfig(uuid: $uuid)
+  }
+`;
+
+/**
+ * __useGetDataPipeConfigQuery__
+ *
+ * To run a query within a React component, call `useGetDataPipeConfigQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetDataPipeConfigQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetDataPipeConfigQuery({
+ *   variables: {
+ *      uuid: // value for 'uuid'
+ *   },
+ * });
+ */
+export function useGetDataPipeConfigQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GetDataPipeConfigQuery,
+    GetDataPipeConfigQueryVariables
+  > &
+    (
+      | { variables: GetDataPipeConfigQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    GetDataPipeConfigQuery,
+    GetDataPipeConfigQueryVariables
+  >(GetDataPipeConfigDocument, options);
+}
+export function useGetDataPipeConfigLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetDataPipeConfigQuery,
+    GetDataPipeConfigQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    GetDataPipeConfigQuery,
+    GetDataPipeConfigQueryVariables
+  >(GetDataPipeConfigDocument, options);
+}
+export function useGetDataPipeConfigSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    GetDataPipeConfigQuery,
+    GetDataPipeConfigQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<
+    GetDataPipeConfigQuery,
+    GetDataPipeConfigQueryVariables
+  >(GetDataPipeConfigDocument, options);
+}
+export type GetDataPipeConfigQueryHookResult = ReturnType<
+  typeof useGetDataPipeConfigQuery
+>;
+export type GetDataPipeConfigLazyQueryHookResult = ReturnType<
+  typeof useGetDataPipeConfigLazyQuery
+>;
+export type GetDataPipeConfigSuspenseQueryHookResult = ReturnType<
+  typeof useGetDataPipeConfigSuspenseQuery
+>;
+export type GetDataPipeConfigQueryResult = Apollo.QueryResult<
+  GetDataPipeConfigQuery,
+  GetDataPipeConfigQueryVariables
 >;
 export const GetTokenDocument = gql`
   query getToken($credentials: String!, $password: String!) {

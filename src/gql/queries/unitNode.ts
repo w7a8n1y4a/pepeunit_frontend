@@ -140,4 +140,12 @@ gql`
             }
         }
     }
+
+    query getDataPipeConfig(
+        $uuid: UUID!
+    ) {
+        getDataPipeConfig (
+            uuid: $uuid
+        )
+    }
 `

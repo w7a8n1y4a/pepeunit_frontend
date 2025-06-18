@@ -1,19 +1,25 @@
 import { useState, useEffect } from 'react';
 import Editor from '@monaco-editor/react';
 import * as YAML from 'yaml';
+import '../form.css'
+
+import { useNodeStore } from '@stores/baseStore';
 
 interface YAMLEditorProps {
-  initialValue?: string | object;
-  onChange?: (yamlText: string, parsedData: any, error?: Error) => void;
+  initialValue?: string | null;
+  onChange: (ymlText: string) => void;
 }
 
 const YAMLEditor = ({
   initialValue = '',
   onChange,
 }: YAMLEditorProps) => {
+
+  const { currentNodeData } = useNodeStore();
+
   const [value, setValue] = useState('');
   const [isValid, setIsValid] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     try {
@@ -22,67 +28,56 @@ const YAMLEditor = ({
         : YAML.stringify(initialValue);
       setValue(parsedValue);
       setIsValid(true);
-      setError('');
+      setError(null);
     } catch (err) {
       setError('Invalid initial YAML value');
       setIsValid(false);
     }
-  }, [initialValue]);
+  }, [currentNodeData, initialValue]);
 
   const handleEditorChange = (newValue: any) => {
     setValue(newValue);
     
     try {
-      console.log(newValue)
-      const parsed = YAML.parse(newValue);
+      YAML.parse(newValue);
       setIsValid(true);
-      setError('');
-      if (onChange) {
-        onChange(newValue, parsed);
-      }
+      setError(null);
     } catch (err) {
-      
       const error = err instanceof Error ? err : new Error(String(err));
       setIsValid(false);
       setError(error.message);
-      if (onChange) {
-        onChange("", newValue, error);
-      }
     }
+
+    onChange(newValue);
   };
 
 
   return (
     <div style={{ width: '100%', position: 'relative' }}>
       <Editor
-        height='500px'
+        height='570px'
         defaultLanguage="yaml"
         value={value}
         onChange={handleEditorChange}
         theme='vs-dark'
         options={{
-          fontSize: 16,                  // Размер шрифта
-          fontFamily: "Consolas, monospace", // Шрифт
-          lineHeight: 20,                 // Высота строки
-          minimap: { enabled: false },    // Отключение мини-карты
-          scrollBeyondLastLine: false,    // Отключение прокрутки после последней строки
-          lineNumbers: "on",             // Номера строк ("on", "off", "relative")
-          wordWrap: "on",                // Перенос строк ("on", "off", "wordWrapColumn")
-          folding: true,                 // Сворачивание блоков кода
-          bracketPairColorization: { enabled: true }, // Подсветка парных скобок
-          autoClosingBrackets: "always", // Автозакрытие скобок
-          autoIndent: "full",            // Автоотступ
-          cursorStyle: "line",           // Стиль курсора ("line", "block", "underline")
-          renderWhitespace: "selection", // Отображение пробелов ("none", "boundary", "selection", "all")
+          fontSize: 16,
+          fontFamily: "Consolas, monospace",
+          lineHeight: 20,
+          minimap: { enabled: false },
+          scrollBeyondLastLine: false,
+          lineNumbers: "on",
+          wordWrap: "on",
+          folding: true,
+          bracketPairColorization: { enabled: true },
+          autoClosingBrackets: "always",
+          autoIndent: "full",
+          cursorStyle: "line",
+          renderWhitespace: "selection",
         }}
       />
       {!isValid && (
-        <div style={{
-          color: 'red',
-          padding: '8px',
-          backgroundColor: '#ffebee',
-          borderTop: '1px solid #ffcdd2',
-        }}>
+        <div className="data_pipe_error">
           YAML Error: {error}
         </div>
       )}
