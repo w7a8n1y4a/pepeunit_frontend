@@ -58,7 +58,7 @@ export default function UnitNodeContent(){
                 }
                 {
                   user.uuid == currentNodeData.creatorUuid && (
-                    <div className='div_statistics'>
+                    <>
                       {
                         currentNodeData.visibilityLevel == VisibilityLevel.Private && (
                           <button className="button_open_alter" onClick={() => openModal('permissionMenu' + nodeType)}>
@@ -66,13 +66,15 @@ export default function UnitNodeContent(){
                           </button>
                         )
                       }
-                      <button className="button_core_function" onClick={() => openModal('unitNodeDataPipe')}>
-                        Data Pipeline
-                      </button>
-                      <button className="button_open_alter" onClick={() => openModal('unitNodeUpdate')}>
-                        Options
-                      </button>
-                    </div>
+                      <div className='div_statistics'>
+                        <button className="button_core_function" onClick={() => openModal('unitNodeDataPipe')}>
+                          Data Pipeline
+                        </button>
+                        <button className="button_open_alter" onClick={() => openModal('unitNodeUpdate')}>
+                          Options
+                        </button>
+                      </div>
+                    </>
                   )
                 }
               </>
@@ -81,7 +83,12 @@ export default function UnitNodeContent(){
         </div>
       </BaseModal>
 
-      <BaseModal modalName={'Permission'} subName={currentNodeData?.name} open={activeModal === 'permissionMenu' + nodeType} openModalType='inputMenu'>
+      <BaseModal
+        modalName={'Permission'}
+        subName={currentNodeData?.name}
+        open={activeModal === 'permissionMenu' + nodeType}
+        openModalType={stringToFormat(currentNodeData?.type) + "Menu"} 
+      >
         {
           currentNodeData && (
             <PermissionForm
