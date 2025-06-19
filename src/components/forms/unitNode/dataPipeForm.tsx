@@ -70,7 +70,6 @@ export default function DataPipeForm() {
     };
 
     const handleYamlChange = (ymlText: any) => {
-        console.log(ymlText)
         setYamlData(ymlText);
     };
 

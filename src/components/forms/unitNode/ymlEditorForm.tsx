@@ -1,5 +1,9 @@
 import { useState, useEffect } from 'react';
 import Editor from '@monaco-editor/react';
+import { useCheckDataPipeConfigLazyQuery } from '@rootTypes/compositionFunctions'
+import { useResultHandler } from '@handlers/useResultHandler';
+import { useAsyncHandler } from '@handlers/useAsyncHandler';
+import createYamlFile from '@src/utils/createYamlFile';
 import * as YAML from 'yaml';
 import '../form.css'
 
@@ -18,39 +22,52 @@ const YAMLEditor = ({
   const { currentNodeData } = useNodeStore();
 
   const [value, setValue] = useState('');
-  const [isValid, setIsValid] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const [validationErrors, setValidationErrors] = useState<Array<{
+    stage: string;
+    message: string;
+  }> | null>(null);
+
+  const { handleError} = useResultHandler();
+  const { runAsync } = useAsyncHandler(handleError);
+
+  const [checkDataPipeConfig] = useCheckDataPipeConfigLazyQuery();
+
   useEffect(() => {
-    try {
-      const parsedValue = typeof initialValue === 'string' 
-        ? initialValue 
-        : YAML.stringify(initialValue);
-      setValue(parsedValue);
-      setIsValid(true);
-      setError(null);
-    } catch (err) {
-      setError('Invalid initial YAML value');
-      setIsValid(false);
-    }
+    setValue(initialValue ? initialValue : '');
   }, [currentNodeData, initialValue]);
+
+  useEffect(() => {
+    runAsync(async () => {
+      let resultCheckPipe = await checkDataPipeConfig({
+          variables: {
+              file: createYamlFile(value),
+          }
+      })
+      if (resultCheckPipe.data?.checkDataPipeConfig){
+        setValidationErrors(resultCheckPipe.data.checkDataPipeConfig);
+      } else {
+        setValidationErrors(null);
+      }
+    })
+  }, [value]);
 
   const handleEditorChange = (newValue: any) => {
     setValue(newValue);
     
     try {
       YAML.parse(newValue);
-      setIsValid(true);
       setError(null);
     } catch (err) {
       const error = err instanceof Error ? err : new Error(String(err));
-      setIsValid(false);
       setError(error.message);
     }
 
     onChange(newValue);
   };
 
+  const hasValidationErrors = error || ( validationErrors && validationErrors.length > 0);
 
   return (
     <div style={{ width: '100%', position: 'relative' }}>
@@ -76,11 +93,24 @@ const YAMLEditor = ({
           renderWhitespace: "selection",
         }}
       />
-      {!isValid && (
-        <div className="data_pipe_error">
-          YAML Error: {error}
-        </div>
-      )}
+
+      {
+        hasValidationErrors && (
+          <div className="data_pipe_error">
+            {
+              error && (
+                <div>YAML Syntax Error: {error}</div>
+              )
+            }
+            {validationErrors && validationErrors.map((err, index) => (
+              <div key={index}>
+                {err.stage.toLowerCase()}: {err.message}
+              </div>
+            ))}
+          </div>
+        )
+      }
+
     </div>
   );
 };
