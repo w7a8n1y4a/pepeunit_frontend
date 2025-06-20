@@ -1,4 +1,3 @@
-import { useResultHandler } from '@handlers/useResultHandler';
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import { VisibilityLevel, useGetBranchCommitsLazyQuery, useUpdateUnitMutation, useGetRepoLazyQuery, RepoType, useGetAvailablePlatformsLazyQuery } from '@rootTypes/compositionFunctions'
 import { useState, useEffect } from 'react';
@@ -6,15 +5,15 @@ import { getCommitSummary } from '@utils/getCommitSummary';
 import isValidLogin from '@utils/isValidLogin'
 import DefaultInput from '@primitives/defaultInput'
 import Spinner from '@primitives/spinner'
-import ResultQuery from '@primitives/resultQuery'
 import '../form.css'
 
 import { useNodeStore } from '@stores/baseStore';
+import { useErrorStore } from '@stores/errorStore';
 
 
 export default function UpdateUnitForm() {
-    const { resultData, setResultData, handleError, handleSuccess } = useResultHandler();
-    const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
+    const { setHappy } = useErrorStore();
+    const { isLoaderActive, runAsync } = useAsyncHandler();
 
     const { currentNodeData, setCurrentNodeData } = useNodeStore();
     const [ currentRepoData, setCurrentRepoData ] = useState<RepoType | null>(null);
@@ -105,7 +104,7 @@ export default function UpdateUnitForm() {
                 variables: currentNodeData
             })
             if (updateUnitData.data){
-                handleSuccess("Unit success update")
+                setHappy("Unit success update")
             }
         })
     };
@@ -137,7 +136,6 @@ export default function UpdateUnitForm() {
                     )}
                         validateFunc={isValidLogin}
                         setIsErrorExist={(hasError) => updateErrorState('name', hasError)}
-                        setResultData={setResultData}
                     />
                     <select id='base_enum' value={currentNodeData.visibilityLevel} onChange={(e) => 
                             setCurrentNodeData({
@@ -264,9 +262,6 @@ export default function UpdateUnitForm() {
             <button className="button_main_action" onClick={handleUpdateUnit} disabled={Object.values(errorState).some(isError => isError)}>
                 Update
             </button>
-            <ResultQuery
-                resultData={resultData}
-            />
         </>
     );
 }

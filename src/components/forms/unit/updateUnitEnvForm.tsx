@@ -1,17 +1,16 @@
-import { useResultHandler } from '@handlers/useResultHandler';
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import { useGetUnitEnvLazyQuery, useUpdateUnitEnvMutation } from '@rootTypes/compositionFunctions'
 import { useState, useEffect } from 'react';
 import Spinner from '@primitives/spinner'
-import ResultQuery from '@primitives/resultQuery'
 import '../form.css'
 
 import { useNodeStore } from '@stores/baseStore';
+import { useErrorStore } from '@stores/errorStore';
 
 
 export default function UpdateUnitEnvForm() {
-    const { resultData, handleError, handleSuccess } = useResultHandler();
-    const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
+    const { setHappy } = useErrorStore();
+    const { isLoaderActive, runAsync } = useAsyncHandler();
 
     const { currentNodeData } = useNodeStore();
 
@@ -29,7 +28,7 @@ export default function UpdateUnitEnvForm() {
                 }
             })
             if (result.data){
-                handleSuccess("ENV success update")
+                setHappy("ENV success update")
 
                 let resultUnitEnv = await getUnitEnv({
                     variables: {
@@ -54,7 +53,6 @@ export default function UpdateUnitEnvForm() {
                 setCurrentUnitEnv(JSON.parse(result.data.getUnitEnv))
             }else{
                 setCurrentUnitEnv(null)
-                handleError(result)
             }
         })
     }, [currentNodeData]);
@@ -99,9 +97,6 @@ export default function UpdateUnitEnvForm() {
                     </button>
                 </>
             }
-            <ResultQuery
-                resultData={resultData}
-            />
         </>
     );
 }

@@ -1,19 +1,18 @@
-import { useResultHandler } from '@handlers/useResultHandler';
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import { useBulkUpdateMutation, useGetBaseMetricsLazyQuery, BaseMetricsType, UserRole } from '@rootTypes/compositionFunctions'
 import BaseModal from '../modal/baseModal'
 import { useState, useEffect } from 'react';
 import Spinner from '@primitives/spinner'
-import ResultQuery from '@primitives/resultQuery'
 
 import { useModalStore, useNodeStore } from '@stores/baseStore';
 import { useUserStore } from '@stores/userStore';
+import { useErrorStore } from '@stores/errorStore';
 import useModalHandlers from '@handlers/useModalHandlers';
 
 
 export default function DomainContent(){
-  const { resultData, handleError, handleSuccess } = useResultHandler();
-  const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
+  const { setHappy } = useErrorStore();
+  const { isLoaderActive, runAsync } = useAsyncHandler();
 
   const { activeModal } = useModalStore();
   const { currentNodeData } = useNodeStore();
@@ -38,7 +37,7 @@ export default function DomainContent(){
     runAsync(async () => {
       let result = await bulkUpdate()
       if (result.data){
-        handleSuccess("Unit and Repo update query send")
+        setHappy("Unit and Repo update query send")
       }
     })
   };
@@ -71,9 +70,6 @@ export default function DomainContent(){
               </>
             )
           }
-          <ResultQuery
-            resultData={resultData}
-          />
         </div>
       </BaseModal>
       <BaseModal modalName='Statistics' subName={currentNodeData?.name} open={activeModal === 'statistics'} openModalType='DomainMenu'>

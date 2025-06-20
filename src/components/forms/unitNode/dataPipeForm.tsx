@@ -1,19 +1,18 @@
-import { useResultHandler } from '@handlers/useResultHandler';
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import { useGetDataPipeConfigLazyQuery, useSetDataPipeConfigMutation, useUpdateUnitNodeMutation} from '@rootTypes/compositionFunctions'
 import Spinner from '@primitives/spinner'
-import ResultQuery from '@primitives/resultQuery'
 import createYamlFile from '@src/utils/createYamlFile';
 import YAMLEditor from '../../forms/unitNode/ymlEditorForm';
 import { useState, useEffect } from 'react';
 import '../form.css'
 
 import { useNodeStore } from '@stores/baseStore';
+import { useErrorStore } from '@stores/errorStore';
 
 
 export default function DataPipeForm() {
-    const { resultData, handleError, handleSuccess } = useResultHandler();
-    const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
+    const { setHappy } = useErrorStore();
+    const { isLoaderActive, runAsync } = useAsyncHandler();
 
     const { currentNodeData, setCurrentNodeData } = useNodeStore();
     const [yamlData, setYamlData] = useState<string | null>(null);
@@ -61,10 +60,10 @@ export default function DataPipeForm() {
                     }
                 })
                 if (result.data?.setDataPipeConfig){
-                    handleSuccess("Success Set DataPipe")
+                    setHappy("Success Set DataPipe")
                 }
             } else if (!resultUpdateNode.data?.updateUnitNode.isDataPipeActive) {
-                handleSuccess("Success Deactivate DataPipe")
+                setHappy("Success Deactivate DataPipe")
             }
         })
     };
@@ -116,9 +115,6 @@ export default function DataPipeForm() {
             <button style={{ marginTop: '20px' }} className="button_main_action" onClick={handleSetDataPipeConfig}>
                 Set Config
             </button>
-            <ResultQuery
-                resultData={resultData}
-            />
         </>
     );
 }

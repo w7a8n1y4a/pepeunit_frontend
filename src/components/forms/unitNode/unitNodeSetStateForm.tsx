@@ -1,20 +1,18 @@
-import { ResultType } from '@rootTypes/resultEnum'
-import { useResultHandler } from '@handlers/useResultHandler';
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import { useSetStateUnitNodeInputMutation, } from '@rootTypes/compositionFunctions'
 import { useState } from 'react';
 import isValidString from '@utils/isValidString'
 import DefaultInput from '@primitives/defaultInput'
 import Spinner from '@primitives/spinner'
-import ResultQuery from '@primitives/resultQuery'
 import '../form.css'
 
 import { useNodeStore } from '@stores/baseStore';
+import { useErrorStore } from '@stores/errorStore';
 
 
 export default function UnitNodeSetStateForm() {
-    const { resultData, setResultData, handleError, handleSuccess } = useResultHandler();
-    const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
+    const { setHappy } = useErrorStore();
+    const { isLoaderActive, runAsync } = useAsyncHandler();
 
     const { currentNodeData, setCurrentNodeData } = useNodeStore();
 
@@ -33,7 +31,7 @@ export default function UnitNodeSetStateForm() {
                 }
             })
             if (result.data){
-                handleSuccess("State UnitNode success update")
+                setHappy("State UnitNode success update")
             }
         })
     };
@@ -50,16 +48,6 @@ export default function UnitNodeSetStateForm() {
             {
                 isLoaderActive && (<Spinner/>)
             }
-            {
-                currentNodeData.defaultBranch === null && (
-                    <ResultQuery
-                        resultData={{
-                            type: ResultType.Angry,
-                            message: 'Fill in the default branch'
-                        }}
-                    />
-                )
-            }
             <div>
                 <form>
                     <DefaultInput
@@ -75,16 +63,12 @@ export default function UnitNodeSetStateForm() {
                         )}
                         validateFunc={isValidString}
                         setIsErrorExist={(hasError) => updateErrorState('name', hasError)}
-                        setResultData={setResultData}
                     />
                 </form>
             </div>
             <button className="button_main_action" onClick={handleUnitNodeSetState} disabled={Object.values(errorState).some(isError => isError)}>
                 Update
             </button>
-            <ResultQuery
-                resultData={resultData}
-            />
         </>
     );
 }

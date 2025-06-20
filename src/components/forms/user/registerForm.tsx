@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useResultHandler } from '@handlers/useResultHandler';
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import { useCreateUserMutation, useGetTokenLazyQuery } from '@rootTypes/compositionFunctions';
 import isValidPassword from '@utils/isValidPassword'
@@ -7,7 +6,6 @@ import isValidLogin from '@utils/isValidLogin'
 import isValidMatchPassword from '@utils/isValidMatchPassword'
 import DefaultInput from '@primitives/defaultInput'
 import Spinner from '@primitives/spinner'
-import ResultQuery from '@primitives/resultQuery'
 import '../form.css'
 
 import { useModalStore } from '@stores/baseStore';
@@ -19,8 +17,7 @@ interface RegisterFormProps {
 }
 
 export default function RegisterForm({ openModalSignIn }: RegisterFormProps) {
-    const { resultData, setResultData, handleError } = useResultHandler();
-    const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
+    const { isLoaderActive, runAsync } = useAsyncHandler();
 
     const { setActiveModal } = useModalStore();
     const { setUser } = useUserStore();
@@ -87,7 +84,6 @@ export default function RegisterForm({ openModalSignIn }: RegisterFormProps) {
                     onChange={setLogin}
                     validateFunc={isValidLogin}
                     setIsErrorExist={(hasError) => updateErrorState('login', hasError)}
-                    setResultData={setResultData}
                 />
                 <DefaultInput
                     id="password_reg"
@@ -98,7 +94,6 @@ export default function RegisterForm({ openModalSignIn }: RegisterFormProps) {
                     onChange={setPassword}
                     validateFunc={isValidPassword}
                     setIsErrorExist={(hasError) => updateErrorState('password', hasError)}
-                    setResultData={setResultData}
                 />
                 <DefaultInput
                     id="confirm_password_reg"
@@ -109,7 +104,6 @@ export default function RegisterForm({ openModalSignIn }: RegisterFormProps) {
                     onChange={setConfirmPassword}
                     validateFunc={isValidMatchPassword}
                     setIsErrorExist={(hasError) => updateErrorState('confirmPassword', hasError)}
-                    setResultData={setResultData}
                 />
             </form>
             <button className="button_main_action" onClick={handleRegister} disabled={Object.values(errorState).some(isError => isError)}>
@@ -118,9 +112,6 @@ export default function RegisterForm({ openModalSignIn }: RegisterFormProps) {
             <button className="button_open_alter_auth" onClick={openModalSignIn}>
                 Authorization
             </button>
-            <ResultQuery
-                resultData={resultData}
-            />
         </>
     );
 }

@@ -1,4 +1,3 @@
-import { useResultHandler } from '@handlers/useResultHandler';
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import BaseModal from '../modal/baseModal'
 import logo from '/images/logo_32_32.png'
@@ -11,7 +10,6 @@ import ChangeLoginForm from '../forms/user/changeLoginForm';
 import ChangePassForm from '../forms/user/changePassForm';
 import RightMenu from '../rightMenu/rightMenu';
 import Spinner from '@primitives/spinner'
-import ResultQuery from '@primitives/resultQuery'
 import { UserRole, useBlockUserMutation, useUnblockUserMutation } from '@rootTypes/compositionFunctions'
 import './header.css'
 import { useState, useCallback, useReducer, useEffect } from 'react';
@@ -19,11 +17,12 @@ import { useState, useCallback, useReducer, useEffect } from 'react';
 import { useModalStore, useNodeStore } from '@stores/baseStore';
 import useModalHandlers from '@handlers/useModalHandlers';
 import { useUserStore } from '@stores/userStore';
+import { useErrorStore } from '@stores/errorStore';
 import SearchMenu from '../searchMenu/searchMenu';
 
 export default function Header(){
-    const { resultData, handleError, handleSuccess } = useResultHandler();
-    const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
+    const { setHappy } = useErrorStore();
+    const { isLoaderActive, runAsync } = useAsyncHandler();
 
     const { activeModal } = useModalStore();
     const { openModal, closeModal } = useModalHandlers();
@@ -55,7 +54,7 @@ export default function Header(){
                 }
             })
             if (result.data){
-                handleSuccess("User " + currentNodeData.login + " success blocked")
+                setHappy("User " + currentNodeData.login + " success blocked")
             }
         })
     };
@@ -68,7 +67,7 @@ export default function Header(){
                 }
             })
             if (result.data){
-                handleSuccess("User " + currentNodeData.login + " success unblocked")
+                setHappy("User " + currentNodeData.login + " success unblocked")
             }
         })
     };
@@ -173,9 +172,6 @@ export default function Header(){
                                 </>
                             )
                         }
-                        <ResultQuery
-                            resultData={resultData}
-                        />
                     </div>
                 </BaseModal>
                 <BaseModal

@@ -1,6 +1,5 @@
 import { NodeType } from '@rootTypes/nodeTypeEnum'
 import { getNodeColor } from '@utils/getNodeColor'
-import { useResultHandler } from '@handlers/useResultHandler';
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -37,8 +36,7 @@ interface GraphContentProps {
 }
 
 export default function GraphContent({routerType, routerUuid}: GraphContentProps){
-  const { handleError } = useResultHandler();
-  const { runAsync } = useAsyncHandler(handleError);
+  const { runAsync } = useAsyncHandler();
 
   const { user } = useUserStore();
 

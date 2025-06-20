@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import Editor from '@monaco-editor/react';
 import { useCheckDataPipeConfigLazyQuery } from '@rootTypes/compositionFunctions'
-import { useResultHandler } from '@handlers/useResultHandler';
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import createYamlFile from '@src/utils/createYamlFile';
 import * as YAML from 'yaml';
@@ -29,8 +28,7 @@ const YAMLEditor = ({
     message: string;
   }> | null>(null);
 
-  const { handleError} = useResultHandler();
-  const { runAsync } = useAsyncHandler(handleError);
+  const { runAsync } = useAsyncHandler();
 
   const [checkDataPipeConfig] = useCheckDataPipeConfigLazyQuery();
 

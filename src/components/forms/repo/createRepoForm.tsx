@@ -1,5 +1,4 @@
 import { NodeType } from '@rootTypes/nodeTypeEnum'
-import { useResultHandler } from '@handlers/useResultHandler';
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import { getNodeColor } from '@utils/getNodeColor'
 import { useCreateRepoMutation, VisibilityLevel, CreateRepoMutationVariables, GitPlatform } from '@rootTypes/compositionFunctions'
@@ -9,15 +8,13 @@ import isValidString from '@utils/isValidString'
 import isValidRepoUrl from '@utils/isValidRepoUrl'
 import DefaultInput from '@primitives/defaultInput'
 import Spinner from '@primitives/spinner'
-import ResultQuery from '@primitives/resultQuery'
 import '../form.css'
 
 import { useGraphStore } from '@stores/graphStore';
 import { useModalStore, useNodeStore } from '@stores/baseStore';
 
 export default function CreateRepoForm() {
-    const { resultData, setResultData, handleError } = useResultHandler();
-    const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
+    const { isLoaderActive, runAsync } = useAsyncHandler();
 
     const { setActiveModal } = useModalStore();
     const { setCurrentNodeData } = useNodeStore();
@@ -113,7 +110,6 @@ export default function CreateRepoForm() {
                         onChange={setRepoName}
                         validateFunc={isValidLogin}
                         setIsErrorExist={(hasError) => updateErrorState('name', hasError)}
-                        setResultData={setResultData}
                     />
                     <DefaultInput
                         id="url_set"
@@ -124,7 +120,6 @@ export default function CreateRepoForm() {
                         onChange={setRepoUrl}
                         validateFunc={isValidRepoUrl}
                         setIsErrorExist={(hasError) => updateErrorState('repoUrl', hasError)}
-                        setResultData={setResultData}
                     />
                     <select id='base_enum' value={gitPlatform} onChange={(e) => {
                         setGitPlatform(e.target.value as GitPlatform); 
@@ -193,7 +188,6 @@ export default function CreateRepoForm() {
                                     onChange={setRepoUsername}
                                     validateFunc={isValidString}
                                     setIsErrorExist={(hasError) => updateErrorState('username', hasError)}
-                                    setResultData={setResultData}
                                 />
                                 <DefaultInput
                                     id="repo_pat_token"
@@ -204,7 +198,6 @@ export default function CreateRepoForm() {
                                     onChange={setPatToken}
                                     validateFunc={isValidString}
                                     setIsErrorExist={(hasError) => updateErrorState('patToken', hasError)}
-                                    setResultData={setResultData}
                                 />
                             </div>
                         )
@@ -214,9 +207,6 @@ export default function CreateRepoForm() {
             <button className="button_main_action" onClick={handleCreateRepo} disabled={Object.values(errorState).some(isError => isError)}>
                 Create
             </button>
-            <ResultQuery
-                resultData={resultData}
-            />
         </>
     );
 }

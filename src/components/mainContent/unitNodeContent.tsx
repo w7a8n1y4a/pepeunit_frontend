@@ -2,7 +2,6 @@ import BaseModal from '../modal/baseModal'
 
 import { UnitNodeTypeEnum, PermissionEntities, VisibilityLevel } from '@rootTypes/compositionFunctions'
 import { useModalStore, useNodeStore } from '@stores/baseStore';
-import { useResultHandler } from '@handlers/useResultHandler';
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import UpdateUnitNodeForm from '../forms/unitNode/updateUnitNodeForm';
 import UnitNodeSetStateForm from '../forms/unitNode/unitNodeSetStateForm';
@@ -19,8 +18,7 @@ export default function UnitNodeContent(){
   const { currentNodeData } = useNodeStore();
   const { openModal } = useModalHandlers();
   const { user } = useUserStore();
-  const { handleError } = useResultHandler();
-  const { isLoaderActive } = useAsyncHandler(handleError);
+  const { isLoaderActive } = useAsyncHandler();
 
   let nodeType = PermissionEntities.UnitNode
 
@@ -103,7 +101,7 @@ export default function UnitNodeContent(){
         modalName={'Related Output'}
         subName={currentNodeData?.name}
         open={activeModal === 'unitNodeAddOutputToInput'}
-        openModalType={stringToFormat(currentNodeData?.type) + "Menu"} 
+        openModalType={"InputMenu"} 
       >
         {
           currentNodeData && (

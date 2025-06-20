@@ -1,4 +1,3 @@
-import { useResultHandler } from '@handlers/useResultHandler';
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import { useState } from 'react';
 import { useUpdateUserMutation } from '@rootTypes/compositionFunctions';
@@ -6,14 +5,15 @@ import isValidPassword from '@utils/isValidPassword'
 import isValidMatchPassword from '@utils/isValidMatchPassword'
 import DefaultInput from '@primitives/defaultInput'
 import Spinner from '@primitives/spinner'
-import ResultQuery from '@primitives/resultQuery'
 import '../form.css'
 
 import { useUserStore } from '@stores/userStore';
+import { useErrorStore } from '@stores/errorStore';
+
 
 export default function ChangePassForm() {
-    const { resultData, setResultData, handleError, handleSuccess } = useResultHandler();
-    const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
+    const { setHappy } = useErrorStore();
+    const { isLoaderActive, runAsync } = useAsyncHandler();
 
     const [password, setPassword] = useState('');']'
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -44,7 +44,7 @@ export default function ChangePassForm() {
             })
             if (result.data) { 
                 setUser(result.data.updateUser)
-                handleSuccess("Pass success update")
+                setHappy("Pass success update")
             }
         })
     };
@@ -65,7 +65,6 @@ export default function ChangePassForm() {
                         onChange={setPassword}
                         validateFunc={isValidPassword}
                         setIsErrorExist={(hasError) => updateErrorState('password', hasError)}
-                        setResultData={setResultData}
                     />
                     <DefaultInput
                         id="confirm_password_new_reg"
@@ -76,16 +75,12 @@ export default function ChangePassForm() {
                         onChange={setConfirmPassword}
                         validateFunc={isValidMatchPassword}
                         setIsErrorExist={(hasError) => updateErrorState('confirmPassword', hasError)}
-                        setResultData={setResultData}
                     />
                 </form>
             </div>
             <button className="button_main_action" onClick={handleChangeLogin} disabled={Object.values(errorState).some(isError => isError)}>
                 Change
             </button>
-            <ResultQuery
-                resultData={resultData}
-            />
         </>
     );
 }

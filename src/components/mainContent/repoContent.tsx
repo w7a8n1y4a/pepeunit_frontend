@@ -1,4 +1,3 @@
-import { useResultHandler } from '@handlers/useResultHandler';
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import { useUpdateLocalRepoMutation, PermissionEntities, useUpdateUnitsFirmwareMutation, useDeleteRepoMutation, useGetVersionsLazyQuery, VisibilityLevel } from '@rootTypes/compositionFunctions'
 import BaseModal from '../modal/baseModal'
@@ -8,7 +7,6 @@ import PermissionForm from '../forms/permission/permissionForm';
 import UpdateRepoCredentialsForm from '../forms/repo/updateRepoCredentialsForm'
 import { useState, useEffect } from 'react';
 import Spinner from '@primitives/spinner'
-import ResultQuery from '@primitives/resultQuery'
 import VersionChart from '@primitives/versionChart'
 import {stringToFormat} from '@utils/stringToFormat'
 
@@ -18,6 +16,7 @@ import copy_img from '/images/copy.svg'
 import { useGraphStore } from '@stores/graphStore';
 import { useModalStore, useNodeStore } from '@stores/baseStore';
 import { useUserStore } from '@stores/userStore';
+import { useErrorStore } from '@stores/errorStore';
 import useModalHandlers from '@handlers/useModalHandlers';
 
 import {
@@ -26,8 +25,8 @@ import {
 import { NodeType } from '@src/rootTypes/nodeTypeEnum';
 
 export default function RepoContent(){
-  const { resultData, handleError, handleSuccess } = useResultHandler();
-  const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
+  const { setHappy } = useErrorStore();
+  const { isLoaderActive, runAsync } = useAsyncHandler();
 
   const { activeModal, setActiveModal } = useModalStore();
   const { currentNodeData } = useNodeStore();
@@ -54,7 +53,7 @@ export default function RepoContent(){
           }
         })
         if (result.data){
-          handleSuccess("Git Repo update request send")
+          setHappy("Git Repo update request send")
         }
       }
     })
@@ -71,7 +70,7 @@ export default function RepoContent(){
           }
         )
         if (result.data){
-          handleSuccess("Unit`s update query send")
+          setHappy("Unit`s update query send")
         }
       }
     })
@@ -90,7 +89,7 @@ export default function RepoContent(){
         if (result.data){
           setActiveModal(null)
           removeNodesAndLinks(currentNodeData.uuid)
-          handleSuccess("Repo success update")
+          setHappy("Repo success update")
         }
       }
     })
@@ -173,9 +172,6 @@ return (
               </>
             )
           }
-          <ResultQuery
-            resultData={resultData}
-          />
         </div>
       </BaseModal>
       <BaseModal
@@ -222,9 +218,6 @@ return (
           <button className="button_del_alter" onClick={handleDeleteRepo}>
             Delete Repo
           </button>
-          <ResultQuery
-            resultData={resultData}
-          />
         </div>
       </BaseModal>
       <BaseModal

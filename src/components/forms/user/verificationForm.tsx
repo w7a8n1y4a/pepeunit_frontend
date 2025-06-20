@@ -1,14 +1,11 @@
 import { useState } from 'react';
-import { useResultHandler } from '@handlers/useResultHandler';
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
-import ResultQuery from '@primitives/resultQuery'
 import { useGetVerificationUserLazyQuery } from '@rootTypes/compositionFunctions';
 import Spinner from '@primitives/spinner'
 import '../form.css'
 
 export default function VerificationForm() {
-    const { resultData, handleError } = useResultHandler();
-    const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
+    const { isLoaderActive, runAsync } = useAsyncHandler();
 
     const [verificationCode, setVerificationCode] = useState('');
     const [getVerification] = useGetVerificationUserLazyQuery();
@@ -38,9 +35,6 @@ export default function VerificationForm() {
             <button className="button_main_action" onClick={handleVerification}>
                 Generate
             </button>
-            <ResultQuery
-                resultData={resultData}
-            />
         </>
     );
 }

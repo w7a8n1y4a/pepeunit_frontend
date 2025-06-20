@@ -1,19 +1,16 @@
-import { useResultHandler } from '@handlers/useResultHandler';
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import { useGetUnitLogsLazyQuery, LogLevel, OrderByDate } from '@rootTypes/compositionFunctions'
 import PaginationControls from '@primitives/pagination';
 import LogLevelSelector from '@primitives/logLevelSelector';
 import { useState, useEffect } from 'react';
 import Spinner from '@primitives/spinner'
-import ResultQuery from '@primitives/resultQuery'
 import '../form.css'
 
 import { useNodeStore } from '@stores/baseStore';
 
 
 export default function LogUnitForm() {
-    const { resultData, handleError } = useResultHandler();
-    const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
+    const { isLoaderActive, runAsync } = useAsyncHandler();
 
     const { currentNodeData } = useNodeStore();
 
@@ -111,9 +108,6 @@ export default function LogUnitForm() {
                 goToNextPage={() => setCurrentPage(prev => prev + 1)}
                 goToPreviousPage={() => setCurrentPage(prev => prev - 1)}
                 inversed={true}
-            />
-            <ResultQuery
-                resultData={resultData}
             />
         </>
     );

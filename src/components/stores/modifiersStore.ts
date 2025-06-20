@@ -13,7 +13,6 @@ import {
 } from '@rootTypes/compositionFunctions'
 import { useSearchNodeStore, useNodeStore } from '@stores/baseStore';
 import { useGraphStore } from '@stores/graphStore';
-import { useResultHandler } from '@handlers/useResultHandler';
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import useModalHandlers from '@handlers/useModalHandlers';
 
@@ -75,8 +74,7 @@ export const useButtonHandlers = () => {
     const { setCurrentNodeData } = useNodeStore();
     const { currentSearchNodeData } = useSearchNodeStore();
     const { graphData, setGraphData, removeNodesByTypes, getNodesByType } = useGraphStore();
-    const { handleError } = useResultHandler();
-    const { runAsync } = useAsyncHandler(handleError);
+    const { runAsync } = useAsyncHandler();
 
     const [getUsers] = useGetUsersLazyQuery();
     const [getRepos] = useGetReposLazyQuery();

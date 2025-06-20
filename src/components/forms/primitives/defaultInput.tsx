@@ -1,6 +1,7 @@
 import attention_img from '/images/attention.svg'
 import { RefObject, useState, useEffect, useRef } from 'react';
-import { ResultType } from '@rootTypes/resultEnum'
+
+import { useErrorStore } from '@stores/errorStore';
 
 import './primitives.css'
 
@@ -14,13 +15,14 @@ interface DefaultInputProps {
     onChange: (value: string) => void;
     validateFunc: (value: any) => string | null;
     setIsErrorExist: (value: boolean) => void
-    setResultData: (value: { type: ResultType; message: string | null }) => void;
 }
 
-export default function DefaultInput({id, type, inputRef, placeholder, value, validateState, onChange, validateFunc, setIsErrorExist, setResultData}: DefaultInputProps) {
+export default function DefaultInput({id, type, inputRef, placeholder, value, validateState, onChange, validateFunc, setIsErrorExist}: DefaultInputProps) {
     const [isValid, setIsValid] = useState(true);
     const [errorMessage, setErrorMessage] = useState<null | string>(null);
     const firstRender = useRef(true);
+
+    const { clearError } = useErrorStore();
 
     useEffect(() => {
         const validation = validateFunc(validateState);
@@ -46,7 +48,7 @@ export default function DefaultInput({id, type, inputRef, placeholder, value, va
                 value={value}
                 onChange={(e) => {
                     onChange(e.target.value)
-                    setResultData({message: null, type: ResultType.Happy})
+                    clearError()
                 }}
             />
             {

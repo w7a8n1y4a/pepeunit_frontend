@@ -5,12 +5,10 @@ import {
     useGetResourceAgentsLazyQuery,
     GetUnitsWithUnitNodesQuery
  } from '@rootTypes/compositionFunctions';
-import { useResultHandler } from '@handlers/useResultHandler';
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import { useState, useEffect } from 'react';
 import { useModalStore } from '@stores/baseStore';
 import Spinner from '@primitives/spinner';
-import ResultQuery from '@primitives/resultQuery';
 import PaginationControls from '@primitives/pagination';
 import EntityTypeSelector from '@primitives/entityTypeSelector';
 import PermissionCreateForm from '../../forms/permission/permissionCreateFrom';
@@ -19,6 +17,7 @@ import IterationList from '@primitives/iterationList'
 import '../form.css';
 
 import { useNodeStore } from '@stores/baseStore';
+import { useErrorStore } from '@stores/errorStore';
 
 
 interface PermissionFormProps {
@@ -26,8 +25,8 @@ interface PermissionFormProps {
 }
 
 export default function PermissionForm({ currentNodeType }: PermissionFormProps) {
-    const { resultData, handleError, handleSuccess } = useResultHandler();
-    const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
+    const { setHappy } = useErrorStore();
+    const { isLoaderActive, runAsync } = useAsyncHandler();
 
     const { currentNodeData } = useNodeStore();
 
@@ -58,7 +57,7 @@ export default function PermissionForm({ currentNodeType }: PermissionFormProps)
                 })
                 if (result.data) {
                     setRefreshTrigger(!refreshTrigger)
-                    handleSuccess("Permission success delete")
+                    setHappy("Permission success delete")
                 }
             }
         })
@@ -184,10 +183,6 @@ export default function PermissionForm({ currentNodeType }: PermissionFormProps)
                     />
                 )}
             </BaseModal>
-
-            <ResultQuery
-                resultData={resultData}
-            />
         </>
     );
 }

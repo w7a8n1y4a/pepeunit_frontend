@@ -5,7 +5,6 @@ import { useState } from 'react';
 import SearchPrimitives from '@primitives/searchPrimitives';
 import '../form.css';
 import { useUserStore } from '@stores/userStore';
-import { useResultHandler } from '@handlers/useResultHandler';
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
   
 interface SearchFormProps {
@@ -13,8 +12,7 @@ interface SearchFormProps {
 }
 
 export default function SearchForm({ onFocusNode }: SearchFormProps){
-  const { resultData, setResultData, handleError } = useResultHandler();
-  const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
+  const { isLoaderActive, runAsync } = useAsyncHandler();
   
   const [selectedEntityType, setSelectedEntityType] = useState<PermissionEntities>(PermissionEntities.Unit);
   const { user } = useUserStore();
@@ -23,8 +21,6 @@ export default function SearchForm({ onFocusNode }: SearchFormProps){
       <SearchPrimitives
           isLoaderActive={isLoaderActive}
           runAsync={runAsync}
-          resultData={resultData}
-          setResultData={setResultData}
           availableEntities={
               user
               ? [PermissionEntities.Unit, PermissionEntities.Repo, PermissionEntities.User]

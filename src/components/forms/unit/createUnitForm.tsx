@@ -1,6 +1,4 @@
-import { ResultType } from '@rootTypes/resultEnum'
 import { NodeType } from '@rootTypes/nodeTypeEnum'
-import { useResultHandler } from '@handlers/useResultHandler';
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import { getNodeColor } from '@utils/getNodeColor'
 import { useCreateUnitMutation, useGetBranchCommitsLazyQuery, VisibilityLevel, CreateUnitMutationVariables, useGetAvailablePlatformsLazyQuery } from '@rootTypes/compositionFunctions'
@@ -9,18 +7,18 @@ import { getCommitSummary } from '@utils/getCommitSummary';
 import isValidLogin from '@utils/isValidLogin'
 import DefaultInput from '@primitives/defaultInput'
 import Spinner from '@primitives/spinner'
-import ResultQuery from '@primitives/resultQuery'
 import '../form.css'
 
 import { useGraphStore } from '@stores/graphStore';
+import { useErrorStore } from '@stores/errorStore';
 import { useModalStore, useNodeStore } from '@stores/baseStore';
 
 
 export default function CreateUnitForm() {
-    const { resultData, setResultData, handleError } = useResultHandler();
-    const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
+    const { isLoaderActive, runAsync } = useAsyncHandler();
 
-    const { setActiveModal } = useModalStore();
+    const { activeModal, setActiveModal } = useModalStore();
+    const { setAngry, clearError } = useErrorStore();
     const { currentNodeData, setCurrentNodeData } = useNodeStore();
 
     const [repoAvailableCommits, setRepoAvailableCommits] = useState<Array<{
@@ -123,6 +121,7 @@ export default function CreateUnitForm() {
                 })
 
                 if (result.data?.getBranchCommits){
+                    console.log('tests2')
                     setRepoAvailableCommits(result.data.getBranchCommits)
                 }
             })
@@ -146,27 +145,30 @@ export default function CreateUnitForm() {
                 })
                 
                 if (result.data?.getAvailablePlatforms){
+                    console.log('tests3')
                     setRepoAvailablePlatforms(result.data.getAvailablePlatforms)
                 }
             })
         }
     }, [currentNodeData, repoCommit, isAutoUpdateFromRepoUnit]);
 
+    useEffect(() => {
+        if (activeModal == 'createUnit' && isAutoUpdateFromRepoUnit && currentNodeData.defaultBranch === null){
+            console.log('tests')
+            setAngry('Fill in the default branch for Repo - you can\'t make Unit auto-update without it')
+        } else {
+            clearError()
+        }
+    }, [
+        activeModal,
+        isAutoUpdateFromRepoUnit,
+        currentNodeData,
+    ]);
 
     return (
         <>  
             {
                 isLoaderActive && (<Spinner/>)
-            }
-            {
-                isAutoUpdateFromRepoUnit && currentNodeData && currentNodeData.defaultBranch === null && (
-                    <ResultQuery
-                        resultData={{
-                            type: ResultType.Angry,
-                            message: 'Fill in the default branch for Repo - you can\'t make Unit auto-update without it'
-                        }}
-                    />
-                )
             }
             <div>
                 <form>
@@ -179,7 +181,6 @@ export default function CreateUnitForm() {
                         onChange={setRepoName}
                         validateFunc={isValidLogin}
                         setIsErrorExist={(hasError) => updateErrorState('name', hasError)}
-                        setResultData={setResultData}
                     />
                     <select id='base_enum' value={unitVisibilityLevel} onChange={(e) => {
                         setUnitVisibilityLevel(e.target.value as VisibilityLevel); 
@@ -252,29 +253,31 @@ export default function CreateUnitForm() {
                             </div>
                         )
                     }
-                    <select id='base_enum' value={targetPlatform === null ? '' : targetPlatform} onChange={(e) => {
-                            setTargetPlatform(e.target.value)
-                        }}
-                    >   
-                        <option value="" disabled selected>Pick platform</option>
-                        {   
-                            repoAvailablePlatforms?.map(
-                                item => (
-                                    <option value={item.name}>
-                                        {item.name}
-                                    </option>
-                                )
-                            )
-                        }
-                    </select>
+
+                    {
+                        currentNodeData.isCompilableRepo && (
+                            <select id='base_enum' value={targetPlatform === null ? '' : targetPlatform} onChange={(e) => {
+                                    setTargetPlatform(e.target.value)
+                                }}
+                            >   
+                                <option value="" disabled selected>Pick platform</option>
+                                {   
+                                    repoAvailablePlatforms?.map(
+                                        item => (
+                                            <option value={item.name}>
+                                                {item.name}
+                                            </option>
+                                        )
+                                    )
+                                }
+                            </select>
+                        )
+                    }
                 </form>
             </div>
             <button className="button_main_action" onClick={handleCreateUnit} disabled={Object.values(errorState).some(isError => isError)}>
                 Create
             </button>
-            <ResultQuery
-                resultData={resultData}
-            />
         </>
     );
 }

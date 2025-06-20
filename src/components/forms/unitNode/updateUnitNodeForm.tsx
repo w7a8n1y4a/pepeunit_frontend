@@ -1,16 +1,15 @@
-import { useResultHandler } from '@handlers/useResultHandler';
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import { VisibilityLevel, UnitNodeTypeEnum, useUpdateUnitNodeMutation} from '@rootTypes/compositionFunctions'
 import Spinner from '@primitives/spinner'
-import ResultQuery from '@primitives/resultQuery'
 import '../form.css'
 
+import { useErrorStore } from '@stores/errorStore';
 import { useNodeStore } from '@stores/baseStore';
 
 
 export default function UpdateUnitNodeForm() {
-    const { resultData, handleError, handleSuccess } = useResultHandler();
-    const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
+    const { setHappy } = useErrorStore();
+    const { isLoaderActive, runAsync } = useAsyncHandler();
 
     const { currentNodeData, setCurrentNodeData } = useNodeStore();
 
@@ -26,7 +25,7 @@ export default function UpdateUnitNodeForm() {
                 }
             })
             if (result.data){
-                handleSuccess("UnitNode success update")
+                setHappy("UnitNode success update")
             }
         })
     };
@@ -76,9 +75,6 @@ export default function UpdateUnitNodeForm() {
             <button className="button_main_action" onClick={handleUpdateUnitNode}>
                 Update
             </button>
-            <ResultQuery
-                resultData={resultData}
-            />
         </>
     );
 }

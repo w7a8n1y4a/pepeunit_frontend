@@ -1,20 +1,19 @@
-import { useResultHandler } from '@handlers/useResultHandler';
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import { useGetUnitsWithUnitNodesLazyQuery, useCreateUnitNodeEdgeMutation, UnitNodeTypeEnum } from '@rootTypes/compositionFunctions'
 import { useState, useEffect } from 'react'
 import DefaultInput from '@primitives/defaultInput'
 import Spinner from '@primitives/spinner'
-import ResultQuery from '@primitives/resultQuery'
 import PaginationControls from '@primitives/pagination';
 import IterationList from '@primitives/iterationList'
 import '../form.css'
 
 import { useNodeStore } from '@stores/baseStore';
+import { useErrorStore } from '@stores/errorStore';
 
 
 export default function UnitNodeEdgeCreateForm() {
-    const { resultData, setResultData, handleError, handleSuccess } = useResultHandler();
-    const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
+    const { setHappy } = useErrorStore();
+    const { isLoaderActive, runAsync } = useAsyncHandler();
 
     const { currentNodeData } = useNodeStore();
 
@@ -65,7 +64,7 @@ export default function UnitNodeEdgeCreateForm() {
                 }
             })
             if (result.data){
-                handleSuccess("Edge success create")
+                setHappy("Edge success create")
             }
         })
     };
@@ -87,7 +86,6 @@ export default function UnitNodeEdgeCreateForm() {
                     onChange={setSearchString}
                     validateFunc={() => (null)}
                     setIsErrorExist={(hasError) => updateErrorState('searchString', hasError)}
-                    setResultData={setResultData}
                 />
             </form>
 
@@ -103,11 +101,6 @@ export default function UnitNodeEdgeCreateForm() {
                 goToNextPage={() => setCurrentPage(prev => prev + 1)}
                 goToPreviousPage={() => setCurrentPage(prev => prev - 1)}
             />
-
-            <ResultQuery
-                resultData={resultData}
-            />
-            
         </>
     );
 }

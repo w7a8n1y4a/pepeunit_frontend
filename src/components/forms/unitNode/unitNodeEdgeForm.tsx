@@ -1,11 +1,9 @@
 import BaseModal from '../../modal/baseModal';
-import { useResultHandler } from '@handlers/useResultHandler';
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import { useGetUnitsOutputByInputLazyQuery, useDeleteUnitNodeEdgeMutation } from '@rootTypes/compositionFunctions';
 import { useState, useEffect } from 'react';
 import { useModalStore } from '@stores/baseStore';
 import Spinner from '@primitives/spinner';
-import ResultQuery from '@primitives/resultQuery';
 import PaginationControls from '@primitives/pagination';
 import IterationList from '@primitives/iterationList'
 import UnitNodeEdgeCreateForm from '../../forms/unitNode/unitNodeEdgeCreateForm';
@@ -14,8 +12,7 @@ import '../form.css';
 import { useNodeStore } from '@stores/baseStore';
 
 export default function UnitNodeEdgeForm() {
-    const { resultData, handleError } = useResultHandler();
-    const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
+    const { isLoaderActive, runAsync } = useAsyncHandler();
 
     const { currentNodeData } = useNodeStore();
 
@@ -45,7 +42,9 @@ export default function UnitNodeEdgeForm() {
     };
 
     useEffect(() => {
-        fetchNodeOutputs();
+        if (activeModal == "InputMenu"){
+            fetchNodeOutputs();
+        }
     }, [currentNodeData, currentPage, activeModal]);
 
     const handleDeleteEdge = (outputNodeUuid: string) => {
@@ -93,10 +92,6 @@ export default function UnitNodeEdgeForm() {
                     <UnitNodeEdgeCreateForm/>
                 )}
             </BaseModal>
-
-            <ResultQuery
-                resultData={resultData}
-            />
         </>
     );
 }

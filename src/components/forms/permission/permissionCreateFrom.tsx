@@ -2,12 +2,12 @@ import {
     PermissionEntities,
     useCreatePermissionMutation,
  } from '@rootTypes/compositionFunctions';
-import { useResultHandler } from '@handlers/useResultHandler';
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import SearchPrimitives from '@primitives/searchPrimitives';
 import '../form.css';
 
 import { useNodeStore } from '@stores/baseStore';
+import { useErrorStore } from '@stores/errorStore';
 
 
 interface PermissionCreateFormProps {
@@ -17,8 +17,8 @@ interface PermissionCreateFormProps {
 }
 
 export default function PermissionCreateForm({ currentNodeType, selectedEntityType, setSelectedEntityType }: PermissionCreateFormProps) {
-    const { resultData, setResultData, handleError, handleSuccess } = useResultHandler();
-    const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
+    const { setHappy } = useErrorStore();
+    const { isLoaderActive, runAsync } = useAsyncHandler();
 
     const { currentNodeData } = useNodeStore();
 
@@ -35,7 +35,7 @@ export default function PermissionCreateForm({ currentNodeType, selectedEntityTy
                 }
             })
             if (result.data){
-                handleSuccess("Permission success create")
+                setHappy("Permission success create")
             }
         })
     };
@@ -44,8 +44,6 @@ export default function PermissionCreateForm({ currentNodeType, selectedEntityTy
         <SearchPrimitives
             isLoaderActive={isLoaderActive}
             runAsync={runAsync}
-            resultData={resultData}
-            setResultData={setResultData}
             availableEntities={[PermissionEntities.Unit, PermissionEntities.User]}
             selectedEntityType={selectedEntityType}
             setSelectedEntityType={setSelectedEntityType}

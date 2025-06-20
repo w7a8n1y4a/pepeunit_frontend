@@ -1,12 +1,10 @@
 import { ResultType } from '@rootTypes/resultEnum'
 import { NodeType } from '@rootTypes/nodeTypeEnum'
-import { useResultHandler } from '@handlers/useResultHandler';
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import { useDeleteUnitMutation, PermissionEntities, useGetAvailablePlatformsLazyQuery, useGetRepoLazyQuery, RepoType, useSendCommandToInputBaseTopicMutation, BackendTopicCommand, useGetTargetVersionLazyQuery, VisibilityLevel, useGetUnitCurrentSchemaLazyQuery } from '@rootTypes/compositionFunctions'
 import BaseModal from '../modal/baseModal'
 import { useState, useEffect } from 'react';
 import Spinner from '@primitives/spinner'
-import ResultQuery from '@primitives/resultQuery'
 import UnitUpdateState from '@primitives/unitUpdateState'
 import UnitMicroState from '@primitives/unitMicroState'
 import UpdateUnitForm from '../forms/unit/updateUnitForm';
@@ -19,14 +17,15 @@ import copyToClipboard from '@utils/copyToClipboard'
 import { useGraphStore } from '@stores/graphStore';
 import { useModalStore, useNodeStore } from '@stores/baseStore';
 import { useUserStore } from '@stores/userStore';
+import { useErrorStore } from '@stores/errorStore';
 import useModalHandlers from '@handlers/useModalHandlers';
 
 import copy_img from '/images/copy.svg'
 
 
 export default function UnitContent(){
-  const { resultData, setResultData, handleError, handleSuccess } = useResultHandler();
-  const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
+  const { setState, setHappy } = useErrorStore();
+  const { isLoaderActive, runAsync } = useAsyncHandler();
 
   const { activeModal, setActiveModal } = useModalStore();
   const { currentNodeData } = useNodeStore();
@@ -82,7 +81,7 @@ export default function UnitContent(){
         link.click();
       }).catch((error) => {
         error.json().then( function (data: any) {
-            setResultData({ type: ResultType.Angry, message: data.detail})
+            setState(ResultType.Angry, data.detail)
           }
         )
       })
@@ -102,7 +101,7 @@ export default function UnitContent(){
           }
         )
         if (result.data){
-          handleSuccess("MQTT command " + command + " success send")
+          setHappy("MQTT command " + command + " success send")
         }
       }
     })
@@ -315,9 +314,6 @@ export default function UnitContent(){
               </>
             )
           }
-          <ResultQuery
-            resultData={resultData}
-          />
         </div>
       </BaseModal>
       <BaseModal
@@ -357,9 +353,6 @@ export default function UnitContent(){
           <button className="button_del_alter" onClick={handleDeleteUnit}>
             Delete Unit
           </button>
-          <ResultQuery
-            resultData={resultData}
-          />
         </div>
       </BaseModal>
       <BaseModal

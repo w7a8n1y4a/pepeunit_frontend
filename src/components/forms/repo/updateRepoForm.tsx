@@ -1,5 +1,3 @@
-import { ResultType } from '@rootTypes/resultEnum'
-import { useResultHandler } from '@handlers/useResultHandler';
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import { NodeType } from '@rootTypes/nodeTypeEnum'
 import { getNodeColor } from '@utils/getNodeColor'
@@ -9,16 +7,19 @@ import { getCommitSummary } from '@utils/getCommitSummary';
 import isValidLogin from '@utils/isValidLogin'
 import DefaultInput from '@primitives/defaultInput'
 import Spinner from '@primitives/spinner'
-import ResultQuery from '@primitives/resultQuery'
 import '../form.css'
 
 import { useGraphStore } from '@stores/graphStore';
+import { useModalStore } from '@stores/baseStore';
 import { useNodeStore } from '@stores/baseStore';
+import { useErrorStore } from '@stores/errorStore';
 
 
 export default function UpdateRepoForm() {
-    const { resultData, setResultData, handleError, handleSuccess } = useResultHandler();
-    const { isLoaderActive, runAsync } = useAsyncHandler(handleError);
+    const { setHappy, setAngry, clearError } = useErrorStore();
+    const { isLoaderActive, runAsync } = useAsyncHandler();
+
+    const { activeModal } = useModalStore();
 
     const { currentNodeData, setCurrentNodeData } = useNodeStore();
 
@@ -86,7 +87,7 @@ export default function UpdateRepoForm() {
                     links: [...graphData.links, newLink],
                 });
 
-                handleSuccess("Repo success update")
+                setHappy("Repo success update")
             }
 
         })
@@ -99,20 +100,18 @@ export default function UpdateRepoForm() {
         }));
     };
 
+    useEffect(() => {
+        if (activeModal == 'updateRepo' && currentNodeData.defaultBranch === null){
+            setAngry('Fill in the default branch')
+        } else {
+            clearError()
+        }
+    }, [activeModal, currentNodeData]);
+
     return (
         <>  
             {
                 isLoaderActive && (<Spinner/>)
-            }
-            {
-                currentNodeData.defaultBranch === null && (
-                    <ResultQuery
-                        resultData={{
-                            type: ResultType.Angry,
-                            message: 'Fill in the default branch'
-                        }}
-                    />
-                )
             }
             <div>
                 <form>
@@ -129,7 +128,6 @@ export default function UpdateRepoForm() {
                         )}
                         validateFunc={isValidLogin}
                         setIsErrorExist={(hasError) => updateErrorState('name', hasError)}
-                        setResultData={setResultData}
                     />
                     <select id='base_enum' value={currentNodeData.visibilityLevel} onChange={(e) => 
                             setCurrentNodeData({
@@ -254,9 +252,6 @@ export default function UpdateRepoForm() {
             <button className="button_main_action" onClick={handleUpdateRepo} disabled={Object.values(errorState).some(isError => isError)}>
                 Update
             </button>
-            <ResultQuery
-                resultData={resultData}
-            />
         </>
     );
 }

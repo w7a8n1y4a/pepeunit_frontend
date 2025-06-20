@@ -5,7 +5,11 @@ import default_img from '/images/pepe/default.svg'
 
 import './primitives.css'
 
-export default function ResultQuery({ resultData }: { resultData: { type: ResultType; message: string | null }}) {
+import { useErrorStore } from '@stores/errorStore';
+
+export default function ResultQuery() {
+
+    const { error } = useErrorStore();
 
     const imageMap = {
         [ResultType.Happy]: happy_img,
@@ -22,11 +26,11 @@ export default function ResultQuery({ resultData }: { resultData: { type: Result
     return (
         <>
             {
-                resultData.message && (
-                    <div className={classMap[resultData.type]}>
-                        <img src={imageMap[resultData.type]} width="36" height="36" />
-                        <div className={classMap[resultData.type] + "_message"}>
-                            {resultData.message}
+                error.message && (
+                    <div className={classMap[error.type]}>
+                        <img src={imageMap[error.type]} width="36" height="36" />
+                        <div className={classMap[error.type] + "_message"}>
+                            {error.message}
                         </div>
                     </div>
                 )

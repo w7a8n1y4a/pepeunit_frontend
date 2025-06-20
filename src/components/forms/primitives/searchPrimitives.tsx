@@ -2,11 +2,9 @@ import {
     PermissionEntities,
     VisibilityLevel
 } from '@rootTypes/compositionFunctions';
-import { ResultState } from '@handlers/useResultHandler';
 import { useRef, useState, useEffect, useLayoutEffect } from 'react';
 import DefaultInput from '@primitives/defaultInput'
 import Spinner from '@primitives/spinner';
-import ResultQuery from '@primitives/resultQuery';
 import PaginationControls from '@primitives/pagination';
 import IterationList from '@primitives/iterationList'
 import EntityTypeSelector from '@primitives/entityTypeSelector';
@@ -20,8 +18,6 @@ import { useUserStore } from '@stores/userStore';
   interface SearchProps {
     isLoaderActive: boolean
     runAsync: any
-    resultData: ResultState
-    setResultData: React.Dispatch<React.SetStateAction<ResultState>>
     availableEntities: PermissionEntities[]
     selectedEntityType: PermissionEntities
     setSelectedEntityType: (show: PermissionEntities) => void
@@ -29,7 +25,7 @@ import { useUserStore } from '@stores/userStore';
     onFocusNode?: (uuid: string, nodeType: string) => void
   }
 
-  export default function SearchPrimitives({isLoaderActive, runAsync, resultData, setResultData, availableEntities, handleCreatePermission, onFocusNode }: SearchProps){
+  export default function SearchPrimitives({isLoaderActive, runAsync, availableEntities, handleCreatePermission, onFocusNode }: SearchProps){
     const { activeModal } = useModalStore();
 
     const { currentNodeData } = useNodeStore();
@@ -145,7 +141,6 @@ import { useUserStore } from '@stores/userStore';
                 onChange={setSearchString}
                 validateFunc={() => (null)}
                 setIsErrorExist={(hasError) => updateErrorState('searchString', hasError)}
-                setResultData={setResultData}
             />
             {
                 selectedEntityType != PermissionEntities.User && (
@@ -206,10 +201,6 @@ import { useUserStore } from '@stores/userStore';
             totalPages={totalPages}
             goToNextPage={() => setCurrentPage(prev => prev + 1)}
             goToPreviousPage={() => setCurrentPage(prev => prev - 1)}
-        />
-
-        <ResultQuery
-            resultData={resultData}
         />
       </>
     )
