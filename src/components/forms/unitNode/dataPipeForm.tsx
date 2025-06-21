@@ -148,7 +148,7 @@ export default function DataPipeForm() {
                     <div className="data_pipe_editor">
                         <div className="buttons_import_export">
                             <label className="button_add_alter">
-                                Import YML
+                                Import YML Config
                                 <input 
                                     type="file" 
                                     accept=".yaml,.yml" 
@@ -161,7 +161,7 @@ export default function DataPipeForm() {
                                 onClick={handleExportYaml}
                                 disabled={!currentNodeData.isDataPipeActive}
                             >
-                                Export YML
+                                Export YML Config
                             </button>
                         </div>
                         <YAMLEditor 
