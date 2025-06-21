@@ -333,3 +333,9 @@ input:checked+.slider:before {
     background-color: transparent;
     border-top: 1px solid #ff3c00cc;
 }
+
+.buttons_import_export {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
