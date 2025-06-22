@@ -1,5 +1,5 @@
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
-import { useGetDataPipeConfigLazyQuery, useSetDataPipeConfigMutation, useUpdateUnitNodeMutation} from '@rootTypes/compositionFunctions'
+import { useGetDataPipeConfigLazyQuery, useSetDataPipeConfigMutation, useUpdateUnitNodeMutation, useDeleteDataPipeDataMutation} from '@rootTypes/compositionFunctions'
 import Spinner from '@primitives/spinner'
 import createYamlFile from '@src/utils/createYamlFile';
 import YAMLEditor from '../../forms/unitNode/ymlEditorForm';
@@ -11,7 +11,7 @@ import { useErrorStore } from '@stores/errorStore';
 
 
 export default function DataPipeForm() {
-    const { setHappy } = useErrorStore();
+    const { setHappy, setAngry } = useErrorStore();
     const { isLoaderActive, runAsync } = useAsyncHandler();
 
     const { currentNodeData, setCurrentNodeData } = useNodeStore();
@@ -20,6 +20,7 @@ export default function DataPipeForm() {
     const [getDataPipeConfig] = useGetDataPipeConfigLazyQuery();
     const [updateUnitNodeMutation] = useUpdateUnitNodeMutation();
     const [setDataPipeConfigMutation] = useSetDataPipeConfigMutation();
+    const [deleteDataPipeDataMutation] = useDeleteDataPipeDataMutation();
 
     useEffect(() => {
         runAsync(async () => {
@@ -63,8 +64,21 @@ export default function DataPipeForm() {
                 URL.revokeObjectURL(url);
             }
         } catch (error) {
-            console.error('Error exporting YAML:', error);
+            setAngry('Error exporting YAML')
         }
+    };
+
+    const handleDeleteDataPipeData = () => {
+        runAsync(async () => {
+            let result = await deleteDataPipeDataMutation({
+                variables: {
+                    uuid: currentNodeData.uuid
+                }
+            })
+            if (result.data?.deleteDataPipeData){
+                setHappy("Success Delete Pipe Data")
+            }
+        })
     };
 
     const handleSetDataPipeConfig = () => {
@@ -114,6 +128,49 @@ export default function DataPipeForm() {
         setYamlData(ymlText);
     };
 
+    const handleExportCSV = async () => {
+        try {
+            const backendUri = (import.meta.env.VITE_BACKEND_URI || window.env.VITE_BACKEND_URI).replace('graphql', '');
+            const url = `${backendUri}api/v1/unit_nodes/get_data_pipe_data_csv/${currentNodeData.uuid}?is_bot_auth=false`;
+            const token = localStorage.getItem('token');
+
+            if (token) {
+                 const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'accept': 'application/json',
+                        'x-auth-token': token,
+                    },
+                    mode: 'cors'
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || 'Failed to export CSV');
+                }
+
+                const blob = await response.blob();
+                const downloadUrl = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = downloadUrl;
+                link.setAttribute(
+                    'download',
+                    `${currentNodeData.topicName || 'data_pipe'}.csv`
+                );
+                document.body.appendChild(link);
+                link.click();
+                
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(downloadUrl);
+                
+                setHappy('CSV exported successfully');
+            }
+
+        } catch (error) {
+            setAngry(error instanceof Error ? error.message : 'Error exporting CSV');
+        }
+    };
+
     return (
         <>  
             {
@@ -159,15 +216,28 @@ export default function DataPipeForm() {
                             <button 
                                 className="button_add_alter" 
                                 onClick={handleExportYaml}
-                                disabled={!currentNodeData.isDataPipeActive}
                             >
                                 Export YML Config
+                            </button>
+                            <button 
+                                className="button_add_alter" 
+                                onClick={handleExportCSV}
+                            >
+                                Export CSV Data
                             </button>
                         </div>
                         <YAMLEditor 
                             initialValue={yamlData}
                             onChange={handleYamlChange}
                         />
+                        <div className="buttons_import_export">
+                            <button 
+                                className="button_del_alter" 
+                                onClick={handleDeleteDataPipeData}
+                            >
+                                Del Saved Pipe Data
+                            </button>
+                        </div>
                     </div>
                 )
             }
