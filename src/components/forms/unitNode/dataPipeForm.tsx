@@ -230,19 +230,17 @@ export default function DataPipeForm() {
                             initialValue={yamlData}
                             onChange={handleYamlChange}
                         />
-                        <div className="buttons_import_export">
-                            <button 
-                                className="button_del_alter" 
-                                onClick={handleDeleteDataPipeData}
-                            >
-                                Del Saved Pipe Data
-                            </button>
-                        </div>
+                        <button
+                            className="button_del_alter" 
+                            onClick={handleDeleteDataPipeData}
+                        >
+                            Del Saved Pipe Data
+                        </button>
                     </div>
                 )
             }
 
-            <button style={{ marginTop: '20px' }} className="button_main_action" onClick={handleSetDataPipeConfig}>
+            <button className="button_main_action" onClick={handleSetDataPipeConfig}>
                 Set Config
             </button>
         </>

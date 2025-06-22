@@ -68,7 +68,7 @@ const YAMLEditor = ({
   const hasValidationErrors = error || ( validationErrors && validationErrors.length > 0);
 
   return (
-    <div style={{ width: '100%', position: 'relative' }}>
+    <div style={{ width: '100%', position: 'relative', paddingBottom: "10px" }}>
       <Editor
         height='570px'
         defaultLanguage="yaml"
