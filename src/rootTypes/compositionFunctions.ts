@@ -978,6 +978,33 @@ export type DeleteRepoMutation = {
   deleteRepo: { __typename?: "NoneType"; isNone: boolean };
 };
 
+export type CreateRepositoryRegistryMutationVariables = Exact<{
+  platform: GitPlatform;
+  repositoryUrl: Scalars["String"]["input"];
+  isPublicRepository: Scalars["Boolean"]["input"];
+  credentials?: InputMaybe<CredentialsInput>;
+}>;
+
+export type CreateRepositoryRegistryMutation = {
+  __typename?: "Mutation";
+  createRepositoryRegistry: {
+    __typename?: "RepositoryRegistryType";
+    uuid: string;
+    platform: GitPlatform;
+    repositoryUrl: string;
+    isPublicRepository: boolean;
+    releasesData?: string | null;
+    localRepositorySize: number;
+    syncStatus?: RepositoryRegistryStatus | null;
+    syncError?: string | null;
+    syncLastDatetime?: string | null;
+    createDatetime: string;
+    lastUpdateDatetime: string;
+    creatorUuid?: string | null;
+    branches: Array<string>;
+  };
+};
+
 export type SetCredentialsMutationVariables = Exact<{
   uuid: Scalars["UUID"]["input"];
   data: CredentialsInput;
@@ -995,6 +1022,15 @@ export type UpdateLocalRepositoryMutationVariables = Exact<{
 export type UpdateLocalRepositoryMutation = {
   __typename?: "Mutation";
   updateLocalRepository: { __typename?: "NoneType"; isNone: boolean };
+};
+
+export type DeleteRepositoryRegistryMutationVariables = Exact<{
+  uuid: Scalars["UUID"]["input"];
+}>;
+
+export type DeleteRepositoryRegistryMutation = {
+  __typename?: "Mutation";
+  deleteRepositoryRegistry: { __typename?: "NoneType"; isNone: boolean };
 };
 
 export type CreateUnitMutationVariables = Exact<{
@@ -1405,6 +1441,30 @@ export type GetVersionsQuery = {
   };
 };
 
+export type GetRepositoryRegistryQueryVariables = Exact<{
+  uuid: Scalars["UUID"]["input"];
+}>;
+
+export type GetRepositoryRegistryQuery = {
+  __typename?: "Query";
+  getRepositoryRegistry: {
+    __typename?: "RepositoryRegistryType";
+    uuid: string;
+    platform: GitPlatform;
+    repositoryUrl: string;
+    isPublicRepository: boolean;
+    releasesData?: string | null;
+    localRepositorySize: number;
+    syncStatus?: RepositoryRegistryStatus | null;
+    syncError?: string | null;
+    syncLastDatetime?: string | null;
+    createDatetime: string;
+    lastUpdateDatetime: string;
+    creatorUuid?: string | null;
+    branches: Array<string>;
+  };
+};
+
 export type GetBranchCommitsQueryVariables = Exact<{
   uuid: Scalars["UUID"]["input"];
   repoBranch: Scalars["String"]["input"];
@@ -1421,6 +1481,60 @@ export type GetBranchCommitsQuery = {
     summary: string;
     tag?: string | null;
   }>;
+};
+
+export type GetCredentialsQueryVariables = Exact<{
+  uuid: Scalars["UUID"]["input"];
+}>;
+
+export type GetCredentialsQuery = {
+  __typename?: "Query";
+  getCredentials?: {
+    __typename?: "OneRepositoryRegistryCredentialsType";
+    status: CredentialStatus;
+    credentials: {
+      __typename?: "CredentialsType";
+      username: string;
+      patToken: string;
+    };
+  } | null;
+};
+
+export type GetRepositoriesRegistryQueryVariables = Exact<{
+  uuids?: InputMaybe<
+    Array<Scalars["UUID"]["input"]> | Scalars["UUID"]["input"]
+  >;
+  creatorUuid?: InputMaybe<Scalars["UUID"]["input"]>;
+  searchString?: InputMaybe<Scalars["String"]["input"]>;
+  isPublicRepository?: InputMaybe<Scalars["Boolean"]["input"]>;
+  orderByCreateDate?: InputMaybe<OrderByDate>;
+  orderByLastUpdate?: InputMaybe<OrderByDate>;
+  offset?: InputMaybe<Scalars["Int"]["input"]>;
+  limit?: InputMaybe<Scalars["Int"]["input"]>;
+}>;
+
+export type GetRepositoriesRegistryQuery = {
+  __typename?: "Query";
+  getRepositoriesRegistry: {
+    __typename?: "RepositoriesRegistryResultType";
+    count: number;
+    repositoriesRegistry: Array<{
+      __typename?: "RepositoryRegistryType";
+      uuid: string;
+      platform: GitPlatform;
+      repositoryUrl: string;
+      isPublicRepository: boolean;
+      releasesData?: string | null;
+      localRepositorySize: number;
+      syncStatus?: RepositoryRegistryStatus | null;
+      syncError?: string | null;
+      syncLastDatetime?: string | null;
+      createDatetime: string;
+      lastUpdateDatetime: string;
+      creatorUuid?: string | null;
+      branches: Array<string>;
+    }>;
+  };
 };
 
 export type GetUnitQueryVariables = Exact<{
@@ -2347,6 +2461,84 @@ export type DeleteRepoMutationOptions = Apollo.BaseMutationOptions<
   DeleteRepoMutation,
   DeleteRepoMutationVariables
 >;
+export const CreateRepositoryRegistryDocument = gql`
+  mutation createRepositoryRegistry(
+    $platform: GitPlatform!
+    $repositoryUrl: String!
+    $isPublicRepository: Boolean!
+    $credentials: CredentialsInput
+  ) {
+    createRepositoryRegistry(
+      repositoryRegistry: {
+        platform: $platform
+        repositoryUrl: $repositoryUrl
+        isPublicRepository: $isPublicRepository
+        credentials: $credentials
+      }
+    ) {
+      uuid
+      platform
+      repositoryUrl
+      isPublicRepository
+      releasesData
+      localRepositorySize
+      syncStatus
+      syncError
+      syncLastDatetime
+      createDatetime
+      lastUpdateDatetime
+      creatorUuid
+      branches
+    }
+  }
+`;
+export type CreateRepositoryRegistryMutationFn = Apollo.MutationFunction<
+  CreateRepositoryRegistryMutation,
+  CreateRepositoryRegistryMutationVariables
+>;
+
+/**
+ * __useCreateRepositoryRegistryMutation__
+ *
+ * To run a mutation, you first call `useCreateRepositoryRegistryMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateRepositoryRegistryMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createRepositoryRegistryMutation, { data, loading, error }] = useCreateRepositoryRegistryMutation({
+ *   variables: {
+ *      platform: // value for 'platform'
+ *      repositoryUrl: // value for 'repositoryUrl'
+ *      isPublicRepository: // value for 'isPublicRepository'
+ *      credentials: // value for 'credentials'
+ *   },
+ * });
+ */
+export function useCreateRepositoryRegistryMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CreateRepositoryRegistryMutation,
+    CreateRepositoryRegistryMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    CreateRepositoryRegistryMutation,
+    CreateRepositoryRegistryMutationVariables
+  >(CreateRepositoryRegistryDocument, options);
+}
+export type CreateRepositoryRegistryMutationHookResult = ReturnType<
+  typeof useCreateRepositoryRegistryMutation
+>;
+export type CreateRepositoryRegistryMutationResult =
+  Apollo.MutationResult<CreateRepositoryRegistryMutation>;
+export type CreateRepositoryRegistryMutationOptions =
+  Apollo.BaseMutationOptions<
+    CreateRepositoryRegistryMutation,
+    CreateRepositoryRegistryMutationVariables
+  >;
 export const SetCredentialsDocument = gql`
   mutation setCredentials($uuid: UUID!, $data: CredentialsInput!) {
     setCredentials(uuid: $uuid, data: $data) {
@@ -2448,6 +2640,57 @@ export type UpdateLocalRepositoryMutationOptions = Apollo.BaseMutationOptions<
   UpdateLocalRepositoryMutation,
   UpdateLocalRepositoryMutationVariables
 >;
+export const DeleteRepositoryRegistryDocument = gql`
+  mutation deleteRepositoryRegistry($uuid: UUID!) {
+    deleteRepositoryRegistry(uuid: $uuid) {
+      isNone
+    }
+  }
+`;
+export type DeleteRepositoryRegistryMutationFn = Apollo.MutationFunction<
+  DeleteRepositoryRegistryMutation,
+  DeleteRepositoryRegistryMutationVariables
+>;
+
+/**
+ * __useDeleteRepositoryRegistryMutation__
+ *
+ * To run a mutation, you first call `useDeleteRepositoryRegistryMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteRepositoryRegistryMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteRepositoryRegistryMutation, { data, loading, error }] = useDeleteRepositoryRegistryMutation({
+ *   variables: {
+ *      uuid: // value for 'uuid'
+ *   },
+ * });
+ */
+export function useDeleteRepositoryRegistryMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    DeleteRepositoryRegistryMutation,
+    DeleteRepositoryRegistryMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    DeleteRepositoryRegistryMutation,
+    DeleteRepositoryRegistryMutationVariables
+  >(DeleteRepositoryRegistryDocument, options);
+}
+export type DeleteRepositoryRegistryMutationHookResult = ReturnType<
+  typeof useDeleteRepositoryRegistryMutation
+>;
+export type DeleteRepositoryRegistryMutationResult =
+  Apollo.MutationResult<DeleteRepositoryRegistryMutation>;
+export type DeleteRepositoryRegistryMutationOptions =
+  Apollo.BaseMutationOptions<
+    DeleteRepositoryRegistryMutation,
+    DeleteRepositoryRegistryMutationVariables
+  >;
 export const CreateUnitDocument = gql`
   mutation createUnit(
     $repoUuid: UUID!
@@ -3952,6 +4195,95 @@ export type GetVersionsQueryResult = Apollo.QueryResult<
   GetVersionsQuery,
   GetVersionsQueryVariables
 >;
+export const GetRepositoryRegistryDocument = gql`
+  query getRepositoryRegistry($uuid: UUID!) {
+    getRepositoryRegistry(uuid: $uuid) {
+      uuid
+      platform
+      repositoryUrl
+      isPublicRepository
+      releasesData
+      localRepositorySize
+      syncStatus
+      syncError
+      syncLastDatetime
+      createDatetime
+      lastUpdateDatetime
+      creatorUuid
+      branches
+    }
+  }
+`;
+
+/**
+ * __useGetRepositoryRegistryQuery__
+ *
+ * To run a query within a React component, call `useGetRepositoryRegistryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetRepositoryRegistryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetRepositoryRegistryQuery({
+ *   variables: {
+ *      uuid: // value for 'uuid'
+ *   },
+ * });
+ */
+export function useGetRepositoryRegistryQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GetRepositoryRegistryQuery,
+    GetRepositoryRegistryQueryVariables
+  > &
+    (
+      | { variables: GetRepositoryRegistryQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    GetRepositoryRegistryQuery,
+    GetRepositoryRegistryQueryVariables
+  >(GetRepositoryRegistryDocument, options);
+}
+export function useGetRepositoryRegistryLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetRepositoryRegistryQuery,
+    GetRepositoryRegistryQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    GetRepositoryRegistryQuery,
+    GetRepositoryRegistryQueryVariables
+  >(GetRepositoryRegistryDocument, options);
+}
+export function useGetRepositoryRegistrySuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    GetRepositoryRegistryQuery,
+    GetRepositoryRegistryQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<
+    GetRepositoryRegistryQuery,
+    GetRepositoryRegistryQueryVariables
+  >(GetRepositoryRegistryDocument, options);
+}
+export type GetRepositoryRegistryQueryHookResult = ReturnType<
+  typeof useGetRepositoryRegistryQuery
+>;
+export type GetRepositoryRegistryLazyQueryHookResult = ReturnType<
+  typeof useGetRepositoryRegistryLazyQuery
+>;
+export type GetRepositoryRegistrySuspenseQueryHookResult = ReturnType<
+  typeof useGetRepositoryRegistrySuspenseQuery
+>;
+export type GetRepositoryRegistryQueryResult = Apollo.QueryResult<
+  GetRepositoryRegistryQuery,
+  GetRepositoryRegistryQueryVariables
+>;
 export const GetBranchCommitsDocument = gql`
   query getBranchCommits(
     $uuid: UUID!
@@ -4048,6 +4380,202 @@ export type GetBranchCommitsSuspenseQueryHookResult = ReturnType<
 export type GetBranchCommitsQueryResult = Apollo.QueryResult<
   GetBranchCommitsQuery,
   GetBranchCommitsQueryVariables
+>;
+export const GetCredentialsDocument = gql`
+  query getCredentials($uuid: UUID!) {
+    getCredentials(uuid: $uuid) {
+      credentials {
+        username
+        patToken
+      }
+      status
+    }
+  }
+`;
+
+/**
+ * __useGetCredentialsQuery__
+ *
+ * To run a query within a React component, call `useGetCredentialsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCredentialsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetCredentialsQuery({
+ *   variables: {
+ *      uuid: // value for 'uuid'
+ *   },
+ * });
+ */
+export function useGetCredentialsQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GetCredentialsQuery,
+    GetCredentialsQueryVariables
+  > &
+    (
+      | { variables: GetCredentialsQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetCredentialsQuery, GetCredentialsQueryVariables>(
+    GetCredentialsDocument,
+    options,
+  );
+}
+export function useGetCredentialsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetCredentialsQuery,
+    GetCredentialsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetCredentialsQuery, GetCredentialsQueryVariables>(
+    GetCredentialsDocument,
+    options,
+  );
+}
+export function useGetCredentialsSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    GetCredentialsQuery,
+    GetCredentialsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<
+    GetCredentialsQuery,
+    GetCredentialsQueryVariables
+  >(GetCredentialsDocument, options);
+}
+export type GetCredentialsQueryHookResult = ReturnType<
+  typeof useGetCredentialsQuery
+>;
+export type GetCredentialsLazyQueryHookResult = ReturnType<
+  typeof useGetCredentialsLazyQuery
+>;
+export type GetCredentialsSuspenseQueryHookResult = ReturnType<
+  typeof useGetCredentialsSuspenseQuery
+>;
+export type GetCredentialsQueryResult = Apollo.QueryResult<
+  GetCredentialsQuery,
+  GetCredentialsQueryVariables
+>;
+export const GetRepositoriesRegistryDocument = gql`
+  query getRepositoriesRegistry(
+    $uuids: [UUID!]
+    $creatorUuid: UUID
+    $searchString: String
+    $isPublicRepository: Boolean
+    $orderByCreateDate: OrderByDate
+    $orderByLastUpdate: OrderByDate
+    $offset: Int
+    $limit: Int
+  ) {
+    getRepositoriesRegistry(
+      filters: {
+        uuids: $uuids
+        creatorUuid: $creatorUuid
+        searchString: $searchString
+        isPublicRepository: $isPublicRepository
+        orderByCreateDate: $orderByCreateDate
+        orderByLastUpdate: $orderByLastUpdate
+        offset: $offset
+        limit: $limit
+      }
+    ) {
+      count
+      repositoriesRegistry {
+        uuid
+        platform
+        repositoryUrl
+        isPublicRepository
+        releasesData
+        localRepositorySize
+        syncStatus
+        syncError
+        syncLastDatetime
+        createDatetime
+        lastUpdateDatetime
+        creatorUuid
+        branches
+      }
+    }
+  }
+`;
+
+/**
+ * __useGetRepositoriesRegistryQuery__
+ *
+ * To run a query within a React component, call `useGetRepositoriesRegistryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetRepositoriesRegistryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetRepositoriesRegistryQuery({
+ *   variables: {
+ *      uuids: // value for 'uuids'
+ *      creatorUuid: // value for 'creatorUuid'
+ *      searchString: // value for 'searchString'
+ *      isPublicRepository: // value for 'isPublicRepository'
+ *      orderByCreateDate: // value for 'orderByCreateDate'
+ *      orderByLastUpdate: // value for 'orderByLastUpdate'
+ *      offset: // value for 'offset'
+ *      limit: // value for 'limit'
+ *   },
+ * });
+ */
+export function useGetRepositoriesRegistryQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetRepositoriesRegistryQuery,
+    GetRepositoriesRegistryQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    GetRepositoriesRegistryQuery,
+    GetRepositoriesRegistryQueryVariables
+  >(GetRepositoriesRegistryDocument, options);
+}
+export function useGetRepositoriesRegistryLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetRepositoriesRegistryQuery,
+    GetRepositoriesRegistryQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    GetRepositoriesRegistryQuery,
+    GetRepositoriesRegistryQueryVariables
+  >(GetRepositoriesRegistryDocument, options);
+}
+export function useGetRepositoriesRegistrySuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    GetRepositoriesRegistryQuery,
+    GetRepositoriesRegistryQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<
+    GetRepositoriesRegistryQuery,
+    GetRepositoriesRegistryQueryVariables
+  >(GetRepositoriesRegistryDocument, options);
+}
+export type GetRepositoriesRegistryQueryHookResult = ReturnType<
+  typeof useGetRepositoriesRegistryQuery
+>;
+export type GetRepositoriesRegistryLazyQueryHookResult = ReturnType<
+  typeof useGetRepositoriesRegistryLazyQuery
+>;
+export type GetRepositoriesRegistrySuspenseQueryHookResult = ReturnType<
+  typeof useGetRepositoriesRegistrySuspenseQuery
+>;
+export type GetRepositoriesRegistryQueryResult = Apollo.QueryResult<
+  GetRepositoriesRegistryQuery,
+  GetRepositoriesRegistryQueryVariables
 >;
 export const GetUnitDocument = gql`
   query getUnit($uuid: UUID!) {
