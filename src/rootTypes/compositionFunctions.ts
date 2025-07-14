@@ -81,9 +81,21 @@ export type CommitType = {
   tag?: Maybe<Scalars["String"]["output"]>;
 };
 
+export enum CredentialStatus {
+  Error = "ERROR",
+  NotVerified = "NOT_VERIFIED",
+  Valid = "VALID",
+}
+
 export type CredentialsInput = {
   patToken: Scalars["String"]["input"];
   username: Scalars["String"]["input"];
+};
+
+export type CredentialsType = {
+  __typename?: "CredentialsType";
+  patToken: Scalars["String"]["output"];
+  username: Scalars["String"]["output"];
 };
 
 export type DataPipeFilterInput = {
@@ -133,22 +145,24 @@ export type Mutation = {
   bulkUpdate: NoneType;
   createPermission: PermissionType;
   createRepo: RepoType;
+  createRepositoryRegistry: RepositoryRegistryType;
   createUnit: UnitType;
   createUnitNodeEdge: UnitNodeEdgeType;
   createUser: UserType;
   deleteDataPipeData: NoneType;
   deletePermission: NoneType;
   deleteRepo: NoneType;
+  deleteRepositoryRegistry: NoneType;
   deleteUnit: NoneType;
   deleteUnitNodeEdge: NoneType;
   sendCommandToInputBaseTopic: NoneType;
+  setCredentials: NoneType;
   setDataPipeConfig: NoneType;
   setStateStorage: NoneType;
   setStateUnitNodeInput: UnitNodeType;
   unblockUser: NoneType;
-  updateLocalRepo: NoneType;
+  updateLocalRepository: NoneType;
   updateRepo: RepoType;
-  updateRepoCredentials: RepoType;
   updateUnit: UnitType;
   updateUnitEnv: NoneType;
   updateUnitNode: UnitNodeType;
@@ -166,6 +180,10 @@ export type MutationCreatePermissionArgs = {
 
 export type MutationCreateRepoArgs = {
   repo: RepoCreateInput;
+};
+
+export type MutationCreateRepositoryRegistryArgs = {
+  repositoryRegistry: RepositoryRegistryCreateInput;
 };
 
 export type MutationCreateUnitArgs = {
@@ -193,6 +211,10 @@ export type MutationDeleteRepoArgs = {
   uuid: Scalars["UUID"]["input"];
 };
 
+export type MutationDeleteRepositoryRegistryArgs = {
+  uuid: Scalars["UUID"]["input"];
+};
+
 export type MutationDeleteUnitArgs = {
   uuid: Scalars["UUID"]["input"];
 };
@@ -204,6 +226,11 @@ export type MutationDeleteUnitNodeEdgeArgs = {
 
 export type MutationSendCommandToInputBaseTopicArgs = {
   command: BackendTopicCommand;
+  uuid: Scalars["UUID"]["input"];
+};
+
+export type MutationSetCredentialsArgs = {
+  data: CredentialsInput;
   uuid: Scalars["UUID"]["input"];
 };
 
@@ -226,17 +253,12 @@ export type MutationUnblockUserArgs = {
   uuid: Scalars["UUID"]["input"];
 };
 
-export type MutationUpdateLocalRepoArgs = {
+export type MutationUpdateLocalRepositoryArgs = {
   uuid: Scalars["UUID"]["input"];
 };
 
 export type MutationUpdateRepoArgs = {
   repo: RepoUpdateInput;
-  uuid: Scalars["UUID"]["input"];
-};
-
-export type MutationUpdateRepoCredentialsArgs = {
-  data: CredentialsInput;
   uuid: Scalars["UUID"]["input"];
 };
 
@@ -283,6 +305,12 @@ export type NRecordsTypeTimeWindowTypeAggregationType =
 export type NoneType = {
   __typename?: "NoneType";
   isNone: Scalars["Boolean"]["output"];
+};
+
+export type OneRepositoryRegistryCredentialsType = {
+  __typename?: "OneRepositoryRegistryCredentialsType";
+  credentials: CredentialsType;
+  status: CredentialStatus;
 };
 
 export enum OrderByDate {
@@ -357,10 +385,13 @@ export type Query = {
   getAvailablePlatforms: Array<PlatformType>;
   getBaseMetrics: BaseMetricsType;
   getBranchCommits: Array<CommitType>;
+  getCredentials?: Maybe<OneRepositoryRegistryCredentialsType>;
   getDataPipeConfig: Scalars["String"]["output"];
   getPipeData: PipeDataResultType;
   getRepo: RepoType;
   getRepos: ReposResultType;
+  getRepositoriesRegistry: RepositoriesRegistryResultType;
+  getRepositoryRegistry: RepositoryRegistryType;
   getResourceAgents: PermissionsType;
   getStateStorage: Scalars["String"]["output"];
   getTargetVersion: TargetVersionType;
@@ -393,6 +424,10 @@ export type QueryGetBranchCommitsArgs = {
   uuid: Scalars["UUID"]["input"];
 };
 
+export type QueryGetCredentialsArgs = {
+  uuid: Scalars["UUID"]["input"];
+};
+
 export type QueryGetDataPipeConfigArgs = {
   uuid: Scalars["UUID"]["input"];
 };
@@ -407,6 +442,14 @@ export type QueryGetRepoArgs = {
 
 export type QueryGetReposArgs = {
   filters: RepoFilterInput;
+};
+
+export type QueryGetRepositoriesRegistryArgs = {
+  filters: RepositoryRegistryFilterInput;
+};
+
+export type QueryGetRepositoryRegistryArgs = {
+  uuid: Scalars["UUID"]["input"];
 };
 
 export type QueryGetResourceAgentsArgs = {
@@ -466,12 +509,9 @@ export type QueryGetVersionsArgs = {
 };
 
 export type RepoCreateInput = {
-  credentials?: InputMaybe<CredentialsInput>;
   isCompilableRepo: Scalars["Boolean"]["input"];
-  isPublicRepository: Scalars["Boolean"]["input"];
   name: Scalars["String"]["input"];
-  platform: GitPlatform;
-  repoUrl: Scalars["String"]["input"];
+  repositoryRegistryUuid: Scalars["UUID"]["input"];
   visibilityLevel: VisibilityLevel;
 };
 
@@ -479,11 +519,11 @@ export type RepoFilterInput = {
   creatorUuid?: InputMaybe<Scalars["UUID"]["input"]>;
   creatorsUuids?: InputMaybe<Array<Scalars["UUID"]["input"]>>;
   isAutoUpdateRepo?: InputMaybe<Scalars["Boolean"]["input"]>;
-  isPublicRepository?: InputMaybe<Scalars["Boolean"]["input"]>;
   limit?: InputMaybe<Scalars["Int"]["input"]>;
   offset?: InputMaybe<Scalars["Int"]["input"]>;
   orderByCreateDate?: InputMaybe<OrderByDate>;
   orderByLastUpdate?: InputMaybe<OrderByDate>;
+  repositoryRegistryUuid?: InputMaybe<Scalars["UUID"]["input"]>;
   searchString?: InputMaybe<Scalars["String"]["input"]>;
   uuids?: InputMaybe<Array<Scalars["UUID"]["input"]>>;
   visibilityLevel?: InputMaybe<Array<VisibilityLevel>>;
@@ -491,7 +531,6 @@ export type RepoFilterInput = {
 
 export type RepoType = {
   __typename?: "RepoType";
-  branches: Array<Scalars["String"]["output"]>;
   createDatetime: Scalars["DateTime"]["output"];
   creatorUuid: Scalars["UUID"]["output"];
   defaultBranch?: Maybe<Scalars["String"]["output"]>;
@@ -499,11 +538,9 @@ export type RepoType = {
   isAutoUpdateRepo: Scalars["Boolean"]["output"];
   isCompilableRepo: Scalars["Boolean"]["output"];
   isOnlyTagUpdate: Scalars["Boolean"]["output"];
-  isPublicRepository: Scalars["Boolean"]["output"];
   lastUpdateDatetime: Scalars["DateTime"]["output"];
   name: Scalars["String"]["output"];
-  platform: GitPlatform;
-  repoUrl: Scalars["String"]["output"];
+  repositoryRegistryUuid: Scalars["UUID"]["output"];
   uuid: Scalars["UUID"]["output"];
   visibilityLevel: VisibilityLevel;
 };
@@ -535,6 +572,53 @@ export type ReposResultType = {
   __typename?: "ReposResultType";
   count: Scalars["Int"]["output"];
   repos: Array<RepoType>;
+};
+
+export type RepositoriesRegistryResultType = {
+  __typename?: "RepositoriesRegistryResultType";
+  count: Scalars["Int"]["output"];
+  repositoriesRegistry: Array<RepositoryRegistryType>;
+};
+
+export type RepositoryRegistryCreateInput = {
+  credentials?: InputMaybe<CredentialsInput>;
+  isPublicRepository: Scalars["Boolean"]["input"];
+  platform: GitPlatform;
+  repositoryUrl: Scalars["String"]["input"];
+};
+
+export type RepositoryRegistryFilterInput = {
+  creatorUuid?: InputMaybe<Scalars["UUID"]["input"]>;
+  isPublicRepository?: InputMaybe<Scalars["Boolean"]["input"]>;
+  limit?: InputMaybe<Scalars["Int"]["input"]>;
+  offset?: InputMaybe<Scalars["Int"]["input"]>;
+  orderByCreateDate?: InputMaybe<OrderByDate>;
+  orderByLastUpdate?: InputMaybe<OrderByDate>;
+  searchString?: InputMaybe<Scalars["String"]["input"]>;
+  uuids?: InputMaybe<Array<Scalars["UUID"]["input"]>>;
+};
+
+export enum RepositoryRegistryStatus {
+  Error = "ERROR",
+  Processing = "PROCESSING",
+  Updated = "UPDATED",
+}
+
+export type RepositoryRegistryType = {
+  __typename?: "RepositoryRegistryType";
+  branches: Array<Scalars["String"]["output"]>;
+  createDatetime: Scalars["DateTime"]["output"];
+  creatorUuid?: Maybe<Scalars["UUID"]["output"]>;
+  isPublicRepository: Scalars["Boolean"]["output"];
+  lastUpdateDatetime: Scalars["DateTime"]["output"];
+  localRepositorySize: Scalars["Int"]["output"];
+  platform: GitPlatform;
+  releasesData?: Maybe<Scalars["String"]["output"]>;
+  repositoryUrl: Scalars["String"]["output"];
+  syncError?: Maybe<Scalars["String"]["output"]>;
+  syncLastDatetime?: Maybe<Scalars["DateTime"]["output"]>;
+  syncStatus?: Maybe<RepositoryRegistryStatus>;
+  uuid: Scalars["UUID"]["output"];
 };
 
 export type TargetVersionType = {
@@ -814,12 +898,9 @@ export type DeletePermissionMutation = {
 };
 
 export type CreateRepoMutationVariables = Exact<{
+  repositoryRegistryUuid: Scalars["UUID"]["input"];
   visibilityLevel: VisibilityLevel;
   name: Scalars["String"]["input"];
-  repoUrl: Scalars["String"]["input"];
-  platform: GitPlatform;
-  isPublicRepository: Scalars["Boolean"]["input"];
-  credentials?: InputMaybe<CredentialsInput>;
   isCompilableRepo: Scalars["Boolean"]["input"];
 }>;
 
@@ -831,17 +912,14 @@ export type CreateRepoMutation = {
     visibilityLevel: VisibilityLevel;
     name: string;
     createDatetime: string;
-    repoUrl: string;
-    platform: GitPlatform;
-    isPublicRepository: boolean;
     defaultBranch?: string | null;
     isAutoUpdateRepo: boolean;
     defaultCommit?: string | null;
     isOnlyTagUpdate: boolean;
     isCompilableRepo: boolean;
     lastUpdateDatetime: string;
-    branches: Array<string>;
     creatorUuid: string;
+    repositoryRegistryUuid: string;
   };
 };
 
@@ -864,54 +942,15 @@ export type UpdateRepoMutation = {
     visibilityLevel: VisibilityLevel;
     name: string;
     createDatetime: string;
-    repoUrl: string;
-    platform: GitPlatform;
-    isPublicRepository: boolean;
     defaultBranch?: string | null;
     isAutoUpdateRepo: boolean;
     defaultCommit?: string | null;
     isOnlyTagUpdate: boolean;
     isCompilableRepo: boolean;
     lastUpdateDatetime: string;
-    branches: Array<string>;
     creatorUuid: string;
+    repositoryRegistryUuid: string;
   };
-};
-
-export type UpdateRepoCredentialsMutationVariables = Exact<{
-  uuid: Scalars["UUID"]["input"];
-  data: CredentialsInput;
-}>;
-
-export type UpdateRepoCredentialsMutation = {
-  __typename?: "Mutation";
-  updateRepoCredentials: {
-    __typename?: "RepoType";
-    uuid: string;
-    visibilityLevel: VisibilityLevel;
-    name: string;
-    createDatetime: string;
-    repoUrl: string;
-    platform: GitPlatform;
-    isPublicRepository: boolean;
-    defaultBranch?: string | null;
-    isAutoUpdateRepo: boolean;
-    defaultCommit?: string | null;
-    isOnlyTagUpdate: boolean;
-    isCompilableRepo: boolean;
-    lastUpdateDatetime: string;
-    branches: Array<string>;
-    creatorUuid: string;
-  };
-};
-
-export type UpdateLocalRepoMutationVariables = Exact<{
-  uuid: Scalars["UUID"]["input"];
-}>;
-
-export type UpdateLocalRepoMutation = {
-  __typename?: "Mutation";
-  updateLocalRepo: { __typename?: "NoneType"; isNone: boolean };
 };
 
 export type UpdateUnitsFirmwareMutationVariables = Exact<{
@@ -923,6 +962,13 @@ export type UpdateUnitsFirmwareMutation = {
   updateUnitsFirmware: { __typename?: "NoneType"; isNone: boolean };
 };
 
+export type BulkUpdateMutationVariables = Exact<{ [key: string]: never }>;
+
+export type BulkUpdateMutation = {
+  __typename?: "Mutation";
+  bulkUpdate: { __typename?: "NoneType"; isNone: boolean };
+};
+
 export type DeleteRepoMutationVariables = Exact<{
   uuid: Scalars["UUID"]["input"];
 }>;
@@ -932,11 +978,23 @@ export type DeleteRepoMutation = {
   deleteRepo: { __typename?: "NoneType"; isNone: boolean };
 };
 
-export type BulkUpdateMutationVariables = Exact<{ [key: string]: never }>;
+export type SetCredentialsMutationVariables = Exact<{
+  uuid: Scalars["UUID"]["input"];
+  data: CredentialsInput;
+}>;
 
-export type BulkUpdateMutation = {
+export type SetCredentialsMutation = {
   __typename?: "Mutation";
-  bulkUpdate: { __typename?: "NoneType"; isNone: boolean };
+  setCredentials: { __typename?: "NoneType"; isNone: boolean };
+};
+
+export type UpdateLocalRepositoryMutationVariables = Exact<{
+  uuid: Scalars["UUID"]["input"];
+}>;
+
+export type UpdateLocalRepositoryMutation = {
+  __typename?: "Mutation";
+  updateLocalRepository: { __typename?: "NoneType"; isNone: boolean };
 };
 
 export type CreateUnitMutationVariables = Exact<{
@@ -1262,21 +1320,19 @@ export type GetRepoQuery = {
     visibilityLevel: VisibilityLevel;
     name: string;
     createDatetime: string;
-    repoUrl: string;
-    platform: GitPlatform;
-    isPublicRepository: boolean;
     defaultBranch?: string | null;
     isAutoUpdateRepo: boolean;
     defaultCommit?: string | null;
     isOnlyTagUpdate: boolean;
     isCompilableRepo: boolean;
     lastUpdateDatetime: string;
-    branches: Array<string>;
     creatorUuid: string;
+    repositoryRegistryUuid: string;
   };
 };
 
 export type GetReposQueryVariables = Exact<{
+  repositoryRegistryUuid?: InputMaybe<Scalars["UUID"]["input"]>;
   uuids?: InputMaybe<
     Array<Scalars["UUID"]["input"]> | Scalars["UUID"]["input"]
   >;
@@ -1285,7 +1341,6 @@ export type GetReposQueryVariables = Exact<{
     Array<Scalars["UUID"]["input"]> | Scalars["UUID"]["input"]
   >;
   searchString?: InputMaybe<Scalars["String"]["input"]>;
-  isPublicRepository?: InputMaybe<Scalars["Boolean"]["input"]>;
   isAutoUpdateRepo?: InputMaybe<Scalars["Boolean"]["input"]>;
   visibilityLevel?: InputMaybe<Array<VisibilityLevel> | VisibilityLevel>;
   orderByCreateDate?: InputMaybe<OrderByDate>;
@@ -1305,37 +1360,16 @@ export type GetReposQuery = {
       visibilityLevel: VisibilityLevel;
       name: string;
       createDatetime: string;
-      repoUrl: string;
-      platform: GitPlatform;
-      isPublicRepository: boolean;
       defaultBranch?: string | null;
       isAutoUpdateRepo: boolean;
       defaultCommit?: string | null;
       isOnlyTagUpdate: boolean;
       isCompilableRepo: boolean;
       lastUpdateDatetime: string;
-      branches: Array<string>;
       creatorUuid: string;
+      repositoryRegistryUuid: string;
     }>;
   };
-};
-
-export type GetBranchCommitsQueryVariables = Exact<{
-  uuid: Scalars["UUID"]["input"];
-  repoBranch: Scalars["String"]["input"];
-  onlyTag: Scalars["Boolean"]["input"];
-  offset?: InputMaybe<Scalars["Int"]["input"]>;
-  limit?: InputMaybe<Scalars["Int"]["input"]>;
-}>;
-
-export type GetBranchCommitsQuery = {
-  __typename?: "Query";
-  getBranchCommits: Array<{
-    __typename?: "CommitType";
-    commit: string;
-    summary: string;
-    tag?: string | null;
-  }>;
 };
 
 export type GetAvailablePlatformsQueryVariables = Exact<{
@@ -1369,6 +1403,24 @@ export type GetVersionsQuery = {
       tag?: string | null;
     }>;
   };
+};
+
+export type GetBranchCommitsQueryVariables = Exact<{
+  uuid: Scalars["UUID"]["input"];
+  repoBranch: Scalars["String"]["input"];
+  onlyTag: Scalars["Boolean"]["input"];
+  offset?: InputMaybe<Scalars["Int"]["input"]>;
+  limit?: InputMaybe<Scalars["Int"]["input"]>;
+}>;
+
+export type GetBranchCommitsQuery = {
+  __typename?: "Query";
+  getBranchCommits: Array<{
+    __typename?: "CommitType";
+    commit: string;
+    summary: string;
+    tag?: string | null;
+  }>;
 };
 
 export type GetUnitQueryVariables = Exact<{
@@ -1984,22 +2036,16 @@ export type DeletePermissionMutationOptions = Apollo.BaseMutationOptions<
 >;
 export const CreateRepoDocument = gql`
   mutation createRepo(
+    $repositoryRegistryUuid: UUID!
     $visibilityLevel: VisibilityLevel!
     $name: String!
-    $repoUrl: String!
-    $platform: GitPlatform!
-    $isPublicRepository: Boolean!
-    $credentials: CredentialsInput
     $isCompilableRepo: Boolean!
   ) {
     createRepo(
       repo: {
+        repositoryRegistryUuid: $repositoryRegistryUuid
         visibilityLevel: $visibilityLevel
         name: $name
-        repoUrl: $repoUrl
-        platform: $platform
-        isPublicRepository: $isPublicRepository
-        credentials: $credentials
         isCompilableRepo: $isCompilableRepo
       }
     ) {
@@ -2007,17 +2053,14 @@ export const CreateRepoDocument = gql`
       visibilityLevel
       name
       createDatetime
-      repoUrl
-      platform
-      isPublicRepository
       defaultBranch
       isAutoUpdateRepo
       defaultCommit
       isOnlyTagUpdate
       isCompilableRepo
       lastUpdateDatetime
-      branches
       creatorUuid
+      repositoryRegistryUuid
     }
   }
 `;
@@ -2039,12 +2082,9 @@ export type CreateRepoMutationFn = Apollo.MutationFunction<
  * @example
  * const [createRepoMutation, { data, loading, error }] = useCreateRepoMutation({
  *   variables: {
+ *      repositoryRegistryUuid: // value for 'repositoryRegistryUuid'
  *      visibilityLevel: // value for 'visibilityLevel'
  *      name: // value for 'name'
- *      repoUrl: // value for 'repoUrl'
- *      platform: // value for 'platform'
- *      isPublicRepository: // value for 'isPublicRepository'
- *      credentials: // value for 'credentials'
  *      isCompilableRepo: // value for 'isCompilableRepo'
  *   },
  * });
@@ -2097,17 +2137,14 @@ export const UpdateRepoDocument = gql`
       visibilityLevel
       name
       createDatetime
-      repoUrl
-      platform
-      isPublicRepository
       defaultBranch
       isAutoUpdateRepo
       defaultCommit
       isOnlyTagUpdate
       isCompilableRepo
       lastUpdateDatetime
-      branches
       creatorUuid
+      repositoryRegistryUuid
     }
   }
 `;
@@ -2161,121 +2198,6 @@ export type UpdateRepoMutationOptions = Apollo.BaseMutationOptions<
   UpdateRepoMutation,
   UpdateRepoMutationVariables
 >;
-export const UpdateRepoCredentialsDocument = gql`
-  mutation updateRepoCredentials($uuid: UUID!, $data: CredentialsInput!) {
-    updateRepoCredentials(uuid: $uuid, data: $data) {
-      uuid
-      visibilityLevel
-      name
-      createDatetime
-      repoUrl
-      platform
-      isPublicRepository
-      defaultBranch
-      isAutoUpdateRepo
-      defaultCommit
-      isOnlyTagUpdate
-      isCompilableRepo
-      lastUpdateDatetime
-      branches
-      creatorUuid
-    }
-  }
-`;
-export type UpdateRepoCredentialsMutationFn = Apollo.MutationFunction<
-  UpdateRepoCredentialsMutation,
-  UpdateRepoCredentialsMutationVariables
->;
-
-/**
- * __useUpdateRepoCredentialsMutation__
- *
- * To run a mutation, you first call `useUpdateRepoCredentialsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateRepoCredentialsMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateRepoCredentialsMutation, { data, loading, error }] = useUpdateRepoCredentialsMutation({
- *   variables: {
- *      uuid: // value for 'uuid'
- *      data: // value for 'data'
- *   },
- * });
- */
-export function useUpdateRepoCredentialsMutation(
-  baseOptions?: Apollo.MutationHookOptions<
-    UpdateRepoCredentialsMutation,
-    UpdateRepoCredentialsMutationVariables
-  >,
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useMutation<
-    UpdateRepoCredentialsMutation,
-    UpdateRepoCredentialsMutationVariables
-  >(UpdateRepoCredentialsDocument, options);
-}
-export type UpdateRepoCredentialsMutationHookResult = ReturnType<
-  typeof useUpdateRepoCredentialsMutation
->;
-export type UpdateRepoCredentialsMutationResult =
-  Apollo.MutationResult<UpdateRepoCredentialsMutation>;
-export type UpdateRepoCredentialsMutationOptions = Apollo.BaseMutationOptions<
-  UpdateRepoCredentialsMutation,
-  UpdateRepoCredentialsMutationVariables
->;
-export const UpdateLocalRepoDocument = gql`
-  mutation updateLocalRepo($uuid: UUID!) {
-    updateLocalRepo(uuid: $uuid) {
-      isNone
-    }
-  }
-`;
-export type UpdateLocalRepoMutationFn = Apollo.MutationFunction<
-  UpdateLocalRepoMutation,
-  UpdateLocalRepoMutationVariables
->;
-
-/**
- * __useUpdateLocalRepoMutation__
- *
- * To run a mutation, you first call `useUpdateLocalRepoMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateLocalRepoMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateLocalRepoMutation, { data, loading, error }] = useUpdateLocalRepoMutation({
- *   variables: {
- *      uuid: // value for 'uuid'
- *   },
- * });
- */
-export function useUpdateLocalRepoMutation(
-  baseOptions?: Apollo.MutationHookOptions<
-    UpdateLocalRepoMutation,
-    UpdateLocalRepoMutationVariables
-  >,
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useMutation<
-    UpdateLocalRepoMutation,
-    UpdateLocalRepoMutationVariables
-  >(UpdateLocalRepoDocument, options);
-}
-export type UpdateLocalRepoMutationHookResult = ReturnType<
-  typeof useUpdateLocalRepoMutation
->;
-export type UpdateLocalRepoMutationResult =
-  Apollo.MutationResult<UpdateLocalRepoMutation>;
-export type UpdateLocalRepoMutationOptions = Apollo.BaseMutationOptions<
-  UpdateLocalRepoMutation,
-  UpdateLocalRepoMutationVariables
->;
 export const UpdateUnitsFirmwareDocument = gql`
   mutation updateUnitsFirmware($uuid: UUID!) {
     updateUnitsFirmware(uuid: $uuid) {
@@ -2325,6 +2247,55 @@ export type UpdateUnitsFirmwareMutationResult =
 export type UpdateUnitsFirmwareMutationOptions = Apollo.BaseMutationOptions<
   UpdateUnitsFirmwareMutation,
   UpdateUnitsFirmwareMutationVariables
+>;
+export const BulkUpdateDocument = gql`
+  mutation bulkUpdate {
+    bulkUpdate {
+      isNone
+    }
+  }
+`;
+export type BulkUpdateMutationFn = Apollo.MutationFunction<
+  BulkUpdateMutation,
+  BulkUpdateMutationVariables
+>;
+
+/**
+ * __useBulkUpdateMutation__
+ *
+ * To run a mutation, you first call `useBulkUpdateMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useBulkUpdateMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [bulkUpdateMutation, { data, loading, error }] = useBulkUpdateMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useBulkUpdateMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    BulkUpdateMutation,
+    BulkUpdateMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<BulkUpdateMutation, BulkUpdateMutationVariables>(
+    BulkUpdateDocument,
+    options,
+  );
+}
+export type BulkUpdateMutationHookResult = ReturnType<
+  typeof useBulkUpdateMutation
+>;
+export type BulkUpdateMutationResult =
+  Apollo.MutationResult<BulkUpdateMutation>;
+export type BulkUpdateMutationOptions = Apollo.BaseMutationOptions<
+  BulkUpdateMutation,
+  BulkUpdateMutationVariables
 >;
 export const DeleteRepoDocument = gql`
   mutation deleteRepo($uuid: UUID!) {
@@ -2376,54 +2347,106 @@ export type DeleteRepoMutationOptions = Apollo.BaseMutationOptions<
   DeleteRepoMutation,
   DeleteRepoMutationVariables
 >;
-export const BulkUpdateDocument = gql`
-  mutation bulkUpdate {
-    bulkUpdate {
+export const SetCredentialsDocument = gql`
+  mutation setCredentials($uuid: UUID!, $data: CredentialsInput!) {
+    setCredentials(uuid: $uuid, data: $data) {
       isNone
     }
   }
 `;
-export type BulkUpdateMutationFn = Apollo.MutationFunction<
-  BulkUpdateMutation,
-  BulkUpdateMutationVariables
+export type SetCredentialsMutationFn = Apollo.MutationFunction<
+  SetCredentialsMutation,
+  SetCredentialsMutationVariables
 >;
 
 /**
- * __useBulkUpdateMutation__
+ * __useSetCredentialsMutation__
  *
- * To run a mutation, you first call `useBulkUpdateMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useBulkUpdateMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useSetCredentialsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSetCredentialsMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [bulkUpdateMutation, { data, loading, error }] = useBulkUpdateMutation({
+ * const [setCredentialsMutation, { data, loading, error }] = useSetCredentialsMutation({
  *   variables: {
+ *      uuid: // value for 'uuid'
+ *      data: // value for 'data'
  *   },
  * });
  */
-export function useBulkUpdateMutation(
+export function useSetCredentialsMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    BulkUpdateMutation,
-    BulkUpdateMutationVariables
+    SetCredentialsMutation,
+    SetCredentialsMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useMutation<BulkUpdateMutation, BulkUpdateMutationVariables>(
-    BulkUpdateDocument,
-    options,
-  );
+  return Apollo.useMutation<
+    SetCredentialsMutation,
+    SetCredentialsMutationVariables
+  >(SetCredentialsDocument, options);
 }
-export type BulkUpdateMutationHookResult = ReturnType<
-  typeof useBulkUpdateMutation
+export type SetCredentialsMutationHookResult = ReturnType<
+  typeof useSetCredentialsMutation
 >;
-export type BulkUpdateMutationResult =
-  Apollo.MutationResult<BulkUpdateMutation>;
-export type BulkUpdateMutationOptions = Apollo.BaseMutationOptions<
-  BulkUpdateMutation,
-  BulkUpdateMutationVariables
+export type SetCredentialsMutationResult =
+  Apollo.MutationResult<SetCredentialsMutation>;
+export type SetCredentialsMutationOptions = Apollo.BaseMutationOptions<
+  SetCredentialsMutation,
+  SetCredentialsMutationVariables
+>;
+export const UpdateLocalRepositoryDocument = gql`
+  mutation updateLocalRepository($uuid: UUID!) {
+    updateLocalRepository(uuid: $uuid) {
+      isNone
+    }
+  }
+`;
+export type UpdateLocalRepositoryMutationFn = Apollo.MutationFunction<
+  UpdateLocalRepositoryMutation,
+  UpdateLocalRepositoryMutationVariables
+>;
+
+/**
+ * __useUpdateLocalRepositoryMutation__
+ *
+ * To run a mutation, you first call `useUpdateLocalRepositoryMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateLocalRepositoryMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateLocalRepositoryMutation, { data, loading, error }] = useUpdateLocalRepositoryMutation({
+ *   variables: {
+ *      uuid: // value for 'uuid'
+ *   },
+ * });
+ */
+export function useUpdateLocalRepositoryMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpdateLocalRepositoryMutation,
+    UpdateLocalRepositoryMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    UpdateLocalRepositoryMutation,
+    UpdateLocalRepositoryMutationVariables
+  >(UpdateLocalRepositoryDocument, options);
+}
+export type UpdateLocalRepositoryMutationHookResult = ReturnType<
+  typeof useUpdateLocalRepositoryMutation
+>;
+export type UpdateLocalRepositoryMutationResult =
+  Apollo.MutationResult<UpdateLocalRepositoryMutation>;
+export type UpdateLocalRepositoryMutationOptions = Apollo.BaseMutationOptions<
+  UpdateLocalRepositoryMutation,
+  UpdateLocalRepositoryMutationVariables
 >;
 export const CreateUnitDocument = gql`
   mutation createUnit(
@@ -3572,17 +3595,14 @@ export const GetRepoDocument = gql`
       visibilityLevel
       name
       createDatetime
-      repoUrl
-      platform
-      isPublicRepository
       defaultBranch
       isAutoUpdateRepo
       defaultCommit
       isOnlyTagUpdate
       isCompilableRepo
       lastUpdateDatetime
-      branches
       creatorUuid
+      repositoryRegistryUuid
     }
   }
 `;
@@ -3648,11 +3668,11 @@ export type GetRepoQueryResult = Apollo.QueryResult<
 >;
 export const GetReposDocument = gql`
   query getRepos(
+    $repositoryRegistryUuid: UUID
     $uuids: [UUID!]
     $creatorUuid: UUID
     $creatorsUuids: [UUID!]
     $searchString: String
-    $isPublicRepository: Boolean
     $isAutoUpdateRepo: Boolean
     $visibilityLevel: [VisibilityLevel!]
     $orderByCreateDate: OrderByDate
@@ -3662,11 +3682,11 @@ export const GetReposDocument = gql`
   ) {
     getRepos(
       filters: {
+        repositoryRegistryUuid: $repositoryRegistryUuid
         uuids: $uuids
         creatorUuid: $creatorUuid
         creatorsUuids: $creatorsUuids
         searchString: $searchString
-        isPublicRepository: $isPublicRepository
         isAutoUpdateRepo: $isAutoUpdateRepo
         visibilityLevel: $visibilityLevel
         orderByCreateDate: $orderByCreateDate
@@ -3681,17 +3701,14 @@ export const GetReposDocument = gql`
         visibilityLevel
         name
         createDatetime
-        repoUrl
-        platform
-        isPublicRepository
         defaultBranch
         isAutoUpdateRepo
         defaultCommit
         isOnlyTagUpdate
         isCompilableRepo
         lastUpdateDatetime
-        branches
         creatorUuid
+        repositoryRegistryUuid
       }
     }
   }
@@ -3709,11 +3726,11 @@ export const GetReposDocument = gql`
  * @example
  * const { data, loading, error } = useGetReposQuery({
  *   variables: {
+ *      repositoryRegistryUuid: // value for 'repositoryRegistryUuid'
  *      uuids: // value for 'uuids'
  *      creatorUuid: // value for 'creatorUuid'
  *      creatorsUuids: // value for 'creatorsUuids'
  *      searchString: // value for 'searchString'
- *      isPublicRepository: // value for 'isPublicRepository'
  *      isAutoUpdateRepo: // value for 'isAutoUpdateRepo'
  *      visibilityLevel: // value for 'visibilityLevel'
  *      orderByCreateDate: // value for 'orderByCreateDate'
@@ -3766,103 +3783,6 @@ export type GetReposSuspenseQueryHookResult = ReturnType<
 export type GetReposQueryResult = Apollo.QueryResult<
   GetReposQuery,
   GetReposQueryVariables
->;
-export const GetBranchCommitsDocument = gql`
-  query getBranchCommits(
-    $uuid: UUID!
-    $repoBranch: String!
-    $onlyTag: Boolean!
-    $offset: Int
-    $limit: Int
-  ) {
-    getBranchCommits(
-      uuid: $uuid
-      filters: {
-        repoBranch: $repoBranch
-        onlyTag: $onlyTag
-        offset: $offset
-        limit: $limit
-      }
-    ) {
-      commit
-      summary
-      tag
-    }
-  }
-`;
-
-/**
- * __useGetBranchCommitsQuery__
- *
- * To run a query within a React component, call `useGetBranchCommitsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetBranchCommitsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetBranchCommitsQuery({
- *   variables: {
- *      uuid: // value for 'uuid'
- *      repoBranch: // value for 'repoBranch'
- *      onlyTag: // value for 'onlyTag'
- *      offset: // value for 'offset'
- *      limit: // value for 'limit'
- *   },
- * });
- */
-export function useGetBranchCommitsQuery(
-  baseOptions: Apollo.QueryHookOptions<
-    GetBranchCommitsQuery,
-    GetBranchCommitsQueryVariables
-  > &
-    (
-      | { variables: GetBranchCommitsQueryVariables; skip?: boolean }
-      | { skip: boolean }
-    ),
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<GetBranchCommitsQuery, GetBranchCommitsQueryVariables>(
-    GetBranchCommitsDocument,
-    options,
-  );
-}
-export function useGetBranchCommitsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    GetBranchCommitsQuery,
-    GetBranchCommitsQueryVariables
-  >,
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<
-    GetBranchCommitsQuery,
-    GetBranchCommitsQueryVariables
-  >(GetBranchCommitsDocument, options);
-}
-export function useGetBranchCommitsSuspenseQuery(
-  baseOptions?: Apollo.SuspenseQueryHookOptions<
-    GetBranchCommitsQuery,
-    GetBranchCommitsQueryVariables
-  >,
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useSuspenseQuery<
-    GetBranchCommitsQuery,
-    GetBranchCommitsQueryVariables
-  >(GetBranchCommitsDocument, options);
-}
-export type GetBranchCommitsQueryHookResult = ReturnType<
-  typeof useGetBranchCommitsQuery
->;
-export type GetBranchCommitsLazyQueryHookResult = ReturnType<
-  typeof useGetBranchCommitsLazyQuery
->;
-export type GetBranchCommitsSuspenseQueryHookResult = ReturnType<
-  typeof useGetBranchCommitsSuspenseQuery
->;
-export type GetBranchCommitsQueryResult = Apollo.QueryResult<
-  GetBranchCommitsQuery,
-  GetBranchCommitsQueryVariables
 >;
 export const GetAvailablePlatformsDocument = gql`
   query getAvailablePlatforms(
@@ -4031,6 +3951,103 @@ export type GetVersionsSuspenseQueryHookResult = ReturnType<
 export type GetVersionsQueryResult = Apollo.QueryResult<
   GetVersionsQuery,
   GetVersionsQueryVariables
+>;
+export const GetBranchCommitsDocument = gql`
+  query getBranchCommits(
+    $uuid: UUID!
+    $repoBranch: String!
+    $onlyTag: Boolean!
+    $offset: Int
+    $limit: Int
+  ) {
+    getBranchCommits(
+      uuid: $uuid
+      filters: {
+        repoBranch: $repoBranch
+        onlyTag: $onlyTag
+        offset: $offset
+        limit: $limit
+      }
+    ) {
+      commit
+      summary
+      tag
+    }
+  }
+`;
+
+/**
+ * __useGetBranchCommitsQuery__
+ *
+ * To run a query within a React component, call `useGetBranchCommitsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetBranchCommitsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetBranchCommitsQuery({
+ *   variables: {
+ *      uuid: // value for 'uuid'
+ *      repoBranch: // value for 'repoBranch'
+ *      onlyTag: // value for 'onlyTag'
+ *      offset: // value for 'offset'
+ *      limit: // value for 'limit'
+ *   },
+ * });
+ */
+export function useGetBranchCommitsQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GetBranchCommitsQuery,
+    GetBranchCommitsQueryVariables
+  > &
+    (
+      | { variables: GetBranchCommitsQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetBranchCommitsQuery, GetBranchCommitsQueryVariables>(
+    GetBranchCommitsDocument,
+    options,
+  );
+}
+export function useGetBranchCommitsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetBranchCommitsQuery,
+    GetBranchCommitsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    GetBranchCommitsQuery,
+    GetBranchCommitsQueryVariables
+  >(GetBranchCommitsDocument, options);
+}
+export function useGetBranchCommitsSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    GetBranchCommitsQuery,
+    GetBranchCommitsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<
+    GetBranchCommitsQuery,
+    GetBranchCommitsQueryVariables
+  >(GetBranchCommitsDocument, options);
+}
+export type GetBranchCommitsQueryHookResult = ReturnType<
+  typeof useGetBranchCommitsQuery
+>;
+export type GetBranchCommitsLazyQueryHookResult = ReturnType<
+  typeof useGetBranchCommitsLazyQuery
+>;
+export type GetBranchCommitsSuspenseQueryHookResult = ReturnType<
+  typeof useGetBranchCommitsSuspenseQuery
+>;
+export type GetBranchCommitsQueryResult = Apollo.QueryResult<
+  GetBranchCommitsQuery,
+  GetBranchCommitsQueryVariables
 >;
 export const GetUnitDocument = gql`
   query getUnit($uuid: UUID!) {

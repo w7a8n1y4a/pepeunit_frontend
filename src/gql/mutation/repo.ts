@@ -2,22 +2,16 @@ import { gql } from 'graphql-tag';
 
 gql`
     mutation createRepo(
+        $repositoryRegistryUuid: UUID!
         $visibilityLevel: VisibilityLevel!
         $name: String!
-        $repoUrl: String!
-        $platform: GitPlatform! 
-        $isPublicRepository: Boolean!
-        $credentials: CredentialsInput
         $isCompilableRepo: Boolean!
     ) {
         createRepo (
             repo: {
+                repositoryRegistryUuid: $repositoryRegistryUuid
                 visibilityLevel: $visibilityLevel
                 name: $name
-                repoUrl: $repoUrl
-                platform: $platform
-                isPublicRepository: $isPublicRepository
-                credentials: $credentials
                 isCompilableRepo: $isCompilableRepo
             }
         ){
@@ -25,17 +19,14 @@ gql`
             visibilityLevel
             name
             createDatetime
-            repoUrl
-            platform
-            isPublicRepository
             defaultBranch
             isAutoUpdateRepo
             defaultCommit
             isOnlyTagUpdate
             isCompilableRepo
             lastUpdateDatetime
-            branches
             creatorUuid
+            repositoryRegistryUuid
         }
     }
     mutation updateRepo(
@@ -64,51 +55,14 @@ gql`
             visibilityLevel
             name
             createDatetime
-            repoUrl
-            platform
-            isPublicRepository
             defaultBranch
             isAutoUpdateRepo
             defaultCommit
             isOnlyTagUpdate
             isCompilableRepo
             lastUpdateDatetime
-            branches
             creatorUuid
-        }
-    }
-    mutation updateRepoCredentials(
-        $uuid: UUID!
-        $data: CredentialsInput!
-    ) {
-        updateRepoCredentials (
-            uuid: $uuid
-            data: $data
-        ){
-            uuid
-            visibilityLevel
-            name
-            createDatetime
-            repoUrl
-            platform
-            isPublicRepository
-            defaultBranch
-            isAutoUpdateRepo
-            defaultCommit
-            isOnlyTagUpdate
-            isCompilableRepo
-            lastUpdateDatetime
-            branches
-            creatorUuid
-        }
-    }
-    mutation updateLocalRepo(
-        $uuid: UUID!
-    ) {
-        updateLocalRepo (
-            uuid: $uuid
-        ){
-            isNone
+            repositoryRegistryUuid
         }
     }
     mutation updateUnitsFirmware(
@@ -120,17 +74,17 @@ gql`
             isNone
         }
     }
+    mutation bulkUpdate{
+        bulkUpdate{
+            isNone
+        }
+    }
     mutation deleteRepo(
         $uuid: UUID!
     ) {
         deleteRepo (
             uuid: $uuid
         ){
-            isNone
-        }
-    }
-    mutation bulkUpdate{
-        bulkUpdate{
             isNone
         }
     }

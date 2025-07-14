@@ -11,25 +11,22 @@ gql`
             visibilityLevel
             name
             createDatetime
-            repoUrl
-            platform
-            isPublicRepository
             defaultBranch
             isAutoUpdateRepo
             defaultCommit
             isOnlyTagUpdate
             isCompilableRepo
             lastUpdateDatetime
-            branches
             creatorUuid
+            repositoryRegistryUuid
         }
     }
     query getRepos(
+        $repositoryRegistryUuid: UUID
         $uuids: [UUID!]
         $creatorUuid: UUID
         $creatorsUuids: [UUID!]
         $searchString: String
-        $isPublicRepository: Boolean
         $isAutoUpdateRepo: Boolean
         $visibilityLevel: [VisibilityLevel!]
         $orderByCreateDate: OrderByDate
@@ -39,11 +36,11 @@ gql`
     ) {
         getRepos(
             filters: {
+                repositoryRegistryUuid: $repositoryRegistryUuid
                 uuids: $uuids
                 creatorUuid: $creatorUuid
                 creatorsUuids: $creatorsUuids
                 searchString: $searchString
-                isPublicRepository: $isPublicRepository
                 isAutoUpdateRepo: $isAutoUpdateRepo
                 visibilityLevel: $visibilityLevel
                 orderByCreateDate: $orderByCreateDate
@@ -58,40 +55,15 @@ gql`
                 visibilityLevel
                 name
                 createDatetime
-                repoUrl
-                platform
-                isPublicRepository
                 defaultBranch
                 isAutoUpdateRepo
                 defaultCommit
                 isOnlyTagUpdate
                 isCompilableRepo
                 lastUpdateDatetime
-                branches
                 creatorUuid
+                repositoryRegistryUuid
             }
-        }
-    }
-
-    query getBranchCommits(
-        $uuid: UUID!
-        $repoBranch: String!
-        $onlyTag: Boolean!
-        $offset: Int
-        $limit: Int
-    ) {
-        getBranchCommits (
-            uuid: $uuid
-            filters: {
-                repoBranch: $repoBranch
-                onlyTag: $onlyTag
-                offset: $offset
-                limit: $limit
-            }
-        ) {
-            commit
-            summary
-            tag
         }
     }
 
