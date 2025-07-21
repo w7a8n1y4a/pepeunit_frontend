@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
-import { useUpdateRepoCredentialsMutation } from '@rootTypes/compositionFunctions'
+import { useSetCredentialsMutation } from '@rootTypes/compositionFunctions'
 import isValidString from '@utils/isValidString'
 import DefaultInput from '@primitives/defaultInput'
 import Spinner from '@primitives/spinner'
@@ -31,12 +31,12 @@ export default function UpdateRepoCredentialsForm() {
         }));
     };
 
-    const [updateRepoCredentialsMutation] = useUpdateRepoCredentialsMutation();
+    const [updateSetCredentialsMutation] = useSetCredentialsMutation();
 
     const handleUpdateCredentials = () => {
         runAsync(async () => {
 
-            let result = await updateRepoCredentialsMutation({
+            let result = await updateSetCredentialsMutation({
                 variables: {
                     uuid: currentNodeData.uuid,
                     data: {

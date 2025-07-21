@@ -1,5 +1,5 @@
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
-import { useUpdateLocalRepoMutation, PermissionEntities, useUpdateUnitsFirmwareMutation, useDeleteRepoMutation, useGetVersionsLazyQuery, VisibilityLevel } from '@rootTypes/compositionFunctions'
+import { useUpdateLocalRepositoryMutation, PermissionEntities, useUpdateUnitsFirmwareMutation, useDeleteRepoMutation, useGetVersionsLazyQuery, VisibilityLevel } from '@rootTypes/compositionFunctions'
 import BaseModal from '../modal/baseModal'
 import CreateUnitForm from '../forms/unit/createUnitForm';
 import UpdateRepoForm from '../forms/repo/updateRepoForm';
@@ -39,7 +39,7 @@ export default function RepoContent(){
 
   let nodeType = PermissionEntities.Repo
 
-  const [updateLocalRepo] = useUpdateLocalRepoMutation();
+  const [updateLocalRepository] = useUpdateLocalRepositoryMutation();
   const [updateUnitsFirmware] = useUpdateUnitsFirmwareMutation()
   const [deleteRepo] = useDeleteRepoMutation()
   const [getVersions] = useGetVersionsLazyQuery()
@@ -47,7 +47,7 @@ export default function RepoContent(){
   const handleUpdateLocalRepo = () => {
     runAsync(async () => {
       if (currentNodeData){
-        let result = await updateLocalRepo({
+        let result = await updateLocalRepository({
           variables: {
             uuid: currentNodeData.uuid
           }

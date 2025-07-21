@@ -8,7 +8,7 @@ import RegisterForm from '../forms/user/registerForm';
 import VerificationForm from '../forms/user/verificationForm';
 import ChangeLoginForm from '../forms/user/changeLoginForm';
 import ChangePassForm from '../forms/user/changePassForm';
-import RightMenu from '../rightMenu/rightMenu';
+import CreateRepoForm from '../forms/repo/createRepoForm'
 import Spinner from '@primitives/spinner'
 import { UserRole, useBlockUserMutation, useUnblockUserMutation } from '@rootTypes/compositionFunctions'
 import './header.css'
@@ -18,6 +18,7 @@ import { useModalStore, useNodeStore } from '@stores/baseStore';
 import useModalHandlers from '@handlers/useModalHandlers';
 import { useUserStore } from '@stores/userStore';
 import { useErrorStore } from '@stores/errorStore';
+import micro from '/images/micro.svg'
 import SearchMenu from '../searchMenu/searchMenu';
 
 export default function Header(){
@@ -89,20 +90,20 @@ export default function Header(){
 
             <div className='user_controls'>
                 {login ? (
-                    <div>
+                    <>
+                        <button className="signin_button" style={{marginTop: "5px"}} onClick={() => openModal('createRepo')}>
+                            <img src={micro} width="32" height="32" alt="AddRepoImg" />
+                        </button>
                         <button className="user_menu_button" onClick={() => {
                             setCurrentNodeData(null)
                             openModal('UserMenu')
-                        
                         }}>
                             {login}
                         </button>
                         <button className="signout_button" onClick={signout}>
                             <img src={signout_icon} width="32" height="32" alt="signout" />
                         </button>
-                        <RightMenu/>
-                    </div>
-                    
+                    </>
                 ) : (
 
                     <button className="signin_button" onClick={() => openModal('signin')}>
@@ -111,6 +112,9 @@ export default function Header(){
                 )}
             </div>
             <div>
+                <BaseModal modalName='Create Repo' open={activeModal === 'createRepo'}>
+                    <CreateRepoForm/>
+                </BaseModal>
                 <BaseModal modalName='Authorization' open={activeModal === 'signin'}>
                     <SignInForm
                         openModalRegister={() => openModal('register')}

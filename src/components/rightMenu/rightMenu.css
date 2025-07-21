@@ -1,9 +1,0 @@
-.right_menu_base {
-    position: absolute;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    top: 60px;
-    right: 10px;
-    z-index: 10;
-}
