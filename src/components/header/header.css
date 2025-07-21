@@ -15,7 +15,13 @@
   }
   
   .logo {
-    margin-right: 20px;
+    margin-top: 2px;
+    margin-right: 18px;
+    margin-left: 2px;
+  }
+
+  .docs {
+    margin-top: -4px;
   }
 
   .search-div {

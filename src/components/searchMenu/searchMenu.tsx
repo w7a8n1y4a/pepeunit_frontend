@@ -21,7 +21,7 @@ export default function SearchMenu() {
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" width="20" height="20">
                         <path d="M11 4a7 7 0 1 1 0 14a7 7 0 0 1 0-14zm0-2a9 9 0 1 0 6.219 15.546l4.396 4.395l1.414-1.414l-4.395-4.396A9 9 0 0 0 11 2z" fill="currentColor"/>
                     </svg>
-                    Search
+                    Search nodes
                 </button>
             </div>
 

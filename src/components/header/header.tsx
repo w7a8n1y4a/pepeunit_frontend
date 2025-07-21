@@ -91,7 +91,7 @@ export default function Header(){
             <div className='user_controls'>
                 {login ? (
                     <>
-                        <button className="signin_button" style={{marginTop: "5px"}} onClick={() => openModal('createRepo')}>
+                        <button className="signin_button" onClick={() => openModal('createRepo')}>
                             <img src={micro} width="32" height="32" alt="AddRepoImg" />
                         </button>
                         <button className="user_menu_button" onClick={() => {
@@ -105,10 +105,14 @@ export default function Header(){
                         </button>
                     </>
                 ) : (
-
-                    <button className="signin_button" onClick={() => openModal('signin')}>
-                        <img src={signin_icon} width="32" height="32" alt="Signin" />
-                    </button>
+                    <>
+                        <button className="signin_button" onClick={() => openModal('createRepo')}>
+                            <img src={micro} width="32" height="32" alt="AddRepoImg" />
+                        </button>
+                        <button className="signin_button" onClick={() => openModal('signin')}>
+                            <img src={signin_icon} width="32" height="32" alt="Signin" />
+                        </button>
+                    </>
                 )}
             </div>
             <div>
