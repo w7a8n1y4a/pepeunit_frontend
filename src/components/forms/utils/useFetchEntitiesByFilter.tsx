@@ -1,5 +1,6 @@
 import { useCallback } from "react";
-import { 
+import {
+  useGetRepositoriesRegistryLazyQuery,
   useGetReposLazyQuery, 
   useGetUnitsLazyQuery,
   useGetUsersLazyQuery,
@@ -9,6 +10,7 @@ import {
 import { NodeType } from '@rootTypes/nodeTypeEnum'
 
 export default function useFetchEntitiesByFilter() {
+  const [getRepositoriesRegistry] = useGetRepositoriesRegistryLazyQuery();
   const [getRepos] = useGetReposLazyQuery();
   const [getUnitsWithUnitNodes] = useGetUnitsWithUnitNodesLazyQuery();
   const [getUnits] = useGetUnitsLazyQuery();
@@ -33,6 +35,8 @@ export default function useFetchEntitiesByFilter() {
       };
 
       switch (agentType) {
+        case NodeType.Registry:
+          return getRepositoriesRegistry({ variables: queryVariables });
         case NodeType.Repo:
           return getRepos({ variables: queryVariables });
         case NodeType.Unit:

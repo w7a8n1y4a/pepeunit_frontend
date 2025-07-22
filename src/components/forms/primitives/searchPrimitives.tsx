@@ -10,6 +10,7 @@ import IterationList from '@primitives/iterationList'
 import EntityTypeSelector from '@primitives/entityTypeSelector';
 import VisibilitySelector from '@primitives/visibilitySelector';
 import useFetchEntitiesByFilter from '../utils/useFetchEntitiesByFilter';
+import {registryToText} from '@utils/registryToText'
 import '../form.css';
 import { useNodeStore, useModalStore } from '@stores/baseStore';
 import { useUserStore } from '@stores/userStore';
@@ -81,7 +82,15 @@ import { useUserStore } from '@stores/userStore';
                 let formattedData: Array<any> = [];
                 let count: number = 0;
                 setTypeList('button')
-                if ('getRepos' in result.data && result.data.getRepos) {
+                if ('getRepositoriesRegistry' in result.data && result.data.getRepositoriesRegistry) {
+                    formattedData = result.data.getRepositoriesRegistry.repositoriesRegistry.map((registry: any) => ({
+                        uuid: registry.uuid,
+                        name: registry.repository_url,
+                        visibilityLevel: registryToText(registry),
+                        __typename: 'RepositoryRegistryType'
+                    }));
+                    count = result.data.getRepositoriesRegistry.count
+                } else if ('getRepos' in result.data && result.data.getRepos) {
                     formattedData = result.data.getRepos.repos;
                     count = result.data.getRepos.count
                 } else if ('getUsers' in result.data && result.data.getUsers) {
