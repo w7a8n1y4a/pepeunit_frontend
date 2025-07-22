@@ -15,7 +15,7 @@ export default function GraphSearch({ onFocusNode }: GraphSearchProps){
   return (
     <>
       <BaseModal
-        modalName={"Search Nodes"}
+        modalName={"Search"}
         open={activeModal === 'graphSearch'}
       >
         <SearchForm onFocusNode={onFocusNode} />

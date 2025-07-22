@@ -1,15 +1,13 @@
 import React from 'react';
 
-import {
-    PermissionEntities,
- } from '@rootTypes/compositionFunctions';
+import { NodeType } from '@rootTypes/nodeTypeEnum'
 
 import './primitives.css'
 
 type EntityTypeSelectorProps = {
-    entities: PermissionEntities[];
+    entities: NodeType[];
     selectedEntityType: string;
-    setSelectedEntityType: (entityType: PermissionEntities) => void;
+    setSelectedEntityType: (entityType: NodeType) => void;
 };
 
 const EntityTypeSelector: React.FC<EntityTypeSelectorProps> = ({
@@ -23,7 +21,7 @@ const EntityTypeSelector: React.FC<EntityTypeSelectorProps> = ({
                 <button
                     key={entityType}
                     className={`entity-button ${selectedEntityType === entityType ? 'active' : ''}`}
-                    onClick={() => setSelectedEntityType(entityType as PermissionEntities)}
+                    onClick={() => setSelectedEntityType(entityType as NodeType)}
                 >
                     {entityType}
                 </button>

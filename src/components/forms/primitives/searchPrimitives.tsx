@@ -1,7 +1,7 @@
 import {
-    PermissionEntities,
     VisibilityLevel
 } from '@rootTypes/compositionFunctions';
+import { NodeType } from '@rootTypes/nodeTypeEnum'
 import { useRef, useState, useEffect, useLayoutEffect } from 'react';
 import DefaultInput from '@primitives/defaultInput'
 import Spinner from '@primitives/spinner';
@@ -18,9 +18,9 @@ import { useUserStore } from '@stores/userStore';
   interface SearchProps {
     isLoaderActive: boolean
     runAsync: any
-    availableEntities: PermissionEntities[]
-    selectedEntityType: PermissionEntities
-    setSelectedEntityType: (show: PermissionEntities) => void
+    availableEntities: NodeType[]
+    selectedEntityType: NodeType
+    setSelectedEntityType: (show: NodeType) => void
     handleCreatePermission?: (entityUuid: string) => void
     onFocusNode?: (uuid: string, nodeType: string) => void
   }
@@ -35,7 +35,7 @@ import { useUserStore } from '@stores/userStore';
     
     const [ searchString, setSearchString ] = useState('');
     const [ isCreatorSearchOnly, setIsCreatorSearchOnly] = useState<boolean>(false);
-    const [selectedEntityType, setSelectedEntityType] = useState<PermissionEntities>(PermissionEntities.Unit);
+    const [selectedEntityType, setSelectedEntityType] = useState<NodeType>(NodeType.Unit);
     const [selectedVisibilityLevels, setSelectedVisibilityLevels] = useState<VisibilityLevel[]>(
         [VisibilityLevel.Public, VisibilityLevel.Internal, VisibilityLevel.Private]
     );
@@ -63,7 +63,7 @@ import { useUserStore } from '@stores/userStore';
 
     const loadEntities = async (
         searchString: string,
-        selectedEntityType: PermissionEntities,
+        selectedEntityType: NodeType,
         currentPage: number,
         visibilityLevel?: VisibilityLevel[], 
         isCreatorSearchOnly?: boolean,
@@ -92,10 +92,10 @@ import { useUserStore } from '@stores/userStore';
                         __typename: 'UserType'
                     }));
                     count = result.data.getUsers.count
-                } else if ('getUnits' in result.data && selectedEntityType == PermissionEntities.Unit) {
+                } else if ('getUnits' in result.data && selectedEntityType == NodeType.Unit) {
                     formattedData = result.data.getUnits.units;
                     count = result.data.getUnits.count
-                } else if ('getUnits' in result.data && selectedEntityType == PermissionEntities.UnitNode) {
+                } else if ('getUnits' in result.data && selectedEntityType == NodeType.UnitNode) {
                     formattedData = result.data.getUnits.units;
                     count = result.data.getUnits.count
                     setTypeList('collapse')
@@ -143,7 +143,7 @@ import { useUserStore } from '@stores/userStore';
                 setIsErrorExist={(hasError) => updateErrorState('searchString', hasError)}
             />
             {
-                selectedEntityType != PermissionEntities.User && (
+                selectedEntityType != NodeType.User && (
                     <button
                         type="button"
                         className="toggle_visibility_button"
@@ -154,7 +154,7 @@ import { useUserStore } from '@stores/userStore';
                 )
             }
             {
-                isModifiersVisible && user && selectedEntityType != PermissionEntities.User && (
+                isModifiersVisible && user && selectedEntityType != NodeType.User && (
                     <div className='toggle_container'>
                         <label className="toggle">
                             <input 
@@ -173,7 +173,7 @@ import { useUserStore } from '@stores/userStore';
             }
         </form>
         {
-            isModifiersVisible && user && selectedEntityType != PermissionEntities.User && (
+            isModifiersVisible && user && selectedEntityType != NodeType.User && (
                 <VisibilitySelector
                     levels={[VisibilityLevel.Public, VisibilityLevel.Internal, VisibilityLevel.Private]}
                     selectedVisibilityLevels={selectedVisibilityLevels}

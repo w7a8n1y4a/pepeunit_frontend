@@ -1,10 +1,11 @@
 import BaseModal from '../../modal/baseModal';
 import {
-    PermissionEntities,
     useDeletePermissionMutation,
     useGetResourceAgentsLazyQuery,
     GetUnitsWithUnitNodesQuery
  } from '@rootTypes/compositionFunctions';
+import { convertNodeTypeToPermissionEntity } from '@utils/mappersNodeTypeToPermissions';
+import { NodeType } from '@rootTypes/nodeTypeEnum'
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import { useState, useEffect } from 'react';
 import { useModalStore } from '@stores/baseStore';
@@ -21,7 +22,7 @@ import { useErrorStore } from '@stores/errorStore';
 
 
 interface PermissionFormProps {
-    currentNodeType: PermissionEntities;
+    currentNodeType: NodeType;
 }
 
 export default function PermissionForm({ currentNodeType }: PermissionFormProps) {
@@ -40,7 +41,7 @@ export default function PermissionForm({ currentNodeType }: PermissionFormProps)
     const { fetchEntitiesByResourceAgents } = useFetchEntitiesByResourceAgents();
     const [getResourceAgentsLazyQuery] = useGetResourceAgentsLazyQuery();
 
-    const [selectedEntityType, setSelectedEntityType] = useState<PermissionEntities>(PermissionEntities.User);
+    const [selectedEntityType, setSelectedEntityType] = useState<NodeType>(NodeType.User);
     
     const [currentPage, setCurrentPage] = useState(0);
     const [totalCount, setTotalCount] = useState(0);
@@ -63,16 +64,16 @@ export default function PermissionForm({ currentNodeType }: PermissionFormProps)
         })
     };
 
-    const loadEntities = async (entityType: PermissionEntities, page: number) => {
+    const loadEntities = async (entityType: NodeType, page: number) => {
         if (!currentNodeData) return;
 
         runAsync(async () => {
             let agentUuids: string[] | null = null
             const resourceAgentsResult = await getResourceAgentsLazyQuery({
                 variables: {
-                    agentType: entityType,
+                    agentType: convertNodeTypeToPermissionEntity(entityType),
                     resourceUuid: currentNodeData.uuid,
-                    resourceType: currentNodeType
+                    resourceType: convertNodeTypeToPermissionEntity(currentNodeType)
                 },
             });
     
@@ -103,10 +104,10 @@ export default function PermissionForm({ currentNodeType }: PermissionFormProps)
                         visibilityLevel: user.role + ' ' + user.status,
                     }));
                     count = result.data.getUsers.count;
-                } else if ('getUnits' in result.data && selectedEntityType == PermissionEntities.Unit) {
+                } else if ('getUnits' in result.data && selectedEntityType == NodeType.Unit) {
                     formattedData = result.data.getUnits.units;
                     count = result.data.getUnits.count
-                } else if ('getUnits' in result.data && selectedEntityType == PermissionEntities.UnitNode) {
+                } else if ('getUnits' in result.data && selectedEntityType == NodeType.UnitNode) {
                     if (agentUuids !== null) {
                         const unitsWithUnitNodes = result.data.getUnits.units as GetUnitsWithUnitNodesQuery['getUnits']['units'];
                         result.data.getUnits.units = unitsWithUnitNodes
@@ -149,7 +150,7 @@ export default function PermissionForm({ currentNodeType }: PermissionFormProps)
             {isLoaderActive && <Spinner />}
 
             <EntityTypeSelector
-                entities={[PermissionEntities.User, PermissionEntities.Unit]}
+                entities={[NodeType.User, NodeType.Unit]}
                 selectedEntityType={selectedEntityType}
                 setSelectedEntityType={setSelectedEntityType}
             />

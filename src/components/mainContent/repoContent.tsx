@@ -1,5 +1,6 @@
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import { useUpdateLocalRepositoryMutation, PermissionEntities, useUpdateUnitsFirmwareMutation, useDeleteRepoMutation, useGetVersionsLazyQuery, VisibilityLevel } from '@rootTypes/compositionFunctions'
+import { convertPermissionEntityToNodeType } from '@utils/mappersNodeTypeToPermissions';
 import BaseModal from '../modal/baseModal'
 import CreateUnitForm from '../forms/unit/createUnitForm';
 import UpdateRepoForm from '../forms/repo/updateRepoForm';
@@ -190,7 +191,7 @@ return (
         {
           currentNodeData && (
             <PermissionForm
-              currentNodeType={nodeType}
+              currentNodeType={convertPermissionEntityToNodeType(nodeType)}
             />
           )
         }

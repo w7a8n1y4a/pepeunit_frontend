@@ -6,7 +6,7 @@ import {
   useGetUsersLazyQuery,
   useGetResourceAgentsLazyQuery
 } from '@rootTypes/compositionFunctions';
-import { PermissionEntities } from '@rootTypes/compositionFunctions';
+import { NodeType } from '@rootTypes/nodeTypeEnum'
 
 export default function useFetchEntitiesByResourceAgents() {
   const [getRepos] = useGetReposLazyQuery();
@@ -15,7 +15,7 @@ export default function useFetchEntitiesByResourceAgents() {
   const [getUsers] = useGetUsersLazyQuery();
   const [getResourceAgentsLazyQuery] = useGetResourceAgentsLazyQuery();
 
-  const fetchEntitiesByResourceAgents = useCallback(async (agentType: PermissionEntities, limit: number, offset: number, agentUuids: string[] | null) => {
+  const fetchEntitiesByResourceAgents = useCallback(async (agentType: NodeType, limit: number, offset: number, agentUuids: string[] | null) => {
     try {
       if (agentUuids) {
         if (agentUuids.length === 0) {
@@ -25,13 +25,13 @@ export default function useFetchEntitiesByResourceAgents() {
         const queryVariables = { uuids: agentUuids, limit: limit, offset: offset};
 
         switch (agentType) {
-          case PermissionEntities.Repo:
+          case NodeType.Repo:
             return getRepos({ variables: queryVariables });
-          case PermissionEntities.Unit:
+          case NodeType.Unit:
             return getUnits({ variables: queryVariables });
-          case PermissionEntities.UnitNode:
+          case NodeType.UnitNode:
             return getUnitsWithUnitNodes({ variables: {} });
-          case PermissionEntities.User:
+          case NodeType.User:
             return getUsers({ variables: queryVariables });
           default:
             throw new Error(`Unsupported entity type: ${agentType}`);

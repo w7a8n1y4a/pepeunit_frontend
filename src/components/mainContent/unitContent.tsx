@@ -2,6 +2,7 @@ import { ResultType } from '@rootTypes/resultEnum'
 import { NodeType } from '@rootTypes/nodeTypeEnum'
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import { useDeleteUnitMutation, PermissionEntities, useGetAvailablePlatformsLazyQuery, useGetRepoLazyQuery, RepoType, useSendCommandToInputBaseTopicMutation, BackendTopicCommand, useGetTargetVersionLazyQuery, VisibilityLevel, useGetUnitCurrentSchemaLazyQuery } from '@rootTypes/compositionFunctions'
+import { convertPermissionEntityToNodeType } from '@utils/mappersNodeTypeToPermissions';
 import BaseModal from '../modal/baseModal'
 import { useState, useEffect } from 'react';
 import Spinner from '@primitives/spinner'
@@ -332,7 +333,7 @@ export default function UnitContent(){
         {
           currentNodeData && (
             <PermissionForm
-              currentNodeType={PermissionEntities.Unit}
+              currentNodeType={convertPermissionEntityToNodeType(PermissionEntities.Unit)}
             />
           )
         }

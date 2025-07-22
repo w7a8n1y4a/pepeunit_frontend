@@ -6,7 +6,7 @@ import {
   useGetUnitsWithUnitNodesLazyQuery,
   VisibilityLevel
 } from '@rootTypes/compositionFunctions';
-import { PermissionEntities } from '@rootTypes/compositionFunctions';
+import { NodeType } from '@rootTypes/nodeTypeEnum'
 
 export default function useFetchEntitiesByFilter() {
   const [getRepos] = useGetReposLazyQuery();
@@ -17,7 +17,7 @@ export default function useFetchEntitiesByFilter() {
   const fetchEntitiesByFilter = useCallback(
     async (
       searchString: string,
-      agentType: PermissionEntities,
+      agentType: NodeType,
       limit: number,
       offset: number,
       visibilityLevel?: VisibilityLevel[],
@@ -33,13 +33,13 @@ export default function useFetchEntitiesByFilter() {
       };
 
       switch (agentType) {
-        case PermissionEntities.Repo:
+        case NodeType.Repo:
           return getRepos({ variables: queryVariables });
-        case PermissionEntities.Unit:
+        case NodeType.Unit:
           return getUnits({ variables: queryVariables });
-        case PermissionEntities.UnitNode:
+        case NodeType.UnitNode:
           return getUnitsWithUnitNodes({ variables: queryVariables });
-        case PermissionEntities.User:
+        case NodeType.User:
           return getUsers({ variables: queryVariables });
         default:
           throw new Error(`Unsupported entity type: ${agentType}`);

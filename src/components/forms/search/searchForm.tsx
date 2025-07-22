@@ -1,8 +1,6 @@
-import {
-    PermissionEntities
-} from '@rootTypes/compositionFunctions';
 import { useState } from 'react';
 import SearchPrimitives from '@primitives/searchPrimitives';
+import { NodeType } from '@rootTypes/nodeTypeEnum'
 import '../form.css';
 import { useUserStore } from '@stores/userStore';
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
@@ -14,7 +12,7 @@ interface SearchFormProps {
 export default function SearchForm({ onFocusNode }: SearchFormProps){
   const { isLoaderActive, runAsync } = useAsyncHandler();
   
-  const [selectedEntityType, setSelectedEntityType] = useState<PermissionEntities>(PermissionEntities.Unit);
+  const [selectedEntityType, setSelectedEntityType] = useState<NodeType>(NodeType.Unit);
   const { user } = useUserStore();
   
   return (
@@ -23,8 +21,8 @@ export default function SearchForm({ onFocusNode }: SearchFormProps){
           runAsync={runAsync}
           availableEntities={
               user
-              ? [PermissionEntities.Unit, PermissionEntities.Repo, PermissionEntities.User]
-              : [PermissionEntities.Unit, PermissionEntities.Repo]
+              ? [NodeType.Registry, NodeType.Unit, NodeType.Repo, NodeType.User]
+              : [NodeType.Registry, NodeType.Unit, NodeType.Repo]
           }
           selectedEntityType={selectedEntityType}
           setSelectedEntityType={setSelectedEntityType}

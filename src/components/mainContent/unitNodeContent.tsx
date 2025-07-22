@@ -1,6 +1,7 @@
 import BaseModal from '../modal/baseModal'
 
 import { UnitNodeTypeEnum, PermissionEntities, VisibilityLevel } from '@rootTypes/compositionFunctions'
+import { convertPermissionEntityToNodeType } from '@utils/mappersNodeTypeToPermissions';
 import { useModalStore, useNodeStore } from '@stores/baseStore';
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import UpdateUnitNodeForm from '../forms/unitNode/updateUnitNodeForm';
@@ -91,7 +92,7 @@ export default function UnitNodeContent(){
         {
           currentNodeData && (
             <PermissionForm
-              currentNodeType={PermissionEntities.UnitNode}
+              currentNodeType={convertPermissionEntityToNodeType(PermissionEntities.UnitNode)}
             />
           )
         }
