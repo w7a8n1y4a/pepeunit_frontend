@@ -209,13 +209,6 @@ return (
           <button className="button_open_alter" onClick={() => openModal('updateRepo')}>
             Options
           </button>
-          {
-            currentNodeData && !currentNodeData.isPublicRepository && (
-              <button className="button_open_alter" onClick={() => openModal('changeCredentials')}>
-                Change GIT Credentials
-              </button>
-            )
-          }
           <button className="button_del_alter" onClick={handleDeleteRepo}>
             Delete Repo
           </button>
@@ -230,18 +223,6 @@ return (
         {
           currentNodeData && (
             <UpdateRepoForm/>
-          )
-        }
-      </BaseModal>
-      <BaseModal
-        modalName='External Auth GIT'
-        subName={currentNodeData?.name}
-        open={activeModal === 'changeCredentials'}
-        openModalType='repoSettingsMenu'
-      >
-        {
-          currentNodeData && (
-            <UpdateRepoCredentialsForm/>
           )
         }
       </BaseModal>

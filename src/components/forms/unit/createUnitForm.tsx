@@ -121,7 +121,6 @@ export default function CreateUnitForm() {
                 })
 
                 if (result.data?.getBranchCommits){
-                    console.log('tests2')
                     setRepoAvailableCommits(result.data.getBranchCommits)
                 }
             })
@@ -145,7 +144,6 @@ export default function CreateUnitForm() {
                 })
                 
                 if (result.data?.getAvailablePlatforms){
-                    console.log('tests3')
                     setRepoAvailablePlatforms(result.data.getAvailablePlatforms)
                 }
             })
@@ -154,7 +152,6 @@ export default function CreateUnitForm() {
 
     useEffect(() => {
         if (activeModal == 'createUnit' && isAutoUpdateFromRepoUnit && currentNodeData.defaultBranch === null){
-            console.log('tests')
             setAngry('Fill in the default branch for Repo - you can\'t make Unit auto-update without it')
         } else {
             clearError()

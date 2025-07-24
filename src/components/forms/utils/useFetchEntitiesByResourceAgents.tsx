@@ -17,11 +17,10 @@ export default function useFetchEntitiesByResourceAgents() {
 
   const fetchEntitiesByResourceAgents = useCallback(async (agentType: NodeType, limit: number, offset: number, agentUuids: string[] | null) => {
     try {
+      if (!agentUuids) {
+        return {data: null};
+      }
       if (agentUuids) {
-        if (agentUuids.length === 0) {
-          return {data: null};
-        }
-
         const queryVariables = { uuids: agentUuids, limit: limit, offset: offset};
 
         switch (agentType) {

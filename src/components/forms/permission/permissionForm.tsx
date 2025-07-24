@@ -82,7 +82,7 @@ export default function PermissionForm({ currentNodeType }: PermissionFormProps)
                     (permission) => permission.agentUuid
                 );
             }
-
+            
             const result = await fetchEntitiesByResourceAgents(
                 entityType,
                 itemsPerPage,
@@ -140,7 +140,9 @@ export default function PermissionForm({ currentNodeType }: PermissionFormProps)
     }, [currentNodeData]);
 
     useEffect(() => {
-        loadEntities(selectedEntityType, currentPage);
+        if (selectedEntityType != NodeType.Registry){
+            loadEntities(selectedEntityType, currentPage);
+        }
     }, [currentPage, selectedEntityType, refreshTrigger]);
 
     const totalPages = Math.ceil(totalCount / itemsPerPage);

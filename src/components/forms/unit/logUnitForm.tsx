@@ -40,7 +40,6 @@ export default function LogUnitForm() {
                 }
             })
             if (result.data?.getUnitLogs){
-                console.log(result.data.getUnitLogs.unitLogs)
                 setCurrentUnitLogs(result.data.getUnitLogs.unitLogs)
                 setTotalCount(result.data.getUnitLogs.count);
             }else{

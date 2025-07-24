@@ -11,12 +11,14 @@ import {
   useGetUnitLazyQuery,
   UnitNodeTypeEnum,
   useGetUnitNodeLazyQuery,
-  useGetUsersLazyQuery
+  useGetUsersLazyQuery,
+  useGetRepositoryRegistryLazyQuery
 } from '@rootTypes/compositionFunctions'
 import { ForceGraph3D } from 'react-force-graph';
 import SpriteText from 'three-spritetext';
 import { useState, useMemo, useEffect, useRef } from 'react';
 import DomainContent from './domainContent'
+import RegistryContent from './registryContent'
 import RepoContent from './repoContent'
 import UnitContent from './unitContent';
 import UnitNodeContent from './unitNodeContent';
@@ -65,6 +67,7 @@ export default function GraphContent({routerType, routerUuid}: GraphContentProps
   const [getUnitNodes] = useGetUnitNodesLazyQuery();
 
   const [getUser] = useGetUserLazyQuery();
+  const [getRepositoryRegistry] = useGetRepositoryRegistryLazyQuery();
   const [getRepo] = useGetRepoLazyQuery();
   const [getUnit] = useGetUnitLazyQuery();
   const [getUnitNode] = useGetUnitNodeLazyQuery();
@@ -265,7 +268,19 @@ export default function GraphContent({routerType, routerUuid}: GraphContentProps
         }
       })
     }
-
+    if (nodeType == 'registry'){
+      runAsync(async () => {
+        let registry = await getRepositoryRegistry({
+          variables: {
+              uuid: uuid
+          }
+        })
+        if (registry.data?.getRepositoryRegistry){
+          openModal(NodeType.Registry + "Menu")
+          setCurrentNodeData(registry.data.getRepositoryRegistry)
+        }
+      })
+    }
     if (nodeType == 'repo') {
       runAsync(async () => {
         let repo = await getRepo({
@@ -480,6 +495,7 @@ export default function GraphContent({routerType, routerUuid}: GraphContentProps
       />
       <GraphSearch onFocusNode={focusNode} />
       <DomainContent/>
+      <RegistryContent/>
       <RepoContent/>
       <UnitContent/>
       <UnitNodeContent/>
