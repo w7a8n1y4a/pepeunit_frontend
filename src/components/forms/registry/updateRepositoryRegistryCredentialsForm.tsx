@@ -93,7 +93,7 @@ export default function UpdateRepositoryRegistryCredentialsForm() {
                     <div className='div_unit_message'>
                         Status: {stringToFormat(repoStatus)}
                     </div>
-            )
+                )
             }
             <div>
                 <form>

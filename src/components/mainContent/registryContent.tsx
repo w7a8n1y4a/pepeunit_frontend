@@ -4,6 +4,7 @@ import BaseModal from '../modal/baseModal'
 import UpdateRepositoryRegistryCredentialsForm from '../forms/registry/updateRepositoryRegistryCredentialsForm'
 import Spinner from '@primitives/spinner'
 import {stringToFormat} from '@utils/stringToFormat'
+import byteConverter from '@utils/byteConverter'
 
 import copyToClipboard from '@utils/copyToClipboard'
 import copy_img from '/images/copy.svg'
@@ -15,6 +16,8 @@ import { useErrorStore } from '@stores/errorStore';
 import useModalHandlers from '@handlers/useModalHandlers';
 
 import { NodeType } from '@src/rootTypes/nodeTypeEnum';
+
+import angry_img from '/images/pepe/angry.svg'
 
 export default function RegistryContent(){
   const { setHappy } = useErrorStore();
@@ -69,6 +72,7 @@ return (
       <BaseModal
         modalName={'Registry'}
         subName={currentNodeData?.name}
+        lastUpdateDatetime={currentNodeData?.syncUpdateDatetime}
         open={activeModal === 'RegistryMenu'}
         copyLink={window.location.origin + '/registry/' + currentNodeData?.uuid}
         reloadEntityType={NodeType.Registry}
@@ -87,6 +91,30 @@ return (
                   </button>
                 </div>
               </>
+            )
+          }
+          {
+            currentNodeData && currentNodeData.syncStatus && (
+                <div className='div_unit_message'>
+                    Sync status: {stringToFormat(currentNodeData.syncStatus)}
+                </div>
+            )
+          }
+          {
+            currentNodeData && currentNodeData.syncError && (
+                <div className="result_angry">
+                    <img src={angry_img} width="36" height="36" />
+                    <div className={"result_angry_message"}>
+                        {stringToFormat(currentNodeData.syncError)}
+                    </div>
+                </div>
+            )
+          }
+          {
+            currentNodeData && currentNodeData.localRepositorySize && (
+              <div className='div_unit_message'>
+                  Local Size: {byteConverter(currentNodeData.localRepositorySize)}
+              </div>
             )
           }
           {
