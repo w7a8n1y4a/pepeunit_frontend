@@ -1,5 +1,5 @@
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
-import { PermissionEntities, useUpdateUnitsFirmwareMutation, useDeleteRepoMutation, useGetVersionsLazyQuery, VisibilityLevel } from '@rootTypes/compositionFunctions'
+import { PermissionEntities, useUpdateUnitsFirmwareMutation, useDeleteRepoMutation, useGetVersionsLazyQuery, VisibilityLevel, useGetRepositoryRegistryLazyQuery } from '@rootTypes/compositionFunctions'
 import { convertPermissionEntityToNodeType } from '@utils/mappersNodeTypeToPermissions';
 import BaseModal from '../modal/baseModal'
 import CreateUnitForm from '../forms/unit/createUnitForm';
@@ -9,9 +9,6 @@ import { useState, useEffect } from 'react';
 import Spinner from '@primitives/spinner'
 import VersionChart from '@primitives/versionChart'
 import {stringToFormat} from '@utils/stringToFormat'
-
-import copyToClipboard from '@utils/copyToClipboard'
-import copy_img from '/images/copy.svg'
 
 import { useGraphStore } from '@stores/graphStore';
 import { useModalStore, useNodeStore } from '@stores/baseStore';
@@ -29,7 +26,7 @@ export default function RepoContent(){
   const { isLoaderActive, runAsync } = useAsyncHandler();
 
   const { activeModal, setActiveModal } = useModalStore();
-  const { currentNodeData } = useNodeStore();
+  const { currentNodeData, setCurrentNodeData } = useNodeStore();
   const { removeNodesAndLinks } = useGraphStore();
   const { openModal } = useModalHandlers();
 
@@ -42,6 +39,7 @@ export default function RepoContent(){
   const [updateUnitsFirmware] = useUpdateUnitsFirmwareMutation()
   const [deleteRepo] = useDeleteRepoMutation()
   const [getVersions] = useGetVersionsLazyQuery()
+  const [getRepositoryRegistry] = useGetRepositoryRegistryLazyQuery();
 
   const handleUpdateUnitsFirmware = () => {
     runAsync(async () => {
@@ -94,6 +92,24 @@ export default function RepoContent(){
     })
 }, [currentNodeData]);
 
+function pickRepositoryRegistry(){
+  runAsync(async () => {
+    if (currentNodeData != null) {
+        let repo_registry = await getRepositoryRegistry(
+            {
+                variables: {
+                    uuid: currentNodeData.repositoryRegistryUuid
+                }
+            }
+        )
+        if (repo_registry.data?.getRepositoryRegistry){
+            openModal("RegistryMenu")
+            setCurrentNodeData(repo_registry.data.getRepositoryRegistry)
+        }
+    }
+  })
+}
+
 return (
     <>
       <BaseModal
@@ -111,18 +127,9 @@ return (
           {
             versions && versions.unitCount > 0 && (<VersionChart data={versions} />)
           }
-          {
-            currentNodeData && (
-              <>
-                <div className='repo_link'>
-                  <a style={{color: "#0077ff"}} target="_blank" href={currentNodeData.repoUrl}>{stringToFormat(currentNodeData.platform)} {currentNodeData.isPublicRepository ? 'public' : 'private'} Link</a>
-                  <button className='repo_link_button' onClick={() => (copyToClipboard(currentNodeData.repoUrl))}>
-                    <img src={copy_img} width="24" height="24" alt="Back"/>
-                  </button>
-                </div>
-              </>
-            )
-          }
+          <button className="button_open_alter" onClick={() => pickRepositoryRegistry()}>
+            Repository Registry
+          </button>
           {
             user && (
               <button className="button_add_alter" onClick={() => openModal('createUnit')}>

@@ -2,6 +2,7 @@ import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import { useUpdateLocalRepositoryMutation, useDeleteRepositoryRegistryMutation } from '@rootTypes/compositionFunctions'
 import BaseModal from '../modal/baseModal'
 import UpdateRepositoryRegistryCredentialsForm from '../forms/registry/updateRepositoryRegistryCredentialsForm'
+import CreateRepositoryRegistryForm from '../forms/registry/createRepositoryRegistryForm'
 import Spinner from '@primitives/spinner'
 import {stringToFormat} from '@utils/stringToFormat'
 import byteConverter from '@utils/byteConverter'
@@ -178,6 +179,17 @@ return (
         {
           currentNodeData && (
             <UpdateRepositoryRegistryCredentialsForm/>
+          )
+        }
+      </BaseModal>
+      <BaseModal
+        modalName='Create Registry'
+        open={activeModal === 'createRepositoryRegistry'}
+        openModalType='RegistryMenu'
+      >
+        {
+          currentNodeData && (
+            <CreateRepositoryRegistryForm/>
           )
         }
       </BaseModal>

@@ -10,6 +10,7 @@ import UnitNodeEdgeCreateForm from '../../forms/unitNode/unitNodeEdgeCreateForm'
 import '../form.css';
 
 import { useNodeStore } from '@stores/baseStore';
+import { NodeType } from '@src/rootTypes/nodeTypeEnum';
 
 export default function UnitNodeEdgeForm() {
     const { isLoaderActive, runAsync } = useAsyncHandler();
@@ -72,6 +73,7 @@ export default function UnitNodeEdgeForm() {
             <IterationList
                 items={nodeOutputs}
                 renderType={'collapse'}
+                selectedEntityType={NodeType.UnitNode}
                 handleDelete={handleDeleteEdge}
                 openModalName={'unitNodeEdgeCreate'}
             />

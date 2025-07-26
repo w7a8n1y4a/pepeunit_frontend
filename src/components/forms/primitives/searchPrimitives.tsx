@@ -201,6 +201,7 @@ import { useUserStore } from '@stores/userStore';
             items={nodeOutputs}
             renderType={typeList}
             openModalName={null}
+            selectedEntityType={selectedEntityType}
             handleCreate={handleCreatePermission}
             onFocusNode={onFocusNode}
         />

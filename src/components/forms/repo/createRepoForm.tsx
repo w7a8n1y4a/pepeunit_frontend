@@ -4,13 +4,12 @@ import { getNodeColor } from '@utils/getNodeColor'
 import { useCreateRepoMutation, VisibilityLevel, CreateRepoMutationVariables } from '@rootTypes/compositionFunctions'
 import { useState } from 'react';
 import isValidLogin from '@utils/isValidLogin'
-import isValidRepoUrl from '@utils/isValidRepoUrl'
 import DefaultInput from '@primitives/defaultInput'
 import Spinner from '@primitives/spinner'
 import '../form.css'
 
 import { useGraphStore } from '@stores/graphStore';
-import { useModalStore, useNodeStore } from '@stores/baseStore';
+import { useModalStore, useNodeStore } from '@stores/baseStore';    
 
 export default function CreateRepoForm() {
     const { isLoaderActive, runAsync } = useAsyncHandler();
@@ -19,16 +18,14 @@ export default function CreateRepoForm() {
     const { setCurrentNodeData } = useNodeStore();
     
     const [repoName, setRepoName] = useState('');
-    const [repoUrl, setRepoUrl] = useState('');
     const [repoVisibilityLevel, setRepoVisibilityLevel] = useState(VisibilityLevel.Public);
-    const [isСompilableRepository, setIsСompilableRepository] = useState(false);
+    const [isCompilableRepository, setIsCompilableRepository] = useState(false);
     const [targetRepositoryRegistry, setTargetRepositoryRegistry] = useState<string | null>(null);
 
     const { graphData, setGraphData } = useGraphStore();
 
     const [errorState, setErrorState] = useState({
         name: true,
-        repoUrl: true,
         username: false,
         patToken: false
     });
@@ -51,7 +48,7 @@ export default function CreateRepoForm() {
                     repositoryRegistryUuid: targetRepositoryRegistry,
                     visibilityLevel: repoVisibilityLevel,
                     name: repoName,
-                    isCompilableRepo: isСompilableRepository,
+                    isCompilableRepo: isCompilableRepository,
                 }
 
                 let result = await createRepoMutation({
@@ -102,16 +99,6 @@ export default function CreateRepoForm() {
                         validateFunc={isValidLogin}
                         setIsErrorExist={(hasError) => updateErrorState('name', hasError)}
                     />
-                    <DefaultInput
-                        id="url_set"
-                        type="text"
-                        placeholder="Repo Url"
-                        value={repoUrl}
-                        validateState={repoUrl}
-                        onChange={setRepoUrl}
-                        validateFunc={isValidRepoUrl}
-                        setIsErrorExist={(hasError) => updateErrorState('repoUrl', hasError)}
-                    />
                     <select id='base_enum' value={repoVisibilityLevel} onChange={(e) => {
                         setRepoVisibilityLevel(e.target.value as VisibilityLevel); 
                     }}
@@ -125,8 +112,8 @@ export default function CreateRepoForm() {
                         <label className="toggle">
                             <input 
                                 type="checkbox" 
-                                checked={isСompilableRepository}
-                                onChange={(e) => { setIsСompilableRepository(e.target.checked)}
+                                checked={isCompilableRepository}
+                                onChange={(e) => { setIsCompilableRepository(e.target.checked)}
                                 } 
                             />
                             <span className="slider"></span>

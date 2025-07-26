@@ -160,6 +160,7 @@ export default function PermissionForm({ currentNodeType }: PermissionFormProps)
             <IterationList
                 items={nodeOutputs}
                 renderType={typeList}
+                selectedEntityType={selectedEntityType}
                 handleDelete={handleDeletePermission}
                 openModalName={'permissionCreate' + currentNodeType}
             />

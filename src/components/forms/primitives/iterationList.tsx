@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { NodeType } from '@rootTypes/nodeTypeEnum'
 import nodeTypeToUserNavigation from '@src/utils/nodeTypeToUserNavigation'
 import useModalHandlers from '@handlers/useModalHandlers';
 
@@ -7,6 +8,7 @@ import './primitives.css'
 interface IterationProps<T> {
     items: T[] | null;
     renderType: string;
+    selectedEntityType: NodeType;
     handleDelete?: (uuid: string) => void;
     handleCreate?: (uuid: string) => void;
     openModalName?: string | null;
@@ -16,6 +18,7 @@ interface IterationProps<T> {
 const IterationList = <T extends { uuid: string }>({
     items,
     renderType,
+    selectedEntityType,
     openModalName,
     handleDelete,
     handleCreate,
@@ -98,6 +101,13 @@ const IterationList = <T extends { uuid: string }>({
                 openModalName && (
                     <div className="iteration-item" onClick={() => openModal(openModalName)}>
                         <h3>Pick Agent</h3>
+                    </div>
+                )
+            }
+            {
+                selectedEntityType == NodeType.Registry && (
+                    <div className="iteration-item" onClick={() => openModal('createRepositoryRegistry')}>
+                        <h3>Create Registry</h3>
                     </div>
                 )
             }

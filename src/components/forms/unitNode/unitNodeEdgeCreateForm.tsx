@@ -1,4 +1,5 @@
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
+import { NodeType } from '@rootTypes/nodeTypeEnum'
 import { useGetUnitsWithUnitNodesLazyQuery, useCreateUnitNodeEdgeMutation, UnitNodeTypeEnum } from '@rootTypes/compositionFunctions'
 import { useState, useEffect } from 'react'
 import DefaultInput from '@primitives/defaultInput'
@@ -92,6 +93,7 @@ export default function UnitNodeEdgeCreateForm() {
             <IterationList
                 items={data}
                 renderType={'collapse'}
+                selectedEntityType={NodeType.UnitNode}
                 handleCreate={handleCreateEdge}
                 openModalName={null}
             />
