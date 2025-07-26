@@ -1,11 +1,10 @@
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
-import { useUpdateLocalRepositoryMutation, PermissionEntities, useUpdateUnitsFirmwareMutation, useDeleteRepoMutation, useGetVersionsLazyQuery, VisibilityLevel } from '@rootTypes/compositionFunctions'
+import { PermissionEntities, useUpdateUnitsFirmwareMutation, useDeleteRepoMutation, useGetVersionsLazyQuery, VisibilityLevel } from '@rootTypes/compositionFunctions'
 import { convertPermissionEntityToNodeType } from '@utils/mappersNodeTypeToPermissions';
 import BaseModal from '../modal/baseModal'
 import CreateUnitForm from '../forms/unit/createUnitForm';
 import UpdateRepoForm from '../forms/repo/updateRepoForm';
 import PermissionForm from '../forms/permission/permissionForm';
-import UpdateRepoCredentialsForm from '../forms/repo/updateRepoCredentialsForm'
 import { useState, useEffect } from 'react';
 import Spinner from '@primitives/spinner'
 import VersionChart from '@primitives/versionChart'
@@ -40,25 +39,9 @@ export default function RepoContent(){
 
   let nodeType = PermissionEntities.Repo
 
-  const [updateLocalRepository] = useUpdateLocalRepositoryMutation();
   const [updateUnitsFirmware] = useUpdateUnitsFirmwareMutation()
   const [deleteRepo] = useDeleteRepoMutation()
   const [getVersions] = useGetVersionsLazyQuery()
-
-  const handleUpdateLocalRepo = () => {
-    runAsync(async () => {
-      if (currentNodeData){
-        let result = await updateLocalRepository({
-          variables: {
-            uuid: currentNodeData.uuid
-          }
-        })
-        if (result.data){
-          setHappy("Git Repo update request send")
-        }
-      }
-    })
-  };
 
   const handleUpdateUnitsFirmware = () => {
     runAsync(async () => {
@@ -163,9 +146,6 @@ return (
                   </button>
                 </div>
                 <div className='div_statistics'>
-                  <button className="button_open_alter_send" onClick={handleUpdateLocalRepo}>
-                    Update local Repo
-                  </button>
                   <button className="button_open_alter_send" onClick={handleUpdateUnitsFirmware}>
                     Update related Unit
                   </button>

@@ -1,5 +1,5 @@
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
-import { VisibilityLevel, useGetBranchCommitsLazyQuery, useUpdateUnitMutation, useGetRepoLazyQuery, RepoType, useGetAvailablePlatformsLazyQuery } from '@rootTypes/compositionFunctions'
+import { VisibilityLevel, useGetBranchCommitsLazyQuery, useUpdateUnitMutation, useGetRepoLazyQuery, RepoType, useGetAvailablePlatformsLazyQuery, RepositoryRegistryType, useGetRepositoryRegistryLazyQuery } from '@rootTypes/compositionFunctions'
 import { useState, useEffect } from 'react';
 import { getCommitSummary } from '@utils/getCommitSummary';
 import isValidLogin from '@utils/isValidLogin'
@@ -16,6 +16,7 @@ export default function UpdateUnitForm() {
     const { isLoaderActive, runAsync } = useAsyncHandler();
 
     const { currentNodeData, setCurrentNodeData } = useNodeStore();
+    const [ currentRepositoryRegistryData, setCurrentRepositoryRegistryData ] = useState<RepositoryRegistryType | null>(null);
     const [ currentRepoData, setCurrentRepoData ] = useState<RepoType | null>(null);
 
     const [repoAvailableCommits, setRepoAvailableCommits] = useState<Array<{
@@ -38,6 +39,7 @@ export default function UpdateUnitForm() {
     const [getBranchCommits] = useGetBranchCommitsLazyQuery();
     const [updateUnitMutation] = useUpdateUnitMutation();
     const [getAvailablePlatforms] = useGetAvailablePlatformsLazyQuery();
+    const [getRepositoryRegistry] = useGetRepositoryRegistryLazyQuery();
     const [getRepo] = useGetRepoLazyQuery();
 
     useEffect(() => {
@@ -61,41 +63,57 @@ export default function UpdateUnitForm() {
     }, [currentNodeData.repoBranch, currentNodeData.isAutoUpdateFromRepoUnit]);
 
     useEffect(() => {
-        runAsync(async () => {
-            setCurrentRepoData(null)
-            let result = await getRepo(
-                {
-                    variables: {
-                        uuid: currentNodeData.repoUuid
-                    }
-                }
-            )
-            if (result.data?.getRepo){
-
-                let repo = result.data.getRepo
-                setCurrentRepoData(repo)
-                setRepoAvailablePlatforms(null)
-
-                if (repo.isCompilableRepo){
-                    let commit = null
-
-                    if (!currentNodeData.isAutoUpdateFromRepoUnit && currentNodeData.repoCommit){
-                        commit = currentNodeData.repoCommit
-                    }
-                    getAvailablePlatforms({
+        if (currentNodeData.__typename == "UnitType"){
+            runAsync(async () => {
+                setCurrentRepoData(null)
+                let repo_result = await getRepo(
+                    {
                         variables: {
-                            uuid: currentNodeData.repoUuid,
-                            targetCommit: commit
+                            uuid: currentNodeData.repoUuid
                         }
-                    }).then(availablePlatforms => {
-                            if (availablePlatforms.data?.getAvailablePlatforms){
-                                setRepoAvailablePlatforms(availablePlatforms.data.getAvailablePlatforms)
+                    }
+                )
+                if (repo_result.data?.getRepo){
+
+                    let repo = repo_result.data.getRepo
+                    setCurrentRepoData(repo)
+                    setRepoAvailablePlatforms(null)
+
+                    if (repo.isCompilableRepo){
+                        let commit = null
+
+                        if (!currentNodeData.isAutoUpdateFromRepoUnit && currentNodeData.repoCommit){
+                            commit = currentNodeData.repoCommit
+                        }
+                        getAvailablePlatforms({
+                            variables: {
+                                uuid: currentNodeData.repoUuid,
+                                targetCommit: commit
                             }
+                        }).then(availablePlatforms => {
+                                if (availablePlatforms.data?.getAvailablePlatforms){
+                                    setRepoAvailablePlatforms(availablePlatforms.data.getAvailablePlatforms)
+                                }
+                            }
+                        )
+                    }
+
+                    setCurrentRepositoryRegistryData(null)
+                    if (currentRepoData != null) {
+                        let repo_registry = await getRepositoryRegistry(
+                            {
+                                variables: {
+                                    uuid: currentRepoData.repositoryRegistryUuid
+                                }
+                            }
+                        )
+                        if (repo_registry.data?.getRepositoryRegistry){
+                            setCurrentRepositoryRegistryData(repo_registry.data.getRepositoryRegistry)
                         }
-                    )
+                    }
                 }
-            }
-        })
+            })
+        }
     }, [currentNodeData]);
 
     const handleUpdateUnit = () => {
@@ -186,14 +204,14 @@ export default function UpdateUnitForm() {
                                 >
                                     <option value="" disabled selected>Pick branch</option>
                                     {
-                                        currentRepoData && !(currentRepoData.branches.includes(currentNodeData.repoBranch)) && (
+                                        currentRepositoryRegistryData && !(currentRepositoryRegistryData.branches.includes(currentNodeData.repoBranch)) && (
                                             <option value={currentNodeData.repoBranch}>
                                                 {currentNodeData.repoBranch}
                                             </option>
                                         )
                                     }
                                     {   
-                                        currentRepoData?.branches.map(
+                                        currentRepositoryRegistryData?.branches.map(
                                             item => (
                                                 <option value={item}>
                                                     {item}

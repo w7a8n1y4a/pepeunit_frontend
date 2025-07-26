@@ -1,7 +1,20 @@
 import { ResultType } from '@rootTypes/resultEnum'
 import { NodeType } from '@rootTypes/nodeTypeEnum'
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
-import { useDeleteUnitMutation, PermissionEntities, useGetAvailablePlatformsLazyQuery, useGetRepoLazyQuery, RepoType, useSendCommandToInputBaseTopicMutation, BackendTopicCommand, useGetTargetVersionLazyQuery, VisibilityLevel, useGetUnitCurrentSchemaLazyQuery } from '@rootTypes/compositionFunctions'
+import {
+  useDeleteUnitMutation,
+  PermissionEntities,
+  useGetAvailablePlatformsLazyQuery,
+  useGetRepoLazyQuery,
+  RepoType,
+  useSendCommandToInputBaseTopicMutation,
+  BackendTopicCommand,
+  useGetTargetVersionLazyQuery,
+  VisibilityLevel,
+  useGetUnitCurrentSchemaLazyQuery,
+  RepositoryRegistryType,
+  useGetRepositoryRegistryLazyQuery
+} from '@rootTypes/compositionFunctions'
 import { convertPermissionEntityToNodeType } from '@utils/mappersNodeTypeToPermissions';
 import BaseModal from '../modal/baseModal'
 import { useState, useEffect } from 'react';
@@ -36,6 +49,8 @@ export default function UnitContent(){
   const [availableCommand, setAvailableCommand] = useState<any | null>(null);
   const [baseOutputTopics, setBaseOutputTopics] = useState<any | null>(null);
 
+  const [ currentRepositoryRegistryData, setCurrentRepositoryRegistryData ] = useState<RepositoryRegistryType | null>(null);
+
   const { openModal } = useModalHandlers();
   const { user } = useUserStore();
 
@@ -49,6 +64,7 @@ export default function UnitContent(){
 
   const [deleteUnit] = useDeleteUnitMutation()
   const [getRepo] = useGetRepoLazyQuery();
+  const [getRepositoryRegistry] = useGetRepositoryRegistryLazyQuery();
   const [getAvailablePlatforms] = useGetAvailablePlatformsLazyQuery();
   const [sendCommandToInputBaseTopic] = useSendCommandToInputBaseTopicMutation();
   const [getTargetVersion] = useGetTargetVersionLazyQuery();
@@ -128,67 +144,80 @@ export default function UnitContent(){
   };
 
   useEffect(() => {
-    runAsync(async () => {
-      if (currentNodeData){
-        setCurrentRepoData(null);
-        setRepoAvailablePlatforms(null);
-  
-        const repoResponse = await getRepo({ variables: { uuid: currentNodeData.repoUuid } });
-        const repo = repoResponse.data?.getRepo;
-  
-        if (repo) {
-          setCurrentRepoData(repo);
-  
-          if (repo.isCompilableRepo) {
-            const platformsResponse = await getAvailablePlatforms(
-              { variables: { uuid: currentNodeData.repoUuid, targetCommit: currentNodeData.repoCommit } }
-            );
-            const platforms = platformsResponse.data?.getAvailablePlatforms;
-  
-            if (platforms) {
-              setRepoAvailablePlatforms(platforms);
+      runAsync(async () => {
+        if (currentNodeData){
+          setCurrentRepoData(null);
+          setRepoAvailablePlatforms(null);
+    
+          const repoResponse = await getRepo({ variables: { uuid: currentNodeData.repoUuid } });
+          const repo = repoResponse.data?.getRepo;
+    
+          if (repo) {
+            setCurrentRepoData(repo);
+    
+            if (repo.isCompilableRepo) {
+              const platformsResponse = await getAvailablePlatforms(
+                { variables: { uuid: currentNodeData.repoUuid, targetCommit: currentNodeData.repoCommit } }
+              );
+              const platforms = platformsResponse.data?.getAvailablePlatforms;
+    
+              if (platforms) {
+                setRepoAvailablePlatforms(platforms);
+              }
+            }
+            setCurrentRepositoryRegistryData(null)
+            if (repo != null) {
+                let repo_registry = await getRepositoryRegistry(
+                    {
+                        variables: {
+                            uuid: repo.repositoryRegistryUuid
+                        }
+                    }
+                )
+                if (repo_registry.data?.getRepositoryRegistry){
+                    setCurrentRepositoryRegistryData(repo_registry.data.getRepositoryRegistry)
+                }
             }
           }
-        }
 
-        let result = await getTargetVersion(
-          {
-            variables: {
-              uuid: currentNodeData.uuid,
+          let result = await getTargetVersion(
+            {
+              variables: {
+                uuid: currentNodeData.uuid,
+              }
             }
+          )
+          if (result.data?.getTargetVersion){
+            setTargetVersion(result.data.getTargetVersion.commit)
           }
-        )
-        if (result.data?.getTargetVersion){
-          setTargetVersion(result.data.getTargetVersion.commit)
+
+          let currentSchema = await getUnitCurrentSchema({variables: {uuid: currentNodeData.uuid}})
+
+          if (currentSchema.data?.getUnitCurrentSchema){
+
+            const inputCommand = JSON.parse(currentSchema.data?.getUnitCurrentSchema)['input_base_topic']
+
+            let state = {
+              'Firmware': "update/pepeunit" in inputCommand,
+              'Schema': "schema_update/pepeunit" in inputCommand,
+              'Env': "env_update/pepeunit" in inputCommand,
+              'Log': "log_sync/pepeunit" in inputCommand
+            }
+
+            const outputTopics = JSON.parse(currentSchema.data?.getUnitCurrentSchema)['output_base_topic']
+            
+            setAvailableCommand(state)
+
+            let outputState = {
+              'State': "state/pepeunit" in outputTopics,
+              'Log': "log/pepeunit" in outputTopics
+            }
+
+            setBaseOutputTopics(outputState)
+          }
+
         }
-
-        let currentSchema = await getUnitCurrentSchema({variables: {uuid: currentNodeData.uuid}})
-
-        if (currentSchema.data?.getUnitCurrentSchema){
-
-          const inputCommand = JSON.parse(currentSchema.data?.getUnitCurrentSchema)['input_base_topic']
-
-          let state = {
-            'Firmware': "update/pepeunit" in inputCommand,
-            'Schema': "schema_update/pepeunit" in inputCommand,
-            'Env': "env_update/pepeunit" in inputCommand,
-            'Log': "log_sync/pepeunit" in inputCommand
-          }
-
-          const outputTopics = JSON.parse(currentSchema.data?.getUnitCurrentSchema)['output_base_topic']
-          
-          setAvailableCommand(state)
-
-          let outputState = {
-            'State': "state/pepeunit" in outputTopics,
-            'Log': "log/pepeunit" in outputTopics
-          }
-
-          setBaseOutputTopics(outputState)
-        }
-
-      }
-    })
+      })
   }, [currentNodeData]);
   
   return (
@@ -375,11 +404,11 @@ export default function UnitContent(){
         openModalType='UnitMenu'
       > 
       {
-        currentRepoData && (
+        currentRepositoryRegistryData && (
           <>
             <div className='repo_link'>
-              <a style={{color: "#0077ff"}} target="_blank" href={currentRepoData.repoUrl}>Documentation Link</a>
-              <button className='repo_link_button' onClick={() => (copyToClipboard(currentRepoData.repoUrl))}>
+              <a style={{color: "#0077ff"}} target="_blank" href={currentRepositoryRegistryData.repositoryUrl}>Documentation Link</a>
+              <button className='repo_link_button' onClick={() => (copyToClipboard(currentRepositoryRegistryData.repositoryUrl))}>
                 <img src={copy_img} width="24" height="24" alt="Back"/>
               </button>
             </div>

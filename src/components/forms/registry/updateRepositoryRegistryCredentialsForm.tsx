@@ -57,17 +57,14 @@ export default function UpdateRepositoryRegistryCredentialsForm() {
     };
 
     useEffect(() => {
-        console.log('test')
         if (currentNodeData.__typename == "RepositoryRegistryType") {
             runAsync(async () => {
-                console.log('one')
                 let credentials = await getCredentials({
                     variables: {
                         uuid: currentNodeData.uuid
                     }
                 })
                 if (credentials.data){
-                    console.log(credentials.data)
                     if (credentials.data?.getCredentials){
                         setRepoUsername(credentials.data.getCredentials.credentials.username)
                         setPatToken(credentials.data.getCredentials.credentials.patToken)

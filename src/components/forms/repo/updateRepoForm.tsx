@@ -1,7 +1,7 @@
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import { NodeType } from '@rootTypes/nodeTypeEnum'
 import { getNodeColor } from '@utils/getNodeColor'
-import { VisibilityLevel, useGetBranchCommitsLazyQuery, useUpdateRepoMutation } from '@rootTypes/compositionFunctions'
+import { VisibilityLevel, useGetBranchCommitsLazyQuery, useUpdateRepoMutation, RepositoryRegistryType, useGetRepositoryRegistryLazyQuery } from '@rootTypes/compositionFunctions'
 import { useState, useEffect } from 'react';
 import { getCommitSummary } from '@utils/getCommitSummary';
 import isValidLogin from '@utils/isValidLogin'
@@ -22,6 +22,7 @@ export default function UpdateRepoForm() {
     const { activeModal } = useModalStore();
 
     const { currentNodeData, setCurrentNodeData } = useNodeStore();
+    const [ currentRepositoryRegistryData, setCurrentRepositoryRegistryData ] = useState<RepositoryRegistryType | null>(null);
 
     const { graphData, setGraphData } = useGraphStore();
 
@@ -38,6 +39,7 @@ export default function UpdateRepoForm() {
 
     const [getBranchCommits] = useGetBranchCommitsLazyQuery();
     const [updateRepoMutation] = useUpdateRepoMutation();
+    const [getRepositoryRegistry] = useGetRepositoryRegistryLazyQuery();
 
     useEffect(() => {
         runAsync(async () => {
@@ -59,6 +61,26 @@ export default function UpdateRepoForm() {
             }
         })
     }, [currentNodeData.defaultBranch, currentNodeData.isAutoUpdateRepo]);
+
+    useEffect(() => {
+        if (currentNodeData.__typename == "RepoType"){
+            runAsync(async () => {
+                setCurrentRepositoryRegistryData(null)
+                if (currentNodeData != null) {
+                    let repo_registry = await getRepositoryRegistry(
+                        {
+                            variables: {
+                                uuid: currentNodeData.repositoryRegistryUuid
+                            }
+                        }
+                    )
+                    if (repo_registry.data?.getRepositoryRegistry){
+                        setCurrentRepositoryRegistryData(repo_registry.data.getRepositoryRegistry)
+                    }
+                }
+            })
+        }
+    }, [currentNodeData]);
 
     const handleUpdateRepo = () => {
         runAsync(async () => {
@@ -140,7 +162,6 @@ export default function UpdateRepoForm() {
                         <option value={VisibilityLevel.Internal}>Internal</option>
                         <option value={VisibilityLevel.Private}>Private</option>
                     </select>
-
                     <select id='base_enum' value={currentNodeData.defaultBranch === null ? '' : currentNodeData.defaultBranch} onChange={(e) => {
                             setCurrentNodeData(
                                 {
@@ -152,14 +173,14 @@ export default function UpdateRepoForm() {
                     >
                         <option value="" disabled selected>Pick branch</option>
                         {
-                            currentNodeData.__typename == 'RepoType' && !(currentNodeData.branches.includes(currentNodeData.defaultBranch)) && (
+                            currentRepositoryRegistryData && !(currentRepositoryRegistryData.branches.includes(currentNodeData.defaultBranch)) && (
                                 <option value={currentNodeData.defaultBranch}>
                                     {currentNodeData.defaultBranch}
                                 </option>
                             )
                         }
                         {   
-                            currentNodeData.branches?.map(
+                            currentRepositoryRegistryData && currentRepositoryRegistryData.branches?.map(
                                 (item: string) => (
                                     <option value={item}>
                                         {item}
