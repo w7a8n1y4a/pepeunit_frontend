@@ -63,57 +63,55 @@ export default function UpdateUnitForm() {
     }, [currentNodeData.repoBranch, currentNodeData.isAutoUpdateFromRepoUnit]);
 
     useEffect(() => {
-        if (currentNodeData.__typename == "UnitType"){
-            runAsync(async () => {
-                setCurrentRepoData(null)
-                let repo_result = await getRepo(
-                    {
-                        variables: {
-                            uuid: currentNodeData.repoUuid
-                        }
-                    }
-                )
-                if (repo_result.data?.getRepo){
-
-                    let repo = repo_result.data.getRepo
-                    setCurrentRepoData(repo)
-                    setRepoAvailablePlatforms(null)
-
-                    if (repo.isCompilableRepo){
-                        let commit = null
-
-                        if (!currentNodeData.isAutoUpdateFromRepoUnit && currentNodeData.repoCommit){
-                            commit = currentNodeData.repoCommit
-                        }
-                        getAvailablePlatforms({
-                            variables: {
-                                uuid: currentNodeData.repoUuid,
-                                targetCommit: commit
-                            }
-                        }).then(availablePlatforms => {
-                                if (availablePlatforms.data?.getAvailablePlatforms){
-                                    setRepoAvailablePlatforms(availablePlatforms.data.getAvailablePlatforms)
-                                }
-                            }
-                        )
-                    }
-
-                    setCurrentRepositoryRegistryData(null)
-                    if (currentRepoData != null) {
-                        let repo_registry = await getRepositoryRegistry(
-                            {
-                                variables: {
-                                    uuid: currentRepoData.repositoryRegistryUuid
-                                }
-                            }
-                        )
-                        if (repo_registry.data?.getRepositoryRegistry){
-                            setCurrentRepositoryRegistryData(repo_registry.data.getRepositoryRegistry)
-                        }
+        runAsync(async () => {
+            setCurrentRepoData(null)
+            let repo_result = await getRepo(
+                {
+                    variables: {
+                        uuid: currentNodeData.repoUuid
                     }
                 }
-            })
-        }
+            )
+            if (repo_result.data?.getRepo){
+
+                let repo = repo_result.data.getRepo
+                setCurrentRepoData(repo)
+                setRepoAvailablePlatforms(null)
+
+                if (repo.isCompilableRepo){
+                    let commit = null
+
+                    if (!currentNodeData.isAutoUpdateFromRepoUnit && currentNodeData.repoCommit){
+                        commit = currentNodeData.repoCommit
+                    }
+                    getAvailablePlatforms({
+                        variables: {
+                            uuid: currentNodeData.repoUuid,
+                            targetCommit: commit
+                        }
+                    }).then(availablePlatforms => {
+                            if (availablePlatforms.data?.getAvailablePlatforms){
+                                setRepoAvailablePlatforms(availablePlatforms.data.getAvailablePlatforms)
+                            }
+                        }
+                    )
+                }
+
+                setCurrentRepositoryRegistryData(null)
+                if (currentRepoData != null) {
+                    let repo_registry = await getRepositoryRegistry(
+                        {
+                            variables: {
+                                uuid: currentRepoData.repositoryRegistryUuid
+                            }
+                        }
+                    )
+                    if (repo_registry.data?.getRepositoryRegistry){
+                        setCurrentRepositoryRegistryData(repo_registry.data.getRepositoryRegistry)
+                    }
+                }
+            }
+        })
     }, [currentNodeData]);
 
     const handleUpdateUnit = () => {

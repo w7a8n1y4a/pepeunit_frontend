@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { NodeType } from '@rootTypes/nodeTypeEnum'
-import { UnitNodeTypeEnum, useGetRepoLazyQuery, useGetUnitLazyQuery, useGetUnitNodeLazyQuery } from '@rootTypes/compositionFunctions'
+import { UnitNodeTypeEnum, useGetRepoLazyQuery, useGetUnitLazyQuery, useGetUnitNodeLazyQuery, useGetRepositoryRegistryLazyQuery } from '@rootTypes/compositionFunctions'
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import ResultQuery from '@primitives/resultQuery'
 import close_img from '/images/close.svg'
@@ -35,6 +35,7 @@ export default function BaseModal({modalName, subName, visibilityLevel, lastUpda
 
     const { updateNodeDataById } = useGraphStore();
 
+    const [getRepositoryRegistry] = useGetRepositoryRegistryLazyQuery();
     const [getRepo] = useGetRepoLazyQuery();
     const [getUnit] = useGetUnitLazyQuery();
     const [getUnitNode] = useGetUnitNodeLazyQuery();
@@ -42,6 +43,14 @@ export default function BaseModal({modalName, subName, visibilityLevel, lastUpda
     function updateData(reloadEntityType: NodeType | UnitNodeTypeEnum) {
         runAsync(async () => {
             let targetdata = null
+
+            if (reloadEntityType == NodeType.Registry){
+                let result = await getRepositoryRegistry({
+                    variables: {uuid: currentNodeData.uuid}
+                })
+                targetdata = result.data?.getRepositoryRegistry
+            }
+
             if (reloadEntityType == NodeType.Repo){
                 let result = await getRepo({
                     variables: {uuid: currentNodeData.uuid}
@@ -65,7 +74,9 @@ export default function BaseModal({modalName, subName, visibilityLevel, lastUpda
             }
 
             if (targetdata?.uuid){
-                updateNodeDataById(targetdata.uuid, targetdata)
+                if (targetdata.__typename != 'RepositoryRegistryType'){
+                    updateNodeDataById(targetdata.uuid, targetdata)
+                }
                 setCurrentNodeData(targetdata)
             }
 

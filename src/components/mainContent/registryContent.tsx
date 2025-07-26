@@ -73,7 +73,7 @@ return (
       <BaseModal
         modalName={'Registry'}
         subName={currentNodeData?.name}
-        lastUpdateDatetime={currentNodeData?.syncUpdateDatetime}
+        lastUpdateDatetime={currentNodeData?.syncLastDatetime}
         open={activeModal === 'RegistryMenu'}
         copyLink={window.location.origin + '/registry/' + currentNodeData?.uuid}
         reloadEntityType={NodeType.Registry}
@@ -136,7 +136,7 @@ return (
                   )
                 }
                 {
-                  user.uuid == currentNodeData.creator_uuid && (
+                  user.uuid == currentNodeData.creatorUuid && (
                     <div className='div_statistics'>
                       <button className="button_open_alter" onClick={() => openModal('registrySettingsMenu')}>
                         Settings
@@ -187,11 +187,7 @@ return (
         open={activeModal === 'createRepositoryRegistry'}
         openModalType='RegistryMenu'
       >
-        {
-          currentNodeData && (
-            <CreateRepositoryRegistryForm/>
-          )
-        }
+        <CreateRepositoryRegistryForm/>
       </BaseModal>
     </>
   )
