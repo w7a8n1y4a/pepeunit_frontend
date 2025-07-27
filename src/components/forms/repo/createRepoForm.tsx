@@ -92,7 +92,7 @@ export default function CreateRepoForm() {
                 <button className="button_registry_search" onClick={() => openModal('registrySearch')}>
                     {
                         currentPickRegistryData ? (
-                            registryToText(currentPickRegistryData)
+                            registryToText(currentPickRegistryData.repositoryUrl)
                         )
                         : (
                             <>

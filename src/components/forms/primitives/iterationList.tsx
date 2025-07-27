@@ -75,7 +75,7 @@ const IterationList = <T extends { uuid: string, __typename: string }>({
             case NodeType.Registry:
                 return [
                     stringToFormat(item.platform),
-                    item.repositoryUrl ? registryToText(item.repositoryUrl) : 'N/A'
+                    item.repositoryUrl ? registryToText(item.repositoryUrl) : '-'
                 ];
             case NodeType.Repo:
             case NodeType.Unit:

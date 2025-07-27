@@ -1,7 +1,15 @@
 import { NodeType } from '@rootTypes/nodeTypeEnum'
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import { getNodeColor } from '@utils/getNodeColor'
-import { useCreateUnitMutation, useGetBranchCommitsLazyQuery, VisibilityLevel, CreateUnitMutationVariables, useGetAvailablePlatformsLazyQuery } from '@rootTypes/compositionFunctions'
+import {
+    useCreateUnitMutation,
+    useGetBranchCommitsLazyQuery,
+    VisibilityLevel,
+    CreateUnitMutationVariables,
+    useGetAvailablePlatformsLazyQuery,
+    RepositoryRegistryType,
+    useGetRepositoryRegistryLazyQuery
+} from '@rootTypes/compositionFunctions'
 import { useState, useEffect } from 'react';
 import { getCommitSummary } from '@utils/getCommitSummary';
 import isValidLogin from '@utils/isValidLogin'
@@ -40,6 +48,8 @@ export default function CreateUnitForm() {
     const [repoBranch, setRepoBranch] = useState<string | null>(null);
     const [repoCommit, setRepoCommit] = useState<string | null>(null);
     const [targetPlatform, setTargetPlatform] = useState<string | null>(null);
+    const [ currentRepositoryRegistryData, setCurrentRepositoryRegistryData ] = useState<RepositoryRegistryType | null>(null);
+    
 
     const [errorState, setErrorState] = useState({
         name: true,
@@ -59,6 +69,7 @@ export default function CreateUnitForm() {
     const [getBranchCommits] = useGetBranchCommitsLazyQuery();
     const [getAvailablePlatforms] = useGetAvailablePlatformsLazyQuery();
     const [createUnitMutation] = useCreateUnitMutation();
+    const [getRepositoryRegistry] = useGetRepositoryRegistryLazyQuery();
 
     const handleCreateUnit = () => {
         runAsync(async () => {
@@ -151,6 +162,24 @@ export default function CreateUnitForm() {
     }, [currentNodeData, repoCommit, isAutoUpdateFromRepoUnit]);
 
     useEffect(() => {
+        runAsync(async () => {
+            setCurrentRepositoryRegistryData(null)
+            if (currentNodeData != null) {
+                let repo_registry = await getRepositoryRegistry(
+                    {
+                        variables: {
+                            uuid: currentNodeData.repositoryRegistryUuid
+                        }
+                    }
+                )
+                if (repo_registry.data?.getRepositoryRegistry){
+                    setCurrentRepositoryRegistryData(repo_registry.data.getRepositoryRegistry)
+                }
+            }
+        })
+    }, [currentNodeData]);
+
+    useEffect(() => {
         if (activeModal == 'createUnit' && isAutoUpdateFromRepoUnit && currentNodeData.defaultBranch === null){
             setAngry('Fill in the default branch for Repo - you can\'t make Unit auto-update without it')
         } else {
@@ -223,7 +252,7 @@ export default function CreateUnitForm() {
                                 >
                                     <option value="" disabled selected>Pick branch</option>
                                     {   
-                                        currentNodeData.__typename == 'RepoType' && currentNodeData.branches.map(
+                                        currentNodeData.__typename == 'RepoType' && currentRepositoryRegistryData && currentRepositoryRegistryData.branches.map(
                                             (item: string) => (
                                                 <option value={item}>
                                                     {item}
