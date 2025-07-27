@@ -14,7 +14,7 @@ import { UserRole, useBlockUserMutation, useUnblockUserMutation } from '@rootTyp
 import './header.css'
 import { useState, useCallback, useReducer, useEffect } from 'react';
 
-import { useModalStore, useNodeStore } from '@stores/baseStore';
+import { useModalStore, useNodeStore, usePickRegistryStore } from '@stores/baseStore';
 import useModalHandlers from '@handlers/useModalHandlers';
 import { useUserStore } from '@stores/userStore';
 import { useErrorStore } from '@stores/errorStore';
@@ -28,6 +28,7 @@ export default function Header(){
     const { activeModal } = useModalStore();
     const { openModal, closeModal } = useModalHandlers();
     const { currentNodeData, setCurrentNodeData } = useNodeStore();
+    const { setCurrentPickRegistryData } = usePickRegistryStore();
     const { user, clearUser } = useUserStore();
     const [, forceUpdate] = useReducer(x => x + 1, 0);
 
@@ -73,6 +74,11 @@ export default function Header(){
         })
     };
 
+    function pickRepoCreate() {
+        setCurrentPickRegistryData(null)
+        openModal('createRepo')
+    }
+
     return (
         <header className='app-header'>
             <div className='logo'>
@@ -91,7 +97,7 @@ export default function Header(){
             <div className='user_controls'>
                 {login ? (
                     <>
-                        <button className="signin_button" onClick={() => openModal('createRepo')}>
+                        <button className="signin_button" onClick={() => pickRepoCreate()}>
                             <img src={micro} width="32" height="32" alt="AddRepoImg" />
                         </button>
                         <button className="user_menu_button" onClick={() => {

@@ -170,15 +170,9 @@ export default function UpdateRepoForm() {
                         }}
                     >
                         <option value="" disabled selected>Pick branch</option>
-                        {
-                            currentRepositoryRegistryData && !(currentRepositoryRegistryData.branches.includes(currentNodeData.defaultBranch)) && (
-                                <option value={currentNodeData.defaultBranch}>
-                                    {currentNodeData.defaultBranch}
-                                </option>
-                            )
-                        }
+
                         {   
-                            currentRepositoryRegistryData && currentRepositoryRegistryData.branches?.map(
+                            currentRepositoryRegistryData && currentRepositoryRegistryData.branches.map(
                                 (item: string) => (
                                     <option value={item}>
                                         {item}

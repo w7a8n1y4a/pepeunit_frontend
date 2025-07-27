@@ -91,6 +91,11 @@ export default function RegistryContent(){
     }
   }
 
+function pickRepoCreate() {
+    setCurrentPickRegistryData(currentNodeData)
+    openModal('createRepo')
+}
+
 return (
     <>
       <BaseModal
@@ -143,7 +148,7 @@ return (
           }
           {
             user && (
-              <button className="button_add_alter" onClick={() => openModal('createRepo')}>
+              <button className="button_add_alter" onClick={() => pickRepoCreate()}>
                 Create Repo
               </button>
             )
