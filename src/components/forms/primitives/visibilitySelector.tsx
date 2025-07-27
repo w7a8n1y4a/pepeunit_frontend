@@ -1,12 +1,14 @@
 import React from 'react';
+import {stringToFormat} from '@utils/stringToFormat'
+
+import './primitives.css';
+
 
 export enum VisibilityLevel {
     Internal = "INTERNAL",
     Private = "PRIVATE",
     Public = "PUBLIC",
 }
-
-import './primitives.css';
 
 type VisibilitySelectorProps = {
     levels: VisibilityLevel[];
@@ -37,7 +39,7 @@ const VisibilitySelector: React.FC<VisibilitySelectorProps> = ({
                     className={`entity-button ${selectedVisibilityLevels.includes(level) ? 'active' : ''}`}
                     onClick={() => toggleVisibilityLevel(level)}
                 >
-                    {level}
+                    {stringToFormat(level)}
                 </button>
             ))}
         </div>

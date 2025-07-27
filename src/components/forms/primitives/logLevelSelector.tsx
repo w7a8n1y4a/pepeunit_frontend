@@ -1,4 +1,5 @@
 import React from 'react';
+import {stringToFormat} from '@utils/stringToFormat'
 
 export enum LogLevel {
     Debug = 'DEBUG',
@@ -39,7 +40,7 @@ const LogLevelSelector: React.FC<LogLevelSelectorProps> = ({
                     className={`entity-button ${selectedLogLevels.includes(level) ? 'active' : ''}`}
                     onClick={() => toggleLogLevel(level)}
                 >
-                    {level}
+                    {stringToFormat(level)}
                 </button>
             ))}
         </div>

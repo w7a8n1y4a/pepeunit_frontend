@@ -9,6 +9,7 @@ import PaginationControls from '@primitives/pagination';
 import IterationList from '@primitives/iterationList'
 import EntityTypeSelector from '@primitives/entityTypeSelector';
 import VisibilitySelector from '@primitives/visibilitySelector';
+import PrivateRegistrySelector, {PrivateRegistry} from '@primitives/privateRegistrySelector';
 import useFetchEntitiesByFilter from '../utils/useFetchEntitiesByFilter';
 import {registryToText} from '@utils/registryToText'
 import '../form.css';
@@ -38,6 +39,9 @@ import { useUserStore } from '@stores/userStore';
     const [ isCreatorSearchOnly, setIsCreatorSearchOnly] = useState<boolean>(false);
     const [selectedVisibilityLevels, setSelectedVisibilityLevels] = useState<VisibilityLevel[]>(
         [VisibilityLevel.Public, VisibilityLevel.Internal, VisibilityLevel.Private]
+    );
+    const [selectedPrivateRegistry, setSelectedPrivateRegistry] = useState<PrivateRegistry[]>(
+        [PrivateRegistry.Public, PrivateRegistry.Private]
     );
 
     const [ typeList, setTypeList ] = useState<'button' | 'collapse'>('button');
@@ -75,6 +79,7 @@ import { useUserStore } from '@stores/userStore';
                 itemsPerPage,
                 currentPage * itemsPerPage,
                 visibilityLevel,
+                selectedPrivateRegistry,
                 user && isCreatorSearchOnly ? user.uuid : undefined  
             )
             if (result?.data) {
@@ -123,7 +128,7 @@ import { useUserStore } from '@stores/userStore';
     
     useEffect(() => {
         loadEntities(searchString, selectedEntityType, currentPage, selectedVisibilityLevels, isCreatorSearchOnly);
-    }, [searchString, currentPage, selectedEntityType, selectedVisibilityLevels, isCreatorSearchOnly]);
+    }, [searchString, currentPage, selectedEntityType, selectedVisibilityLevels, selectedPrivateRegistry, isCreatorSearchOnly]);
 
     const updateErrorState = (field: keyof typeof errorState, hasError: boolean) => {
         setErrorState(prevState => ({
@@ -181,7 +186,16 @@ import { useUserStore } from '@stores/userStore';
             }
         </form>
         {
-            isModifiersVisible && user && selectedEntityType != NodeType.User && (
+            isModifiersVisible && selectedEntityType != NodeType.User && selectedEntityType == NodeType.Registry && (
+                <PrivateRegistrySelector
+                    levels={[PrivateRegistry.Private, PrivateRegistry.Public]}
+                    selectedPrivateRegistry={selectedPrivateRegistry}
+                    setSelectedPrivateRegistry={setSelectedPrivateRegistry}
+                />
+            )
+        }
+        {
+            isModifiersVisible && user && selectedEntityType != NodeType.User && selectedEntityType != NodeType.Registry && (
                 <VisibilitySelector
                     levels={[VisibilityLevel.Public, VisibilityLevel.Internal, VisibilityLevel.Private]}
                     selectedVisibilityLevels={selectedVisibilityLevels}

@@ -8,6 +8,7 @@ import {
   VisibilityLevel
 } from '@rootTypes/compositionFunctions';
 import { NodeType } from '@rootTypes/nodeTypeEnum'
+import {PrivateRegistry} from '@primitives/privateRegistrySelector';
 
 export default function useFetchEntitiesByFilter() {
   const [getRepositoriesRegistry] = useGetRepositoriesRegistryLazyQuery();
@@ -16,6 +17,19 @@ export default function useFetchEntitiesByFilter() {
   const [getUnits] = useGetUnitsLazyQuery();
   const [getUsers] = useGetUsersLazyQuery();
 
+  function isPublicRegistrySet(selectedPrivateRegistry?: PrivateRegistry[]){
+    let isPublicRepository: null | boolean = null
+    if (selectedPrivateRegistry && selectedPrivateRegistry.length > 0){
+      if (selectedPrivateRegistry.includes(PrivateRegistry.Private) && !(selectedPrivateRegistry.includes(PrivateRegistry.Public))){
+        isPublicRepository = false
+      } else if (selectedPrivateRegistry.includes(PrivateRegistry.Public) && !(selectedPrivateRegistry.includes(PrivateRegistry.Private))){
+        isPublicRepository = true
+      }
+    }
+    console.log(isPublicRepository)
+    return isPublicRepository
+  }
+
   const fetchEntitiesByFilter = useCallback(
     async (
       searchString: string,
@@ -23,6 +37,7 @@ export default function useFetchEntitiesByFilter() {
       limit: number,
       offset: number,
       visibilityLevel?: VisibilityLevel[],
+      selectedPrivateRegistry?: PrivateRegistry[],
       creatorUuid?: string
     ) => {
     try {
@@ -31,6 +46,7 @@ export default function useFetchEntitiesByFilter() {
         limit: limit,
         offset: offset,
         visibilityLevel: visibilityLevel,
+        isPublicRepository: isPublicRegistrySet(selectedPrivateRegistry),
         creatorUuid: creatorUuid
       };
 
