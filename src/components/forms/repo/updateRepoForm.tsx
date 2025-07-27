@@ -190,6 +190,7 @@ export default function UpdateRepoForm() {
                                 onChange={(e) => { setCurrentNodeData({
                                         ...currentNodeData,
                                         isCompilableRepo: e.target.checked,
+                                        isOnlyTagUpdate: e.target.checked ? true : currentNodeData.isOnlyTagUpdate
                                     })
                                 }} 
                             />

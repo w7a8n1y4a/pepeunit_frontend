@@ -74,7 +74,7 @@ export default function GraphContent({routerType, routerUuid}: GraphContentProps
   const [getUnitNode] = useGetUnitNodeLazyQuery();
 
   useEffect(() => {
-    if (!routerType && !routerUuid){
+    if (routerType === 'registry' || (!routerType && !routerUuid)){
       runAsync(async () => {
         let reposData = await getRepos()
         if (reposData.data?.getRepos){
