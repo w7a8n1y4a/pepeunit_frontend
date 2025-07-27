@@ -39,3 +39,13 @@ export const useReloadBaseGraphDataStore = create<ReloadBaseGraphDataStore>((set
     reloadState: false,
     setReloadState: (state: boolean) => set({ reloadState:  state}),
 }));
+
+export interface PickRegistryStore {
+    currentPickRegistryData: any | null,
+    setCurrentPickRegistryData: (registry: any | null) => void,
+}
+
+export const usePickRegistryStore = create<PickRegistryStore>((set) => ({
+    currentPickRegistryData: null as any | null,
+    setCurrentPickRegistryData: (registry: any | null ) => set({ currentPickRegistryData: registry }),
+}));

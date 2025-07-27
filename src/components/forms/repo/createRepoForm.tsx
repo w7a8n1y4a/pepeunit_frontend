@@ -9,18 +9,20 @@ import Spinner from '@primitives/spinner'
 import '../form.css'
 
 import { useGraphStore } from '@stores/graphStore';
-import { useModalStore, useNodeStore } from '@stores/baseStore';    
+import { useModalStore, useNodeStore, usePickRegistryStore } from '@stores/baseStore';
+import useModalHandlers from '@handlers/useModalHandlers'; 
 
 export default function CreateRepoForm() {
     const { isLoaderActive, runAsync } = useAsyncHandler();
 
     const { setActiveModal } = useModalStore();
     const { setCurrentNodeData } = useNodeStore();
+    const { openModal } = useModalHandlers();
     
     const [repoName, setRepoName] = useState('');
     const [repoVisibilityLevel, setRepoVisibilityLevel] = useState(VisibilityLevel.Public);
     const [isCompilableRepository, setIsCompilableRepository] = useState(false);
-    const [targetRepositoryRegistry, setTargetRepositoryRegistry] = useState<string | null>(null);
+    const { currentPickRegistryData, setCurrentPickRegistryData } = usePickRegistryStore();
 
     const { graphData, setGraphData } = useGraphStore();
 
@@ -41,11 +43,11 @@ export default function CreateRepoForm() {
 
     const handleCreateRepo = () => {
         // TODO: del
-        setTargetRepositoryRegistry(null)
-        if (targetRepositoryRegistry) {
+        setCurrentPickRegistryData(null)
+        if (currentPickRegistryData) {
             runAsync(async () => {
                 let repoVariables: CreateRepoMutationVariables = {
-                    repositoryRegistryUuid: targetRepositoryRegistry,
+                    repositoryRegistryUuid: currentPickRegistryData,
                     visibilityLevel: repoVisibilityLevel,
                     name: repoName,
                     isCompilableRepo: isCompilableRepository,
@@ -89,6 +91,21 @@ export default function CreateRepoForm() {
             }
             <div>
                 <form>
+                    <button className="button_registry_search" onClick={() => openModal('registrySearch')}>
+                        {
+                            currentPickRegistryData ? (
+                                currentPickRegistryData.repositoryUrl
+                            )
+                            : (
+                                <>
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" width="20" height="20">
+                                        <path d="M11 4a7 7 0 1 1 0 14a7 7 0 0 1 0-14zm0-2a9 9 0 1 0 6.219 15.546l4.396 4.395l1.414-1.414l-4.395-4.396A9 9 0 0 0 11 2z" fill="currentColor"/>
+                                    </svg>
+                                    Search in Registry
+                                </>
+                            )
+                        }
+                    </button>
                     <DefaultInput
                         id="name_set"
                         type="text"

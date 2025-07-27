@@ -15,6 +15,7 @@ import { useModalStore, useNodeStore } from '@stores/baseStore';
 import { useUserStore } from '@stores/userStore';
 import { useErrorStore } from '@stores/errorStore';
 import useModalHandlers from '@handlers/useModalHandlers';
+import SearchForm from '../forms/search/searchForm';
 
 import { NodeType } from '@src/rootTypes/nodeTypeEnum';
 
@@ -67,6 +68,7 @@ export default function RegistryContent(){
       }
     })
   };
+
 
 return (
     <>
@@ -188,6 +190,12 @@ return (
         openModalType='RegistryMenu'
       >
         <CreateRepositoryRegistryForm/>
+      </BaseModal>
+      <BaseModal
+        modalName={"Search"}
+        open={activeModal === 'registrySearch'}
+      >
+        <SearchForm targetSearch={NodeType.Registry} />
       </BaseModal>
     </>
   )

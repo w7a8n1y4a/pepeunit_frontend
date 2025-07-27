@@ -22,13 +22,14 @@ import RegistryContent from './registryContent'
 import RepoContent from './repoContent'
 import UnitContent from './unitContent';
 import UnitNodeContent from './unitNodeContent';
-import GraphSearch from './graphSearch'
+import BaseModal from '../modal/baseModal'
+import SearchForm from '../forms/search/searchForm';
 
 import { useGraphStore } from '@stores/graphStore';
 import { useNodeStore, useSearchNodeStore, useReloadBaseGraphDataStore, useModalStore } from '@stores/baseStore';
 import useModalHandlers from '@handlers/useModalHandlers';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
-import { Vector2 } from 'three'; 
+import { Vector2 } from 'three';
 
 import { useUserStore } from '@stores/userStore';
 
@@ -45,7 +46,7 @@ export default function GraphContent({routerType, routerUuid}: GraphContentProps
   const navigate = useNavigate();
 
   const { openModal } = useModalHandlers();
-  const { setActiveModal } = useModalStore();
+  const { activeModal, setActiveModal } = useModalStore();
   const { setCurrentNodeData } = useNodeStore();
   const { setCurrentSearchNodeData } = useSearchNodeStore();
   const { graphData, setGraphData, removeNodesAndLinks } = useGraphStore();
@@ -178,7 +179,6 @@ export default function GraphContent({routerType, routerUuid}: GraphContentProps
   }, []);
 
   function focusNode(uuid: string, nodeType: string) {
-
     navigate('/' + nodeType + '/' + uuid);
 
     if (nodeType == 'domain') {
@@ -493,7 +493,12 @@ export default function GraphContent({routerType, routerUuid}: GraphContentProps
         cooldownTicks={100}
         onEngineStop={() => fgRef.current.zoomToFit(500)}
       />
-      <GraphSearch onFocusNode={focusNode} />
+      <BaseModal
+        modalName={"Search"}
+        open={activeModal === 'graphSearch'}
+      >
+        <SearchForm targetSearch={NodeType.Unit} onFocusNode={focusNode} />
+      </BaseModal>
       <DomainContent/>
       <RegistryContent/>
       <RepoContent/>

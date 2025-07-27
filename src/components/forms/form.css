@@ -339,3 +339,31 @@ input:checked+.slider:before {
     justify-content: space-between;
     margin-bottom: 10px;
 }
+
+
+.button_registry_search {
+    margin: 5px 0;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    background: none;
+    border: 3px solid #282828;
+    border-radius: 4px;
+    padding: 0.4rem;
+    font-size: 0.9rem;
+    color: #777;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.button_registry_search svg {
+    margin-right: 8px;
+}
+
+.button_registry_search:hover {
+    border: 3px solid #999;
+}
+
+.button_registry_search:active {
+    background-color: #282828;
+}

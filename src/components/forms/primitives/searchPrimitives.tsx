@@ -26,7 +26,7 @@ import { useUserStore } from '@stores/userStore';
     onFocusNode?: (uuid: string, nodeType: string) => void
   }
 
-  export default function SearchPrimitives({isLoaderActive, runAsync, availableEntities, handleCreatePermission, onFocusNode }: SearchProps){
+  export default function SearchPrimitives({isLoaderActive, runAsync, availableEntities, selectedEntityType, setSelectedEntityType, handleCreatePermission, onFocusNode }: SearchProps){
     const { activeModal } = useModalStore();
 
     const { currentNodeData } = useNodeStore();
@@ -36,7 +36,6 @@ import { useUserStore } from '@stores/userStore';
     
     const [ searchString, setSearchString ] = useState('');
     const [ isCreatorSearchOnly, setIsCreatorSearchOnly] = useState<boolean>(false);
-    const [selectedEntityType, setSelectedEntityType] = useState<NodeType>(NodeType.Unit);
     const [selectedVisibilityLevels, setSelectedVisibilityLevels] = useState<VisibilityLevel[]>(
         [VisibilityLevel.Public, VisibilityLevel.Internal, VisibilityLevel.Private]
     );
