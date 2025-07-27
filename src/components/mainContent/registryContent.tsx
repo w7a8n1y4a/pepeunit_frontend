@@ -1,5 +1,5 @@
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
-import { useUpdateLocalRepositoryMutation, useDeleteRepositoryRegistryMutation } from '@rootTypes/compositionFunctions'
+import { useUpdateLocalRepositoryMutation, useDeleteRepositoryRegistryMutation, useGetRepositoryRegistryLazyQuery } from '@rootTypes/compositionFunctions'
 import BaseModal from '../modal/baseModal'
 import UpdateRepositoryRegistryCredentialsForm from '../forms/registry/updateRepositoryRegistryCredentialsForm'
 import CreateRepositoryRegistryForm from '../forms/registry/createRepositoryRegistryForm'
@@ -11,7 +11,7 @@ import copyToClipboard from '@utils/copyToClipboard'
 import copy_img from '/images/copy.svg'
 
 import { useGraphStore } from '@stores/graphStore';
-import { useModalStore, useNodeStore } from '@stores/baseStore';
+import { useModalStore, useNodeStore, usePickRegistryStore } from '@stores/baseStore';
 import { useUserStore } from '@stores/userStore';
 import { useErrorStore } from '@stores/errorStore';
 import useModalHandlers from '@handlers/useModalHandlers';
@@ -31,9 +31,11 @@ export default function RegistryContent(){
   const { openModal } = useModalHandlers();
 
   const { user } = useUserStore();
+  const { setCurrentPickRegistryData } = usePickRegistryStore();
 
   const [updateLocalRepository] = useUpdateLocalRepositoryMutation();
   const [deleteRepositoryRegistry] = useDeleteRepositoryRegistryMutation()
+  const [getRepositoryRegistry] = useGetRepositoryRegistryLazyQuery();
 
   const handleUpdateLocalRepository = () => {
     runAsync(async () => {
@@ -69,6 +71,25 @@ export default function RegistryContent(){
     })
   };
 
+  function pickRegistry(uuid: string, nodeType: string) {
+    if (nodeType == 'registry'){
+      runAsync(async () => {
+          setCurrentPickRegistryData(null)
+          let repo_registry = await getRepositoryRegistry(
+              {
+                  variables: {
+                      uuid: uuid
+                  }
+              }
+          )
+          
+          if (repo_registry.data?.getRepositoryRegistry){
+              openModal('createRepo')
+              setCurrentPickRegistryData(repo_registry.data.getRepositoryRegistry)
+          }
+      })
+    }
+  }
 
 return (
     <>
@@ -194,8 +215,9 @@ return (
       <BaseModal
         modalName={"Search"}
         open={activeModal === 'registrySearch'}
+        openModalType='createRepo'
       >
-        <SearchForm targetSearch={NodeType.Registry} />
+        <SearchForm targetSearch={NodeType.Registry} onFocusNode={pickRegistry}/>
       </BaseModal>
     </>
   )

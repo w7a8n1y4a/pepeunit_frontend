@@ -354,6 +354,7 @@ input:checked+.slider:before {
     color: #777;
     cursor: pointer;
     transition: all 0.2s ease;
+    width: 100%;
 }
 
 .button_registry_search svg {
