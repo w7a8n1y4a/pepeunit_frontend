@@ -45,18 +45,26 @@ export default function UpdateUnitForm() {
     useEffect(() => {
         runAsync(async () => {
             if (currentNodeData.repoBranch){
-                let result = await getBranchCommits({
-                    variables: {
-                        uuid: currentNodeData.repoUuid,
-                        repoBranch: currentNodeData.repoBranch,
-                        onlyTag: false,
-                        limit: 100,
-                        offset: 0
-                    }
+
+                let repo = await getRepo({
+                variables: {
+                    uuid: currentNodeData.repoUuid
+                }
                 })
-                
-                if (result.data?.getBranchCommits){
-                    setRepoAvailableCommits(result.data.getBranchCommits)
+                if (repo.data?.getRepo){
+                    let result = await getBranchCommits({
+                        variables: {
+                            uuid: repo.data?.getRepo.repositoryRegistryUuid,
+                            repoBranch: currentNodeData.repoBranch,
+                            onlyTag: false,
+                            limit: 100,
+                            offset: 0
+                        }
+                    })
+                    
+                    if (result.data?.getBranchCommits){
+                        setRepoAvailableCommits(result.data.getBranchCommits)
+                    }
                 }
             }
         })
@@ -201,13 +209,6 @@ export default function UpdateUnitForm() {
                                     }}
                                 >
                                     <option value="" disabled selected>Pick branch</option>
-                                    {
-                                        currentRepositoryRegistryData && !(currentRepositoryRegistryData.branches.includes(currentNodeData.repoBranch)) && (
-                                            <option value={currentNodeData.repoBranch}>
-                                                {currentNodeData.repoBranch}
-                                            </option>
-                                        )
-                                    }
                                     {   
                                         currentRepositoryRegistryData?.branches.map(
                                             item => (

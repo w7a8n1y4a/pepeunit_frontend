@@ -123,7 +123,7 @@ export default function CreateUnitForm() {
             runAsync(async () => {
                 let result = await getBranchCommits({
                     variables: {
-                        uuid: currentNodeData.uuid,
+                        uuid: currentNodeData.repositoryRegistryUuid,
                         repoBranch: repoBranch,
                         onlyTag: false,
                         limit: 100,

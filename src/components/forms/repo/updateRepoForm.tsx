@@ -47,14 +47,13 @@ export default function UpdateRepoForm() {
 
                 let result = await getBranchCommits({
                     variables: {
-                        uuid: currentNodeData.uuid,
+                        uuid: currentNodeData.repositoryRegistryUuid,
                         repoBranch: currentNodeData.defaultBranch,
                         onlyTag: false,
                         limit: 100,
                         offset: 0
                     }
                 })
-
                 if (result.data?.getBranchCommits){
                     setRepoAvailableCommits(result.data.getBranchCommits)
                 }
