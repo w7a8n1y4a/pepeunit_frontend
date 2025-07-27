@@ -11,7 +11,6 @@ import EntityTypeSelector from '@primitives/entityTypeSelector';
 import VisibilitySelector from '@primitives/visibilitySelector';
 import PrivateRegistrySelector, {PrivateRegistry} from '@primitives/privateRegistrySelector';
 import useFetchEntitiesByFilter from '../utils/useFetchEntitiesByFilter';
-import {registryToText} from '@utils/registryToText'
 import '../form.css';
 import { useNodeStore, useModalStore } from '@stores/baseStore';
 import { useUserStore } from '@stores/userStore';
@@ -87,23 +86,13 @@ import { useUserStore } from '@stores/userStore';
                 let count: number = 0;
                 setTypeList('button')
                 if ('getRepositoriesRegistry' in result.data && result.data.getRepositoriesRegistry) {
-                    formattedData = result.data.getRepositoriesRegistry.repositoriesRegistry.map((registry: any) => ({
-                        uuid: registry.uuid,
-                        name: registry.repository_url,
-                        visibilityLevel: registryToText(registry),
-                        __typename: 'RepositoryRegistryType'
-                    }));
+                    formattedData = result.data.getRepositoriesRegistry.repositoriesRegistry
                     count = result.data.getRepositoriesRegistry.count
                 } else if ('getRepos' in result.data && result.data.getRepos) {
                     formattedData = result.data.getRepos.repos;
                     count = result.data.getRepos.count
                 } else if ('getUsers' in result.data && result.data.getUsers) {
-                    formattedData = result.data.getUsers.users.map((user: any) => ({
-                        uuid: user.uuid,
-                        name: user.login,
-                        visibilityLevel: user.role + ' ' + user.status,
-                        __typename: 'UserType'
-                    }));
+                    formattedData = result.data.getUsers.users;
                     count = result.data.getUsers.count
                 } else if ('getUnits' in result.data && selectedEntityType == NodeType.Unit) {
                     formattedData = result.data.getUnits.units;

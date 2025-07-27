@@ -1,7 +1,3 @@
-import {
-    RepositoryRegistryType
-} from '@rootTypes/compositionFunctions';
-import {stringToFormat} from '@utils/stringToFormat'
 import truncateString from '@utils/truncateString'
 
 function cleanGitUrl(fullUrl: string): string {
@@ -12,7 +8,6 @@ function cleanGitUrl(fullUrl: string): string {
     return withoutGit;
 }
 
-export function registryToText(registry: RepositoryRegistryType): string {
-    let platform = stringToFormat(registry.platform) ? stringToFormat(registry.platform) : ''
-    return truncateString(platform + ' ' + cleanGitUrl(registry.repositoryUrl), 48)
+export function registryToText(repositoryUrl: string): string {
+    return truncateString(cleanGitUrl(repositoryUrl), 48)
 }

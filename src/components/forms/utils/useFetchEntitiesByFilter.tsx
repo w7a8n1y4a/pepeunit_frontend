@@ -26,7 +26,6 @@ export default function useFetchEntitiesByFilter() {
         isPublicRepository = true
       }
     }
-    console.log(isPublicRepository)
     return isPublicRepository
   }
 

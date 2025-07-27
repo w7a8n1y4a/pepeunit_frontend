@@ -94,15 +94,8 @@ export default function PermissionForm({ currentNodeType }: PermissionFormProps)
                 let formattedData: Array<any> = [];
                 let count: number = 0;
 
-                if ('getRepos' in result.data && result.data.getRepos) {
-                    formattedData = result.data.getRepos.repos;
-                    count = result.data.getRepos.count;
-                } else if ('getUsers' in result.data && result.data.getUsers) {
-                    formattedData = result.data.getUsers.users.map((user: any) => ({
-                        uuid: user.uuid,
-                        name: user.login,
-                        visibilityLevel: user.role + ' ' + user.status,
-                    }));
+                if ('getUsers' in result.data && result.data.getUsers) {
+                    formattedData = result.data.getUsers.users;
                     count = result.data.getUsers.count;
                 } else if ('getUnits' in result.data && selectedEntityType == NodeType.Unit) {
                     formattedData = result.data.getUnits.units;

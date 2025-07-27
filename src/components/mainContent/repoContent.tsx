@@ -8,7 +8,6 @@ import PermissionForm from '../forms/permission/permissionForm';
 import { useState, useEffect } from 'react';
 import Spinner from '@primitives/spinner'
 import VersionChart from '@primitives/versionChart'
-import {stringToFormat} from '@utils/stringToFormat'
 
 import { useGraphStore } from '@stores/graphStore';
 import { useModalStore, useNodeStore } from '@stores/baseStore';
@@ -115,7 +114,7 @@ return (
       <BaseModal
         modalName={'Repo'}
         subName={currentNodeData?.name}
-        visibilityLevel={stringToFormat(currentNodeData?.visibilityLevel)}
+        visibilityLevel={currentNodeData?.visibilityLevel}
         open={activeModal === 'RepoMenu'}
         copyLink={window.location.origin + '/repo/' + currentNodeData?.uuid}
         reloadEntityType={NodeType.Repo}

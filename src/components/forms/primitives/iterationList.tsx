@@ -1,9 +1,11 @@
 import { useState } from 'react';
-import { NodeType } from '@rootTypes/nodeTypeEnum'
-import nodeTypeToUserNavigation from '@src/utils/nodeTypeToUserNavigation'
+import { NodeType } from '@rootTypes/nodeTypeEnum';
+import nodeTypeToUserNavigation from '@src/utils/nodeTypeToUserNavigation';
 import useModalHandlers from '@handlers/useModalHandlers';
+import { stringToFormat } from '@utils/stringToFormat';
+import { registryToText } from '@utils/registryToText';
 
-import './primitives.css'
+import './primitives.css';
 
 interface IterationProps<T> {
     items: T[] | null;
@@ -15,7 +17,7 @@ interface IterationProps<T> {
     onFocusNode?: (uuid: string, nodeType: string) => void;
 }
 
-const IterationList = <T extends { uuid: string }>({
+const IterationList = <T extends { uuid: string, __typename: string }>({
     items,
     renderType,
     selectedEntityType,
@@ -24,10 +26,9 @@ const IterationList = <T extends { uuid: string }>({
     handleCreate,
     onFocusNode
 }: IterationProps<T>) => {
-
     const { openModal } = useModalHandlers();
     const [collapsedUnits, setCollapsedUnits] = useState<{ [key: string]: boolean }>({});
-    
+
     const handleToggle = (unitId: string) => {
         setCollapsedUnits(prev => ({
             ...prev,
@@ -36,82 +37,131 @@ const IterationList = <T extends { uuid: string }>({
     };
 
     const renderActionButtons = (uuid: string, nodeType?: string) => (
-        <>
+        <div className="iteration-actions">
             {handleDelete && (
                 <button className="iteration-node-del-button" onClick={() => handleDelete(uuid)}>
-                    delete
+                    Delete
                 </button>
             )}
             {handleCreate && (
                 <button className="iteration-node-add-button" onClick={() => handleCreate(uuid)}>
-                    add
+                    Add
                 </button>
             )}
             {onFocusNode && nodeType && (
                 <button className="iteration-node-add-button" onClick={() => onFocusNode(uuid, nodeTypeToUserNavigation(nodeType))}>
-                    pickme
+                    Pick
                 </button>
             )}
-        </>
+        </div>
     );
 
-    const renderUnitItem = (unit: any) => (
-        <>
-            <button className="iteration-header" onClick={() => handleToggle(unit.uuid)}>
-                <h3>{unit.name} {unit.visibilityLevel}</h3>
-            </button>
-            {collapsedUnits[unit.uuid] && unit.unitNodes && (
-                <div className="iteration-nodes">
-                    {unit.unitNodes.map((node: any) => (
-                        <div className="iteration-node" key={node.uuid}>
-                            <h4>{node.topicName}</h4>
-                            {renderActionButtons(node.uuid)}
-                        </div>
+    const getHeaders = () => {
+        switch (selectedEntityType) {
+            case NodeType.Registry:
+                return ['Platform', 'Repository URL', 'Actions'];
+            case NodeType.Repo:
+            case NodeType.Unit:
+                return ['Name', 'Visibility', 'Actions'];
+            case NodeType.User:
+                return ['Login', 'Role', 'Status', 'Actions'];
+            default:
+                return [];
+        }
+    };
+
+    const getRowData = (item: any) => {
+        switch (selectedEntityType) {
+            case NodeType.Registry:
+                return [
+                    stringToFormat(item.platform),
+                    item.repositoryUrl ? registryToText(item.repositoryUrl) : 'N/A'
+                ];
+            case NodeType.Repo:
+            case NodeType.Unit:
+                return [item.name, stringToFormat(item.visibilityLevel)];
+            case NodeType.User:
+                return [item.login, stringToFormat(item.role), stringToFormat(item.status)];
+            default:
+                return [];
+        }
+    };
+
+    const renderTable = () => (
+        <table className="iteration-table">
+            <thead>
+                <tr>
+                    {getHeaders().map((header, index) => (
+                        <th key={index}>{header}</th>
                     ))}
-                </div>
-            )}
-        </>
+                </tr>
+            </thead>
+            <tbody>
+                {items?.map((item) => (
+                    <tr key={item.uuid}>
+                        {getRowData(item).map((data, index) => (
+                            <td key={index}>{data || '-'}</td>
+                        ))}
+                        <td>
+                            {renderActionButtons(item.uuid, item.__typename)}
+                        </td>
+                    </tr>
+                ))}
+            </tbody>
+        </table>
     );
 
-    const renderPermissionItem = (permission: any) => (
-        <>
-            <button className="iteration-header">
-                <h3>{permission.name} {permission.visibilityLevel}</h3>
-                { renderActionButtons(permission.uuid, permission.__typename) }
-            </button>
-        </>
-    );
+    const renderCustomUnitItem = (units: Array<any>) => (
+            units && units.length > 0 && (
+                units.map((unit) => (
+                    <div className="iteration-unit">
+                        <button className="iteration-unit-header" onClick={() => handleToggle(unit.uuid)}>
+                            <h3>{unit.name} {stringToFormat(unit.visibilityLevel)}</h3>
+                        </button>
+                        {collapsedUnits[unit.uuid] && unit.unitNodes && (
+                            <table className="iteration-table">
+                                <thead>
+                                    <tr>
+                                        <th>Topic Name</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {unit.unitNodes.map((node: any) => (
+                                        <tr key={node.uuid}>
+                                            <td>{node.topicName}</td>
+                                            <td>{renderActionButtons(node.uuid)}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        )}
+                    </div>
+                )
+            )
+
+    ));
 
     return (
-        <>
-            {
-                items && items.length > 0 ? (
-                    items.map((item) => (
-                        <div key={item.uuid} className="iteration-item">
-                            {
-                                renderType === 'button' ? (renderPermissionItem(item)) : (renderUnitItem(item))
-                            }
-                        </div>
-                    ))
-                ) : (
-                    <h3>No Agent</h3>
-                )
-            }
-            {
-                openModalName && (
-                    <div className="iteration-item" onClick={() => openModal(openModalName)}>
-                        <h3>Pick Agent</h3>
-                    </div>
-                )
-            }
-            {
-                selectedEntityType == NodeType.Registry && (
-                    <div className="iteration-item" onClick={() => openModal('createRepositoryRegistry')}>
-                        <h3>Create Registry</h3>
-                    </div>
-                )
-            }
-        </>
+        <div className="iteration-container">
+            {items && items.length > 0 ? (
+                renderType === 'button' ? renderTable() : renderCustomUnitItem(items)
+            ) : (
+                <div className="iteration-empty">No items found</div>
+            )}
+
+            {openModalName && (
+                <button className="iteration-add-button" onClick={() => openModal(openModalName)}>
+                    Pick Agent
+                </button>
+            )}
+
+            {selectedEntityType === NodeType.Registry && (
+                <button className="iteration-add-button" onClick={() => openModal('createRepositoryRegistry')}>
+                    Create Registry
+                </button>
+            )}
+        </div>
     );
 };
 

@@ -28,7 +28,7 @@ export default function UnitNodeContent(){
       <BaseModal
         modalName={currentNodeData?.type}
         subName={currentNodeData?.topicName}
-        visibilityLevel={stringToFormat(currentNodeData?.visibilityLevel)}
+        visibilityLevel={currentNodeData?.visibilityLevel}
         lastUpdateDatetime={currentNodeData?.lastUpdateDatetime}
         open={activeModal === 'InputMenu' || activeModal === 'OutputMenu'}
         copyLink={window.location.origin + '/unit-node/' + currentNodeData?.uuid}

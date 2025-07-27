@@ -25,7 +25,6 @@ import UpdateUnitForm from '../forms/unit/updateUnitForm';
 import PermissionForm from '../forms/permission/permissionForm';
 import UpdateUnitEnvForm from '../forms/unit/updateUnitEnvForm'
 import LogUnitForm from '../forms/unit/logUnitForm'
-import {stringToFormat} from '@utils/stringToFormat'
 import copyToClipboard from '@utils/copyToClipboard'
 
 import { useGraphStore } from '@stores/graphStore';
@@ -225,7 +224,7 @@ export default function UnitContent(){
       <BaseModal
         modalName={'Unit'}
         subName={currentNodeData?.name}
-        visibilityLevel={stringToFormat(currentNodeData?.visibilityLevel)}
+        visibilityLevel={currentNodeData?.visibilityLevel}
         lastUpdateDatetime={currentNodeData?.lastUpdateDatetime}
         open={activeModal === 'UnitMenu'}
         copyLink={window.location.origin + '/unit/' + currentNodeData?.uuid}
