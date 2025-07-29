@@ -136,7 +136,7 @@ export default function PermissionForm({ currentNodeType }: PermissionFormProps)
         if (selectedEntityType != NodeType.Registry){
             loadEntities(selectedEntityType, currentPage);
         }
-    }, [currentPage, selectedEntityType, refreshTrigger]);
+    }, [currentPage, selectedEntityType, refreshTrigger, activeModal]);
 
     const totalPages = Math.ceil(totalCount / itemsPerPage);
 
