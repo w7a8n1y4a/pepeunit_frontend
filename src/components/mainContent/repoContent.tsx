@@ -1,6 +1,5 @@
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
-import { PermissionEntities, useUpdateUnitsFirmwareMutation, useDeleteRepoMutation, useGetVersionsLazyQuery, VisibilityLevel, useGetRepositoryRegistryLazyQuery } from '@rootTypes/compositionFunctions'
-import { convertPermissionEntityToNodeType } from '@utils/mappersNodeTypeToPermissions';
+import { useUpdateUnitsFirmwareMutation, useDeleteRepoMutation, useGetVersionsLazyQuery, VisibilityLevel, useGetRepositoryRegistryLazyQuery } from '@rootTypes/compositionFunctions'
 import BaseModal from '../modal/baseModal'
 import CreateUnitForm from '../forms/unit/createUnitForm';
 import UpdateRepoForm from '../forms/repo/updateRepoForm';
@@ -32,8 +31,6 @@ export default function RepoContent(){
   const [versions, setVersions] = useState<GetVersionsQuery['getVersions'] | null>(null)
 
   const { user } = useUserStore();
-
-  let nodeType = PermissionEntities.Repo
 
   const [updateUnitsFirmware] = useUpdateUnitsFirmwareMutation()
   const [deleteRepo] = useDeleteRepoMutation()
@@ -142,7 +139,7 @@ return (
                 <div className='div_statistics'>
                   {
                     currentNodeData.visibilityLevel == VisibilityLevel.Private && (
-                      <button className="button_open_alter" onClick={() => openModal('permissionMenu' + nodeType)}>
+                      <button className="button_open_alter" onClick={() => openModal('permissionMenu' + NodeType.Repo)}>
                         Permission
                       </button>
                     )
@@ -173,11 +170,16 @@ return (
           )
         }
       </BaseModal>
-      <BaseModal modalName={'Permission'} subName={currentNodeData?.name} open={activeModal === 'permissionMenu' + nodeType} openModalType='RepoMenu'>
+      <BaseModal
+        modalName={'Permission'}
+        subName={currentNodeData?.name}
+        open={activeModal === 'permissionMenu' + NodeType.Repo}
+        openModalType='RepoMenu'
+      >
         {
           currentNodeData && (
             <PermissionForm
-              currentNodeType={convertPermissionEntityToNodeType(nodeType)}
+              currentNodeType={NodeType.Repo}
             />
           )
         }

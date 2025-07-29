@@ -45,7 +45,7 @@ export default function PermissionCreateForm({ currentNodeType, selectedEntityTy
         <SearchPrimitives
             isLoaderActive={isLoaderActive}
             runAsync={runAsync}
-            availableEntities={[NodeType.Unit, NodeType.User]}
+            availableEntities={[NodeType.User, NodeType.Unit]}
             selectedEntityType={selectedEntityType}
             setSelectedEntityType={setSelectedEntityType}
             handleCreatePermission={handleCreatePermission}

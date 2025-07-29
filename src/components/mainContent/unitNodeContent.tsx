@@ -1,7 +1,6 @@
 import BaseModal from '../modal/baseModal'
-
+import { NodeType } from '@rootTypes/nodeTypeEnum'
 import { UnitNodeTypeEnum, PermissionEntities, VisibilityLevel } from '@rootTypes/compositionFunctions'
-import { convertPermissionEntityToNodeType } from '@utils/mappersNodeTypeToPermissions';
 import { useModalStore, useNodeStore } from '@stores/baseStore';
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import UpdateUnitNodeForm from '../forms/unitNode/updateUnitNodeForm';
@@ -20,8 +19,6 @@ export default function UnitNodeContent(){
   const { openModal } = useModalHandlers();
   const { user } = useUserStore();
   const { isLoaderActive } = useAsyncHandler();
-
-  let nodeType = PermissionEntities.UnitNode
 
   return (
     <>
@@ -61,7 +58,7 @@ export default function UnitNodeContent(){
                     <>
                       {
                         currentNodeData.visibilityLevel == VisibilityLevel.Private && (
-                          <button className="button_open_alter" onClick={() => openModal('permissionMenu' + nodeType)}>
+                          <button className="button_open_alter" onClick={() => openModal('permissionMenu' + NodeType.UnitNode)}>
                             Permission
                           </button>
                         )
@@ -86,13 +83,13 @@ export default function UnitNodeContent(){
       <BaseModal
         modalName={'Permission'}
         subName={currentNodeData?.name}
-        open={activeModal === 'permissionMenu' + nodeType}
+        open={activeModal === 'permissionMenu' + NodeType.UnitNode}
         openModalType={stringToFormat(currentNodeData?.type) + "Menu"} 
       >
         {
           currentNodeData && (
             <PermissionForm
-              currentNodeType={convertPermissionEntityToNodeType(PermissionEntities.UnitNode)}
+              currentNodeType={NodeType.UnitNode}
             />
           )
         }

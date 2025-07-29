@@ -3,7 +3,6 @@ import { NodeType } from '@rootTypes/nodeTypeEnum'
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import {
   useDeleteUnitMutation,
-  PermissionEntities,
   useGetAvailablePlatformsLazyQuery,
   useGetRepoLazyQuery,
   RepoType,
@@ -15,7 +14,6 @@ import {
   RepositoryRegistryType,
   useGetRepositoryRegistryLazyQuery
 } from '@rootTypes/compositionFunctions'
-import { convertPermissionEntityToNodeType } from '@utils/mappersNodeTypeToPermissions';
 import BaseModal from '../modal/baseModal'
 import { useState, useEffect } from 'react';
 import Spinner from '@primitives/spinner'
@@ -53,8 +51,6 @@ export default function UnitContent(){
   const { openModal } = useModalHandlers();
   const { user } = useUserStore();
 
-  let nodeType = PermissionEntities.Unit
-    
   const [repoAvailablePlatforms, setRepoAvailablePlatforms] = useState<Array<{
     __typename?: "PlatformType";
     name: string;
@@ -331,7 +327,7 @@ export default function UnitContent(){
                 <div className='div_statistics'>
                   {
                     currentNodeData.visibilityLevel == VisibilityLevel.Private && (
-                      <button className="button_open_alter" onClick={() => openModal('permissionMenu' + nodeType)}>
+                      <button className="button_open_alter" onClick={() => openModal('permissionMenu' + NodeType.Unit)}>
                         Permission
                       </button>
                     )
@@ -357,11 +353,11 @@ export default function UnitContent(){
           )
         }
       </BaseModal>
-      <BaseModal modalName={'Permissions'} subName={currentNodeData?.name} open={activeModal === 'permissionMenu' + nodeType} openModalType='UnitMenu'>
+      <BaseModal modalName={'Permissions'} subName={currentNodeData?.name} open={activeModal === 'permissionMenu' + NodeType.Unit} openModalType='UnitMenu'>
         {
           currentNodeData && (
             <PermissionForm
-              currentNodeType={convertPermissionEntityToNodeType(PermissionEntities.Unit)}
+              currentNodeType={NodeType.Unit}
             />
           )
         }
