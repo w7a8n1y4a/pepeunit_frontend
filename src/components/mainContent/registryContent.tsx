@@ -105,6 +105,7 @@ return (
         open={activeModal === 'RegistryMenu'}
         copyLink={window.location.origin + '/registry/' + currentNodeData?.uuid}
         reloadEntityType={NodeType.Registry}
+        openModalType={'graphSearch'}
       >
         <div className="modal_menu_content">
           {
@@ -213,7 +214,7 @@ return (
       <BaseModal
         modalName='Create Registry'
         open={activeModal === 'createRepositoryRegistry'}
-        openModalType='RegistryMenu'
+        openModalType='graphSearch'
       >
         <CreateRepositoryRegistryForm/>
       </BaseModal>
