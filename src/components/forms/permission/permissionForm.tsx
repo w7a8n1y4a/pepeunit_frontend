@@ -133,7 +133,7 @@ export default function PermissionForm({ currentNodeType }: PermissionFormProps)
     }, [currentNodeData]);
 
     useEffect(() => {
-        if (selectedEntityType != NodeType.Registry){
+        if (selectedEntityType != NodeType.Registry && activeModal?.slice(0, 14) == 'permissionMenu'){
             loadEntities(selectedEntityType, currentPage);
         }
     }, [currentPage, selectedEntityType, refreshTrigger, activeModal]);
