@@ -43,7 +43,7 @@ export default function UnitNodeEdgeForm() {
     };
 
     useEffect(() => {
-        if (activeModal == "InputMenu"){
+        if (activeModal == "unitNodeAddOutputToInput"){
             fetchNodeOutputs();
         }
     }, [currentNodeData, currentPage, activeModal]);
