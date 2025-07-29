@@ -1,13 +1,21 @@
 import { create } from 'zustand';
 
 export interface ModalStore {
-    activeModal: string | null;
-    setActiveModal: (show: string | null) => void;
+  activeModal: string | null;
+  previousModal: string | null;
+  setActiveModal: (show: string | null) => void;
 }
 
-export const useModalStore = create<ModalStore>((set) => ({
-    activeModal: null as string | null,
-    setActiveModal: (show: string | null) => set({ activeModal: show }),
+export const useModalStore = create<ModalStore>((set, get) => ({
+  activeModal: null,
+  previousModal: null,
+  setActiveModal: (show: string | null) => {
+    const current = get().activeModal;
+    set({
+      previousModal: current,
+      activeModal: show,
+    });
+  },
 }));
 
 export interface NodeStore {

@@ -26,9 +26,9 @@ export default function Header(){
     const { isLoaderActive, runAsync } = useAsyncHandler();
 
     const { activeModal } = useModalStore();
-    const { openModal, closeModal } = useModalHandlers();
+    const { openModal, closeModal, previousModal } = useModalHandlers();
     const { currentNodeData, setCurrentNodeData } = useNodeStore();
-    const { setCurrentPickRegistryData } = usePickRegistryStore();
+    const { setCurrentPickRegistryData, currentPickRegistryData } = usePickRegistryStore();
     const { user, clearUser } = useUserStore();
     const [, forceUpdate] = useReducer(x => x + 1, 0);
 
@@ -119,7 +119,11 @@ export default function Header(){
                 )}
             </div>
             <div>
-                <BaseModal modalName='Create Repo' open={activeModal === 'createRepo'}>
+                <BaseModal
+                    modalName='Create Repo'
+                    open={activeModal === 'createRepo'}
+                    openModalType={previousModal == 'RegistryMenu' && currentPickRegistryData ? 'RegistryMenu' : undefined}    
+                >
                     <CreateRepoForm/>
                 </BaseModal>
                 <BaseModal modalName='Authorization' open={activeModal === 'signin'}>

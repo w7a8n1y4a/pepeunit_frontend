@@ -3,19 +3,19 @@ import { useModalStore } from '@stores/baseStore';
 import { useErrorStore } from '@stores/errorStore';
 
 const useModalHandlers = () => {
-    const { setActiveModal } = useModalStore();
+  const { setActiveModal, previousModal } = useModalStore();
+  const { clearError } = useErrorStore();
 
-    const { clearError } = useErrorStore();
+  const toggleModal = useCallback((modalType: string | null) => {
+    clearError();
+    setActiveModal(modalType);
+  }, [setActiveModal]);
 
-    const toggleModal = useCallback((modalType: string | null) => {
-        clearError()
-        setActiveModal(modalType);
-    }, [setActiveModal]);
-
-    return {
-        openModal: (modalType: string) => toggleModal(modalType),
-        closeModal: () => toggleModal(null),
-    };
+  return {
+    openModal: (modalType: string) => toggleModal(modalType),
+    closeModal: () => toggleModal(null),
+    previousModal,
+  };
 };
 
 export default useModalHandlers;

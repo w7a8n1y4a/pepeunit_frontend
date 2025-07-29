@@ -28,7 +28,7 @@ export default function RegistryContent(){
   const { activeModal, setActiveModal } = useModalStore();
   const { currentNodeData } = useNodeStore();
   const { removeNodesAndLinks } = useGraphStore();
-  const { openModal } = useModalHandlers();
+  const { openModal, previousModal } = useModalHandlers();
 
   const { user } = useUserStore();
   const { setCurrentPickRegistryData } = usePickRegistryStore();
@@ -105,7 +105,7 @@ return (
         open={activeModal === 'RegistryMenu'}
         copyLink={window.location.origin + '/registry/' + currentNodeData?.uuid}
         reloadEntityType={NodeType.Registry}
-        openModalType={'graphSearch'}
+        openModalType={previousModal == 'RepoMenu' ? undefined : 'graphSearch'}
       >
         <div className="modal_menu_content">
           {
