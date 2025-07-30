@@ -61,6 +61,7 @@ export enum BackendTopicCommand {
 export type BaseMetricsType = {
   __typename?: "BaseMetricsType";
   repoCount: Scalars["Int"]["output"];
+  repositoryRegistryCount: Scalars["Int"]["output"];
   unitCount: Scalars["Int"]["output"];
   unitNodeCount: Scalars["Int"]["output"];
   unitNodeEdgeCount: Scalars["Int"]["output"];
@@ -1313,6 +1314,7 @@ export type GetBaseMetricsQuery = {
   getBaseMetrics: {
     __typename?: "BaseMetricsType";
     userCount: number;
+    repositoryRegistryCount: number;
     repoCount: number;
     unitCount: number;
     unitNodeCount: number;
@@ -3657,6 +3659,7 @@ export const GetBaseMetricsDocument = gql`
   query getBaseMetrics {
     getBaseMetrics {
       userCount
+      repositoryRegistryCount
       repoCount
       unitCount
       unitNodeCount

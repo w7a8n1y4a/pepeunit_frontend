@@ -4,6 +4,7 @@ gql`
     query getBaseMetrics{
         getBaseMetrics{
             userCount
+            repositoryRegistryCount
             repoCount
             unitCount
             unitNodeCount

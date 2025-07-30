@@ -78,6 +78,9 @@ export default function DomainContent(){
               User - {baseMetrics?.userCount}
             </div>
             <div className='div_statistics_text'>
+              RegistryCount - {baseMetrics?.repositoryRegistryCount}
+            </div>
+            <div className='div_statistics_text'>
               Repo - {baseMetrics?.repoCount}
             </div>
             <div className='div_statistics_text'>
