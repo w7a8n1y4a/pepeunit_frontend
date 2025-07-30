@@ -155,7 +155,7 @@ export default function DataPipeForm() {
                 link.href = downloadUrl;
                 link.setAttribute(
                     'download',
-                    `${currentNodeData.topicName || 'data_pipe'}.csv`
+                    `${currentNodeData.topicName || 'data_pipe'}.zip`
                 );
                 document.body.appendChild(link);
                 link.click();
