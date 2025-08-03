@@ -3,6 +3,7 @@ import { gql } from 'graphql-tag';
 gql`
     mutation createRepo(
         $repositoryRegistryUuid: UUID!
+        $defaultBranch: String!
         $visibilityLevel: VisibilityLevel!
         $name: String!
         $isCompilableRepo: Boolean!
@@ -10,6 +11,7 @@ gql`
         createRepo (
             repo: {
                 repositoryRegistryUuid: $repositoryRegistryUuid
+                defaultBranch: $defaultBranch
                 visibilityLevel: $visibilityLevel
                 name: $name
                 isCompilableRepo: $isCompilableRepo

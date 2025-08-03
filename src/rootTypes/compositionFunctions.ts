@@ -510,6 +510,7 @@ export type QueryGetVersionsArgs = {
 };
 
 export type RepoCreateInput = {
+  defaultBranch: Scalars["String"]["input"];
   isCompilableRepo: Scalars["Boolean"]["input"];
   name: Scalars["String"]["input"];
   repositoryRegistryUuid: Scalars["UUID"]["input"];
@@ -900,6 +901,7 @@ export type DeletePermissionMutation = {
 
 export type CreateRepoMutationVariables = Exact<{
   repositoryRegistryUuid: Scalars["UUID"]["input"];
+  defaultBranch: Scalars["String"]["input"];
   visibilityLevel: VisibilityLevel;
   name: Scalars["String"]["input"];
   isCompilableRepo: Scalars["Boolean"]["input"];
@@ -2153,6 +2155,7 @@ export type DeletePermissionMutationOptions = Apollo.BaseMutationOptions<
 export const CreateRepoDocument = gql`
   mutation createRepo(
     $repositoryRegistryUuid: UUID!
+    $defaultBranch: String!
     $visibilityLevel: VisibilityLevel!
     $name: String!
     $isCompilableRepo: Boolean!
@@ -2160,6 +2163,7 @@ export const CreateRepoDocument = gql`
     createRepo(
       repo: {
         repositoryRegistryUuid: $repositoryRegistryUuid
+        defaultBranch: $defaultBranch
         visibilityLevel: $visibilityLevel
         name: $name
         isCompilableRepo: $isCompilableRepo
@@ -2199,6 +2203,7 @@ export type CreateRepoMutationFn = Apollo.MutationFunction<
  * const [createRepoMutation, { data, loading, error }] = useCreateRepoMutation({
  *   variables: {
  *      repositoryRegistryUuid: // value for 'repositoryRegistryUuid'
+ *      defaultBranch: // value for 'defaultBranch'
  *      visibilityLevel: // value for 'visibilityLevel'
  *      name: // value for 'name'
  *      isCompilableRepo: // value for 'isCompilableRepo'

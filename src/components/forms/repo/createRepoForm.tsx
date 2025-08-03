@@ -13,14 +13,17 @@ import { useGraphStore } from '@stores/graphStore';
 import { useModalStore, useNodeStore, usePickRegistryStore } from '@stores/baseStore';
 import useModalHandlers from '@handlers/useModalHandlers'; 
 
+import { useErrorStore } from '@stores/errorStore';
+
 export default function CreateRepoForm() {
     const { isLoaderActive, runAsync } = useAsyncHandler();
-
+    const { setAngry } = useErrorStore();
     const { setActiveModal } = useModalStore();
     const { setCurrentNodeData } = useNodeStore();
     const { openModal } = useModalHandlers();
     
     const [repoName, setRepoName] = useState('');
+    const [defaultBranch, setDefaultBranch] = useState<string | null>(null);
     const [repoVisibilityLevel, setRepoVisibilityLevel] = useState(VisibilityLevel.Public);
     const [isCompilableRepository, setIsCompilableRepository] = useState(false);
     const { currentPickRegistryData } = usePickRegistryStore();
@@ -43,10 +46,11 @@ export default function CreateRepoForm() {
     const [createRepoMutation] = useCreateRepoMutation();
 
     const handleCreateRepo = () => {
-        if (currentPickRegistryData) {
+        if (currentPickRegistryData && defaultBranch) {
             runAsync(async () => {
                 let repoVariables: CreateRepoMutationVariables = {
                     repositoryRegistryUuid: currentPickRegistryData.uuid,
+                    defaultBranch: defaultBranch,
                     visibilityLevel: repoVisibilityLevel,
                     name: repoName,
                     isCompilableRepo: isCompilableRepository,
@@ -80,6 +84,10 @@ export default function CreateRepoForm() {
                     setActiveModal('updateRepo')
                 }
             })
+        } else {
+            runAsync(async () => {
+                setAngry('Fill in the default branch')
+            })
         }
     };
 
@@ -105,6 +113,22 @@ export default function CreateRepoForm() {
                     }
                 </button>
                 <form>
+                    <select id='base_enum' onChange={(e) => {
+                            setDefaultBranch(e.target.value)
+                        }}
+                    >
+                        <option value="" disabled selected>Pick branch</option>
+
+                        {   
+                            currentPickRegistryData && currentPickRegistryData.branches.map(
+                                (item: string) => (
+                                    <option value={item}>
+                                        {item}
+                                    </option>
+                                )
+                            )
+                        }
+                    </select>
                     <DefaultInput
                         id="name_set"
                         type="text"
