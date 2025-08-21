@@ -156,6 +156,7 @@ export type Mutation = {
   deleteRepositoryRegistry: NoneType;
   deleteUnit: NoneType;
   deleteUnitNodeEdge: NoneType;
+  deleteUserCookies: NoneType;
   sendCommandToInputBaseTopic: NoneType;
   setCredentials: NoneType;
   setDataPipeConfig: NoneType;
@@ -388,6 +389,7 @@ export type Query = {
   getBranchCommits: Array<CommitType>;
   getCredentials?: Maybe<OneRepositoryRegistryCredentialsType>;
   getDataPipeConfig: Scalars["String"]["output"];
+  getGrafanaToken: Scalars["String"]["output"];
   getPipeData: PipeDataResultType;
   getRepo: RepoType;
   getRepos: ReposResultType;
@@ -1300,6 +1302,15 @@ export type BlockUserMutation = {
   blockUser: { __typename?: "NoneType"; isNone: boolean };
 };
 
+export type DeleteUserCookiesMutationVariables = Exact<{
+  [key: string]: never;
+}>;
+
+export type DeleteUserCookiesMutation = {
+  __typename?: "Mutation";
+  deleteUserCookies: { __typename?: "NoneType"; isNone: boolean };
+};
+
 export type UnblockUserMutationVariables = Exact<{
   uuid: Scalars["UUID"]["input"];
 }>;
@@ -1980,6 +1991,13 @@ export type GetTokenQueryVariables = Exact<{
 }>;
 
 export type GetTokenQuery = { __typename?: "Query"; getToken: string };
+
+export type GetGrafanaTokenQueryVariables = Exact<{ [key: string]: never }>;
+
+export type GetGrafanaTokenQuery = {
+  __typename?: "Query";
+  getGrafanaToken: string;
+};
 
 export type GetUserQueryVariables = Exact<{
   uuid: Scalars["UUID"]["input"];
@@ -3609,6 +3627,55 @@ export type BlockUserMutationResult = Apollo.MutationResult<BlockUserMutation>;
 export type BlockUserMutationOptions = Apollo.BaseMutationOptions<
   BlockUserMutation,
   BlockUserMutationVariables
+>;
+export const DeleteUserCookiesDocument = gql`
+  mutation deleteUserCookies {
+    deleteUserCookies {
+      isNone
+    }
+  }
+`;
+export type DeleteUserCookiesMutationFn = Apollo.MutationFunction<
+  DeleteUserCookiesMutation,
+  DeleteUserCookiesMutationVariables
+>;
+
+/**
+ * __useDeleteUserCookiesMutation__
+ *
+ * To run a mutation, you first call `useDeleteUserCookiesMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteUserCookiesMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteUserCookiesMutation, { data, loading, error }] = useDeleteUserCookiesMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useDeleteUserCookiesMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    DeleteUserCookiesMutation,
+    DeleteUserCookiesMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    DeleteUserCookiesMutation,
+    DeleteUserCookiesMutationVariables
+  >(DeleteUserCookiesDocument, options);
+}
+export type DeleteUserCookiesMutationHookResult = ReturnType<
+  typeof useDeleteUserCookiesMutation
+>;
+export type DeleteUserCookiesMutationResult =
+  Apollo.MutationResult<DeleteUserCookiesMutation>;
+export type DeleteUserCookiesMutationOptions = Apollo.BaseMutationOptions<
+  DeleteUserCookiesMutation,
+  DeleteUserCookiesMutationVariables
 >;
 export const UnblockUserDocument = gql`
   mutation unblockUser($uuid: UUID!) {
@@ -6078,6 +6145,76 @@ export type GetTokenSuspenseQueryHookResult = ReturnType<
 export type GetTokenQueryResult = Apollo.QueryResult<
   GetTokenQuery,
   GetTokenQueryVariables
+>;
+export const GetGrafanaTokenDocument = gql`
+  query getGrafanaToken {
+    getGrafanaToken
+  }
+`;
+
+/**
+ * __useGetGrafanaTokenQuery__
+ *
+ * To run a query within a React component, call `useGetGrafanaTokenQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetGrafanaTokenQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetGrafanaTokenQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetGrafanaTokenQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetGrafanaTokenQuery,
+    GetGrafanaTokenQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetGrafanaTokenQuery, GetGrafanaTokenQueryVariables>(
+    GetGrafanaTokenDocument,
+    options,
+  );
+}
+export function useGetGrafanaTokenLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetGrafanaTokenQuery,
+    GetGrafanaTokenQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    GetGrafanaTokenQuery,
+    GetGrafanaTokenQueryVariables
+  >(GetGrafanaTokenDocument, options);
+}
+export function useGetGrafanaTokenSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    GetGrafanaTokenQuery,
+    GetGrafanaTokenQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<
+    GetGrafanaTokenQuery,
+    GetGrafanaTokenQueryVariables
+  >(GetGrafanaTokenDocument, options);
+}
+export type GetGrafanaTokenQueryHookResult = ReturnType<
+  typeof useGetGrafanaTokenQuery
+>;
+export type GetGrafanaTokenLazyQueryHookResult = ReturnType<
+  typeof useGetGrafanaTokenLazyQuery
+>;
+export type GetGrafanaTokenSuspenseQueryHookResult = ReturnType<
+  typeof useGetGrafanaTokenSuspenseQuery
+>;
+export type GetGrafanaTokenQueryResult = Apollo.QueryResult<
+  GetGrafanaTokenQuery,
+  GetGrafanaTokenQueryVariables
 >;
 export const GetUserDocument = gql`
   query getUser($uuid: UUID!) {

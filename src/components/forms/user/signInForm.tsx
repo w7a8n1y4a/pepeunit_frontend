@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
-import { useGetTokenLazyQuery, useGetUserLazyQuery } from '@rootTypes/compositionFunctions';
+import { useGetTokenLazyQuery, useGetUserLazyQuery, useGetGrafanaTokenLazyQuery } from '@rootTypes/compositionFunctions';
 import { getUserUuidByToken } from '@utils/getUserUuidByToken';
 import isValidPassword from '@utils/isValidPassword'
 import isValidLogin from '@utils/isValidLogin'
@@ -43,6 +43,7 @@ export default function SignInForm({openModalRegister}: SignInFormProps) {
     }, [login, password]);
 
     const [getToken] = useGetTokenLazyQuery();
+    const [getGrafanaToken] = useGetGrafanaTokenLazyQuery();
     const [getUser] = useGetUserLazyQuery();
 
     const handleLogin = () => {
@@ -66,6 +67,8 @@ export default function SignInForm({openModalRegister}: SignInFormProps) {
                     setUser(userData.data.getUser)
                 }
                 setActiveModal(null)
+
+                await getGrafanaToken()
             } else {
                 setError(result)
             }

@@ -10,7 +10,7 @@ import ChangeLoginForm from '../forms/user/changeLoginForm';
 import ChangePassForm from '../forms/user/changePassForm';
 import CreateRepoForm from '../forms/repo/createRepoForm'
 import Spinner from '@primitives/spinner'
-import { UserRole, useBlockUserMutation, useUnblockUserMutation } from '@rootTypes/compositionFunctions'
+import { UserRole, useBlockUserMutation, useUnblockUserMutation, useDeleteUserCookiesMutation } from '@rootTypes/compositionFunctions'
 import './header.css'
 import { useState, useCallback, useReducer, useEffect } from 'react';
 
@@ -36,6 +36,7 @@ export default function Header(){
 
     const [blockUser] = useBlockUserMutation();
     const [unblockUser] = useUnblockUserMutation();
+    const [deleteUserCookies] = useDeleteUserCookiesMutation();
 
     useEffect(() => {
         setLogin(user?.login)
@@ -45,6 +46,11 @@ export default function Header(){
         localStorage.removeItem('token');
         clearUser()
         closeModal();
+
+        runAsync(async () => {
+            await deleteUserCookies()
+        })
+
         forceUpdate();
     }, [closeModal]);
 

@@ -36,6 +36,12 @@ gql`
         }
     }
 
+    mutation deleteUserCookies{
+        deleteUserCookies{
+            isNone
+        }
+    }
+
     mutation unblockUser(
         $uuid: UUID!
     ) {
