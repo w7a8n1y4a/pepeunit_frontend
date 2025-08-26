@@ -94,6 +94,17 @@ gql`
             isNone
         }
     }
+    mutation setDataPipeDataCsv(
+        $uuid: UUID!
+        $file: Upload!
+    ) {
+        setDataPipeDataCsv (
+            uuid: $uuid
+            file: $file
+        ){
+            isNone
+        }
+    }
     mutation deleteDataPipeData(
         $uuid: UUID!
     ) {

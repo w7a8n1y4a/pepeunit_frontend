@@ -160,6 +160,7 @@ export type Mutation = {
   sendCommandToInputBaseTopic: NoneType;
   setCredentials: NoneType;
   setDataPipeConfig: NoneType;
+  setDataPipeDataCsv: NoneType;
   setStateStorage: NoneType;
   setStateUnitNodeInput: UnitNodeType;
   unblockUser: NoneType;
@@ -237,6 +238,11 @@ export type MutationSetCredentialsArgs = {
 };
 
 export type MutationSetDataPipeConfigArgs = {
+  file: Scalars["Upload"]["input"];
+  uuid: Scalars["UUID"]["input"];
+};
+
+export type MutationSetDataPipeDataCsvArgs = {
   file: Scalars["Upload"]["input"];
   uuid: Scalars["UUID"]["input"];
 };
@@ -1248,6 +1254,16 @@ export type SetDataPipeConfigMutationVariables = Exact<{
 export type SetDataPipeConfigMutation = {
   __typename?: "Mutation";
   setDataPipeConfig: { __typename?: "NoneType"; isNone: boolean };
+};
+
+export type SetDataPipeDataCsvMutationVariables = Exact<{
+  uuid: Scalars["UUID"]["input"];
+  file: Scalars["Upload"]["input"];
+}>;
+
+export type SetDataPipeDataCsvMutation = {
+  __typename?: "Mutation";
+  setDataPipeDataCsv: { __typename?: "NoneType"; isNone: boolean };
 };
 
 export type DeleteDataPipeDataMutationVariables = Exact<{
@@ -3418,6 +3434,57 @@ export type SetDataPipeConfigMutationResult =
 export type SetDataPipeConfigMutationOptions = Apollo.BaseMutationOptions<
   SetDataPipeConfigMutation,
   SetDataPipeConfigMutationVariables
+>;
+export const SetDataPipeDataCsvDocument = gql`
+  mutation setDataPipeDataCsv($uuid: UUID!, $file: Upload!) {
+    setDataPipeDataCsv(uuid: $uuid, file: $file) {
+      isNone
+    }
+  }
+`;
+export type SetDataPipeDataCsvMutationFn = Apollo.MutationFunction<
+  SetDataPipeDataCsvMutation,
+  SetDataPipeDataCsvMutationVariables
+>;
+
+/**
+ * __useSetDataPipeDataCsvMutation__
+ *
+ * To run a mutation, you first call `useSetDataPipeDataCsvMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSetDataPipeDataCsvMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [setDataPipeDataCsvMutation, { data, loading, error }] = useSetDataPipeDataCsvMutation({
+ *   variables: {
+ *      uuid: // value for 'uuid'
+ *      file: // value for 'file'
+ *   },
+ * });
+ */
+export function useSetDataPipeDataCsvMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    SetDataPipeDataCsvMutation,
+    SetDataPipeDataCsvMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    SetDataPipeDataCsvMutation,
+    SetDataPipeDataCsvMutationVariables
+  >(SetDataPipeDataCsvDocument, options);
+}
+export type SetDataPipeDataCsvMutationHookResult = ReturnType<
+  typeof useSetDataPipeDataCsvMutation
+>;
+export type SetDataPipeDataCsvMutationResult =
+  Apollo.MutationResult<SetDataPipeDataCsvMutation>;
+export type SetDataPipeDataCsvMutationOptions = Apollo.BaseMutationOptions<
+  SetDataPipeDataCsvMutation,
+  SetDataPipeDataCsvMutationVariables
 >;
 export const DeleteDataPipeDataDocument = gql`
   mutation deleteDataPipeData($uuid: UUID!) {
