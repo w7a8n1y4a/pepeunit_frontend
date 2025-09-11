@@ -7,4 +7,5 @@ export enum NodeType {
     UnitNode = 'UnitNode',
     Input = "Input",
     Output = "Output",
+    Dashboard = 'Dashboard',
 }

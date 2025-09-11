@@ -36,7 +36,11 @@ const IterationList = <T extends { uuid: string, __typename: string }>({
         }));
     };
 
-    const renderActionButtons = (uuid: string, nodeType?: string) => (
+    const handleLink = (uuid: string) => {
+        window.open((import.meta.env.VITE_SELF_URI || window.env.VITE_SELF_URI) + uuid.slice(1))
+    };
+
+    const renderActionButtons = (uuid: string, nodeType?: string | undefined, __typename?: string) => (
         <div className="iteration-actions">
             {handleDelete && (
                 <button className="iteration-node-del-button" onClick={() => handleDelete(uuid)}>
@@ -46,6 +50,11 @@ const IterationList = <T extends { uuid: string, __typename: string }>({
             {handleCreate && (
                 <button className="iteration-node-add-button" onClick={() => handleCreate(uuid)}>
                     Add
+                </button>
+            )}
+            {__typename == 'DashboardType' && (
+                <button className="iteration-node-add-button" onClick={() => handleLink(uuid)}>
+                    Link
                 </button>
             )}
             {onFocusNode && nodeType && (
@@ -59,12 +68,14 @@ const IterationList = <T extends { uuid: string, __typename: string }>({
     const getHeaders = () => {
         switch (selectedEntityType) {
             case NodeType.Registry:
-                return ['Platform', 'Repository URL', 'Actions'];
+                return ['Platform', 'Repository URL', 'Action'];
             case NodeType.Repo:
             case NodeType.Unit:
-                return ['Name', 'Visibility', 'Actions'];
+                return ['Name', 'Visibility', 'Action'];
             case NodeType.User:
-                return ['Login', 'Role', 'Status', 'Actions'];
+                return ['Login', 'Role', 'Status', 'Action'];
+            case NodeType.Dashboard:
+                return ['Name', 'Status', 'Last Version', 'Grafana', 'Action'];
             default:
                 return [];
         }
@@ -82,6 +93,8 @@ const IterationList = <T extends { uuid: string, __typename: string }>({
                 return [item.name, stringToFormat(item.visibilityLevel)];
             case NodeType.User:
                 return [item.login, stringToFormat(item.role), stringToFormat(item.status)];
+            case NodeType.Dashboard:
+                return [item.name, stringToFormat(item.syncStatus), item.incLastVersion];
             default:
                 return [];
         }
@@ -102,6 +115,19 @@ const IterationList = <T extends { uuid: string, __typename: string }>({
                         {getRowData(item).map((data, index) => (
                             <td key={index}>{data || '-'}</td>
                         ))}
+
+                        {
+                            item.__typename == 'DashboardType' && (
+                                'dashboardUrl' in item && item.dashboardUrl ? (
+                                    <td>
+                                        {renderActionButtons((item as { dashboardUrl?: string }).dashboardUrl!, undefined, item.__typename)}
+                                    </td>
+                                ) : (
+                                    <td>-</td>
+                                )
+                            )
+                        }
+
                         <td>
                             {renderActionButtons(item.uuid, item.__typename)}
                         </td>
@@ -159,6 +185,11 @@ const IterationList = <T extends { uuid: string, __typename: string }>({
             {selectedEntityType === NodeType.Registry && (
                 <button className="iteration-add-button" onClick={() => openModal('createRepositoryRegistry')}>
                     Create Registry
+                </button>
+            )}
+            {selectedEntityType === NodeType.Dashboard && (
+                <button className="iteration-add-button" onClick={() => openModal('createDashboard')}>
+                    Create Dashboard
                 </button>
             )}
         </div>

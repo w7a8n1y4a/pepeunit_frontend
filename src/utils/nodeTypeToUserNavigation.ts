@@ -6,7 +6,8 @@ function nodeTypeToUserNavigation(nodeType: string): string{
         'RepositoryRegistryType': 'registry',
         'RepoType': 'repo',
         'UnitType': 'unit',
-        'UnitNodeType': 'unit-node'
+        'UnitNodeType': 'unit-node',
+        'DashboardType': 'dashboard'
     }
 
     return aliases[nodeType]  || ''

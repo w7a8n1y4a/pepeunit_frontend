@@ -13,6 +13,7 @@ export const nodeTypeToPermissionEntity: Record<NodeType, PermissionEntities | n
   [NodeType.UnitNode]: PermissionEntities.UnitNode,
   [NodeType.Input]: null,
   [NodeType.Output]: null,
+  [NodeType.Dashboard]: null,
 };
 
 export const permissionEntityToNodeType: Record<PermissionEntities, NodeType> = {

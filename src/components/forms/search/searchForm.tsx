@@ -17,7 +17,7 @@ export default function SearchForm({ targetSearch, onFocusNode }: SearchFormProp
   const { user } = useUserStore();
   
   let availableEntities = user
-    ? [NodeType.Registry, NodeType.Unit, NodeType.Repo, NodeType.User]
+    ? [NodeType.Registry, NodeType.Unit, NodeType.Repo, NodeType.User, NodeType.Dashboard]
     : [NodeType.Registry, NodeType.Unit, NodeType.Repo]
 
   if (targetSearch == NodeType.Registry) {

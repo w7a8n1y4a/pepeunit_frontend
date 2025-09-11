@@ -101,6 +101,9 @@ import { useUserStore } from '@stores/userStore';
                     formattedData = result.data.getUnits.units;
                     count = result.data.getUnits.count
                     setTypeList('collapse')
+                } else if ('getDashboards' in result.data) {
+                    formattedData = result.data.getDashboards.dashboards;
+                    count = result.data.getDashboards.count
                 }
                 
                 setNodeOutputs(formattedData);
@@ -145,7 +148,7 @@ import { useUserStore } from '@stores/userStore';
                 setIsErrorExist={(hasError) => updateErrorState('searchString', hasError)}
             />
             {
-                selectedEntityType != NodeType.User && (
+                selectedEntityType != NodeType.User && selectedEntityType != NodeType.Dashboard && (
                     <button
                         type="button"
                         className="toggle_visibility_button"

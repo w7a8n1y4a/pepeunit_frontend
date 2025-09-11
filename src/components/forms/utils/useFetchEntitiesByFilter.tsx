@@ -5,6 +5,7 @@ import {
   useGetUnitsLazyQuery,
   useGetUsersLazyQuery,
   useGetUnitsWithUnitNodesLazyQuery,
+  useGetDashboardsLazyQuery,
   VisibilityLevel
 } from '@rootTypes/compositionFunctions';
 import { NodeType } from '@rootTypes/nodeTypeEnum'
@@ -16,6 +17,7 @@ export default function useFetchEntitiesByFilter() {
   const [getUnitsWithUnitNodes] = useGetUnitsWithUnitNodesLazyQuery();
   const [getUnits] = useGetUnitsLazyQuery();
   const [getUsers] = useGetUsersLazyQuery();
+  const [getDashboards] = useGetDashboardsLazyQuery();
 
   function isPublicRegistrySet(selectedPrivateRegistry?: PrivateRegistry[]){
     let isPublicRepository: null | boolean = null
@@ -60,6 +62,8 @@ export default function useFetchEntitiesByFilter() {
           return getUnitsWithUnitNodes({ variables: queryVariables });
         case NodeType.User:
           return getUsers({ variables: queryVariables });
+        case NodeType.Dashboard:
+          return getDashboards({ variables: queryVariables });
         default:
           throw new Error(`Unsupported entity type: ${agentType}`);
       }
