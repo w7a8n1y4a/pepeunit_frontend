@@ -107,7 +107,7 @@ export default function Header(){
                         <button className="signin_button" onClick={() => pickRepoCreate()}>
                             <img src={micro} width="32" height="32" alt="AddRepoImg" />
                         </button>
-                        <button className="signin_button" onClick={() => window.open((import.meta.env.VITE_SELF_URI || window.env.VITE_SELF_URI) + 'grafana/login/generic_oauth')}>
+                        <button className="signin_button" onClick={() => window.open((import.meta.env.VITE_SELF_URI || window.env.VITE_SELF_URI) + 'grafana/login/generic_oauth?orgId=' + user?.grafanaOrgId || '1')}>
                             <img src={grafana} width="32" height="32" alt="GrafanaOpenImg" />
                         </button>
                         <button className="user_menu_button" onClick={() => {
@@ -167,6 +167,27 @@ export default function Header(){
                                     <button className="button_open_alter" onClick={() => openModal('changePass')}>
                                         Change Password
                                     </button>
+
+                                    <div className='div_statistics'>
+                                        {
+                                            user.grafanaOrgId && (
+                                                <>
+                                                    <div className='div_statistics_text'>
+                                                        Grafana Org Id:
+                                                    </div>
+                                                    <div className='div_statistics_text'>
+                                                        {user.grafanaOrgId}
+                                                    </div>
+                                                </>
+                                            )
+                                        }
+                                        <div className='div_statistics_text'>
+                                            Grafana Org Name:
+                                        </div>
+                                        <div className='div_statistics_text'>
+                                            {user.grafanaOrgName}
+                                        </div>
+                                    </div>
                                 </>
                             )
                         }
