@@ -12,7 +12,8 @@ import {
   UnitNodeTypeEnum,
   useGetUnitNodeLazyQuery,
   useGetUsersLazyQuery,
-  useGetRepositoryRegistryLazyQuery
+  useGetRepositoryRegistryLazyQuery,
+  useGetDashboardLazyQuery
 } from '@rootTypes/compositionFunctions'
 import { ForceGraph3D } from 'react-force-graph';
 import SpriteText from 'three-spritetext';
@@ -22,6 +23,7 @@ import RegistryContent from './registryContent'
 import RepoContent from './repoContent'
 import UnitContent from './unitContent';
 import UnitNodeContent from './unitNodeContent';
+import GrafanaContent from './grafanaContent'
 import BaseModal from '../modal/baseModal'
 import SearchForm from '../forms/search/searchForm';
 
@@ -72,6 +74,7 @@ export default function GraphContent({routerType, routerUuid}: GraphContentProps
   const [getRepo] = useGetRepoLazyQuery();
   const [getUnit] = useGetUnitLazyQuery();
   const [getUnitNode] = useGetUnitNodeLazyQuery();
+  const [getDashboard] = useGetDashboardLazyQuery();
 
   useEffect(() => {
     if (routerType === 'registry' || (!routerType && !routerUuid)){
@@ -281,6 +284,21 @@ export default function GraphContent({routerType, routerUuid}: GraphContentProps
         }
       })
     }
+
+    if (nodeType == 'dashboard'){
+      runAsync(async () => {
+        let dashboard = await getDashboard({
+          variables: {
+              uuid: uuid
+          }
+        })
+        if (dashboard.data?.getDashboard){
+          openModal(NodeType.Dashboard + "Menu")
+          setCurrentNodeData(dashboard.data.getDashboard)
+        }
+      })
+    }
+
     if (nodeType == 'repo') {
       runAsync(async () => {
         let repo = await getRepo({
@@ -504,6 +522,7 @@ export default function GraphContent({routerType, routerUuid}: GraphContentProps
       <RepoContent/>
       <UnitContent/>
       <UnitNodeContent/>
+      <GrafanaContent/>
     </>
   )
 }
