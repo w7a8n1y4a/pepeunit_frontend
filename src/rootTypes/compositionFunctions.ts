@@ -99,6 +99,95 @@ export type CredentialsType = {
   username: Scalars["String"]["output"];
 };
 
+export type DashboardCreateInput = {
+  name: Scalars["String"]["input"];
+};
+
+export type DashboardFilterInput = {
+  limit?: InputMaybe<Scalars["Int"]["input"]>;
+  offset?: InputMaybe<Scalars["Int"]["input"]>;
+  orderByCreateDate?: InputMaybe<OrderByDate>;
+  searchString?: InputMaybe<Scalars["String"]["input"]>;
+};
+
+export type DashboardPanelCreateInput = {
+  dashboardUuid: Scalars["UUID"]["input"];
+  title: Scalars["String"]["input"];
+  type: DashboardPanelTypeEnum;
+};
+
+export type DashboardPanelType = {
+  __typename?: "DashboardPanelType";
+  createDatetime: Scalars["DateTime"]["output"];
+  creatorUuid: Scalars["UUID"]["output"];
+  dashboardUuid: Scalars["UUID"]["output"];
+  title: Scalars["String"]["output"];
+  type: DashboardPanelTypeEnum;
+  unitNodesForPanel: Array<UnitNodeForPanelType>;
+  uuid: Scalars["UUID"]["output"];
+};
+
+export enum DashboardPanelTypeEnum {
+  AlertList = "ALERT_LIST",
+  AnnotationList = "ANNOTATION_LIST",
+  BarChart = "BAR_CHART",
+  BarGauge = "BAR_GAUGE",
+  Candlestick = "CANDLESTICK",
+  Canvas = "CANVAS",
+  DashboardList = "DASHBOARD_LIST",
+  FlameGraph = "FLAME_GRAPH",
+  Gauge = "GAUGE",
+  Geomap = "GEOMAP",
+  Heatmap = "HEATMAP",
+  Histogram = "HISTOGRAM",
+  HourlyHeatmap = "HOURLY_HEATMAP",
+  Logs = "LOGS",
+  News = "NEWS",
+  NodeGraph = "NODE_GRAPH",
+  PieChart = "PIE_CHART",
+  Stat = "STAT",
+  StateTimeline = "STATE_TIMELINE",
+  StatusHistory = "STATUS_HISTORY",
+  Table = "TABLE",
+  Text = "TEXT",
+  TimeSeries = "TIME_SERIES",
+  Traces = "TRACES",
+  Trend = "TREND",
+  XyChart = "XY_CHART",
+}
+
+export type DashboardPanelsResultType = {
+  __typename?: "DashboardPanelsResultType";
+  count: Scalars["Int"]["output"];
+  panels: Array<DashboardPanelType>;
+};
+
+export enum DashboardStatus {
+  Error = "ERROR",
+  Processing = "PROCESSING",
+  Success = "SUCCESS",
+}
+
+export type DashboardType = {
+  __typename?: "DashboardType";
+  createDatetime: Scalars["DateTime"]["output"];
+  creatorUuid: Scalars["UUID"]["output"];
+  dashboardUrl?: Maybe<Scalars["String"]["output"]>;
+  grafanaUuid: Scalars["UUID"]["output"];
+  incLastVersion?: Maybe<Scalars["Int"]["output"]>;
+  name: Scalars["String"]["output"];
+  syncError?: Maybe<Scalars["String"]["output"]>;
+  syncLastDatetime?: Maybe<Scalars["DateTime"]["output"]>;
+  syncStatus?: Maybe<DashboardStatus>;
+  uuid: Scalars["UUID"]["output"];
+};
+
+export type DashboardsResultType = {
+  __typename?: "DashboardsResultType";
+  count: Scalars["Int"]["output"];
+  dashboards: Array<DashboardType>;
+};
+
 export type DataPipeFilterInput = {
   aggregationType?: InputMaybe<Array<AggregationFunctions>>;
   endAggWindowDatetime?: InputMaybe<Scalars["DateTime"]["input"]>;
@@ -106,6 +195,7 @@ export type DataPipeFilterInput = {
   limit?: InputMaybe<Scalars["Int"]["input"]>;
   offset?: InputMaybe<Scalars["Int"]["input"]>;
   orderByCreateDate?: InputMaybe<OrderByDate>;
+  relativeTime?: InputMaybe<Scalars["String"]["input"]>;
   searchString?: InputMaybe<Scalars["String"]["input"]>;
   startAggWindowDatetime?: InputMaybe<Scalars["DateTime"]["input"]>;
   startCreateDatetime?: InputMaybe<Scalars["DateTime"]["input"]>;
@@ -132,6 +222,21 @@ export enum GitPlatform {
   Gitlab = "GITLAB",
 }
 
+export type LastValueType = {
+  __typename?: "LastValueType";
+  lastUpdateDatetime: Scalars["DateTime"]["output"];
+  state: Scalars["String"]["output"];
+  unitNodeUuid: Scalars["UUID"]["output"];
+  uuid: Scalars["UUID"]["output"];
+};
+
+export type LinkUnitNodeToPanelInput = {
+  dashboardPanelsUuid: Scalars["UUID"]["input"];
+  isForcedToJson: Scalars["Boolean"]["input"];
+  isLastData: Scalars["Boolean"]["input"];
+  unitNodeUuid: Scalars["UUID"]["input"];
+};
+
 export enum LogLevel {
   Critical = "CRITICAL",
   Debug = "DEBUG",
@@ -144,25 +249,32 @@ export type Mutation = {
   __typename?: "Mutation";
   blockUser: NoneType;
   bulkUpdate: NoneType;
+  createDashboard: DashboardType;
+  createDashboardPanel: DashboardPanelType;
   createPermission: PermissionType;
   createRepo: RepoType;
   createRepositoryRegistry: RepositoryRegistryType;
   createUnit: UnitType;
   createUnitNodeEdge: UnitNodeEdgeType;
   createUser: UserType;
+  deleteDashboard: NoneType;
   deleteDataPipeData: NoneType;
+  deleteLink: NoneType;
+  deletePanel: NoneType;
   deletePermission: NoneType;
   deleteRepo: NoneType;
   deleteRepositoryRegistry: NoneType;
   deleteUnit: NoneType;
   deleteUnitNodeEdge: NoneType;
   deleteUserCookies: NoneType;
+  linkUnitNodeToPanel: UnitNodeForPanelType;
   sendCommandToInputBaseTopic: NoneType;
   setCredentials: NoneType;
   setDataPipeConfig: NoneType;
   setDataPipeDataCsv: NoneType;
   setStateStorage: NoneType;
   setStateUnitNodeInput: UnitNodeType;
+  syncDashboard: DashboardType;
   unblockUser: NoneType;
   updateLocalRepository: NoneType;
   updateRepo: RepoType;
@@ -175,6 +287,14 @@ export type Mutation = {
 
 export type MutationBlockUserArgs = {
   uuid: Scalars["UUID"]["input"];
+};
+
+export type MutationCreateDashboardArgs = {
+  dashboard: DashboardCreateInput;
+};
+
+export type MutationCreateDashboardPanelArgs = {
+  dashboardPanel: DashboardPanelCreateInput;
 };
 
 export type MutationCreatePermissionArgs = {
@@ -201,7 +321,20 @@ export type MutationCreateUserArgs = {
   user: UserCreateInput;
 };
 
+export type MutationDeleteDashboardArgs = {
+  uuid: Scalars["UUID"]["input"];
+};
+
 export type MutationDeleteDataPipeDataArgs = {
+  uuid: Scalars["UUID"]["input"];
+};
+
+export type MutationDeleteLinkArgs = {
+  dashboardPanelUuid: Scalars["UUID"]["input"];
+  unitNodeUuid: Scalars["UUID"]["input"];
+};
+
+export type MutationDeletePanelArgs = {
   uuid: Scalars["UUID"]["input"];
 };
 
@@ -225,6 +358,10 @@ export type MutationDeleteUnitArgs = {
 export type MutationDeleteUnitNodeEdgeArgs = {
   inputUuid: Scalars["UUID"]["input"];
   outputUuid: Scalars["UUID"]["input"];
+};
+
+export type MutationLinkUnitNodeToPanelArgs = {
+  dashboard: LinkUnitNodeToPanelInput;
 };
 
 export type MutationSendCommandToInputBaseTopicArgs = {
@@ -254,6 +391,10 @@ export type MutationSetStateStorageArgs = {
 
 export type MutationSetStateUnitNodeInputArgs = {
   unitNode: UnitNodeSetStateInput;
+  uuid: Scalars["UUID"]["input"];
+};
+
+export type MutationSyncDashboardArgs = {
   uuid: Scalars["UUID"]["input"];
 };
 
@@ -296,7 +437,6 @@ export type MutationUpdateUserArgs = {
 export type NRecordsType = {
   __typename?: "NRecordsType";
   createDatetime: Scalars["DateTime"]["output"];
-  id: Scalars["Int"]["output"];
   maxCount: Scalars["Int"]["output"];
   size: Scalars["Int"]["output"];
   state: Scalars["String"]["output"];
@@ -305,8 +445,9 @@ export type NRecordsType = {
   uuid: Scalars["UUID"]["output"];
 };
 
-export type NRecordsTypeTimeWindowTypeAggregationType =
+export type NRecordsTypeTimeWindowTypeAggregationTypeLastValueType =
   | AggregationType
+  | LastValueType
   | NRecordsType
   | TimeWindowType;
 
@@ -371,7 +512,7 @@ export type PermissionsType = {
 export type PipeDataResultType = {
   __typename?: "PipeDataResultType";
   count: Scalars["Int"]["output"];
-  pipeData: Array<NRecordsTypeTimeWindowTypeAggregationType>;
+  pipeData: Array<NRecordsTypeTimeWindowTypeAggregationTypeLastValueType>;
 };
 
 export type PlatformType = {
@@ -394,6 +535,9 @@ export type Query = {
   getBaseMetrics: BaseMetricsType;
   getBranchCommits: Array<CommitType>;
   getCredentials?: Maybe<OneRepositoryRegistryCredentialsType>;
+  getDashboard: DashboardType;
+  getDashboardPanels: DashboardPanelsResultType;
+  getDashboards: DashboardsResultType;
   getDataPipeConfig: Scalars["String"]["output"];
   getGrafanaToken: Scalars["String"]["output"];
   getPipeData: PipeDataResultType;
@@ -435,6 +579,18 @@ export type QueryGetBranchCommitsArgs = {
 
 export type QueryGetCredentialsArgs = {
   uuid: Scalars["UUID"]["input"];
+};
+
+export type QueryGetDashboardArgs = {
+  uuid: Scalars["UUID"]["input"];
+};
+
+export type QueryGetDashboardPanelsArgs = {
+  uuid: Scalars["UUID"]["input"];
+};
+
+export type QueryGetDashboardsArgs = {
+  filters: DashboardFilterInput;
 };
 
 export type QueryGetDataPipeConfigArgs = {
@@ -735,6 +891,14 @@ export type UnitNodeFilterInput = {
   visibilityLevel?: InputMaybe<Array<VisibilityLevel>>;
 };
 
+export type UnitNodeForPanelType = {
+  __typename?: "UnitNodeForPanelType";
+  isForcedToJson: Scalars["Boolean"]["output"];
+  isLastData: Scalars["Boolean"]["output"];
+  unitNode: UnitNodeType;
+  unitWithUnitNodeName: Scalars["String"]["output"];
+};
+
 export type UnitNodeSetStateInput = {
   state?: InputMaybe<Scalars["String"]["input"]>;
 };
@@ -877,6 +1041,152 @@ export enum VisibilityLevel {
   Private = "PRIVATE",
   Public = "PUBLIC",
 }
+
+export type CreateDashboardMutationVariables = Exact<{
+  name: Scalars["String"]["input"];
+}>;
+
+export type CreateDashboardMutation = {
+  __typename?: "Mutation";
+  createDashboard: {
+    __typename?: "DashboardType";
+    uuid: string;
+    grafanaUuid: string;
+    name: string;
+    createDatetime: string;
+    dashboardUrl?: string | null;
+    incLastVersion?: number | null;
+    syncStatus?: DashboardStatus | null;
+    syncError?: string | null;
+    syncLastDatetime?: string | null;
+    creatorUuid: string;
+  };
+};
+
+export type CreateDashboardPanelMutationVariables = Exact<{
+  dashboardUuid: Scalars["UUID"]["input"];
+  title: Scalars["String"]["input"];
+  type: DashboardPanelTypeEnum;
+}>;
+
+export type CreateDashboardPanelMutation = {
+  __typename?: "Mutation";
+  createDashboardPanel: {
+    __typename?: "DashboardPanelType";
+    uuid: string;
+    type: DashboardPanelTypeEnum;
+    title: string;
+    createDatetime: string;
+    creatorUuid: string;
+    dashboardUuid: string;
+    unitNodesForPanel: Array<{
+      __typename?: "UnitNodeForPanelType";
+      isLastData: boolean;
+      isForcedToJson: boolean;
+      unitWithUnitNodeName: string;
+      unitNode: {
+        __typename?: "UnitNodeType";
+        uuid: string;
+        type: UnitNodeTypeEnum;
+        visibilityLevel: VisibilityLevel;
+        isRewritableInput: boolean;
+        topicName: string;
+        lastUpdateDatetime: string;
+        isDataPipeActive: boolean;
+        dataPipeYml?: string | null;
+        dataPipeStatus?: string | null;
+        dataPipeError?: string | null;
+        createDatetime: string;
+        state?: string | null;
+        unitUuid: string;
+        creatorUuid: string;
+      };
+    }>;
+  };
+};
+
+export type LinkUnitNodeToPanelMutationVariables = Exact<{
+  unitNodeUuid: Scalars["UUID"]["input"];
+  dashboardPanelsUuid: Scalars["UUID"]["input"];
+  isLastData: Scalars["Boolean"]["input"];
+  isForcedToJson: Scalars["Boolean"]["input"];
+}>;
+
+export type LinkUnitNodeToPanelMutation = {
+  __typename?: "Mutation";
+  linkUnitNodeToPanel: {
+    __typename?: "UnitNodeForPanelType";
+    isLastData: boolean;
+    isForcedToJson: boolean;
+    unitWithUnitNodeName: string;
+    unitNode: {
+      __typename?: "UnitNodeType";
+      uuid: string;
+      type: UnitNodeTypeEnum;
+      visibilityLevel: VisibilityLevel;
+      isRewritableInput: boolean;
+      topicName: string;
+      lastUpdateDatetime: string;
+      isDataPipeActive: boolean;
+      dataPipeYml?: string | null;
+      dataPipeStatus?: string | null;
+      dataPipeError?: string | null;
+      createDatetime: string;
+      state?: string | null;
+      unitUuid: string;
+      creatorUuid: string;
+    };
+  };
+};
+
+export type SyncDashboardMutationVariables = Exact<{
+  uuid: Scalars["UUID"]["input"];
+}>;
+
+export type SyncDashboardMutation = {
+  __typename?: "Mutation";
+  syncDashboard: {
+    __typename?: "DashboardType";
+    uuid: string;
+    grafanaUuid: string;
+    name: string;
+    createDatetime: string;
+    dashboardUrl?: string | null;
+    incLastVersion?: number | null;
+    syncStatus?: DashboardStatus | null;
+    syncError?: string | null;
+    syncLastDatetime?: string | null;
+    creatorUuid: string;
+  };
+};
+
+export type DeleteDashboardMutationVariables = Exact<{
+  uuid: Scalars["UUID"]["input"];
+}>;
+
+export type DeleteDashboardMutation = {
+  __typename?: "Mutation";
+  deleteDashboard: { __typename?: "NoneType"; isNone: boolean };
+};
+
+export type DeletePanelMutationVariables = Exact<{
+  uuid: Scalars["UUID"]["input"];
+}>;
+
+export type DeletePanelMutation = {
+  __typename?: "Mutation";
+  deletePanel: { __typename?: "NoneType"; isNone: boolean };
+};
+
+export type DeleteLinkMutationVariables = Exact<{
+  unitNodeUuid: Scalars["UUID"]["input"];
+  dashboardPanelUuid: Scalars["UUID"]["input"];
+}>;
+
+export type DeleteLinkMutation = {
+  __typename?: "Mutation";
+  deleteLink: { __typename?: "NoneType"; isNone: boolean };
+};
 
 export type CreatePermissionMutationVariables = Exact<{
   agentUuid: Scalars["UUID"]["input"];
@@ -1334,6 +1644,99 @@ export type UnblockUserMutationVariables = Exact<{
 export type UnblockUserMutation = {
   __typename?: "Mutation";
   unblockUser: { __typename?: "NoneType"; isNone: boolean };
+};
+
+export type GetDashboardQueryVariables = Exact<{
+  uuid: Scalars["UUID"]["input"];
+}>;
+
+export type GetDashboardQuery = {
+  __typename?: "Query";
+  getDashboard: {
+    __typename?: "DashboardType";
+    uuid: string;
+    grafanaUuid: string;
+    name: string;
+    createDatetime: string;
+    dashboardUrl?: string | null;
+    incLastVersion?: number | null;
+    syncStatus?: DashboardStatus | null;
+    syncError?: string | null;
+    syncLastDatetime?: string | null;
+    creatorUuid: string;
+  };
+};
+
+export type GetDashboardsQueryVariables = Exact<{
+  searchString?: InputMaybe<Scalars["String"]["input"]>;
+  orderByCreateDate?: InputMaybe<OrderByDate>;
+  offset?: InputMaybe<Scalars["Int"]["input"]>;
+  limit?: InputMaybe<Scalars["Int"]["input"]>;
+}>;
+
+export type GetDashboardsQuery = {
+  __typename?: "Query";
+  getDashboards: {
+    __typename?: "DashboardsResultType";
+    count: number;
+    dashboards: Array<{
+      __typename?: "DashboardType";
+      uuid: string;
+      grafanaUuid: string;
+      name: string;
+      createDatetime: string;
+      dashboardUrl?: string | null;
+      incLastVersion?: number | null;
+      syncStatus?: DashboardStatus | null;
+      syncError?: string | null;
+      syncLastDatetime?: string | null;
+      creatorUuid: string;
+    }>;
+  };
+};
+
+export type GetDashboardPanelsQueryVariables = Exact<{
+  uuid: Scalars["UUID"]["input"];
+}>;
+
+export type GetDashboardPanelsQuery = {
+  __typename?: "Query";
+  getDashboardPanels: {
+    __typename?: "DashboardPanelsResultType";
+    count: number;
+    panels: Array<{
+      __typename?: "DashboardPanelType";
+      uuid: string;
+      type: DashboardPanelTypeEnum;
+      title: string;
+      createDatetime: string;
+      creatorUuid: string;
+      dashboardUuid: string;
+      unitNodesForPanel: Array<{
+        __typename?: "UnitNodeForPanelType";
+        isLastData: boolean;
+        isForcedToJson: boolean;
+        unitWithUnitNodeName: string;
+        unitNode: {
+          __typename?: "UnitNodeType";
+          uuid: string;
+          type: UnitNodeTypeEnum;
+          visibilityLevel: VisibilityLevel;
+          isRewritableInput: boolean;
+          topicName: string;
+          lastUpdateDatetime: string;
+          isDataPipeActive: boolean;
+          dataPipeYml?: string | null;
+          dataPipeStatus?: string | null;
+          dataPipeError?: string | null;
+          createDatetime: string;
+          state?: string | null;
+          unitUuid: string;
+          creatorUuid: string;
+        };
+      }>;
+    }>;
+  };
 };
 
 export type GetBaseMetricsQueryVariables = Exact<{ [key: string]: never }>;
@@ -1968,8 +2371,14 @@ export type GetPipeDataQuery = {
           state_float: number;
         }
       | {
+          __typename: "LastValueType";
+          uuid: string;
+          unitNodeUuid: string;
+          lastUpdateDatetime: string;
+          state: string;
+        }
+      | {
           __typename: "NRecordsType";
-          id: number;
           uuid: string;
           unitNodeUuid: string;
           stateType: TypeInputValue;
@@ -2066,6 +2475,449 @@ export type GetVerificationUserQuery = {
   getVerificationUser: string;
 };
 
+export const CreateDashboardDocument = gql`
+  mutation createDashboard($name: String!) {
+    createDashboard(dashboard: { name: $name }) {
+      uuid
+      grafanaUuid
+      name
+      createDatetime
+      dashboardUrl
+      incLastVersion
+      syncStatus
+      syncError
+      syncLastDatetime
+      creatorUuid
+    }
+  }
+`;
+export type CreateDashboardMutationFn = Apollo.MutationFunction<
+  CreateDashboardMutation,
+  CreateDashboardMutationVariables
+>;
+
+/**
+ * __useCreateDashboardMutation__
+ *
+ * To run a mutation, you first call `useCreateDashboardMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateDashboardMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createDashboardMutation, { data, loading, error }] = useCreateDashboardMutation({
+ *   variables: {
+ *      name: // value for 'name'
+ *   },
+ * });
+ */
+export function useCreateDashboardMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CreateDashboardMutation,
+    CreateDashboardMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    CreateDashboardMutation,
+    CreateDashboardMutationVariables
+  >(CreateDashboardDocument, options);
+}
+export type CreateDashboardMutationHookResult = ReturnType<
+  typeof useCreateDashboardMutation
+>;
+export type CreateDashboardMutationResult =
+  Apollo.MutationResult<CreateDashboardMutation>;
+export type CreateDashboardMutationOptions = Apollo.BaseMutationOptions<
+  CreateDashboardMutation,
+  CreateDashboardMutationVariables
+>;
+export const CreateDashboardPanelDocument = gql`
+  mutation createDashboardPanel(
+    $dashboardUuid: UUID!
+    $title: String!
+    $type: DashboardPanelTypeEnum!
+  ) {
+    createDashboardPanel(
+      dashboardPanel: {
+        dashboardUuid: $dashboardUuid
+        title: $title
+        type: $type
+      }
+    ) {
+      uuid
+      type
+      title
+      createDatetime
+      creatorUuid
+      dashboardUuid
+      unitNodesForPanel {
+        unitNode {
+          uuid
+          type
+          visibilityLevel
+          isRewritableInput
+          topicName
+          lastUpdateDatetime
+          isDataPipeActive
+          dataPipeYml
+          dataPipeStatus
+          dataPipeError
+          createDatetime
+          state
+          unitUuid
+          creatorUuid
+        }
+        isLastData
+        isForcedToJson
+        unitWithUnitNodeName
+      }
+    }
+  }
+`;
+export type CreateDashboardPanelMutationFn = Apollo.MutationFunction<
+  CreateDashboardPanelMutation,
+  CreateDashboardPanelMutationVariables
+>;
+
+/**
+ * __useCreateDashboardPanelMutation__
+ *
+ * To run a mutation, you first call `useCreateDashboardPanelMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateDashboardPanelMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createDashboardPanelMutation, { data, loading, error }] = useCreateDashboardPanelMutation({
+ *   variables: {
+ *      dashboardUuid: // value for 'dashboardUuid'
+ *      title: // value for 'title'
+ *      type: // value for 'type'
+ *   },
+ * });
+ */
+export function useCreateDashboardPanelMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CreateDashboardPanelMutation,
+    CreateDashboardPanelMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    CreateDashboardPanelMutation,
+    CreateDashboardPanelMutationVariables
+  >(CreateDashboardPanelDocument, options);
+}
+export type CreateDashboardPanelMutationHookResult = ReturnType<
+  typeof useCreateDashboardPanelMutation
+>;
+export type CreateDashboardPanelMutationResult =
+  Apollo.MutationResult<CreateDashboardPanelMutation>;
+export type CreateDashboardPanelMutationOptions = Apollo.BaseMutationOptions<
+  CreateDashboardPanelMutation,
+  CreateDashboardPanelMutationVariables
+>;
+export const LinkUnitNodeToPanelDocument = gql`
+  mutation linkUnitNodeToPanel(
+    $unitNodeUuid: UUID!
+    $dashboardPanelsUuid: UUID!
+    $isLastData: Boolean!
+    $isForcedToJson: Boolean!
+  ) {
+    linkUnitNodeToPanel(
+      dashboard: {
+        unitNodeUuid: $unitNodeUuid
+        dashboardPanelsUuid: $dashboardPanelsUuid
+        isLastData: $isLastData
+        isForcedToJson: $isForcedToJson
+      }
+    ) {
+      unitNode {
+        uuid
+        type
+        visibilityLevel
+        isRewritableInput
+        topicName
+        lastUpdateDatetime
+        isDataPipeActive
+        dataPipeYml
+        dataPipeStatus
+        dataPipeError
+        createDatetime
+        state
+        unitUuid
+        creatorUuid
+      }
+      isLastData
+      isForcedToJson
+      unitWithUnitNodeName
+    }
+  }
+`;
+export type LinkUnitNodeToPanelMutationFn = Apollo.MutationFunction<
+  LinkUnitNodeToPanelMutation,
+  LinkUnitNodeToPanelMutationVariables
+>;
+
+/**
+ * __useLinkUnitNodeToPanelMutation__
+ *
+ * To run a mutation, you first call `useLinkUnitNodeToPanelMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLinkUnitNodeToPanelMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [linkUnitNodeToPanelMutation, { data, loading, error }] = useLinkUnitNodeToPanelMutation({
+ *   variables: {
+ *      unitNodeUuid: // value for 'unitNodeUuid'
+ *      dashboardPanelsUuid: // value for 'dashboardPanelsUuid'
+ *      isLastData: // value for 'isLastData'
+ *      isForcedToJson: // value for 'isForcedToJson'
+ *   },
+ * });
+ */
+export function useLinkUnitNodeToPanelMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    LinkUnitNodeToPanelMutation,
+    LinkUnitNodeToPanelMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    LinkUnitNodeToPanelMutation,
+    LinkUnitNodeToPanelMutationVariables
+  >(LinkUnitNodeToPanelDocument, options);
+}
+export type LinkUnitNodeToPanelMutationHookResult = ReturnType<
+  typeof useLinkUnitNodeToPanelMutation
+>;
+export type LinkUnitNodeToPanelMutationResult =
+  Apollo.MutationResult<LinkUnitNodeToPanelMutation>;
+export type LinkUnitNodeToPanelMutationOptions = Apollo.BaseMutationOptions<
+  LinkUnitNodeToPanelMutation,
+  LinkUnitNodeToPanelMutationVariables
+>;
+export const SyncDashboardDocument = gql`
+  mutation syncDashboard($uuid: UUID!) {
+    syncDashboard(uuid: $uuid) {
+      uuid
+      grafanaUuid
+      name
+      createDatetime
+      dashboardUrl
+      incLastVersion
+      syncStatus
+      syncError
+      syncLastDatetime
+      creatorUuid
+    }
+  }
+`;
+export type SyncDashboardMutationFn = Apollo.MutationFunction<
+  SyncDashboardMutation,
+  SyncDashboardMutationVariables
+>;
+
+/**
+ * __useSyncDashboardMutation__
+ *
+ * To run a mutation, you first call `useSyncDashboardMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSyncDashboardMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [syncDashboardMutation, { data, loading, error }] = useSyncDashboardMutation({
+ *   variables: {
+ *      uuid: // value for 'uuid'
+ *   },
+ * });
+ */
+export function useSyncDashboardMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    SyncDashboardMutation,
+    SyncDashboardMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    SyncDashboardMutation,
+    SyncDashboardMutationVariables
+  >(SyncDashboardDocument, options);
+}
+export type SyncDashboardMutationHookResult = ReturnType<
+  typeof useSyncDashboardMutation
+>;
+export type SyncDashboardMutationResult =
+  Apollo.MutationResult<SyncDashboardMutation>;
+export type SyncDashboardMutationOptions = Apollo.BaseMutationOptions<
+  SyncDashboardMutation,
+  SyncDashboardMutationVariables
+>;
+export const DeleteDashboardDocument = gql`
+  mutation deleteDashboard($uuid: UUID!) {
+    deleteDashboard(uuid: $uuid) {
+      isNone
+    }
+  }
+`;
+export type DeleteDashboardMutationFn = Apollo.MutationFunction<
+  DeleteDashboardMutation,
+  DeleteDashboardMutationVariables
+>;
+
+/**
+ * __useDeleteDashboardMutation__
+ *
+ * To run a mutation, you first call `useDeleteDashboardMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteDashboardMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteDashboardMutation, { data, loading, error }] = useDeleteDashboardMutation({
+ *   variables: {
+ *      uuid: // value for 'uuid'
+ *   },
+ * });
+ */
+export function useDeleteDashboardMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    DeleteDashboardMutation,
+    DeleteDashboardMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    DeleteDashboardMutation,
+    DeleteDashboardMutationVariables
+  >(DeleteDashboardDocument, options);
+}
+export type DeleteDashboardMutationHookResult = ReturnType<
+  typeof useDeleteDashboardMutation
+>;
+export type DeleteDashboardMutationResult =
+  Apollo.MutationResult<DeleteDashboardMutation>;
+export type DeleteDashboardMutationOptions = Apollo.BaseMutationOptions<
+  DeleteDashboardMutation,
+  DeleteDashboardMutationVariables
+>;
+export const DeletePanelDocument = gql`
+  mutation deletePanel($uuid: UUID!) {
+    deletePanel(uuid: $uuid) {
+      isNone
+    }
+  }
+`;
+export type DeletePanelMutationFn = Apollo.MutationFunction<
+  DeletePanelMutation,
+  DeletePanelMutationVariables
+>;
+
+/**
+ * __useDeletePanelMutation__
+ *
+ * To run a mutation, you first call `useDeletePanelMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeletePanelMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deletePanelMutation, { data, loading, error }] = useDeletePanelMutation({
+ *   variables: {
+ *      uuid: // value for 'uuid'
+ *   },
+ * });
+ */
+export function useDeletePanelMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    DeletePanelMutation,
+    DeletePanelMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<DeletePanelMutation, DeletePanelMutationVariables>(
+    DeletePanelDocument,
+    options,
+  );
+}
+export type DeletePanelMutationHookResult = ReturnType<
+  typeof useDeletePanelMutation
+>;
+export type DeletePanelMutationResult =
+  Apollo.MutationResult<DeletePanelMutation>;
+export type DeletePanelMutationOptions = Apollo.BaseMutationOptions<
+  DeletePanelMutation,
+  DeletePanelMutationVariables
+>;
+export const DeleteLinkDocument = gql`
+  mutation deleteLink($unitNodeUuid: UUID!, $dashboardPanelUuid: UUID!) {
+    deleteLink(
+      unitNodeUuid: $unitNodeUuid
+      dashboardPanelUuid: $dashboardPanelUuid
+    ) {
+      isNone
+    }
+  }
+`;
+export type DeleteLinkMutationFn = Apollo.MutationFunction<
+  DeleteLinkMutation,
+  DeleteLinkMutationVariables
+>;
+
+/**
+ * __useDeleteLinkMutation__
+ *
+ * To run a mutation, you first call `useDeleteLinkMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteLinkMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteLinkMutation, { data, loading, error }] = useDeleteLinkMutation({
+ *   variables: {
+ *      unitNodeUuid: // value for 'unitNodeUuid'
+ *      dashboardPanelUuid: // value for 'dashboardPanelUuid'
+ *   },
+ * });
+ */
+export function useDeleteLinkMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    DeleteLinkMutation,
+    DeleteLinkMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<DeleteLinkMutation, DeleteLinkMutationVariables>(
+    DeleteLinkDocument,
+    options,
+  );
+}
+export type DeleteLinkMutationHookResult = ReturnType<
+  typeof useDeleteLinkMutation
+>;
+export type DeleteLinkMutationResult =
+  Apollo.MutationResult<DeleteLinkMutation>;
+export type DeleteLinkMutationOptions = Apollo.BaseMutationOptions<
+  DeleteLinkMutation,
+  DeleteLinkMutationVariables
+>;
 export const CreatePermissionDocument = gql`
   mutation createPermission(
     $agentUuid: UUID!
@@ -3793,6 +4645,298 @@ export type UnblockUserMutationResult =
 export type UnblockUserMutationOptions = Apollo.BaseMutationOptions<
   UnblockUserMutation,
   UnblockUserMutationVariables
+>;
+export const GetDashboardDocument = gql`
+  query getDashboard($uuid: UUID!) {
+    getDashboard(uuid: $uuid) {
+      uuid
+      grafanaUuid
+      name
+      createDatetime
+      dashboardUrl
+      incLastVersion
+      syncStatus
+      syncError
+      syncLastDatetime
+      creatorUuid
+    }
+  }
+`;
+
+/**
+ * __useGetDashboardQuery__
+ *
+ * To run a query within a React component, call `useGetDashboardQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetDashboardQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetDashboardQuery({
+ *   variables: {
+ *      uuid: // value for 'uuid'
+ *   },
+ * });
+ */
+export function useGetDashboardQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GetDashboardQuery,
+    GetDashboardQueryVariables
+  > &
+    (
+      | { variables: GetDashboardQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetDashboardQuery, GetDashboardQueryVariables>(
+    GetDashboardDocument,
+    options,
+  );
+}
+export function useGetDashboardLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetDashboardQuery,
+    GetDashboardQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetDashboardQuery, GetDashboardQueryVariables>(
+    GetDashboardDocument,
+    options,
+  );
+}
+export function useGetDashboardSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    GetDashboardQuery,
+    GetDashboardQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<GetDashboardQuery, GetDashboardQueryVariables>(
+    GetDashboardDocument,
+    options,
+  );
+}
+export type GetDashboardQueryHookResult = ReturnType<
+  typeof useGetDashboardQuery
+>;
+export type GetDashboardLazyQueryHookResult = ReturnType<
+  typeof useGetDashboardLazyQuery
+>;
+export type GetDashboardSuspenseQueryHookResult = ReturnType<
+  typeof useGetDashboardSuspenseQuery
+>;
+export type GetDashboardQueryResult = Apollo.QueryResult<
+  GetDashboardQuery,
+  GetDashboardQueryVariables
+>;
+export const GetDashboardsDocument = gql`
+  query getDashboards(
+    $searchString: String
+    $orderByCreateDate: OrderByDate
+    $offset: Int
+    $limit: Int
+  ) {
+    getDashboards(
+      filters: {
+        searchString: $searchString
+        orderByCreateDate: $orderByCreateDate
+        offset: $offset
+        limit: $limit
+      }
+    ) {
+      count
+      dashboards {
+        uuid
+        grafanaUuid
+        name
+        createDatetime
+        dashboardUrl
+        incLastVersion
+        syncStatus
+        syncError
+        syncLastDatetime
+        creatorUuid
+      }
+    }
+  }
+`;
+
+/**
+ * __useGetDashboardsQuery__
+ *
+ * To run a query within a React component, call `useGetDashboardsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetDashboardsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetDashboardsQuery({
+ *   variables: {
+ *      searchString: // value for 'searchString'
+ *      orderByCreateDate: // value for 'orderByCreateDate'
+ *      offset: // value for 'offset'
+ *      limit: // value for 'limit'
+ *   },
+ * });
+ */
+export function useGetDashboardsQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetDashboardsQuery,
+    GetDashboardsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetDashboardsQuery, GetDashboardsQueryVariables>(
+    GetDashboardsDocument,
+    options,
+  );
+}
+export function useGetDashboardsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetDashboardsQuery,
+    GetDashboardsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetDashboardsQuery, GetDashboardsQueryVariables>(
+    GetDashboardsDocument,
+    options,
+  );
+}
+export function useGetDashboardsSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    GetDashboardsQuery,
+    GetDashboardsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<
+    GetDashboardsQuery,
+    GetDashboardsQueryVariables
+  >(GetDashboardsDocument, options);
+}
+export type GetDashboardsQueryHookResult = ReturnType<
+  typeof useGetDashboardsQuery
+>;
+export type GetDashboardsLazyQueryHookResult = ReturnType<
+  typeof useGetDashboardsLazyQuery
+>;
+export type GetDashboardsSuspenseQueryHookResult = ReturnType<
+  typeof useGetDashboardsSuspenseQuery
+>;
+export type GetDashboardsQueryResult = Apollo.QueryResult<
+  GetDashboardsQuery,
+  GetDashboardsQueryVariables
+>;
+export const GetDashboardPanelsDocument = gql`
+  query getDashboardPanels($uuid: UUID!) {
+    getDashboardPanels(uuid: $uuid) {
+      count
+      panels {
+        uuid
+        type
+        title
+        createDatetime
+        creatorUuid
+        dashboardUuid
+        unitNodesForPanel {
+          unitNode {
+            uuid
+            type
+            visibilityLevel
+            isRewritableInput
+            topicName
+            lastUpdateDatetime
+            isDataPipeActive
+            dataPipeYml
+            dataPipeStatus
+            dataPipeError
+            createDatetime
+            state
+            unitUuid
+            creatorUuid
+          }
+          isLastData
+          isForcedToJson
+          unitWithUnitNodeName
+        }
+      }
+    }
+  }
+`;
+
+/**
+ * __useGetDashboardPanelsQuery__
+ *
+ * To run a query within a React component, call `useGetDashboardPanelsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetDashboardPanelsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetDashboardPanelsQuery({
+ *   variables: {
+ *      uuid: // value for 'uuid'
+ *   },
+ * });
+ */
+export function useGetDashboardPanelsQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GetDashboardPanelsQuery,
+    GetDashboardPanelsQueryVariables
+  > &
+    (
+      | { variables: GetDashboardPanelsQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    GetDashboardPanelsQuery,
+    GetDashboardPanelsQueryVariables
+  >(GetDashboardPanelsDocument, options);
+}
+export function useGetDashboardPanelsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetDashboardPanelsQuery,
+    GetDashboardPanelsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    GetDashboardPanelsQuery,
+    GetDashboardPanelsQueryVariables
+  >(GetDashboardPanelsDocument, options);
+}
+export function useGetDashboardPanelsSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    GetDashboardPanelsQuery,
+    GetDashboardPanelsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<
+    GetDashboardPanelsQuery,
+    GetDashboardPanelsQueryVariables
+  >(GetDashboardPanelsDocument, options);
+}
+export type GetDashboardPanelsQueryHookResult = ReturnType<
+  typeof useGetDashboardPanelsQuery
+>;
+export type GetDashboardPanelsLazyQueryHookResult = ReturnType<
+  typeof useGetDashboardPanelsLazyQuery
+>;
+export type GetDashboardPanelsSuspenseQueryHookResult = ReturnType<
+  typeof useGetDashboardPanelsSuspenseQuery
+>;
+export type GetDashboardPanelsQueryResult = Apollo.QueryResult<
+  GetDashboardPanelsQuery,
+  GetDashboardPanelsQueryVariables
 >;
 export const GetBaseMetricsDocument = gql`
   query getBaseMetrics {
@@ -5959,8 +7103,13 @@ export const GetPipeDataDocument = gql`
       count
       pipeData {
         __typename
+        ... on LastValueType {
+          uuid
+          unitNodeUuid
+          state: state
+          lastUpdateDatetime
+        }
         ... on NRecordsType {
-          id
           uuid
           unitNodeUuid
           state: state

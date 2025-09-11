@@ -109,8 +109,13 @@ gql`
             count
             pipeData {
                 __typename
+                ... on LastValueType{
+                    uuid
+                    unitNodeUuid
+                    state: state
+                    lastUpdateDatetime
+                }
                 ... on NRecordsType{
-                    id
                     uuid
                     unitNodeUuid
                     state: state
