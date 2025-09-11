@@ -10,6 +10,8 @@ gql`
             role
             status
             login
+            grafanaOrgName
+            grafanaOrgId
             createDatetime
         }
     }
@@ -22,6 +24,8 @@ gql`
             role
             status
             login
+            grafanaOrgName
+            grafanaOrgId
             createDatetime
         }
     }

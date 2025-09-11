@@ -1019,6 +1019,8 @@ export enum UserStatus {
 export type UserType = {
   __typename?: "UserType";
   createDatetime: Scalars["DateTime"]["output"];
+  grafanaOrgId?: Maybe<Scalars["String"]["output"]>;
+  grafanaOrgName?: Maybe<Scalars["UUID"]["output"]>;
   login: Scalars["String"]["output"];
   role: UserRole;
   status: UserStatus;
@@ -1598,6 +1600,8 @@ export type CreateUserMutation = {
     role: UserRole;
     status: UserStatus;
     login: string;
+    grafanaOrgName?: string | null;
+    grafanaOrgId?: string | null;
     createDatetime: string;
   };
 };
@@ -1615,6 +1619,8 @@ export type UpdateUserMutation = {
     role: UserRole;
     status: UserStatus;
     login: string;
+    grafanaOrgName?: string | null;
+    grafanaOrgId?: string | null;
     createDatetime: string;
   };
 };
@@ -2436,6 +2442,8 @@ export type GetUserQuery = {
     role: UserRole;
     status: UserStatus;
     login: string;
+    grafanaOrgName?: string | null;
+    grafanaOrgId?: string | null;
     createDatetime: string;
   };
 };
@@ -2463,6 +2471,8 @@ export type GetUsersQuery = {
       role: UserRole;
       status: UserStatus;
       login: string;
+      grafanaOrgName?: string | null;
+      grafanaOrgId?: string | null;
       createDatetime: string;
     }>;
   };
@@ -4395,6 +4405,8 @@ export const CreateUserDocument = gql`
       role
       status
       login
+      grafanaOrgName
+      grafanaOrgId
       createDatetime
     }
   }
@@ -4450,6 +4462,8 @@ export const UpdateUserDocument = gql`
       role
       status
       login
+      grafanaOrgName
+      grafanaOrgId
       createDatetime
     }
   }
@@ -7439,6 +7453,8 @@ export const GetUserDocument = gql`
       role
       status
       login
+      grafanaOrgName
+      grafanaOrgId
       createDatetime
     }
   }
@@ -7530,6 +7546,8 @@ export const GetUsersDocument = gql`
         role
         status
         login
+        grafanaOrgName
+        grafanaOrgId
         createDatetime
       }
     }
