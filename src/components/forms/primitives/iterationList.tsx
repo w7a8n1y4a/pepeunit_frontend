@@ -5,6 +5,8 @@ import useModalHandlers from '@handlers/useModalHandlers';
 import { stringToFormat } from '@utils/stringToFormat';
 import { registryToText } from '@utils/registryToText';
 
+import { useNodeStore } from '@stores/baseStore';
+
 import './primitives.css';
 
 interface IterationProps<T> {
@@ -29,6 +31,8 @@ const IterationList = <T extends { uuid: string, __typename: string }>({
     const { openModal } = useModalHandlers();
     const [collapsedUnits, setCollapsedUnits] = useState<{ [key: string]: boolean }>({});
 
+    const { currentNodeData } = useNodeStore();
+
     const handleToggle = (unitId: string) => {
         setCollapsedUnits(prev => ({
             ...prev,
@@ -40,9 +44,13 @@ const IterationList = <T extends { uuid: string, __typename: string }>({
         window.open((import.meta.env.VITE_SELF_URI || window.env.VITE_SELF_URI) + uuid.slice(1))
     };
 
+    const handlUnitNodePanel = (uuid: string) => {
+        console.log(uuid, currentNodeData)
+    };
+
     const renderActionButtons = (uuid: string, nodeType?: string | undefined, __typename?: string) => (
         <div className="iteration-actions">
-            {handleDelete && (
+            {handleDelete && nodeType  && (
                 <button className="iteration-node-del-button" onClick={() => handleDelete(uuid)}>
                     Delete
                 </button>
@@ -55,6 +63,11 @@ const IterationList = <T extends { uuid: string, __typename: string }>({
             {__typename == 'DashboardType' && (
                 <button className="iteration-node-add-button" onClick={() => handleLink(uuid)}>
                     Link
+                </button>
+            )}
+            {__typename == 'DashboardPanelType' && (
+                <button className="iteration-node-add-button" onClick={() => handlUnitNodePanel(uuid)}>
+                    UnitNode
                 </button>
             )}
             {onFocusNode && nodeType && (
@@ -76,6 +89,8 @@ const IterationList = <T extends { uuid: string, __typename: string }>({
                 return ['Login', 'Role', 'Status', 'Action'];
             case NodeType.Dashboard:
                 return ['Name', 'Status', 'Last Version', 'Grafana', 'Action'];
+            case NodeType.DashboardPanel:
+                return ['Name', 'Type', 'Settings', 'Action'];
             default:
                 return [];
         }
@@ -95,6 +110,8 @@ const IterationList = <T extends { uuid: string, __typename: string }>({
                 return [item.login, stringToFormat(item.role), stringToFormat(item.status)];
             case NodeType.Dashboard:
                 return [item.name, stringToFormat(item.syncStatus), item.incLastVersion];
+            case NodeType.DashboardPanel:
+                return [item.title, item.type];
             default:
                 return [];
         }
@@ -121,6 +138,18 @@ const IterationList = <T extends { uuid: string, __typename: string }>({
                                 'dashboardUrl' in item && item.dashboardUrl ? (
                                     <td>
                                         {renderActionButtons((item as { dashboardUrl?: string }).dashboardUrl!, undefined, item.__typename)}
+                                    </td>
+                                ) : (
+                                    <td>-</td>
+                                )
+                            )
+                        }
+
+                        {
+                            item.__typename == 'DashboardPanelType' && (
+                                item ? (
+                                    <td>
+                                        {renderActionButtons(item.uuid, undefined, item.__typename)}
                                     </td>
                                 ) : (
                                     <td>-</td>
@@ -176,9 +205,21 @@ const IterationList = <T extends { uuid: string, __typename: string }>({
                 <div className="iteration-empty">No items found</div>
             )}
 
-            {openModalName && (
+            {selectedEntityType === NodeType.UnitNode && openModalName && (
+                <button className="iteration-add-button" onClick={() => openModal(openModalName)}>
+                    Search by Unit
+                </button>
+            )}
+
+            {(selectedEntityType === NodeType.Unit || selectedEntityType === NodeType.User) && openModalName && (
                 <button className="iteration-add-button" onClick={() => openModal(openModalName)}>
                     Pick Agent
+                </button>
+            )}
+
+            {selectedEntityType === NodeType.DashboardPanel && openModalName && (
+                <button className="iteration-add-button" onClick={() => openModal(openModalName)}>
+                    Create Panel
                 </button>
             )}
 
@@ -187,7 +228,8 @@ const IterationList = <T extends { uuid: string, __typename: string }>({
                     Create Registry
                 </button>
             )}
-            {selectedEntityType === NodeType.Dashboard && (
+
+            {selectedEntityType === NodeType.Dashboard && !openModalName && (
                 <button className="iteration-add-button" onClick={() => openModal('createDashboard')}>
                     Create Dashboard
                 </button>

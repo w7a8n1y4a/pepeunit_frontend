@@ -31,12 +31,12 @@ export default function CreateDashboardForm() {
 
     const handleCreateDashboard = () => {
         runAsync(async () => {
-            let repoVariables: CreateDashboardMutationVariables = {
+            let dashboardVariables: CreateDashboardMutationVariables = {
                 name: dashboardName,
             }
 
             let result = await createDashboardMutation({
-                variables: repoVariables
+                variables: dashboardVariables
             })
 
             if (result.data){
