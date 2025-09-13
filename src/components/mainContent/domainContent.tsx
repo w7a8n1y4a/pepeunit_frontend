@@ -61,9 +61,6 @@ export default function DomainContent(){
           {
             user?.role === UserRole.Admin && (
               <>
-                <a className="button_open_alter_send" href={(import.meta.env.VITE_SELF_URI || window.env.VITE_SELF_URI) + 'grafana/'} target="_blank">
-                  Grafana
-                </a>
                 <button className="button_open_alter_send" onClick={handleBulkUpdate}>
                   Update all Repo and Unit
                 </button>
