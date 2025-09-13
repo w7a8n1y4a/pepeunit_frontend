@@ -5,6 +5,7 @@ import useModalHandlers from '@handlers/useModalHandlers';
 import { stringToFormat } from '@utils/stringToFormat';
 import { registryToText } from '@utils/registryToText';
 
+import { useUserStore } from '@stores/userStore';
 import { useDashboardPanelStore } from '@stores/baseStore';
 
 import './primitives.css';
@@ -32,6 +33,7 @@ const IterationList = <T extends { uuid: string, __typename: string }>({
     const [collapsedUnits, setCollapsedUnits] = useState<{ [key: string]: boolean }>({});
 
     const { setCurrentDashboardPanelData } = useDashboardPanelStore();
+    const { user } = useUserStore();
 
     const handleToggle = (unitId: string) => {
         setCollapsedUnits(prev => ({
@@ -41,7 +43,7 @@ const IterationList = <T extends { uuid: string, __typename: string }>({
     };
 
     const handleLink = (uuid: string) => {
-        window.open((import.meta.env.VITE_SELF_URI || window.env.VITE_SELF_URI) + uuid.slice(1))
+        window.open((import.meta.env.VITE_SELF_URI || window.env.VITE_SELF_URI) + uuid.slice(1) + '?orgId=' + user?.grafanaOrgId)
     };
 
     const handlUnitNodePanel = (item: any) => {

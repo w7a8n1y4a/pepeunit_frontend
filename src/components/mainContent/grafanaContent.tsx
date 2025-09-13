@@ -86,8 +86,8 @@ return (
             currentNodeData && currentNodeData.dashboardUrl && (
               <>
                 <div className='repo_link'>
-                  <a style={{color: "#0077ff"}} target="_blank" href={(import.meta.env.VITE_SELF_URI || window.env.VITE_SELF_URI) + currentNodeData.dashboardUrl.slice(1)}>Grafana Link</a>
-                  <button className='repo_link_button' onClick={() => (copyToClipboard((import.meta.env.VITE_SELF_URI || window.env.VITE_SELF_URI) + currentNodeData.dashboardUrl.slice(1)))}>
+                  <a style={{color: "#0077ff"}} target="_blank" href={(import.meta.env.VITE_SELF_URI || window.env.VITE_SELF_URI) + currentNodeData.dashboardUrl.slice(1) + '?orgId=' + user?.grafanaOrgId}>Grafana Link</a>
+                  <button className='repo_link_button' onClick={() => (copyToClipboard((import.meta.env.VITE_SELF_URI || window.env.VITE_SELF_URI) + currentNodeData.dashboardUrl.slice(1) + '?orgId=' + user?.grafanaOrgId))}>
                     <img src={copy_img} width="24" height="24" alt="Back"/>
                   </button>
                 </div>
