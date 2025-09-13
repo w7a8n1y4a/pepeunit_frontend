@@ -107,7 +107,7 @@ export default function Header(){
                         <button className="signin_button" onClick={() => pickRepoCreate()}>
                             <img src={micro} width="32" height="32" alt="AddRepoImg" />
                         </button>
-                        <button className="signin_button" onClick={() => window.open((import.meta.env.VITE_SELF_URI || window.env.VITE_SELF_URI) + 'grafana/login/generic_oauth?orgId=' + user?.grafanaOrgId || '1')}>
+                        <button className="signin_button" onClick={() => window.open((import.meta.env.VITE_SELF_URI || window.env.VITE_SELF_URI) + 'grafana/login/generic_oauth')}>
                             <img src={grafana} width="32" height="32" alt="GrafanaOpenImg" />
                         </button>
                         <button className="user_menu_button" onClick={() => {
