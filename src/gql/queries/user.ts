@@ -8,10 +8,6 @@ gql`
         getToken (data: { credentials: $credentials, password: $password })
     }
 
-    query getGrafanaToken{
-        getGrafanaToken
-    }
-
     query getUser(
         $uuid: UUID!
     ) {

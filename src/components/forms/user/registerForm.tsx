@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
-import { useCreateUserMutation, useGetTokenLazyQuery, useGetGrafanaTokenLazyQuery } from '@rootTypes/compositionFunctions';
+import { useCreateUserMutation, useGetTokenLazyQuery } from '@rootTypes/compositionFunctions';
 import isValidPassword from '@utils/isValidPassword'
 import isValidLogin from '@utils/isValidLogin'
 import isValidMatchPassword from '@utils/isValidMatchPassword'
@@ -33,7 +33,6 @@ export default function RegisterForm({ openModalSignIn }: RegisterFormProps) {
 
     const [createUserMutation] = useCreateUserMutation();
     const [getToken] = useGetTokenLazyQuery();
-    const [getGrafanaToken] = useGetGrafanaTokenLazyQuery();
     
     const handleRegister = () => {
         runAsync(async () => {
@@ -58,8 +57,6 @@ export default function RegisterForm({ openModalSignIn }: RegisterFormProps) {
                         setUser(result.data.createUser)
                     }
                     setActiveModal(null)
-
-                    await getGrafanaToken()
                 }
             }
         })
