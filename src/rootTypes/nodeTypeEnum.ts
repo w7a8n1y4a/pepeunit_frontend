@@ -8,5 +8,6 @@ export enum NodeType {
     Input = "Input",
     Output = "Output",
     Dashboard = 'Dashboard',
-    DashboardPanel = 'DashboardPanel'
+    DashboardPanel = 'DashboardPanel',
+    DashboardUnitNode = 'DashboardUnitNode'
 }

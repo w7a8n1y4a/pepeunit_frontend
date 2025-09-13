@@ -5,7 +5,7 @@ import useModalHandlers from '@handlers/useModalHandlers';
 import { stringToFormat } from '@utils/stringToFormat';
 import { registryToText } from '@utils/registryToText';
 
-import { useNodeStore } from '@stores/baseStore';
+import { useDashboardPanelStore } from '@stores/baseStore';
 
 import './primitives.css';
 
@@ -31,7 +31,7 @@ const IterationList = <T extends { uuid: string, __typename: string }>({
     const { openModal } = useModalHandlers();
     const [collapsedUnits, setCollapsedUnits] = useState<{ [key: string]: boolean }>({});
 
-    const { currentNodeData } = useNodeStore();
+    const { setCurrentDashboardPanelData } = useDashboardPanelStore();
 
     const handleToggle = (unitId: string) => {
         setCollapsedUnits(prev => ({
@@ -44,9 +44,18 @@ const IterationList = <T extends { uuid: string, __typename: string }>({
         window.open((import.meta.env.VITE_SELF_URI || window.env.VITE_SELF_URI) + uuid.slice(1))
     };
 
-    const handlUnitNodePanel = (uuid: string) => {
-        console.log(uuid, currentNodeData)
+    const handlUnitNodePanel = (item: any) => {
+        setCurrentDashboardPanelData(item)
+        openModal('unitNodesPanel')
     };
+
+    const renderUnitNodesPanelButton = (item: any) => (
+        <div className="iteration-actions">
+            <button className="iteration-node-add-button" onClick={() => handlUnitNodePanel(item)}>
+                UnitNodes
+            </button>
+        </div>
+    );
 
     const renderActionButtons = (uuid: string, nodeType?: string | undefined, __typename?: string) => (
         <div className="iteration-actions">
@@ -63,11 +72,6 @@ const IterationList = <T extends { uuid: string, __typename: string }>({
             {__typename == 'DashboardType' && (
                 <button className="iteration-node-add-button" onClick={() => handleLink(uuid)}>
                     Link
-                </button>
-            )}
-            {__typename == 'DashboardPanelType' && (
-                <button className="iteration-node-add-button" onClick={() => handlUnitNodePanel(uuid)}>
-                    UnitNode
                 </button>
             )}
             {onFocusNode && nodeType && (
@@ -90,7 +94,9 @@ const IterationList = <T extends { uuid: string, __typename: string }>({
             case NodeType.Dashboard:
                 return ['Name', 'Status', 'Last Version', 'Grafana', 'Action'];
             case NodeType.DashboardPanel:
-                return ['Name', 'Type', 'Settings', 'Action'];
+                return ['Title', 'Type', 'Settings', 'Action'];
+            case NodeType.DashboardUnitNode:
+                return ['Resource', 'Type', 'Active DataPipe?', 'Only last value?', 'Value str to json?', 'Action'];
             default:
                 return [];
         }
@@ -112,6 +118,14 @@ const IterationList = <T extends { uuid: string, __typename: string }>({
                 return [item.name, stringToFormat(item.syncStatus), item.incLastVersion];
             case NodeType.DashboardPanel:
                 return [item.title, item.type];
+            case NodeType.DashboardUnitNode:
+                return [
+                    item.unitWithUnitNodeName,
+                    stringToFormat(item.unitNode.type),
+                    String(item.unitNode.isDataPipeActive),
+                    String(item.isLastData),
+                    String(item.isForcedToJson)
+                ];
             default:
                 return [];
         }
@@ -149,7 +163,7 @@ const IterationList = <T extends { uuid: string, __typename: string }>({
                             item.__typename == 'DashboardPanelType' && (
                                 item ? (
                                     <td>
-                                        {renderActionButtons(item.uuid, undefined, item.__typename)}
+                                        {renderUnitNodesPanelButton(item)}
                                     </td>
                                 ) : (
                                     <td>-</td>

@@ -3,7 +3,7 @@ import Spinner from '@primitives/spinner'
 
 import { useSyncDashboardMutation, useDeleteDashboardMutation } from '@rootTypes/compositionFunctions'
 
-import { useModalStore, useNodeStore } from '@stores/baseStore';
+import { useModalStore, useNodeStore, useDashboardPanelStore } from '@stores/baseStore';
 import { useErrorStore } from '@stores/errorStore';
 import { NodeType } from '@src/rootTypes/nodeTypeEnum';
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
@@ -15,6 +15,7 @@ import useModalHandlers from '@handlers/useModalHandlers';
 import CreateDashboardForm from '../forms/grafana/createDashboardForm'
 import CreateDashboardPanelForm from '../forms/grafana/createDashboardPanelForm'
 import DashboardPanelsForm from '../forms/grafana/dashboardPanelsForm'
+import UnitNodesPanelForm from '../forms/grafana/unitNodesPanelForm'
 import copy_img from '/images/copy.svg'
 import angry_img from '/images/pepe/angry.svg'
 
@@ -25,6 +26,7 @@ export default function GrafanaContent(){
 
   const { user } = useUserStore();
   const { currentNodeData, setCurrentNodeData } = useNodeStore();
+  const { currentDashboardPanelData } = useDashboardPanelStore();
   const { openModal } = useModalHandlers();
 
   const [ syncDashboard ] = useSyncDashboardMutation()
@@ -181,6 +183,14 @@ return (
         openModalType='DashboardMenu' 
       >
         <DashboardPanelsForm/>
+      </BaseModal>
+      <BaseModal
+        modalName={'Panel'}
+        subName={currentDashboardPanelData?.title}
+        open={activeModal === 'unitNodesPanel'}
+        openModalType='panelManagment' 
+      >
+        <UnitNodesPanelForm/>
       </BaseModal>
     </>
   )

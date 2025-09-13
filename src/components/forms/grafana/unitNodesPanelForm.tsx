@@ -1,5 +1,5 @@
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
-import { useGetDashboardPanelsLazyQuery, useDeletePanelMutation } from '@rootTypes/compositionFunctions';
+import { useGetDashboardPanelsLazyQuery, useDeleteLinkMutation } from '@rootTypes/compositionFunctions';
 import { useState, useEffect, useMemo } from 'react';
 import { useModalStore } from '@stores/baseStore';
 import Spinner from '@primitives/spinner';
@@ -7,18 +7,19 @@ import PaginationControls from '@primitives/pagination';
 import IterationList from '@primitives/iterationList'
 import '../form.css';
 
-import { useNodeStore } from '@stores/baseStore';
+import { useNodeStore, useDashboardPanelStore } from '@stores/baseStore';
 import { NodeType } from '@src/rootTypes/nodeTypeEnum';
 
-export default function DashboardPanelsForm() {
+export default function UnitNodesPanelForm() {
     const { isLoaderActive, runAsync } = useAsyncHandler();
 
     const { currentNodeData } = useNodeStore();
+    const { currentDashboardPanelData } = useDashboardPanelStore();
     const { activeModal } = useModalStore();
 
-    const [dashboardPanels, setDashboardPanels] = useState<Array<any>>([]);
+    const [unitNodesPanel, setUnitNodesPanel] = useState<Array<any>>([]);
     const [getDashboardPanelsQuery] = useGetDashboardPanelsLazyQuery();
-    const [deletePanelMutation] = useDeletePanelMutation();
+    const [deleteLinkMutation] = useDeleteLinkMutation();
     
     const [currentPage, setCurrentPage] = useState(0);
     const itemsPerPage = 6;
@@ -29,24 +30,35 @@ export default function DashboardPanelsForm() {
                 variables: {
                     uuid: currentNodeData.uuid
                 }
-            })
+            });
             if (result.data) {
-                setDashboardPanels(result.data.getDashboardPanels.panels);
+                const panels = result.data.getDashboardPanels.panels;
+
+                const matchedPanel = panels.find(
+                    (panel: any) => panel.uuid === currentDashboardPanelData?.uuid
+                );
+
+                if (matchedPanel) {
+                    setUnitNodesPanel(matchedPanel.unitNodesForPanel);
+                }
             }
-        })
+        });
     };
 
     useEffect(() => {
-        if (activeModal == "panelManagment"){
+        if (activeModal == "unitNodesPanel"){
             fetchNodeOutputs();
         }
-    }, [currentNodeData, activeModal]);
+    }, [currentNodeData, currentDashboardPanelData, activeModal]);
 
-    const handleDeletePanel = (uuid: string) => {
+    const handleDeleteLink = (unitNodeUuid: string) => {
         runAsync(async () => {
-            if (currentNodeData) {
-                let result = await deletePanelMutation({
-                    variables: { uuid }
+            if (currentDashboardPanelData) {
+                let result = await deleteLinkMutation({
+                    variables: {
+                        dashboardPanelUuid: currentDashboardPanelData.uuid,
+                        unitNodeUuid: unitNodeUuid
+                    }
                 })
                 if (result.data) {
                     fetchNodeOutputs();
@@ -58,10 +70,10 @@ export default function DashboardPanelsForm() {
     const paginatedPanels = useMemo(() => {
         const start = currentPage * itemsPerPage;
         const end = start + itemsPerPage;
-        return dashboardPanels.slice(start, end);
-    }, [dashboardPanels, currentPage, itemsPerPage]);
+        return unitNodesPanel.slice(start, end);
+    }, [unitNodesPanel, currentPage, itemsPerPage]);
 
-    const totalPages = Math.ceil(dashboardPanels.length / itemsPerPage);
+    const totalPages = Math.ceil(unitNodesPanel.length / itemsPerPage);
 
     return (
         <>
@@ -70,9 +82,9 @@ export default function DashboardPanelsForm() {
             <IterationList
                 items={paginatedPanels}
                 renderType={'button'}
-                selectedEntityType={NodeType.DashboardPanel}
-                handleDelete={handleDeletePanel}
-                openModalName={'createDashboardPanel'}
+                selectedEntityType={NodeType.DashboardUnitNode}
+                handleDelete={handleDeleteLink}
+                openModalName={'unitNodesPanel'}
             />
 
             <PaginationControls
