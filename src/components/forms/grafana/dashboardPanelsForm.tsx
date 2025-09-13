@@ -1,7 +1,7 @@
 import BaseModal from '../../modal/baseModal';
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import { useGetDashboardPanelsLazyQuery, useDeletePanelMutation } from '@rootTypes/compositionFunctions';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useModalStore } from '@stores/baseStore';
 import Spinner from '@primitives/spinner';
 import PaginationControls from '@primitives/pagination';
@@ -16,14 +16,13 @@ export default function DashboardPanelsForm() {
     const { isLoaderActive, runAsync } = useAsyncHandler();
 
     const { currentNodeData } = useNodeStore();
-
     const { activeModal } = useModalStore();
-    const [dashboardPanels, setDashboardPanels] = useState<Array<any> | null>(null);
+
+    const [dashboardPanels, setDashboardPanels] = useState<Array<any>>([]);
     const [getDashboardPanelsQuery] = useGetDashboardPanelsLazyQuery();
     const [deletePanelMutation] = useDeletePanelMutation();
     
     const [currentPage, setCurrentPage] = useState(0);
-    const [totalCount, setTotalCount] = useState(0);
     const itemsPerPage = 6;
 
     const fetchNodeOutputs = () => {
@@ -35,7 +34,6 @@ export default function DashboardPanelsForm() {
             })
             if (result.data) {
                 setDashboardPanels(result.data.getDashboardPanels.panels);
-                setTotalCount(result.data.getDashboardPanels.count);
             }
         })
     };
@@ -44,15 +42,13 @@ export default function DashboardPanelsForm() {
         if (activeModal == "panelManagment"){
             fetchNodeOutputs();
         }
-    }, [currentNodeData, currentPage, activeModal]);
+    }, [currentNodeData, activeModal]);
 
     const handleDeletePanel = (uuid: string) => {
         runAsync(async () => {
             if (currentNodeData) {
                 let result = await deletePanelMutation({
-                    variables: {
-                        uuid: uuid
-                    }
+                    variables: { uuid }
                 })
                 if (result.data) {
                     fetchNodeOutputs();
@@ -61,14 +57,21 @@ export default function DashboardPanelsForm() {
         })
     };
 
-    const totalPages = Math.ceil(totalCount / itemsPerPage);
+    // отрезаем по текущей странице
+    const paginatedPanels = useMemo(() => {
+        const start = currentPage * itemsPerPage;
+        const end = start + itemsPerPage;
+        return dashboardPanels.slice(start, end);
+    }, [dashboardPanels, currentPage, itemsPerPage]);
+
+    const totalPages = Math.ceil(dashboardPanels.length / itemsPerPage);
 
     return (
         <>
             {isLoaderActive && <Spinner />}
 
             <IterationList
-                items={dashboardPanels}
+                items={paginatedPanels}
                 renderType={'button'}
                 selectedEntityType={NodeType.DashboardPanel}
                 handleDelete={handleDeletePanel}
@@ -78,8 +81,8 @@ export default function DashboardPanelsForm() {
             <PaginationControls
                 currentPage={currentPage}
                 totalPages={totalPages}
-                goToNextPage={() => setCurrentPage(prev => prev + 1)}
-                goToPreviousPage={() => setCurrentPage(prev => prev - 1)}
+                goToNextPage={() => setCurrentPage(prev => Math.min(prev + 1, totalPages - 1))}
+                goToPreviousPage={() => setCurrentPage(prev => Math.max(prev - 1, 0))}
             />
 
             <BaseModal
