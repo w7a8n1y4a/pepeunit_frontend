@@ -1,18 +1,20 @@
 import BaseModal from '../../modal/baseModal';
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
-import { useGetUnitsOutputByInputLazyQuery, useDeleteUnitNodeEdgeMutation } from '@rootTypes/compositionFunctions';
+import { useGetUnitsOutputByInputLazyQuery, useDeleteUnitNodeEdgeMutation, useCreateUnitNodeEdgeMutation, UnitNodeTypeEnum } from '@rootTypes/compositionFunctions';
 import { useState, useEffect } from 'react';
 import { useModalStore } from '@stores/baseStore';
 import Spinner from '@primitives/spinner';
 import PaginationControls from '@primitives/pagination';
 import IterationList from '@primitives/iterationList'
 import UnitNodeEdgeCreateForm from '../../forms/unitNode/unitNodeEdgeCreateForm';
+import { useErrorStore } from '@stores/errorStore';
 import '../form.css';
 
 import { useNodeStore } from '@stores/baseStore';
 import { NodeType } from '@src/rootTypes/nodeTypeEnum';
 
 export default function UnitNodeEdgeForm() {
+    const { setHappy } = useErrorStore();
     const { isLoaderActive, runAsync } = useAsyncHandler();
 
     const { currentNodeData } = useNodeStore();
@@ -20,6 +22,7 @@ export default function UnitNodeEdgeForm() {
     const { activeModal } = useModalStore();
     const [nodeOutputs, setNodeOutputs] = useState<Array<any> | null>(null);
     const [getUnitsOutputByInputQuery] = useGetUnitsOutputByInputLazyQuery();
+    const [createUnitNodeEdgeMutation] = useCreateUnitNodeEdgeMutation();
     const [deleteUnitNodeEdgeMutation] = useDeleteUnitNodeEdgeMutation();
     
     const [currentPage, setCurrentPage] = useState(0);
@@ -47,6 +50,20 @@ export default function UnitNodeEdgeForm() {
             fetchNodeOutputs();
         }
     }, [currentNodeData, currentPage, activeModal]);
+
+    const handleCreateEdge = (nodeUuid: string) => {
+        runAsync(async () => {
+            let result = await createUnitNodeEdgeMutation({
+                variables: {
+                    nodeOutputUuid: nodeUuid,
+                    nodeInputUuid: currentNodeData.uuid
+                }
+            })
+            if (result.data){
+                setHappy("Edge success create")
+            }
+        })
+    };
 
     const handleDeleteEdge = (outputNodeUuid: string) => {
         runAsync(async () => {
@@ -91,7 +108,10 @@ export default function UnitNodeEdgeForm() {
                 openModalType={"unitNodeAddOutputToInput"} 
             >
                 {currentNodeData && (
-                    <UnitNodeEdgeCreateForm/>
+                    <UnitNodeEdgeCreateForm
+                        availableUnitNodeType={[UnitNodeTypeEnum.Output]}
+                        handleCreateConnection={handleCreateEdge}
+                    />
                 )}
             </BaseModal>
         </>

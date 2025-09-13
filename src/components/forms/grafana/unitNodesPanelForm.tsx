@@ -1,5 +1,5 @@
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
-import { useGetDashboardPanelsLazyQuery, useDeleteLinkMutation } from '@rootTypes/compositionFunctions';
+import { useGetDashboardPanelsLazyQuery, useDeleteLinkMutation, UnitNodeTypeEnum } from '@rootTypes/compositionFunctions';
 import UnitNodeEdgeCreateForm from '../../forms/unitNode/unitNodeEdgeCreateForm';
 import { useState, useEffect, useMemo } from 'react';
 import { useModalStore } from '@stores/baseStore';
@@ -7,9 +7,12 @@ import BaseModal from '../../modal/baseModal';
 import Spinner from '@primitives/spinner';
 import PaginationControls from '@primitives/pagination';
 import IterationList from '@primitives/iterationList'
+import useModalHandlers from '@handlers/useModalHandlers';
 import '../form.css';
 
-import { useNodeStore, useDashboardPanelStore } from '@stores/baseStore';
+import CreateLinkUnitNodePanelForm from '../../forms/grafana/createLinkUnitNodePanelForm'
+
+import { useNodeStore, useDashboardPanelStore, useUnitNodeStore } from '@stores/baseStore';
 import { NodeType } from '@src/rootTypes/nodeTypeEnum';
 
 export default function UnitNodesPanelForm() {
@@ -17,7 +20,9 @@ export default function UnitNodesPanelForm() {
 
     const { currentNodeData } = useNodeStore();
     const { currentDashboardPanelData } = useDashboardPanelStore();
+    const { setCurrentUnitNodeData } = useUnitNodeStore();
     const { activeModal } = useModalStore();
+    const { openModal } = useModalHandlers();
 
     const [unitNodesPanel, setUnitNodesPanel] = useState<Array<any>>([]);
     const [getDashboardPanelsQuery] = useGetDashboardPanelsLazyQuery();
@@ -53,7 +58,13 @@ export default function UnitNodesPanelForm() {
         }
     }, [currentNodeData, currentDashboardPanelData, activeModal]);
 
+    const handleOpenModalCreateLink = (uuid: string) => {
+        setCurrentUnitNodeData(uuid)
+        openModal('createLinkUnitNodePanel')
+    };
+
     const handleDeleteLink = (unitNodeUuid: string) => {
+        console.log(unitNodeUuid)
         runAsync(async () => {
             if (currentDashboardPanelData) {
                 let result = await deleteLinkMutation({
@@ -101,8 +112,18 @@ export default function UnitNodesPanelForm() {
                 openModalType={"unitNodesPanel"} 
             >
                 {currentNodeData && currentDashboardPanelData && (
-                    <UnitNodeEdgeCreateForm/>
+                    <UnitNodeEdgeCreateForm
+                        availableUnitNodeType={[UnitNodeTypeEnum.Output, UnitNodeTypeEnum.Input]}
+                        handleCreateConnection={handleOpenModalCreateLink}
+                    />
                 )}
+            </BaseModal>
+            <BaseModal
+                modalName='Link UnitNode to Panel'
+                open={activeModal === 'createLinkUnitNodePanel'}
+                openModalType='unitNodesPanel'
+            >
+                <CreateLinkUnitNodePanelForm/>
             </BaseModal>
         </>
     );

@@ -1,6 +1,6 @@
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import { NodeType } from '@rootTypes/nodeTypeEnum'
-import { useGetUnitsWithUnitNodesLazyQuery, useCreateUnitNodeEdgeMutation, UnitNodeTypeEnum } from '@rootTypes/compositionFunctions'
+import { useGetUnitsWithUnitNodesLazyQuery, UnitNodeTypeEnum } from '@rootTypes/compositionFunctions'
 import { useState, useEffect } from 'react'
 import DefaultInput from '@primitives/defaultInput'
 import Spinner from '@primitives/spinner'
@@ -8,15 +8,13 @@ import PaginationControls from '@primitives/pagination';
 import IterationList from '@primitives/iterationList'
 import '../form.css'
 
-import { useNodeStore } from '@stores/baseStore';
-import { useErrorStore } from '@stores/errorStore';
+interface SearchProps {
+    availableUnitNodeType: UnitNodeTypeEnum[]
+    handleCreateConnection: (uuid: string) => void
+}
 
-
-export default function UnitNodeEdgeCreateForm() {
-    const { setHappy } = useErrorStore();
+export default function UnitNodeEdgeCreateForm({availableUnitNodeType, handleCreateConnection }: SearchProps) {
     const { isLoaderActive, runAsync } = useAsyncHandler();
-
-    const { currentNodeData } = useNodeStore();
 
     const [errorState, setErrorState] = useState({
         searchString: false,
@@ -30,7 +28,6 @@ export default function UnitNodeEdgeCreateForm() {
     const itemsPerPage = 6;
 
     const [ getUnitsWithUnitNodes ] = useGetUnitsWithUnitNodesLazyQuery();
-    const [ createUnitNodeEdgeMutation ] = useCreateUnitNodeEdgeMutation();
 
     useEffect(() => {
         runAsync(async () => {
@@ -39,7 +36,7 @@ export default function UnitNodeEdgeCreateForm() {
                     searchString: searchString,
                     limit: itemsPerPage,
                     offset: currentPage * itemsPerPage,
-                    unitNodeType: [UnitNodeTypeEnum.Output]
+                    unitNodeType: availableUnitNodeType
                 }
             })
             if (result.data?.getUnits){
@@ -54,20 +51,6 @@ export default function UnitNodeEdgeCreateForm() {
             ...prevState,
             [field]: hasError
         }));
-    };
-
-    const handleCreateEdge = (nodeUuid: string) => {
-        runAsync(async () => {
-            let result = await createUnitNodeEdgeMutation({
-                variables: {
-                    nodeOutputUuid: nodeUuid,
-                    nodeInputUuid: currentNodeData.uuid
-                }
-            })
-            if (result.data){
-                setHappy("Edge success create")
-            }
-        })
     };
 
     const totalPages = Math.ceil(totalCount / itemsPerPage);
@@ -94,7 +77,7 @@ export default function UnitNodeEdgeCreateForm() {
                 items={data}
                 renderType={'collapse'}
                 selectedEntityType={NodeType.UnitNode}
-                handleCreate={handleCreateEdge}
+                handleCreate={handleCreateConnection}
                 openModalName={null}
             />
             <PaginationControls

@@ -38,6 +38,16 @@ export const useDashboardPanelStore = create<DashboardPanelStore>((set) => ({
     setCurrentDashboardPanelData: (dashboardPanel: any | null ) => set({ currentDashboardPanelData: dashboardPanel }),
 }));
 
+export interface UnitNodeStore {
+    currentUnitNodeData: any | null,
+    setCurrentUnitNodeData: (unitNode: any | null) => void,
+}
+
+export const useUnitNodeStore = create<UnitNodeStore>((set) => ({
+    currentUnitNodeData: null as any | null,
+    setCurrentUnitNodeData: (unitNode: any | null ) => set({ currentUnitNodeData: unitNode }),
+}));
+
 export interface SearchNodeStore {
     currentSearchNodeData: any | null,
     setCurrentSearchNodeData: (unit: any | null) => void,

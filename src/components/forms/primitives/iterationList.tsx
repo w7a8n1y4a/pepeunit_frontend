@@ -170,10 +170,17 @@ const IterationList = <T extends { uuid: string, __typename: string }>({
                                 )
                             )
                         }
-
-                        <td>
-                            {renderActionButtons(item.uuid, item.__typename)}
-                        </td>
+                        {
+                            item.__typename == 'UnitNodeForPanelType' ? (
+                                <td>
+                                    {renderActionButtons((item as { unitNode?: any }).unitNode!.uuid, item.__typename)}
+                                </td>
+                            ) : (
+                                <td>
+                                    {renderActionButtons(item.uuid, item.__typename)}
+                                </td>
+                            )
+                        }
                     </tr>
                 ))}
             </tbody>
@@ -199,7 +206,7 @@ const IterationList = <T extends { uuid: string, __typename: string }>({
                                     {unit.unitNodes.map((node: any) => (
                                         <tr key={node.uuid}>
                                             <td>{node.topicName}</td>
-                                            <td>{renderActionButtons(node.uuid)}</td>
+                                            <td>{renderActionButtons(node.uuid, 'UnitNode')}</td>
                                         </tr>
                                     ))}
                                 </tbody>
