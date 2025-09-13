@@ -237,6 +237,12 @@ const IterationList = <T extends { uuid: string, __typename: string }>({
                 </button>
             )}
 
+            {selectedEntityType === NodeType.DashboardUnitNode && (
+                <button className="iteration-add-button" onClick={() => openModal('unitNodeLinkCreate')}>
+                    Add UnitNode
+                </button>
+            )}
+
             {selectedEntityType === NodeType.Registry && (
                 <button className="iteration-add-button" onClick={() => openModal('createRepositoryRegistry')}>
                     Create Registry

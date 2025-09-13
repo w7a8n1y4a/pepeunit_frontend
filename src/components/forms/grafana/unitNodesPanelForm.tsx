@@ -1,7 +1,9 @@
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import { useGetDashboardPanelsLazyQuery, useDeleteLinkMutation } from '@rootTypes/compositionFunctions';
+import UnitNodeEdgeCreateForm from '../../forms/unitNode/unitNodeEdgeCreateForm';
 import { useState, useEffect, useMemo } from 'react';
 import { useModalStore } from '@stores/baseStore';
+import BaseModal from '../../modal/baseModal';
 import Spinner from '@primitives/spinner';
 import PaginationControls from '@primitives/pagination';
 import IterationList from '@primitives/iterationList'
@@ -93,6 +95,15 @@ export default function UnitNodesPanelForm() {
                 goToNextPage={() => setCurrentPage(prev => Math.min(prev + 1, totalPages - 1))}
                 goToPreviousPage={() => setCurrentPage(prev => Math.max(prev - 1, 0))}
             />
+            <BaseModal
+                modalName={'Search by Unit'}
+                open={activeModal === 'unitNodeLinkCreate'}
+                openModalType={"unitNodesPanel"} 
+            >
+                {currentNodeData && currentDashboardPanelData && (
+                    <UnitNodeEdgeCreateForm/>
+                )}
+            </BaseModal>
         </>
     );
 }
