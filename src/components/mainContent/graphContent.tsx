@@ -77,7 +77,7 @@ export default function GraphContent({routerType, routerUuid}: GraphContentProps
   const [getDashboard] = useGetDashboardLazyQuery();
 
   useEffect(() => {
-    if (routerType === 'registry' || (!routerType && !routerUuid)){
+    if (routerType === 'registry' || routerType === 'dashboard' || (!routerType && !routerUuid)){
       runAsync(async () => {
         let reposData = await getRepos()
         if (reposData.data?.getRepos){
