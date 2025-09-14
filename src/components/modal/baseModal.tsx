@@ -1,7 +1,14 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { NodeType } from '@rootTypes/nodeTypeEnum'
-import { UnitNodeTypeEnum, useGetRepoLazyQuery, useGetUnitLazyQuery, useGetUnitNodeLazyQuery, useGetRepositoryRegistryLazyQuery } from '@rootTypes/compositionFunctions'
+import { 
+    UnitNodeTypeEnum,
+    useGetRepoLazyQuery,
+    useGetUnitLazyQuery,
+    useGetUnitNodeLazyQuery,
+    useGetRepositoryRegistryLazyQuery,
+    useGetDashboardLazyQuery
+} from '@rootTypes/compositionFunctions'
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import ResultQuery from '@primitives/resultQuery'
 import close_img from '/images/close.svg'
@@ -35,6 +42,7 @@ export default function BaseModal({modalName, subName, visibilityLevel, lastUpda
 
     const { updateNodeDataById } = useGraphStore();
 
+    const [getDashboard] = useGetDashboardLazyQuery();
     const [getRepositoryRegistry] = useGetRepositoryRegistryLazyQuery();
     const [getRepo] = useGetRepoLazyQuery();
     const [getUnit] = useGetUnitLazyQuery();
@@ -43,6 +51,13 @@ export default function BaseModal({modalName, subName, visibilityLevel, lastUpda
     function updateData(reloadEntityType: NodeType | UnitNodeTypeEnum) {
         runAsync(async () => {
             let targetdata = null
+
+            if (reloadEntityType == NodeType.Dashboard){
+                let result = await getDashboard({
+                    variables: {uuid: currentNodeData.uuid}
+                })
+                targetdata = result.data?.getDashboard
+            }
 
             if (reloadEntityType == NodeType.Registry){
                 let result = await getRepositoryRegistry({
