@@ -57,7 +57,7 @@ export default function UpdateRepositoryRegistryCredentialsForm() {
     };
 
     useEffect(() => {
-        if (currentNodeData.__typename == "RepositoryRegistryType") {
+        if (currentNodeData.__typename == "RepositoryRegistryType" && !currentNodeData.isPublicRepository) {
             runAsync(async () => {
                 let credentials = await getCredentials({
                     variables: {

@@ -139,11 +139,12 @@ export default function UnitContent(){
   };
 
   useEffect(() => {
+    if (!currentNodeData || currentNodeData.__typename == "UnitType"){
       runAsync(async () => {
         if (currentNodeData){
           setCurrentRepoData(null);
           setRepoAvailablePlatforms(null);
-    
+          
           const repoResponse = await getRepo({ variables: { uuid: currentNodeData.repoUuid } });
           const repo = repoResponse.data?.getRepo;
     
@@ -213,6 +214,7 @@ export default function UnitContent(){
 
         }
       })
+    }
   }, [currentNodeData]);
   
   return (

@@ -43,83 +43,87 @@ export default function UpdateUnitForm() {
     const [getRepo] = useGetRepoLazyQuery();
 
     useEffect(() => {
-        runAsync(async () => {
-            if (currentNodeData.repoBranch){
+        if (currentNodeData.__typename == "UnitType"){
+            runAsync(async () => {
+                if (currentNodeData.repoBranch){
 
-                let repo = await getRepo({
-                variables: {
-                    uuid: currentNodeData.repoUuid
-                }
-                })
-                if (repo.data?.getRepo){
-                    let result = await getBranchCommits({
-                        variables: {
-                            uuid: repo.data?.getRepo.repositoryRegistryUuid,
-                            repoBranch: currentNodeData.repoBranch,
-                            onlyTag: false,
-                            limit: 100,
-                            offset: 0
-                        }
-                    })
-                    
-                    if (result.data?.getBranchCommits){
-                        setRepoAvailableCommits(result.data.getBranchCommits)
-                    }
-                }
-            }
-        })
-    }, [currentNodeData.repoBranch, currentNodeData.isAutoUpdateFromRepoUnit]);
-
-    useEffect(() => {
-        runAsync(async () => {
-            setCurrentRepoData(null)
-            let repo_result = await getRepo(
-                {
+                    let repo = await getRepo({
                     variables: {
                         uuid: currentNodeData.repoUuid
                     }
-                }
-            )
-            if (repo_result.data?.getRepo){
-
-                let repo = repo_result.data.getRepo
-                setCurrentRepoData(repo)
-                setRepoAvailablePlatforms(null)
-
-                if (repo.isCompilableRepo){
-                    let commit = null
-
-                    if (!currentNodeData.isAutoUpdateFromRepoUnit && currentNodeData.repoCommit){
-                        commit = currentNodeData.repoCommit
-                    }
-                    getAvailablePlatforms({
-                        variables: {
-                            uuid: currentNodeData.repoUuid,
-                            targetCommit: commit
-                        }
-                    }).then(availablePlatforms => {
-                            if (availablePlatforms.data?.getAvailablePlatforms){
-                                setRepoAvailablePlatforms(availablePlatforms.data.getAvailablePlatforms)
-                            }
-                        }
-                    )
-                }
-
-                setCurrentRepositoryRegistryData(null)
-                if (currentRepoData != null) {
-                    let repo_registry = await getRepositoryRegistry(
-                        {
+                    })
+                    if (repo.data?.getRepo){
+                        let result = await getBranchCommits({
                             variables: {
-                                uuid: currentRepoData.repositoryRegistryUuid
+                                uuid: repo.data?.getRepo.repositoryRegistryUuid,
+                                repoBranch: currentNodeData.repoBranch,
+                                onlyTag: false,
+                                limit: 100,
+                                offset: 0
                             }
+                        })
+                        
+                        if (result.data?.getBranchCommits){
+                            setRepoAvailableCommits(result.data.getBranchCommits)
                         }
-                    )
-                    if (repo_registry.data?.getRepositoryRegistry){
-                        setCurrentRepositoryRegistryData(repo_registry.data.getRepositoryRegistry)
                     }
                 }
-            }
-        })
+            })
+        }
+    }, [currentNodeData.repoBranch, currentNodeData.isAutoUpdateFromRepoUnit]);
+
+    useEffect(() => {
+        if (currentNodeData.__typename == "UnitType"){
+            runAsync(async () => {
+                setCurrentRepoData(null)
+                let repo_result = await getRepo(
+                    {
+                        variables: {
+                            uuid: currentNodeData.repoUuid
+                        }
+                    }
+                )
+                if (repo_result.data?.getRepo){
+
+                    let repo = repo_result.data.getRepo
+                    setCurrentRepoData(repo)
+                    setRepoAvailablePlatforms(null)
+
+                    if (repo.isCompilableRepo){
+                        let commit = null
+
+                        if (!currentNodeData.isAutoUpdateFromRepoUnit && currentNodeData.repoCommit){
+                            commit = currentNodeData.repoCommit
+                        }
+                        getAvailablePlatforms({
+                            variables: {
+                                uuid: currentNodeData.repoUuid,
+                                targetCommit: commit
+                            }
+                        }).then(availablePlatforms => {
+                                if (availablePlatforms.data?.getAvailablePlatforms){
+                                    setRepoAvailablePlatforms(availablePlatforms.data.getAvailablePlatforms)
+                                }
+                            }
+                        )
+                    }
+
+                    setCurrentRepositoryRegistryData(null)
+                    if (currentRepoData != null) {
+                        let repo_registry = await getRepositoryRegistry(
+                            {
+                                variables: {
+                                    uuid: currentRepoData.repositoryRegistryUuid
+                                }
+                            }
+                        )
+                        if (repo_registry.data?.getRepositoryRegistry){
+                            setCurrentRepositoryRegistryData(repo_registry.data.getRepositoryRegistry)
+                        }
+                    }
+                }
+            })
+        }
     }, [currentNodeData]);
 
     const handleUpdateUnit = () => {

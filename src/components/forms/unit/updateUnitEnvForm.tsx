@@ -43,18 +43,20 @@ export default function UpdateUnitEnvForm() {
     };
 
     useEffect(() => {
-        runAsync(async () => {
-            let result = await getUnitEnv({
-                variables: {
-                    uuid: currentNodeData.uuid,
+        if (currentNodeData.__typename == "UnitType"){
+            runAsync(async () => {
+                let result = await getUnitEnv({
+                    variables: {
+                        uuid: currentNodeData.uuid,
+                    }
+                })
+                if (result.data?.getUnitEnv){
+                    setCurrentUnitEnv(JSON.parse(result.data.getUnitEnv))
+                }else{
+                    setCurrentUnitEnv(null)
                 }
             })
-            if (result.data?.getUnitEnv){
-                setCurrentUnitEnv(JSON.parse(result.data.getUnitEnv))
-            }else{
-                setCurrentUnitEnv(null)
-            }
-        })
+        }
     }, [currentNodeData]);
 
     const handleInputChange = (key: string, value: string) => {

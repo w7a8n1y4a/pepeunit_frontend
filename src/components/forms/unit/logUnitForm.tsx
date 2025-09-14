@@ -29,23 +29,25 @@ export default function LogUnitForm() {
         currentPage: number,
         level: LogLevel[],
     ) => {
-        runAsync(async () => {
-            let result = await getUnitLogs({
-                variables: {
-                    uuid: currentNodeData.uuid,
-                    level: level,
-                    orderByCreateDate: OrderByDate.Desc,
-                    limit: itemsPerPage,
-                    offset: currentPage * itemsPerPage
+        if (currentNodeData.__typename == "UnitType"){
+            runAsync(async () => {
+                let result = await getUnitLogs({
+                    variables: {
+                        uuid: currentNodeData.uuid,
+                        level: level,
+                        orderByCreateDate: OrderByDate.Desc,
+                        limit: itemsPerPage,
+                        offset: currentPage * itemsPerPage
+                    }
+                })
+                if (result.data?.getUnitLogs){
+                    setCurrentUnitLogs(result.data.getUnitLogs.unitLogs)
+                    setTotalCount(result.data.getUnitLogs.count);
+                }else{
+                    setCurrentUnitLogs([])
                 }
             })
-            if (result.data?.getUnitLogs){
-                setCurrentUnitLogs(result.data.getUnitLogs.unitLogs)
-                setTotalCount(result.data.getUnitLogs.count);
-            }else{
-                setCurrentUnitLogs([])
-            }
-        })
+        }
     };
 
     useEffect(() => {

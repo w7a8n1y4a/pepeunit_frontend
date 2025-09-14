@@ -69,6 +69,7 @@ export default function PermissionForm({ currentNodeType }: PermissionFormProps)
 
         runAsync(async () => {
             let agentUuids: string[] | null = null
+            console.log(currentNodeData.uuid, convertNodeTypeToPermissionEntity(entityType),  currentNodeData.__typename, convertNodeTypeToPermissionEntity(currentNodeType))
             const resourceAgentsResult = await getResourceAgentsLazyQuery({
                 variables: {
                     agentType: convertNodeTypeToPermissionEntity(entityType),
@@ -129,7 +130,9 @@ export default function PermissionForm({ currentNodeType }: PermissionFormProps)
     };
 
     useEffect(() => {
-        loadEntities(selectedEntityType, 0);
+        if (currentNodeData.__typename != "RepositoryRegistryType"){
+            loadEntities(selectedEntityType, 0);
+        }
     }, [currentNodeData]);
 
     useEffect(() => {

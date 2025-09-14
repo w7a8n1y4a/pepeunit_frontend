@@ -4,7 +4,6 @@ import {
   useGetUnitsLazyQuery, 
   useGetUnitsWithUnitNodesLazyQuery, 
   useGetUsersLazyQuery,
-  useGetResourceAgentsLazyQuery
 } from '@rootTypes/compositionFunctions';
 import { NodeType } from '@rootTypes/nodeTypeEnum'
 
@@ -13,7 +12,6 @@ export default function useFetchEntitiesByResourceAgents() {
   const [getUnits] = useGetUnitsLazyQuery();
   const [getUnitsWithUnitNodes] = useGetUnitsWithUnitNodesLazyQuery();
   const [getUsers] = useGetUsersLazyQuery();
-  const [getResourceAgentsLazyQuery] = useGetResourceAgentsLazyQuery();
 
   const fetchEntitiesByResourceAgents = useCallback(async (agentType: NodeType, limit: number, offset: number, agentUuids: string[] | null) => {
     try {
@@ -41,7 +39,7 @@ export default function useFetchEntitiesByResourceAgents() {
     } catch (error) {
       console.error("Error fetching entities by resource agents:");
     }
-  }, [getRepos, getUnits, getUnitsWithUnitNodes, getUsers, getResourceAgentsLazyQuery]);
+  }, [getRepos, getUnits, getUnitsWithUnitNodes, getUsers]);
 
   return { fetchEntitiesByResourceAgents };
 }

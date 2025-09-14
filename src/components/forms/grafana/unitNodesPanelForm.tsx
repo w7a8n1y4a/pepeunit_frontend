@@ -64,7 +64,6 @@ export default function UnitNodesPanelForm() {
     };
 
     const handleDeleteLink = (unitNodeUuid: string) => {
-        console.log(unitNodeUuid)
         runAsync(async () => {
             if (currentDashboardPanelData) {
                 let result = await deleteLinkMutation({

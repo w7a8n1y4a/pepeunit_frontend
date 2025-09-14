@@ -74,19 +74,21 @@ export default function RepoContent(){
   };
 
   useEffect(() => {
-    runAsync(async () => {
-      if (currentNodeData){
-        let result = await getVersions({
-          variables: {
-              uuid: currentNodeData.uuid,
+    if (!currentNodeData || currentNodeData.__typename == "RepoType"){
+      runAsync(async () => {
+        if (currentNodeData){
+          let result = await getVersions({
+            variables: {
+                uuid: currentNodeData.uuid,
+            }
+          })
+          if (result.data?.getVersions){
+              setVersions(result.data.getVersions)
           }
-        })
-        if (result.data?.getVersions){
-            setVersions(result.data.getVersions)
         }
-      }
-    })
-}, [currentNodeData]);
+      })
+    }
+  }, [currentNodeData]);
 
 function pickRepositoryRegistry(){
   runAsync(async () => {

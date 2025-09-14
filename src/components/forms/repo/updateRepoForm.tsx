@@ -62,21 +62,23 @@ export default function UpdateRepoForm() {
     }, [currentNodeData.defaultBranch, currentNodeData.isAutoUpdateRepo]);
 
     useEffect(() => {
-        runAsync(async () => {
-            setCurrentRepositoryRegistryData(null)
-            if (currentNodeData != null) {
-                let repo_registry = await getRepositoryRegistry(
-                    {
-                        variables: {
-                            uuid: currentNodeData.repositoryRegistryUuid
+        if (currentNodeData.__typename == "RepoType"){
+            runAsync(async () => {
+                setCurrentRepositoryRegistryData(null)
+                if (currentNodeData != null) {
+                    let repo_registry = await getRepositoryRegistry(
+                        {
+                            variables: {
+                                uuid: currentNodeData.repositoryRegistryUuid
+                            }
                         }
+                    )
+                    if (repo_registry.data?.getRepositoryRegistry){
+                        setCurrentRepositoryRegistryData(repo_registry.data.getRepositoryRegistry)
                     }
-                )
-                if (repo_registry.data?.getRepositoryRegistry){
-                    setCurrentRepositoryRegistryData(repo_registry.data.getRepositoryRegistry)
                 }
-            }
-        })
+            })
+        }
     }, [currentNodeData]);
 
     const handleUpdateRepo = () => {

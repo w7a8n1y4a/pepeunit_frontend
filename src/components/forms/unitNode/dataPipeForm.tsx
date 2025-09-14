@@ -24,19 +24,21 @@ export default function DataPipeForm() {
     const [deleteDataPipeDataMutation] = useDeleteDataPipeDataMutation();
 
     useEffect(() => {
-        runAsync(async () => {
-            let result = await getDataPipeConfig({
-                variables: {
-                    uuid: currentNodeData.uuid,
+        if (currentNodeData.__typename == "UnitNodeType"){
+            runAsync(async () => {
+                let result = await getDataPipeConfig({
+                    variables: {
+                        uuid: currentNodeData.uuid,
+                    }
+                })
+                
+                if (result.data) {
+                    setYamlData(result.data.getDataPipeConfig)
+                } else {
+                    setYamlData('')
                 }
             })
-            
-            if (result.data) {
-                setYamlData(result.data.getDataPipeConfig)
-            } else {
-                setYamlData('')
-            }
-        })
+        }
     }, [currentNodeData]);
 
     const handleExportYaml = async () => {
