@@ -357,7 +357,7 @@ export default function UnitContent(){
       </BaseModal>
       <BaseModal modalName={'Permissions'} subName={currentNodeData?.name} open={activeModal === 'permissionMenu' + NodeType.Unit} openModalType='UnitMenu'>
         {
-          currentNodeData && (
+          currentNodeData && currentNodeData.__typename == "UnitType" && (
             <PermissionForm
               currentNodeType={NodeType.Unit}
             />

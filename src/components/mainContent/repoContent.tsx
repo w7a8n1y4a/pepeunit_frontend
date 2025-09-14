@@ -179,7 +179,7 @@ return (
         openModalType='RepoMenu'
       >
         {
-          currentNodeData && (
+          currentNodeData && currentNodeData.__typename == "RepoType" && (
             <PermissionForm
               currentNodeType={NodeType.Repo}
             />

@@ -87,7 +87,7 @@ export default function UnitNodeContent(){
         openModalType={stringToFormat(currentNodeData?.type) + "Menu"} 
       >
         {
-          currentNodeData && (
+          currentNodeData && currentNodeData.__typename == "UnitNodeType" && (
             <PermissionForm
               currentNodeType={NodeType.UnitNode}
             />
