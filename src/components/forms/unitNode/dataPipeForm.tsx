@@ -24,7 +24,7 @@ export default function DataPipeForm() {
     const [deleteDataPipeDataMutation] = useDeleteDataPipeDataMutation();
 
     useEffect(() => {
-        if (currentNodeData.__typename == "UnitNodeType" && currentNodeData.isValidActiveDataPipe){
+        if (currentNodeData.__typename == "UnitNodeType" && currentNodeData.isDataPipeActive){
             runAsync(async () => {
                 let result = await getDataPipeConfig({
                     variables: {
