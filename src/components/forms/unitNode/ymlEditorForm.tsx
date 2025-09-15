@@ -70,7 +70,7 @@ const YAMLEditor = ({
   return (
     <div style={{ width: '100%', position: 'relative', paddingBottom: "10px" }}>
       <Editor
-        height='570px'
+        height='400px'
         defaultLanguage="yaml"
         value={value}
         onChange={handleEditorChange}
