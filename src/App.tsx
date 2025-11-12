@@ -10,6 +10,7 @@ import Header from './components/header/header';
 import { useEffect } from 'react';
 
 import { useUserStore } from '@stores/userStore';
+import { useSetGrafanaCookiesMutation } from '@rootTypes/compositionFunctions';
 
 const authLink = setContext((_, { headers }) => {
   const token = localStorage.getItem('token');
@@ -64,6 +65,16 @@ const client = new ApolloClient({
   },
 });
 
+function GrafanaCookieInitializer() {
+	const [setGrafanaCookies] = useSetGrafanaCookiesMutation();
+
+	useEffect(() => {
+		setGrafanaCookies();
+	}, [setGrafanaCookies]);
+
+	return null;
+}
+
 function App() {
   const { routerType, routerUuid } = useParams();
   const { setUser } = useUserStore();
@@ -79,6 +90,7 @@ function App() {
   return (
     <>
       <ApolloProvider client={client}>
+        <GrafanaCookieInitializer/>
         <Header/>
         <GraphContent routerType={routerType} routerUuid={routerUuid}/>
       </ApolloProvider>

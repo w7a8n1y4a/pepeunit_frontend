@@ -40,6 +40,12 @@ gql`
         }
     }
 
+    mutation setGrafanaCookies{
+        setGrafanaCookies{
+            isNone
+        }
+    }
+
     mutation deleteUserCookies{
         deleteUserCookies{
             isNone

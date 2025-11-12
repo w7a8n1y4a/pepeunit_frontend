@@ -272,6 +272,7 @@ export type Mutation = {
   setCredentials: NoneType;
   setDataPipeConfig: NoneType;
   setDataPipeDataCsv: NoneType;
+  setGrafanaCookies: NoneType;
   setStateStorage: NoneType;
   setStateUnitNodeInput: UnitNodeType;
   syncDashboard: DashboardType;
@@ -1631,6 +1632,15 @@ export type BlockUserMutationVariables = Exact<{
 export type BlockUserMutation = {
   __typename?: "Mutation";
   blockUser: { __typename?: "NoneType"; isNone: boolean };
+};
+
+export type SetGrafanaCookiesMutationVariables = Exact<{
+  [key: string]: never;
+}>;
+
+export type SetGrafanaCookiesMutation = {
+  __typename?: "Mutation";
+  setGrafanaCookies: { __typename?: "NoneType"; isNone: boolean };
 };
 
 export type DeleteUserCookiesMutationVariables = Exact<{
@@ -4552,6 +4562,55 @@ export type BlockUserMutationResult = Apollo.MutationResult<BlockUserMutation>;
 export type BlockUserMutationOptions = Apollo.BaseMutationOptions<
   BlockUserMutation,
   BlockUserMutationVariables
+>;
+export const SetGrafanaCookiesDocument = gql`
+  mutation setGrafanaCookies {
+    setGrafanaCookies {
+      isNone
+    }
+  }
+`;
+export type SetGrafanaCookiesMutationFn = Apollo.MutationFunction<
+  SetGrafanaCookiesMutation,
+  SetGrafanaCookiesMutationVariables
+>;
+
+/**
+ * __useSetGrafanaCookiesMutation__
+ *
+ * To run a mutation, you first call `useSetGrafanaCookiesMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSetGrafanaCookiesMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [setGrafanaCookiesMutation, { data, loading, error }] = useSetGrafanaCookiesMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useSetGrafanaCookiesMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    SetGrafanaCookiesMutation,
+    SetGrafanaCookiesMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    SetGrafanaCookiesMutation,
+    SetGrafanaCookiesMutationVariables
+  >(SetGrafanaCookiesDocument, options);
+}
+export type SetGrafanaCookiesMutationHookResult = ReturnType<
+  typeof useSetGrafanaCookiesMutation
+>;
+export type SetGrafanaCookiesMutationResult =
+  Apollo.MutationResult<SetGrafanaCookiesMutation>;
+export type SetGrafanaCookiesMutationOptions = Apollo.BaseMutationOptions<
+  SetGrafanaCookiesMutation,
+  SetGrafanaCookiesMutationVariables
 >;
 export const DeleteUserCookiesDocument = gql`
   mutation deleteUserCookies {
