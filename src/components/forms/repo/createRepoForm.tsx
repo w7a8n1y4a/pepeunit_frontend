@@ -81,7 +81,7 @@ export default function CreateRepoForm() {
                         links: [...graphData.links, newLink],
                     });
                     setCurrentNodeData(newRepo)
-                    setActiveModal('updateRepo')
+                    setActiveModal('RepoMenu')
                 }
             })
         } else {
