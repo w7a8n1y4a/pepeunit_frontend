@@ -580,7 +580,7 @@ export default function GraphContent({routerType, routerUuid}: GraphContentProps
     <>
       <ForceGraph2D
         ref={fgRef}
-        backgroundColor='#0a0a0a'
+        backgroundColor='#121212'
         width={displayWidth}
         height={displayHeight}
         graphData={processedData}
