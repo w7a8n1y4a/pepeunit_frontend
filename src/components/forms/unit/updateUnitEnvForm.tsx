@@ -60,7 +60,7 @@ export default function UpdateUnitEnvForm() {
     }, [currentNodeData]);
 
     const handleInputChange = (key: string, value: string) => {
-        const parsedValue = isNaN(Number(value)) ? value : Number(value);
+        const parsedValue = value === "" ? "" : (isNaN(Number(value)) ? value : Number(value));
 
         if (currentUnitEnv) {
             setCurrentUnitEnv({
