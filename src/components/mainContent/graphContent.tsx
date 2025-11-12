@@ -15,8 +15,7 @@ import {
   useGetRepositoryRegistryLazyQuery,
   useGetDashboardLazyQuery
 } from '@rootTypes/compositionFunctions'
-import { ForceGraph3D } from 'react-force-graph';
-import SpriteText from 'three-spritetext';
+import { ForceGraph2D } from 'react-force-graph';
 import { useState, useMemo, useEffect, useRef } from 'react';
 import DomainContent from './domainContent'
 import RegistryContent from './registryContent'
@@ -30,8 +29,6 @@ import SearchForm from '../forms/search/searchForm';
 import { useGraphStore } from '@stores/graphStore';
 import { useNodeStore, useSearchNodeStore, useReloadBaseGraphDataStore, useModalStore } from '@stores/baseStore';
 import useModalHandlers from '@handlers/useModalHandlers';
-import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
-import { Vector2 } from 'three';
 
 import { useUserStore } from '@stores/userStore';
 
@@ -156,9 +153,9 @@ export default function GraphContent({routerType, routerUuid}: GraphContentProps
           }
         })
       }
-    }
   }
-
+  }
+ 
   function pickMenu(node: any){
     openModal(node.type + "Menu")
     setCurrentNodeData(node.data)
@@ -170,16 +167,6 @@ export default function GraphContent({routerType, routerUuid}: GraphContentProps
   });
 
   const fgRef = useRef<any>(null);
-
-  useEffect(() => {
-    if (fgRef.current) {
-      const bloomPass = new UnrealBloomPass(new Vector2(window.innerWidth, window.innerHeight), 4, 1, 0);
-      const composer = fgRef.current.postProcessingComposer();
-      if (composer) {
-        composer.addPass(bloomPass);
-      }
-    }
-  }, []);
 
   function focusNode(uuid: string, nodeType: string) {
     navigate('/' + nodeType + '/' + uuid);
@@ -484,29 +471,132 @@ export default function GraphContent({routerType, routerUuid}: GraphContentProps
     }
   }, [routerUuid, routerType])
 
+  const nodeRelSizeValue = 10;
+  const clamp255 = (v: number) => Math.max(0, Math.min(255, Math.round(v)));
+  const parseColorToRgb = (color: any): { r: number, g: number, b: number } => {
+    if (!color || typeof color !== 'string') return { r: 153, g: 153, b: 153 };
+    const c = color.trim();
+    // #RRGGBB
+    const hex6 = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(c);
+    if (hex6) {
+      return {
+        r: parseInt(hex6[1], 16),
+        g: parseInt(hex6[2], 16),
+        b: parseInt(hex6[3], 16)
+      };
+    }
+    // #RGB
+    const hex3 = /^#?([a-f\d])([a-f\d])([a-f\d])$/i.exec(c);
+    if (hex3) {
+      return {
+        r: parseInt(hex3[1] + hex3[1], 16),
+        g: parseInt(hex3[2] + hex3[2], 16),
+        b: parseInt(hex3[3] + hex3[3], 16)
+      };
+    }
+    // rgb() or rgba()
+    const rgb = /^rgba?\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})/i.exec(c);
+    if (rgb) {
+      return {
+        r: clamp255(Number(rgb[1])),
+        g: clamp255(Number(rgb[2])),
+        b: clamp255(Number(rgb[3]))
+      };
+    }
+    // fallback
+    return { r: 153, g: 153, b: 153 };
+  }
+  const darkenColor = (color: any, factor = 0.25) => {
+    const { r, g, b } = parseColorToRgb(color);
+    const fr = clamp255(r * (1 - factor));
+    const fg = clamp255(g * (1 - factor));
+    const fb = clamp255(b * (1 - factor));
+    return `rgb(${fr},${fg},${fb})`;
+  }
+  const drawNodeCanvas = (node: any, ctx: CanvasRenderingContext2D) => {
+    const nodeAny = node as any;
+    const x = typeof nodeAny.x === 'number' ? nodeAny.x : 0;
+    const y = typeof nodeAny.y === 'number' ? nodeAny.y : 0;
+    const r = nodeRelSizeValue;
+
+    // Fill circle (node)
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, 2 * Math.PI, false);
+    ctx.fillStyle = nodeAny.color ?? '#999';
+    ctx.fill();
+
+    // Border around the default circle
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, 2 * Math.PI, false);
+    ctx.strokeStyle = darkenColor(nodeAny.color ?? '#999', 0.3);
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Label above the circle
+    const label = nodeAny.data?.name ? nodeAny.data.name : nodeAny.data?.login;
+    if (label) {
+      const fontSize = 13;
+      ctx.font = `${fontSize}px Sans-Serif`;
+      ctx.fillStyle = '#fff';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      // place above the circle top with extra padding
+      const labelYOffset = (nodeRelSizeValue + 12);
+      ctx.fillText(label, x, y - labelYOffset);
+    }
+  }
+  const paintNodePointer = (node: any, color: string, ctx: CanvasRenderingContext2D) => {
+    const nodeAny = node as any;
+    const x = typeof nodeAny.x === 'number' ? nodeAny.x : 0;
+    const y = typeof nodeAny.y === 'number' ? nodeAny.y : 0;
+    const r = nodeRelSizeValue;
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, 2 * Math.PI, false);
+    ctx.fillStyle = color;
+    ctx.fill();
+  }
+
+  const getNodeLabel = (node: any) => (node.data.name ? node.data.name : node.data.login)
+  const getNodeColorProp = (node: any) => node.color
+  const particleSpeed = (d: any) => ((d.value === undefined ? 1 : d.value) * 0.001)
+  
+  useEffect(() => {
+    if (fgRef.current) {
+      const chargeForce = fgRef.current.d3Force && fgRef.current.d3Force('charge');
+      if (chargeForce && typeof chargeForce.strength === 'function') {
+        chargeForce.strength(-200); // slightly stronger repulsion
+      }
+      const linkForce = fgRef.current.d3Force && fgRef.current.d3Force('link');
+      if (linkForce && typeof linkForce.distance === 'function') {
+        linkForce.distance(() => 100); // increase link length a bit
+      }
+      if (fgRef.current.d3ReheatSimulation) {
+        fgRef.current.d3ReheatSimulation();
+      }
+    }
+  }, [processedData]);
+
   return (
     <>
-      <ForceGraph3D
+      <ForceGraph2D
         ref={fgRef}
-        backgroundColor='rgba(10,10,10, 15)'
+        backgroundColor='#0a0a0a'
         width={displayWidth}
         height={displayHeight}
         graphData={processedData}
         enableNodeDrag={false}
-        nodeThreeObject={(node: any) => {
-          const sprite = new SpriteText(node.data.name ? node.data.name : node.data.login ) as any;
-          sprite.color = "#fff";
-          sprite.textHeight = 4;
-          sprite.position.y = 10;
-          return sprite;
-        }}
-        nodeThreeObjectExtend={true}
-        showNavInfo={false}
-        onNodeClick={(node) => pickMenu(node)}
-        onNodeRightClick={(node) => handleNodeRightClick(node)}
-        nodeResolution={15}
+        nodeColor={getNodeColorProp}
+        nodeRelSize={nodeRelSizeValue}
+        nodeCanvasObject={drawNodeCanvas}
+        nodeCanvasObjectMode={() => 'replace'}
+        nodePointerAreaPaint={paintNodePointer}
+        nodeLabel={getNodeLabel}
+        onNodeClick={pickMenu}
+        onNodeRightClick={handleNodeRightClick}
+        linkColor={() => 'rgba(255,255,255,0.40)'}
+        linkWidth={1}
         linkDirectionalParticles="value"
-        linkDirectionalParticleSpeed={d => (d.value === undefined ? 1 : d.value) * 0.001}
+        linkDirectionalParticleSpeed={particleSpeed}
         linkDirectionalParticleWidth={1}
         cooldownTicks={100}
         onEngineStop={() => fgRef.current.zoomToFit(500)}
