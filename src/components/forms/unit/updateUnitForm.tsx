@@ -109,17 +109,13 @@ export default function UpdateUnitForm() {
                     }
 
                     setCurrentRepositoryRegistryData(null)
-                    if (currentRepoData != null) {
-                        let repo_registry = await getRepositoryRegistry(
-                            {
-                                variables: {
-                                    uuid: currentRepoData.repositoryRegistryUuid
-                                }
-                            }
-                        )
-                        if (repo_registry.data?.getRepositoryRegistry){
-                            setCurrentRepositoryRegistryData(repo_registry.data.getRepositoryRegistry)
+                    const repo_registry = await getRepositoryRegistry({
+                        variables: {
+                            uuid: repo.repositoryRegistryUuid
                         }
+                    })
+                    if (repo_registry.data?.getRepositoryRegistry){
+                        setCurrentRepositoryRegistryData(repo_registry.data.getRepositoryRegistry)
                     }
                 }
             })
