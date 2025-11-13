@@ -113,7 +113,7 @@ export default function CreateUnitForm() {
                     links: [...graphData.links, newLink],
                 });
                 setCurrentNodeData(result.data.createUnit)
-                setActiveModal(null)
+                setActiveModal('UnitMenu')
             }
         })
     };
