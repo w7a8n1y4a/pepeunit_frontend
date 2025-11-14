@@ -113,6 +113,15 @@ gql`
             isNone
         }
     }
+    mutation resetUnitEnv(
+        $uuid: UUID!
+    ) {
+        resetUnitEnv (
+            uuid: $uuid
+        ){
+            isNone
+        }
+    }
     mutation setStateStorage(
         $uuid: UUID!
         $state: String!

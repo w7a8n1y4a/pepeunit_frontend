@@ -268,6 +268,7 @@ export type Mutation = {
   deleteUnitNodeEdge: NoneType;
   deleteUserCookies: NoneType;
   linkUnitNodeToPanel: UnitNodeForPanelType;
+  resetUnitEnv: NoneType;
   sendCommandToInputBaseTopic: NoneType;
   setCredentials: NoneType;
   setDataPipeConfig: NoneType;
@@ -363,6 +364,10 @@ export type MutationDeleteUnitNodeEdgeArgs = {
 
 export type MutationLinkUnitNodeToPanelArgs = {
   dashboard: LinkUnitNodeToPanelInput;
+};
+
+export type MutationResetUnitEnvArgs = {
+  uuid: Scalars["UUID"]["input"];
 };
 
 export type MutationSendCommandToInputBaseTopicArgs = {
@@ -1457,6 +1462,15 @@ export type UpdateUnitEnvMutationVariables = Exact<{
 export type UpdateUnitEnvMutation = {
   __typename?: "Mutation";
   updateUnitEnv: { __typename?: "NoneType"; isNone: boolean };
+};
+
+export type ResetUnitEnvMutationVariables = Exact<{
+  uuid: Scalars["UUID"]["input"];
+}>;
+
+export type ResetUnitEnvMutation = {
+  __typename?: "Mutation";
+  resetUnitEnv: { __typename?: "NoneType"; isNone: boolean };
 };
 
 export type SetStateStorageMutationVariables = Exact<{
@@ -3890,6 +3904,56 @@ export type UpdateUnitEnvMutationResult =
 export type UpdateUnitEnvMutationOptions = Apollo.BaseMutationOptions<
   UpdateUnitEnvMutation,
   UpdateUnitEnvMutationVariables
+>;
+export const ResetUnitEnvDocument = gql`
+  mutation resetUnitEnv($uuid: UUID!) {
+    resetUnitEnv(uuid: $uuid) {
+      isNone
+    }
+  }
+`;
+export type ResetUnitEnvMutationFn = Apollo.MutationFunction<
+  ResetUnitEnvMutation,
+  ResetUnitEnvMutationVariables
+>;
+
+/**
+ * __useResetUnitEnvMutation__
+ *
+ * To run a mutation, you first call `useResetUnitEnvMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useResetUnitEnvMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [resetUnitEnvMutation, { data, loading, error }] = useResetUnitEnvMutation({
+ *   variables: {
+ *      uuid: // value for 'uuid'
+ *   },
+ * });
+ */
+export function useResetUnitEnvMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    ResetUnitEnvMutation,
+    ResetUnitEnvMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    ResetUnitEnvMutation,
+    ResetUnitEnvMutationVariables
+  >(ResetUnitEnvDocument, options);
+}
+export type ResetUnitEnvMutationHookResult = ReturnType<
+  typeof useResetUnitEnvMutation
+>;
+export type ResetUnitEnvMutationResult =
+  Apollo.MutationResult<ResetUnitEnvMutation>;
+export type ResetUnitEnvMutationOptions = Apollo.BaseMutationOptions<
+  ResetUnitEnvMutation,
+  ResetUnitEnvMutationVariables
 >;
 export const SetStateStorageDocument = gql`
   mutation setStateStorage($uuid: UUID!, $state: String!) {

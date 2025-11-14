@@ -1,5 +1,5 @@
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
-import { useGetUnitEnvLazyQuery, useUpdateUnitEnvMutation } from '@rootTypes/compositionFunctions'
+import { useGetUnitEnvLazyQuery, useUpdateUnitEnvMutation, useResetUnitEnvMutation } from '@rootTypes/compositionFunctions'
 import { useState, useEffect } from 'react';
 import Spinner from '@primitives/spinner'
 import '../form.css'
@@ -18,6 +18,7 @@ export default function UpdateUnitEnvForm() {
 
     const [getUnitEnv] = useGetUnitEnvLazyQuery()
     const [updateUnitEnv] = useUpdateUnitEnvMutation();
+    const [resetUnitEnv] = useResetUnitEnvMutation();
 
     const handleUpdateUnitEnv = () => {
         runAsync(async () => {
@@ -37,6 +38,29 @@ export default function UpdateUnitEnvForm() {
                 })
                 if (resultUnitEnv.data?.getUnitEnv){
                     setCurrentUnitEnv(JSON.parse(resultUnitEnv.data.getUnitEnv))
+                }
+            }
+        })
+    };
+
+    const handleResetUnitEnv = () => {
+        runAsync(async () => {
+            let result = await resetUnitEnv({
+                variables: {
+                    uuid: currentNodeData.uuid,
+                }
+            })
+            if (result.data){
+                setHappy("ENV success reset")
+                let resultUnitEnv = await getUnitEnv({
+                    variables: {
+                        uuid: currentNodeData.uuid,
+                    }
+                })
+                if (resultUnitEnv.data?.getUnitEnv){
+                    setCurrentUnitEnv(JSON.parse(resultUnitEnv.data.getUnitEnv))
+                }else{
+                    setCurrentUnitEnv(null)
                 }
             }
         })
@@ -96,6 +120,9 @@ export default function UpdateUnitEnvForm() {
                     </div>
                     <button className="button_main_action" onClick={handleUpdateUnitEnv}>
                         Update
+                    </button>
+                    <button className="button_core_function" onClick={handleResetUnitEnv}>
+                        Reset
                     </button>
                 </>
             }
