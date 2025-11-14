@@ -12,6 +12,7 @@ gql`
             visibilityLevel
             isRewritableInput
             topicName
+            maxConnections
             lastUpdateDatetime
             isDataPipeActive
             dataPipeYml
@@ -52,6 +53,7 @@ gql`
                 visibilityLevel
                 isRewritableInput
                 topicName
+                maxConnections
                 lastUpdateDatetime
                 isDataPipeActive
                 dataPipeYml

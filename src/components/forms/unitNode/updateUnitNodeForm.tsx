@@ -21,7 +21,8 @@ export default function UpdateUnitNodeForm() {
                 variables: {
                     uuid: currentNodeData.uuid,
                     visibilityLevel: currentNodeData.visibilityLevel,
-                    isRewritableInput: currentNodeData.type == UnitNodeTypeEnum.Input ? currentNodeData.isRewritableInput : null
+                    isRewritableInput: currentNodeData.type == UnitNodeTypeEnum.Input ? currentNodeData.isRewritableInput : null,
+                    maxConnections: currentNodeData.maxConnections
                 }
             })
             if (result.data){
@@ -48,6 +49,23 @@ export default function UpdateUnitNodeForm() {
                         <option value={VisibilityLevel.Internal}>Internal</option>
                         <option value={VisibilityLevel.Private}>Private</option>
                     </select>
+                    <div className='input_container'>
+                        <label htmlFor="max_connections">
+                            Max Connections
+                        </label>
+                        <input
+                            id="max_connections"
+                            type="number"
+                            min={0}
+                            value={currentNodeData.maxConnections}
+                            onChange={(e) =>
+                                setCurrentNodeData({
+                                    ...currentNodeData,
+                                    maxConnections: Math.max(0, Number.parseInt(e.target.value || '0', 10))
+                                })
+                            }
+                        />
+                    </div>
                     {
                         currentNodeData.type == UnitNodeTypeEnum.Input && (
                             <div className='toggle_container'>

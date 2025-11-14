@@ -918,6 +918,7 @@ export type UnitNodeType = {
   isDataPipeActive: Scalars["Boolean"]["output"];
   isRewritableInput: Scalars["Boolean"]["output"];
   lastUpdateDatetime: Scalars["DateTime"]["output"];
+  maxConnections: Scalars["Int"]["output"];
   state?: Maybe<Scalars["String"]["output"]>;
   topicName: Scalars["String"]["output"];
   type: UnitNodeTypeEnum;
@@ -934,6 +935,7 @@ export enum UnitNodeTypeEnum {
 export type UnitNodeUpdateInput = {
   isDataPipeActive?: InputMaybe<Scalars["Boolean"]["input"]>;
   isRewritableInput?: InputMaybe<Scalars["Boolean"]["input"]>;
+  maxConnections?: InputMaybe<Scalars["Int"]["input"]>;
   visibilityLevel?: InputMaybe<VisibilityLevel>;
 };
 
@@ -1498,6 +1500,7 @@ export type UpdateUnitNodeMutationVariables = Exact<{
   visibilityLevel?: InputMaybe<VisibilityLevel>;
   isRewritableInput?: InputMaybe<Scalars["Boolean"]["input"]>;
   isDataPipeActive?: InputMaybe<Scalars["Boolean"]["input"]>;
+  maxConnections?: InputMaybe<Scalars["Int"]["input"]>;
 }>;
 
 export type UpdateUnitNodeMutation = {
@@ -1509,6 +1512,7 @@ export type UpdateUnitNodeMutation = {
     visibilityLevel: VisibilityLevel;
     isRewritableInput: boolean;
     topicName: string;
+    maxConnections: number;
     lastUpdateDatetime: string;
     isDataPipeActive: boolean;
     dataPipeYml?: string | null;
@@ -1535,6 +1539,7 @@ export type SetStateUnitNodeInputMutation = {
     visibilityLevel: VisibilityLevel;
     isRewritableInput: boolean;
     topicName: string;
+    maxConnections: number;
     lastUpdateDatetime: string;
     isDataPipeActive: boolean;
     dataPipeYml?: string | null;
@@ -2303,6 +2308,7 @@ export type GetUnitNodeQuery = {
     visibilityLevel: VisibilityLevel;
     isRewritableInput: boolean;
     topicName: string;
+    maxConnections: number;
     lastUpdateDatetime: string;
     isDataPipeActive: boolean;
     dataPipeYml?: string | null;
@@ -2340,6 +2346,7 @@ export type GetUnitNodesQuery = {
       visibilityLevel: VisibilityLevel;
       isRewritableInput: boolean;
       topicName: string;
+      maxConnections: number;
       lastUpdateDatetime: string;
       isDataPipeActive: boolean;
       dataPipeYml?: string | null;
@@ -4067,6 +4074,7 @@ export const UpdateUnitNodeDocument = gql`
     $visibilityLevel: VisibilityLevel
     $isRewritableInput: Boolean
     $isDataPipeActive: Boolean
+    $maxConnections: Int
   ) {
     updateUnitNode(
       uuid: $uuid
@@ -4074,6 +4082,7 @@ export const UpdateUnitNodeDocument = gql`
         visibilityLevel: $visibilityLevel
         isRewritableInput: $isRewritableInput
         isDataPipeActive: $isDataPipeActive
+        maxConnections: $maxConnections
       }
     ) {
       uuid
@@ -4081,6 +4090,7 @@ export const UpdateUnitNodeDocument = gql`
       visibilityLevel
       isRewritableInput
       topicName
+      maxConnections
       lastUpdateDatetime
       isDataPipeActive
       dataPipeYml
@@ -4115,6 +4125,7 @@ export type UpdateUnitNodeMutationFn = Apollo.MutationFunction<
  *      visibilityLevel: // value for 'visibilityLevel'
  *      isRewritableInput: // value for 'isRewritableInput'
  *      isDataPipeActive: // value for 'isDataPipeActive'
+ *      maxConnections: // value for 'maxConnections'
  *   },
  * });
  */
@@ -4147,6 +4158,7 @@ export const SetStateUnitNodeInputDocument = gql`
       visibilityLevel
       isRewritableInput
       topicName
+      maxConnections
       lastUpdateDatetime
       isDataPipeActive
       dataPipeYml
@@ -6924,6 +6936,7 @@ export const GetUnitNodeDocument = gql`
       visibilityLevel
       isRewritableInput
       topicName
+      maxConnections
       lastUpdateDatetime
       isDataPipeActive
       dataPipeYml
@@ -7034,6 +7047,7 @@ export const GetUnitNodesDocument = gql`
         visibilityLevel
         isRewritableInput
         topicName
+        maxConnections
         lastUpdateDatetime
         isDataPipeActive
         dataPipeYml

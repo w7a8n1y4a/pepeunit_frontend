@@ -6,6 +6,7 @@ gql`
         $visibilityLevel: VisibilityLevel
         $isRewritableInput: Boolean
         $isDataPipeActive: Boolean
+        $maxConnections: Int
     ) {
         updateUnitNode (
             uuid: $uuid
@@ -13,6 +14,7 @@ gql`
                 visibilityLevel: $visibilityLevel
                 isRewritableInput: $isRewritableInput
                 isDataPipeActive: $isDataPipeActive
+                maxConnections: $maxConnections
             }
         ){
             uuid
@@ -20,6 +22,7 @@ gql`
             visibilityLevel
             isRewritableInput
             topicName
+            maxConnections
             lastUpdateDatetime
             isDataPipeActive
             dataPipeYml
@@ -46,6 +49,7 @@ gql`
             visibilityLevel
             isRewritableInput
             topicName
+            maxConnections
             lastUpdateDatetime
             isDataPipeActive
             dataPipeYml
