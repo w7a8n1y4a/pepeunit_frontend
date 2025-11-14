@@ -70,7 +70,7 @@ function GrafanaCookieInitializer() {
 
 	useEffect(() => {
 		setGrafanaCookies();
-	}, [setGrafanaCookies]);
+	}, []);
 
 	return null;
 }

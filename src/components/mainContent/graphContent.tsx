@@ -161,10 +161,14 @@ export default function GraphContent({routerType, routerUuid}: GraphContentProps
     setCurrentNodeData(node.data)
   }
 
-  window.addEventListener('resize', () => {
-    setDisplayWidth(window.innerWidth);
-    setDisplayHeight(window.innerHeight);
-  });
+  useEffect(() => {
+    const onResize = () => {
+      setDisplayWidth(window.innerWidth);
+      setDisplayHeight(window.innerHeight);
+    };
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
 
   const fgRef = useRef<any>(null);
 

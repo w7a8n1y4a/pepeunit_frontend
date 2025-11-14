@@ -51,12 +51,13 @@ export default function LogUnitForm() {
     };
 
     useEffect(() => {
-        loadEntities(currentPage, selectedLogLevels);
+        // При смене выбранного узла сбрасываем страницу
+        setCurrentPage(0);
     }, [currentNodeData]);
     
     useEffect(() => {
         loadEntities(currentPage, selectedLogLevels);
-    }, [currentPage, selectedLogLevels]);
+    }, [currentPage, selectedLogLevels, currentNodeData]);
 
     const totalPages = Math.ceil(totalCount / itemsPerPage);
     

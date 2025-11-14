@@ -115,12 +115,15 @@ import { useUserStore } from '@stores/userStore';
     };
     
     useEffect(() => {
-        loadEntities('', selectedEntityType, currentPage, selectedVisibilityLevels, isCreatorSearchOnly);
+        // При смене контекста сбрасываем поиск и страницу;
+        // сам запрос выполнится во втором эффекте
+        setSearchString('');
+        setCurrentPage(0);
     }, [currentNodeData]);
     
     useEffect(() => {
         loadEntities(searchString, selectedEntityType, currentPage, selectedVisibilityLevels, isCreatorSearchOnly);
-    }, [searchString, currentPage, selectedEntityType, selectedVisibilityLevels, selectedPrivateRegistry, isCreatorSearchOnly]);
+    }, [searchString, currentPage, selectedEntityType, selectedVisibilityLevels, selectedPrivateRegistry, isCreatorSearchOnly, currentNodeData]);
 
     const updateErrorState = (field: keyof typeof errorState, hasError: boolean) => {
         setErrorState(prevState => ({
