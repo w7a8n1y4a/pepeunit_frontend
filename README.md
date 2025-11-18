@@ -1,26 +1,19 @@
 # Pepeunit Frontend
 
-## [Репозиторий документации](https://git.pepemoss.com/pepe/pepeunit/pepeunit.git) Pepeunit
+## [Карта проекта](https://pepeunit.com/development-pepeunit/maps.html)
 
-## Внешние зависимости
-
-1. Развёрнутый [Бэкенд](https://git.pepemoss.com/pepe/pepeunit/pepeunit_backend.git) `Pepeunit`
+## Управление проектом
+```bash
+make help
+```
 
 ## Основные этапы развёртывания
-0. Установить пакеты
+0. Установите пакеты
     ```bash
-    npm install
+    make install
     ```
-1. Создать файл `.env` по аналогии с файлом `.env-example`
-1. Запустить приложение в режиме разработчика:
+1. Создайте файл `.env` по аналогии с файлом `.env-example` - [Подробнее о переменных окружения](https://pepeunit.com/deployment/env-variables.html#frontend)
+1. Запустите приложение в режиме разработчика:
     ```bash
-    npm run dev
+    make run-dev
     ```
-
-## Полезные команды
-1. `npm run dev` - запустит дев стенд
-1. `npm run build` - сбилдит статический фронтенд
-1. `npm run preview` - запустит веб сервер на основе статического фронтенда
-1. `npm run lint` - запустит `eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0`
-1. `npm run stylelint` - запустит `stylelint ./src/**/*.{ts,tsx} --fix --config=./stylelint.config.cjs`
-1. `npm run generate-api-types` - запустит генерацию типов для `GraphQL` схемы, в том числи и запросов, на основе находищихся в папке `./src/gql`
