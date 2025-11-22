@@ -299,4 +299,12 @@ gql`
             uuid: $uuid
         )
     }
+
+    query getConvertTomlToMd(
+        $file: Upload!
+    ) {
+        getConvertTomlToMd(
+            file: $file
+        )
+    }
 `

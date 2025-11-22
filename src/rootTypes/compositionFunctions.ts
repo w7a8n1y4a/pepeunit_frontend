@@ -540,6 +540,7 @@ export type Query = {
   getAvailablePlatforms: Array<PlatformType>;
   getBaseMetrics: BaseMetricsType;
   getBranchCommits: Array<CommitType>;
+  getConvertTomlToMd: Scalars["String"]["output"];
   getCredentials?: Maybe<OneRepositoryRegistryCredentialsType>;
   getDashboard: DashboardType;
   getDashboardPanels: DashboardPanelsResultType;
@@ -580,6 +581,10 @@ export type QueryGetAvailablePlatformsArgs = {
 export type QueryGetBranchCommitsArgs = {
   filters: CommitFilterInput;
   uuid: Scalars["UUID"]["input"];
+};
+
+export type QueryGetConvertTomlToMdArgs = {
+  file: Scalars["Upload"]["input"];
 };
 
 export type QueryGetCredentialsArgs = {
@@ -2293,6 +2298,15 @@ export type GetStateStorageQueryVariables = Exact<{
 export type GetStateStorageQuery = {
   __typename?: "Query";
   getStateStorage: string;
+};
+
+export type GetConvertTomlToMdQueryVariables = Exact<{
+  file: Scalars["Upload"]["input"];
+}>;
+
+export type GetConvertTomlToMdQuery = {
+  __typename?: "Query";
+  getConvertTomlToMd: string;
 };
 
 export type GetUnitNodeQueryVariables = Exact<{
@@ -6927,6 +6941,81 @@ export type GetStateStorageSuspenseQueryHookResult = ReturnType<
 export type GetStateStorageQueryResult = Apollo.QueryResult<
   GetStateStorageQuery,
   GetStateStorageQueryVariables
+>;
+export const GetConvertTomlToMdDocument = gql`
+  query getConvertTomlToMd($file: Upload!) {
+    getConvertTomlToMd(file: $file)
+  }
+`;
+
+/**
+ * __useGetConvertTomlToMdQuery__
+ *
+ * To run a query within a React component, call `useGetConvertTomlToMdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetConvertTomlToMdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetConvertTomlToMdQuery({
+ *   variables: {
+ *      file: // value for 'file'
+ *   },
+ * });
+ */
+export function useGetConvertTomlToMdQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GetConvertTomlToMdQuery,
+    GetConvertTomlToMdQueryVariables
+  > &
+    (
+      | { variables: GetConvertTomlToMdQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    GetConvertTomlToMdQuery,
+    GetConvertTomlToMdQueryVariables
+  >(GetConvertTomlToMdDocument, options);
+}
+export function useGetConvertTomlToMdLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetConvertTomlToMdQuery,
+    GetConvertTomlToMdQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    GetConvertTomlToMdQuery,
+    GetConvertTomlToMdQueryVariables
+  >(GetConvertTomlToMdDocument, options);
+}
+export function useGetConvertTomlToMdSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    GetConvertTomlToMdQuery,
+    GetConvertTomlToMdQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<
+    GetConvertTomlToMdQuery,
+    GetConvertTomlToMdQueryVariables
+  >(GetConvertTomlToMdDocument, options);
+}
+export type GetConvertTomlToMdQueryHookResult = ReturnType<
+  typeof useGetConvertTomlToMdQuery
+>;
+export type GetConvertTomlToMdLazyQueryHookResult = ReturnType<
+  typeof useGetConvertTomlToMdLazyQuery
+>;
+export type GetConvertTomlToMdSuspenseQueryHookResult = ReturnType<
+  typeof useGetConvertTomlToMdSuspenseQuery
+>;
+export type GetConvertTomlToMdQueryResult = Apollo.QueryResult<
+  GetConvertTomlToMdQuery,
+  GetConvertTomlToMdQueryVariables
 >;
 export const GetUnitNodeDocument = gql`
   query getUnitNode($uuid: UUID!) {
