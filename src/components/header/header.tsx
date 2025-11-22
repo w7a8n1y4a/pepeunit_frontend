@@ -10,9 +10,9 @@ import ChangeLoginForm from '../forms/user/changeLoginForm';
 import ChangePassForm from '../forms/user/changePassForm';
 import CreateRepoForm from '../forms/repo/createRepoForm'
 import Spinner from '@primitives/spinner'
-import { UserRole, useBlockUserMutation, useUnblockUserMutation, useDeleteUserCookiesMutation } from '@rootTypes/compositionFunctions'
+import { UserRole, useBlockUserMutation, useUnblockUserMutation, useDeleteUserCookiesMutation, useGetConvertTomlToMdLazyQuery } from '@rootTypes/compositionFunctions'
 import './header.css'
-import { useState, useCallback, useReducer, useEffect } from 'react';
+import { useState, useCallback, useReducer, useEffect, useRef } from 'react';
 
 import { useModalStore, useNodeStore, usePickRegistryStore } from '@stores/baseStore';
 import useModalHandlers from '@handlers/useModalHandlers';
@@ -38,6 +38,8 @@ export default function Header(){
     const [blockUser] = useBlockUserMutation();
     const [unblockUser] = useUnblockUserMutation();
     const [deleteUserCookies] = useDeleteUserCookiesMutation();
+    const [getConvertTomlToMd] = useGetConvertTomlToMdLazyQuery();
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         setLogin(user?.login)
@@ -77,6 +79,40 @@ export default function Header(){
             })
             if (result.data){
                 setHappy("User " + currentNodeData.login + " success unblocked")
+            }
+        })
+    };
+
+    const openTomlPicker = () => {
+        fileInputRef.current?.click();
+    };
+
+    const handleTomlSelected = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+
+        runAsync(async () => {
+            try {
+                const result = await getConvertTomlToMd({
+                    variables: {
+                        file: file
+                    }
+                });
+                const markdown = result.data?.getConvertTomlToMd;
+                if (markdown) {
+                    const blob = new Blob([markdown], { type: 'text/markdown;charset=utf-8' });
+                    const url = window.URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.setAttribute('download', 'README.md');
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    window.URL.revokeObjectURL(url);
+                    setHappy('README.md generated');
+                }
+            } finally {
+                event.target.value = '';
             }
         })
     };
@@ -167,6 +203,17 @@ export default function Header(){
                                     <button className="button_open_alter" onClick={() => openModal('changePass')}>
                                         Change Password
                                     </button>
+
+                                    <button className="button_open_alter_send" onClick={openTomlPicker}>
+                                        Generate README.md
+                                    </button>
+                                    <input
+                                        type="file"
+                                        ref={fileInputRef}
+                                        accept=".toml"
+                                        style={{ display: 'none' }}
+                                        onChange={handleTomlSelected}
+                                    />
 
                                     <div className='div_statistics'>
                                         {
