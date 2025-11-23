@@ -36,7 +36,7 @@ gql`
                 memAlloc
                 freq
                 statvfs
-                commitVersion
+                puCommitVersion
             }
             currentCommitVersion
             lastUpdateDatetime
@@ -82,7 +82,7 @@ gql`
                 memAlloc
                 freq
                 statvfs
-                commitVersion
+                puCommitVersion
             }
             currentCommitVersion
             lastUpdateDatetime

@@ -952,12 +952,12 @@ export type UnitNodesResultType = {
 
 export type UnitStateType = {
   __typename?: "UnitStateType";
-  commitVersion?: Maybe<Scalars["String"]["output"]>;
   freq?: Maybe<Scalars["Float"]["output"]>;
   ifconfig: Array<Scalars["String"]["output"]>;
   memAlloc?: Maybe<Scalars["Float"]["output"]>;
   memFree?: Maybe<Scalars["Float"]["output"]>;
   millis?: Maybe<Scalars["Float"]["output"]>;
+  puCommitVersion?: Maybe<Scalars["String"]["output"]>;
   statvfs: Array<Scalars["Float"]["output"]>;
 };
 
@@ -1405,7 +1405,7 @@ export type CreateUnitMutation = {
       memAlloc?: number | null;
       freq?: number | null;
       statvfs: Array<number>;
-      commitVersion?: string | null;
+      puCommitVersion?: string | null;
     } | null;
   };
 };
@@ -1447,7 +1447,7 @@ export type UpdateUnitMutation = {
       memAlloc?: number | null;
       freq?: number | null;
       statvfs: Array<number>;
-      commitVersion?: string | null;
+      puCommitVersion?: string | null;
     } | null;
   };
 };
@@ -2041,7 +2041,7 @@ export type GetUnitQuery = {
       memAlloc?: number | null;
       freq?: number | null;
       statvfs: Array<number>;
-      commitVersion?: string | null;
+      puCommitVersion?: string | null;
     } | null;
   };
 };
@@ -2095,7 +2095,7 @@ export type GetUnitsQuery = {
         memAlloc?: number | null;
         freq?: number | null;
         statvfs: Array<number>;
-        commitVersion?: string | null;
+        puCommitVersion?: string | null;
       } | null;
     }>;
   };
@@ -2151,7 +2151,7 @@ export type GetUnitsWithUnitNodesQuery = {
         memAlloc?: number | null;
         freq?: number | null;
         statvfs: Array<number>;
-        commitVersion?: string | null;
+        puCommitVersion?: string | null;
       } | null;
       unitNodes: Array<{
         __typename?: "UnitNodeType";
@@ -2215,7 +2215,7 @@ export type GetUnitsOutputByInputQuery = {
         memAlloc?: number | null;
         freq?: number | null;
         statvfs: Array<number>;
-        commitVersion?: string | null;
+        puCommitVersion?: string | null;
       } | null;
       unitNodes: Array<{
         __typename?: "UnitNodeType";
@@ -3667,7 +3667,7 @@ export const CreateUnitDocument = gql`
         memAlloc
         freq
         statvfs
-        commitVersion
+        puCommitVersion
       }
       currentCommitVersion
       lastUpdateDatetime
@@ -3764,7 +3764,7 @@ export const UpdateUnitDocument = gql`
         memAlloc
         freq
         statvfs
-        commitVersion
+        puCommitVersion
       }
       currentCommitVersion
       lastUpdateDatetime
@@ -6036,7 +6036,7 @@ export const GetUnitDocument = gql`
         memAlloc
         freq
         statvfs
-        commitVersion
+        puCommitVersion
       }
       currentCommitVersion
       lastUpdateDatetime
@@ -6156,7 +6156,7 @@ export const GetUnitsDocument = gql`
           memAlloc
           freq
           statvfs
-          commitVersion
+          puCommitVersion
         }
         currentCommitVersion
         lastUpdateDatetime
@@ -6291,7 +6291,7 @@ export const GetUnitsWithUnitNodesDocument = gql`
           memAlloc
           freq
           statvfs
-          commitVersion
+          puCommitVersion
         }
         currentCommitVersion
         lastUpdateDatetime
@@ -6438,7 +6438,7 @@ export const GetUnitsOutputByInputDocument = gql`
           memAlloc
           freq
           statvfs
-          commitVersion
+          puCommitVersion
         }
         currentCommitVersion
         lastUpdateDatetime
