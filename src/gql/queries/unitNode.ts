@@ -112,13 +112,11 @@ gql`
             pipeData {
                 __typename
                 ... on LastValueType{
-                    uuid
                     unitNodeUuid
                     state: state
                     lastUpdateDatetime
                 }
                 ... on NRecordsType{
-                    uuid
                     unitNodeUuid
                     state: state
                     stateType
@@ -127,7 +125,6 @@ gql`
                     size
                 }
                 ... on TimeWindowType{
-                    uuid
                     unitNodeUuid
                     state: state
                     stateType
@@ -136,7 +133,6 @@ gql`
                     size
                 }
                 ... on AggregationType{
-                    uuid
                     unitNodeUuid
                     state_float: state
                     aggregationType

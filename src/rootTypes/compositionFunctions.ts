@@ -2412,7 +2412,6 @@ export type GetPipeDataQuery = {
     pipeData: Array<
       | {
           __typename: "AggregationType";
-          uuid: string;
           unitNodeUuid: string;
           aggregationType: AggregationFunctions;
           timeWindowSize: number;
@@ -2422,14 +2421,12 @@ export type GetPipeDataQuery = {
         }
       | {
           __typename: "LastValueType";
-          uuid: string;
           unitNodeUuid: string;
           lastUpdateDatetime: string;
           state: string;
         }
       | {
           __typename: "NRecordsType";
-          uuid: string;
           unitNodeUuid: string;
           stateType: TypeInputValue;
           createDatetime: string;
@@ -2439,7 +2436,6 @@ export type GetPipeDataQuery = {
         }
       | {
           __typename: "TimeWindowType";
-          uuid: string;
           unitNodeUuid: string;
           stateType: TypeInputValue;
           createDatetime: string;
@@ -7336,13 +7332,11 @@ export const GetPipeDataDocument = gql`
       pipeData {
         __typename
         ... on LastValueType {
-          uuid
           unitNodeUuid
           state: state
           lastUpdateDatetime
         }
         ... on NRecordsType {
-          uuid
           unitNodeUuid
           state: state
           stateType
@@ -7351,7 +7345,6 @@ export const GetPipeDataDocument = gql`
           size
         }
         ... on TimeWindowType {
-          uuid
           unitNodeUuid
           state: state
           stateType
@@ -7360,7 +7353,6 @@ export const GetPipeDataDocument = gql`
           size
         }
         ... on AggregationType {
-          uuid
           unitNodeUuid
           state_float: state
           aggregationType
