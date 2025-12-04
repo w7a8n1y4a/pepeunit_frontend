@@ -24,6 +24,7 @@ import PermissionForm from '../forms/permission/permissionForm';
 import UpdateUnitEnvForm from '../forms/unit/updateUnitEnvForm'
 import LogUnitForm from '../forms/unit/logUnitForm'
 import copyToClipboard from '@utils/copyToClipboard'
+import showClipboardNotification from '@utils/showClipboardNotification'
 
 import { useGraphStore } from '@stores/graphStore';
 import { useModalStore, useNodeStore } from '@stores/baseStore';
@@ -425,7 +426,13 @@ export default function UnitContent(){
           <>
             <div className='repo_link'>
               <a style={{color: "#0077ff"}} target="_blank" href={currentRepositoryRegistryData.repositoryUrl}>Documentation Link</a>
-              <button className='repo_link_button' onClick={() => (copyToClipboard(currentRepositoryRegistryData.repositoryUrl))}>
+              <button
+                className='repo_link_button'
+                onClick={(e) => {
+                  copyToClipboard(currentRepositoryRegistryData.repositoryUrl)
+                  showClipboardNotification(e)
+                }}
+              >
                 <img src={copy_img} width="24" height="24" alt="Back"/>
               </button>
             </div>

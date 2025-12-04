@@ -9,6 +9,7 @@ import { NodeType } from '@src/rootTypes/nodeTypeEnum';
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import {stringToFormat} from '@utils/stringToFormat'
 import copyToClipboard from '@utils/copyToClipboard'
+import showClipboardNotification from '@utils/showClipboardNotification'
 import { useUserStore } from '@stores/userStore';
 import useModalHandlers from '@handlers/useModalHandlers';
 
@@ -86,8 +87,21 @@ return (
             currentNodeData && currentNodeData.dashboardUrl && (
               <>
                 <div className='repo_link'>
-                  <a style={{color: "#0077ff"}} target="_blank" href={(import.meta.env.VITE_SELF_URI || window.env.VITE_SELF_URI) + currentNodeData.dashboardUrl.slice(1) + '?orgId=' + user?.grafanaOrgId}>Grafana Link</a>
-                  <button className='repo_link_button' onClick={() => (copyToClipboard((import.meta.env.VITE_SELF_URI || window.env.VITE_SELF_URI) + currentNodeData.dashboardUrl.slice(1) + '?orgId=' + user?.grafanaOrgId))}>
+                  <a
+                    style={{color: "#0077ff"}}
+                    target="_blank"
+                    href={(import.meta.env.VITE_SELF_URI || window.env.VITE_SELF_URI) + currentNodeData.dashboardUrl.slice(1) + '?orgId=' + user?.grafanaOrgId}
+                  >
+                    Grafana Link
+                  </a>
+                  <button
+                    className='repo_link_button'
+                    onClick={(e) => {
+                      const link = (import.meta.env.VITE_SELF_URI || window.env.VITE_SELF_URI) + currentNodeData.dashboardUrl.slice(1) + '?orgId=' + user?.grafanaOrgId
+                      copyToClipboard(link)
+                      showClipboardNotification(e)
+                    }}
+                  >
                     <img src={copy_img} width="24" height="24" alt="Back"/>
                   </button>
                 </div>

@@ -9,6 +9,7 @@ import byteConverter from '@utils/byteConverter'
 
 import copyToClipboard from '@utils/copyToClipboard'
 import copy_img from '/images/copy.svg'
+import showClipboardNotification from '@utils/showClipboardNotification'
 
 import { useGraphStore } from '@stores/graphStore';
 import { useModalStore, useNodeStore, usePickRegistryStore } from '@stores/baseStore';
@@ -116,7 +117,13 @@ return (
               <>
                 <div className='repo_link'>
                   <a style={{color: "#0077ff"}} target="_blank" href={currentNodeData.repositoryUrl}>{stringToFormat(currentNodeData.platform)} {currentNodeData.isPublicRepository ? 'public' : 'private'} Link</a>
-                  <button className='repo_link_button' onClick={() => (copyToClipboard(currentNodeData.repositoryUrl))}>
+                  <button
+                    className='repo_link_button'
+                    onClick={(e) => {
+                      copyToClipboard(currentNodeData.repositoryUrl)
+                      showClipboardNotification(e)
+                    }}
+                  >
                     <img src={copy_img} width="24" height="24" alt="Back"/>
                   </button>
                 </div>

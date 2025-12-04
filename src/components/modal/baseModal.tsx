@@ -16,6 +16,7 @@ import back_img from '/images/back.svg'
 import reload_img from '/images/reload.svg'
 import copy_img from '/images/copy.svg'
 import copyToClipboard from '@utils/copyToClipboard'
+import showClipboardNotification from '@utils/showClipboardNotification'
 import './baseModal.css'
 
 import { useGraphStore } from '@stores/graphStore';
@@ -113,7 +114,13 @@ export default function BaseModal({modalName, subName, visibilityLevel, lastUpda
                 <div className="div_modal_buttons">
                     {
                         copyLink && currentNodeData && (
-                            <button className="modal_menu_button" onClick={() => (copyToClipboard(copyLink))}>
+                            <button
+                                className="modal_menu_button"
+                                onClick={(e) => {
+                                    copyToClipboard(copyLink)
+                                    showClipboardNotification(e)
+                                }}
+                            >
                                 <img src={copy_img} width="20" height="20" alt="Reload"/>
                             </button>
                         )

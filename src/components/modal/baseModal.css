@@ -39,3 +39,18 @@ dialog {
     padding-left: 10px;
     padding-top: 4px;
 }
+
+.clipboard-notification {
+    position: fixed;
+    padding: 4px 8px;
+    color: #ffffff;
+    border: solid 2px;
+    background-color: #101010;
+    border-color: #282828;
+    border-radius: 4px;
+    font-size: 18px;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 1;
+    transition: opacity 0.25s ease-out;
+}
