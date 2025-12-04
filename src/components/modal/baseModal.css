@@ -1,9 +1,11 @@
 dialog {
     border-radius: 16px;
     border: solid 3px;
-    border-color: #282828;
+    border-color: #161818;
     min-width: 400px;
     max-width: 700px;
+    background-color: #070909;
+    color: #ffffff;
 }
 
 .modal_header {
@@ -45,8 +47,8 @@ dialog {
     padding: 4px 8px;
     color: #ffffff;
     border: solid 2px;
-    background-color: #101010;
-    border-color: #282828;
+    background-color: #070909;
+    border-color: #161818;
     border-radius: 4px;
     font-size: 18px;
     pointer-events: none;

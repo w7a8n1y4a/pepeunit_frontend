@@ -37,7 +37,7 @@ const ButtonModifiers = () => {
             key={button.id}
             onClick={() =>  toggleButton(button.id)}
             style={{
-              border: '2px solid ' + (button.isActive ? getNodeColor(button.nodeType) : '#282828')
+              border: '2px solid ' + (button.isActive ? getNodeColor(button.nodeType) : '#161818')
             }}
           >
             {

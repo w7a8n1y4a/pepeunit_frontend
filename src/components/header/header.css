@@ -39,7 +39,7 @@
     align-items: center;
     justify-content: center;
     background: none;
-    border: 2px solid #282828;
+    border: 2px solid #161818;
     border-radius: 8px;
     padding: 0.4rem;
     font-size: 0.9rem;
@@ -57,7 +57,7 @@
   }
   
   .search-button:active {
-    background-color: #282828;
+    background-color: #161818;
   }
   
   .user_controls {

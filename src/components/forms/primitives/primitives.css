@@ -73,9 +73,9 @@
 }
 
 .pagination-controls button:disabled {
-    background-color: #101010;
+    background-color: #070909;
     border: solid 3px;
-    border-color: #282828;
+    border-color: #161818;
     cursor: not-allowed;
 }
 
@@ -109,7 +109,7 @@
 }
 
 .iteration-table th {
-    background-color: #282828;
+    background-color: #161818;
     color: #2196F3;
     padding: 12px 15px;
     text-align: left;
@@ -118,7 +118,7 @@
 .iteration-table td {
     padding: 12px 15px;
     color: #e0e0e0;
-    border-bottom: 2px solid #282828;
+    border-bottom: 2px solid #161818;
 }
 
 .iteration-table tr:last-child td {
@@ -181,9 +181,9 @@
 /* Styles for custom unit view */
 .iteration-unit {
     margin-bottom: 15px;
-    border: 2px solid #282828;
+    border: 2px solid #161818;
     border-radius: 4px;
-    background-color: #101010;
+    background-color: #070909;
     overflow: hidden;
 }
 
@@ -213,7 +213,7 @@
 .iteration-unit table {
     margin: 0;
     border: none;
-    border-top: 2px solid #282828;
+    border-top: 2px solid #161818;
     border-radius: 0;
 }
 .entity-type-selector {
@@ -224,9 +224,9 @@
 
 .entity-button {
     padding: 8px 16px;
-    border: 2px solid #282828;
+    border: 2px solid #161818;
     border-radius: 4px;
-    background-color: #101010;
+    background-color: #070909;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
@@ -238,7 +238,7 @@
 }
 
 .entity-button:hover {
-    background-color: #282828;
+    background-color: #161818;
 }
 
 .update_info {
@@ -251,7 +251,7 @@
     background-color: transparent;
     border-radius: 10px;
     border: solid 3px;
-    border-color: #282828;
+    border-color: #161818;
     padding: 2px 10px;
     text-align: center;
     font-size: 16px;
@@ -268,7 +268,7 @@
     background-color: transparent;
     border-radius: 10px;
     border: solid 3px;
-    border-color: #282828;
+    border-color: #161818;
     padding: 2px 10px;
     text-align: center;
     font-size: 14px;

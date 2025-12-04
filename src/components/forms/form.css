@@ -2,9 +2,9 @@ input {
     width: 100%;
     padding: 10px;
     margin: 5px 0;
-    border: 3px solid #282828;
+    border: 3px solid #161818;
     border-radius: 4px;
-    background-color: #101010;
+    background-color: #070909;
     box-sizing: border-box;
 }
 
@@ -41,7 +41,7 @@ form {
     background-color: transparent;
     border-radius: 10px;
     border: solid 3px;
-    border-color: #282828;
+    border-color: #161818;
     padding: 10px 20px;
     text-align: center;
     font-size: 16px;
@@ -54,7 +54,7 @@ form {
     display: flex;
     border-radius: 10px;
     border: solid 3px;
-    border-color: #282828;
+    border-color: #161818;
     padding: 5px 10px;
     text-align: center;
     font-size: 20px;
@@ -78,7 +78,7 @@ form {
     background-color: transparent;
     border-radius: 10px;
     border: solid 3px;
-    border-color: #282828;
+    border-color: #161818;
     padding: 10px 20px;
     text-align: center;
     font-size: 16px;
@@ -148,8 +148,8 @@ form {
     border: solid 3px;
     padding: 10px;
     margin: 5px 0px;
-    border-color: #282828;
-    background-color: #101010;
+    border-color: #161818;
+    background-color: #070909;
     color: #777;
     appearance: none; 
     -webkit-appearance: none; 
@@ -190,7 +190,7 @@ form {
     right: 0;
     bottom: 0;
     border: solid 3px;
-    border-color: #282828;
+    border-color: #161818;
     transition: .4s;
     border-radius: 4px;
 }
@@ -225,7 +225,7 @@ input:checked+.slider:before {
     overflow-y: auto;
     padding: 10px;
     margin-bottom: 10px;
-    border: 3px solid #282828;
+    border: 3px solid #161818;
     border-radius: 5px;
 }
 
@@ -249,7 +249,7 @@ input:checked+.slider:before {
     background-color: transparent;
     border-radius: 10px;
     border: solid 3px;
-    border-color: #282828;
+    border-color: #161818;
     padding: 2px 10px;
     text-align: center;
     font-size: 16px;
@@ -272,7 +272,7 @@ input:checked+.slider:before {
     background-color: transparent;
     border-radius: 10px;
     border: solid 3px;
-    border-color: #282828;
+    border-color: #161818;
     padding: 4px;
     text-align: center;
     font-size: 15px;
@@ -286,7 +286,7 @@ input:checked+.slider:before {
 .log-entry {
     margin-bottom: 12px;
     padding: 8px;
-    border-left: 3px solid #282828;
+    border-left: 3px solid #161818;
 }
 
 .log-header {
@@ -347,7 +347,7 @@ input:checked+.slider:before {
     align-items: center;
     justify-content: left;
     background: none;
-    border: 3px solid #282828;
+    border: 3px solid #161818;
     border-radius: 4px;
     padding: 0.4rem;
     font-size: 0.9rem;
@@ -366,5 +366,5 @@ input:checked+.slider:before {
 }
 
 .button_registry_search:active {
-    background-color: #282828;
+    background-color: #161818;
 }
