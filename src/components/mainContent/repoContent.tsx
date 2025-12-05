@@ -1,5 +1,5 @@
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
-import { useUpdateUnitsFirmwareMutation, useDeleteRepoMutation, useGetVersionsLazyQuery, VisibilityLevel, useGetRepositoryRegistryLazyQuery } from '@rootTypes/compositionFunctions'
+import { useUpdateUnitsFirmwareMutation, useDeleteRepoMutation, useGetVersionsLazyQuery, VisibilityLevel } from '@rootTypes/compositionFunctions'
 import BaseModal from '../modal/baseModal'
 import CreateUnitForm from '../forms/unit/createUnitForm';
 import UpdateRepoForm from '../forms/repo/updateRepoForm';
@@ -24,7 +24,7 @@ export default function RepoContent(){
   const { isLoaderActive, runAsync } = useAsyncHandler();
 
   const { activeModal, setActiveModal } = useModalStore();
-  const { currentNodeData, setCurrentNodeData } = useNodeStore();
+  const { currentNodeData } = useNodeStore();
   const { removeNodesAndLinks } = useGraphStore();
   const { openModal } = useModalHandlers();
 
@@ -35,7 +35,6 @@ export default function RepoContent(){
   const [updateUnitsFirmware] = useUpdateUnitsFirmwareMutation()
   const [deleteRepo] = useDeleteRepoMutation()
   const [getVersions] = useGetVersionsLazyQuery()
-  const [getRepositoryRegistry] = useGetRepositoryRegistryLazyQuery();
 
   const handleUpdateUnitsFirmware = () => {
     runAsync(async () => {
@@ -89,24 +88,6 @@ export default function RepoContent(){
       })
     }
   }, [currentNodeData]);
-
-function pickRepositoryRegistry(){
-  runAsync(async () => {
-    if (currentNodeData != null) {
-        let repo_registry = await getRepositoryRegistry(
-            {
-                variables: {
-                    uuid: currentNodeData.repositoryRegistryUuid
-                }
-            }
-        )
-        if (repo_registry.data?.getRepositoryRegistry){
-            openModal("RegistryMenu")
-            setCurrentNodeData(repo_registry.data.getRepositoryRegistry)
-        }
-    }
-  })
-}
 
 return (
     <>

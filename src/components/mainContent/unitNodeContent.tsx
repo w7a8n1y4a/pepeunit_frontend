@@ -1,6 +1,6 @@
 import BaseModal from '../modal/baseModal'
 import { NodeType } from '@rootTypes/nodeTypeEnum'
-import { UnitNodeTypeEnum, VisibilityLevel, useGetUnitLazyQuery } from '@rootTypes/compositionFunctions'
+import { UnitNodeTypeEnum, VisibilityLevel } from '@rootTypes/compositionFunctions'
 import { useModalStore, useNodeStore } from '@stores/baseStore';
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import UpdateUnitNodeForm from '../forms/unitNode/updateUnitNodeForm';
@@ -15,11 +15,10 @@ import {stringToFormat} from '@utils/stringToFormat'
 
 export default function UnitNodeContent(){
   const { activeModal } = useModalStore();
-  const { currentNodeData, setCurrentNodeData } = useNodeStore();
+  const { currentNodeData} = useNodeStore();
   const { openModal } = useModalHandlers();
   const { user } = useUserStore();
-  const { isLoaderActive, runAsync } = useAsyncHandler();
-  const [getUnit] = useGetUnitLazyQuery();
+  const { isLoaderActive } = useAsyncHandler();
 
   return (
     <>
