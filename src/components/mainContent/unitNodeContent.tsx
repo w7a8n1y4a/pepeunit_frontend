@@ -31,6 +31,7 @@ export default function UnitNodeContent(){
         open={activeModal === 'InputMenu' || activeModal === 'OutputMenu'}
         copyLink={window.location.origin + '/unit-node/' + currentNodeData?.uuid}
         reloadEntityType={currentNodeData?.type}
+        showParentEntityButton
       >
         <div className="modal_menu_content">
           {
@@ -39,23 +40,6 @@ export default function UnitNodeContent(){
           <div className='div_unit_message'>
             {currentNodeData?.state || "No Data"}
           </div>
-          <button
-            className="button_open_alter"
-            onClick={() => {
-              runAsync(async () => {
-                if (currentNodeData) {
-                  const unitResp = await getUnit({ variables: { uuid: currentNodeData.unitUuid } });
-                  const unit = unitResp.data?.getUnit;
-                  if (unit) {
-                    openModal('UnitMenu');
-                    setCurrentNodeData(unit);
-                  }
-                }
-              });
-            }}
-          >
-            Unit
-          </button>
           {
             user && currentNodeData && (
               <>

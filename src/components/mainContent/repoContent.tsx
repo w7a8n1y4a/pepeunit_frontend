@@ -117,6 +117,7 @@ return (
         open={activeModal === 'RepoMenu'}
         copyLink={window.location.origin + '/repo/' + currentNodeData?.uuid}
         reloadEntityType={NodeType.Repo}
+        showParentEntityButton
       >
         <div className="modal_menu_content">
           {
@@ -125,9 +126,6 @@ return (
           {
             versions && versions.unitCount > 0 && (<VersionChart data={versions} />)
           }
-          <button className="button_open_alter" onClick={() => pickRepositoryRegistry()}>
-            Repository Registry
-          </button>
           {
             user && (
               <button className="button_add_alter" onClick={() => openModal('createUnit')}>

@@ -15,6 +15,7 @@ import close_img from '/images/close.svg'
 import back_img from '/images/back.svg'
 import reload_img from '/images/reload.svg'
 import copy_img from '/images/copy.svg'
+import house_img from '/images/house.svg'
 import copyToClipboard from '@utils/copyToClipboard'
 import showClipboardNotification from '@utils/showClipboardNotification'
 import './baseModal.css'
@@ -34,9 +35,10 @@ interface ModalProps {
     openModalType?: string
     reloadEntityType?: NodeType | UnitNodeTypeEnum
     copyLink?: string
+    showParentEntityButton?: boolean
 }
 
-export default function BaseModal({modalName, subName, visibilityLevel, lastUpdateDatetime, children, open, openModalType, reloadEntityType, copyLink}: ModalProps) {
+export default function BaseModal({modalName, subName, visibilityLevel, lastUpdateDatetime, children, open, openModalType, reloadEntityType, copyLink, showParentEntityButton}: ModalProps) {
     const { openModal, closeModal } = useModalHandlers();
     const { runAsync } = useAsyncHandler();
     const { currentNodeData, setCurrentNodeData } = useNodeStore();
@@ -48,6 +50,46 @@ export default function BaseModal({modalName, subName, visibilityLevel, lastUpda
     const [getRepo] = useGetRepoLazyQuery();
     const [getUnit] = useGetUnitLazyQuery();
     const [getUnitNode] = useGetUnitNodeLazyQuery();
+
+    function openParentEntity() {
+        if (!currentNodeData) {
+            return
+        }
+
+        runAsync(async () => {
+            let targetdata: any = null
+            let targetModal: string | null = null
+
+            if (currentNodeData.__typename == 'RepoType' && currentNodeData.repositoryRegistryUuid) {
+                const result = await getRepositoryRegistry({
+                    variables: { uuid: currentNodeData.repositoryRegistryUuid }
+                })
+                targetdata = result.data?.getRepositoryRegistry
+                targetModal = 'RegistryMenu'
+            }
+
+            if (currentNodeData.__typename == 'UnitType' && currentNodeData.repoUuid) {
+                const result = await getRepo({
+                    variables: { uuid: currentNodeData.repoUuid }
+                })
+                targetdata = result.data?.getRepo
+                targetModal = 'RepoMenu'
+            }
+
+            if (currentNodeData.__typename == 'UnitNodeType' && currentNodeData.unitUuid) {
+                const result = await getUnit({
+                    variables: { uuid: currentNodeData.unitUuid }
+                })
+                targetdata = result.data?.getUnit
+                targetModal = 'UnitMenu'
+            }
+
+            if (targetdata && targetdata.uuid && targetModal) {
+                openModal(targetModal)
+                setCurrentNodeData(targetdata)
+            }
+        })
+    }
 
     function updateData(reloadEntityType: NodeType | UnitNodeTypeEnum) {
         runAsync(async () => {
@@ -112,6 +154,16 @@ export default function BaseModal({modalName, subName, visibilityLevel, lastUpda
                     }
                 </div>
                 <div className="div_modal_buttons">
+                    {
+                        showParentEntityButton && currentNodeData && (
+                            <button
+                                className="modal_menu_button"
+                                onClick={openParentEntity}
+                            >
+                                <img src={house_img} width="20" height="20" alt="Parent"/>
+                            </button>
+                        )
+                    }
                     {
                         copyLink && currentNodeData && (
                             <button

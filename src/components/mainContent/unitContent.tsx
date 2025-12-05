@@ -40,7 +40,7 @@ export default function UnitContent(){
   const { isLoaderActive, runAsync } = useAsyncHandler();
 
   const { activeModal, setActiveModal } = useModalStore();
-  const { currentNodeData, setCurrentNodeData } = useNodeStore();
+  const { currentNodeData } = useNodeStore();
   const { removeNodesAndLinks } = useGraphStore();
   const [currentRepoData, setCurrentRepoData] = useState<RepoType | null>(null);
   const [targetVersion, setTargetVersion] = useState<string | null>(null);
@@ -218,22 +218,6 @@ export default function UnitContent(){
     }
   }, [currentNodeData]);
   
-  function pickRepo(){
-    runAsync(async () => {
-      if (currentNodeData != null) {
-        let repo = currentRepoData
-        if (!repo) {
-          const repoResponse = await getRepo({ variables: { uuid: currentNodeData.repoUuid } })
-          repo = repoResponse.data?.getRepo || null
-        }
-        if (repo){
-          openModal("RepoMenu")
-          setCurrentNodeData(repo)
-        }
-      }
-    })
-  }
-
   return (
     <>
       <BaseModal
@@ -244,6 +228,7 @@ export default function UnitContent(){
         open={activeModal === 'UnitMenu'}
         copyLink={window.location.origin + '/unit/' + currentNodeData?.uuid}
         reloadEntityType={NodeType.Unit}
+        showParentEntityButton
       >
         <div className="modal_menu_content">
           {
@@ -257,9 +242,6 @@ export default function UnitContent(){
               </>
             )
           }
-          <button className="button_open_alter" onClick={() => pickRepo()}>
-            Repository
-          </button>
 
           {
             user && currentNodeData && user.uuid == currentNodeData.creatorUuid && (
