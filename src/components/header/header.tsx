@@ -23,7 +23,7 @@ import grafana from '/images/grafana.svg'
 import SearchMenu from '../searchMenu/searchMenu';
 
 export default function Header(){
-    const { setHappy } = useErrorStore();
+    const { setHappy, setError } = useErrorStore();
     const { isLoaderActive, runAsync } = useAsyncHandler();
 
     const { activeModal } = useModalStore();
@@ -98,7 +98,14 @@ export default function Header(){
                         file: file
                     }
                 });
+
+                if (result.errors && result.errors.length) {
+                    setError(result);
+                    return;
+                }
+
                 const markdown = result.data?.getConvertTomlToMd;
+
                 if (markdown) {
                     const blob = new Blob([markdown], { type: 'text/markdown;charset=utf-8' });
                     const url = window.URL.createObjectURL(blob);
