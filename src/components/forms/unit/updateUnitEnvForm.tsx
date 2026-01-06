@@ -32,18 +32,22 @@ export default function UpdateUnitEnvForm() {
         }
     };
 
-    const parseEnvValue = (value: string): string | number | null => {
+    const parseEnvValue = (value: string): string | number | boolean | null => {
         const trimmed = value.trim();
 
         // 1) null -> JSON null
         if (trimmed.toLowerCase() === "null") return null;
 
-        // 2) numbers (including decimals with dot)
+        // 2) booleans
+        if (trimmed.toLowerCase() === "true") return true;
+        if (trimmed.toLowerCase() === "false") return false;
+
+        // 3) numbers (including decimals with dot)
         // Examples: 123, -123, 1.4321, 1., 0.5
         const isNumeric = /^-?(?:\d+\.?\d*|\.\d+)$/.test(trimmed);
         if (isNumeric) return Number(trimmed);
 
-        // 3) everything else -> string
+        // 4) everything else -> string
         return value;
     };
 
