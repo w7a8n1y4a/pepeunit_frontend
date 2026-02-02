@@ -6,6 +6,7 @@ import CreateRepositoryRegistryForm from '../forms/registry/createRepositoryRegi
 import Spinner from '@primitives/spinner'
 import {stringToFormat} from '@utils/stringToFormat'
 import byteConverter from '@utils/byteConverter'
+import { gitUrlToDisplayName } from '@utils/gitUrlToDisplayName'
 
 import copyToClipboard from '@utils/copyToClipboard'
 import copy_img from '/images/copy.svg'
@@ -101,7 +102,7 @@ return (
     <>
       <BaseModal
         modalName={'Registry'}
-        subName={currentNodeData?.name}
+        subName={gitUrlToDisplayName(currentNodeData?.repositoryUrl)}
         lastUpdateDatetime={currentNodeData?.syncLastDatetime}
         open={activeModal === 'RegistryMenu'}
         copyLink={window.location.origin + '/registry/' + currentNodeData?.uuid}
@@ -193,7 +194,7 @@ return (
 
       <BaseModal
         modalName='Settings'
-        subName={currentNodeData?.name}
+        subName={gitUrlToDisplayName(currentNodeData?.repositoryUrl)}
         open={activeModal === 'registrySettingsMenu'}
         openModalType='RegistryMenu'
         >
@@ -208,7 +209,7 @@ return (
       </BaseModal>
       <BaseModal
         modalName='External Auth GIT'
-        subName={currentNodeData?.name}
+        subName={gitUrlToDisplayName(currentNodeData?.repositoryUrl)}
         open={activeModal === 'changeCredentials'}
         openModalType='RegistryMenu'
       >
