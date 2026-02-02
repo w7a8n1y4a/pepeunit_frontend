@@ -23,10 +23,12 @@ export default function UpdateUnitEnvForm() {
 
     const stringifyEnvValue = (value: unknown): string => {
         if (value === null) return "null";
+        if (value === undefined) return "null";
         if (typeof value === "string") return value;
         if (typeof value === "number" || typeof value === "boolean") return String(value);
         try {
-            return JSON.stringify(value);
+            const json = JSON.stringify(value);
+            return json === undefined ? String(value) : json;
         } catch {
             return String(value);
         }
@@ -154,7 +156,7 @@ export default function UpdateUnitEnvForm() {
                                         <label>{key}</label>
                                         <input
                                             type="text"
-                                            value={value}
+                                            value={value ?? "null"}
                                             onChange={(e) => handleInputChange(key, e.target.value)}
                                         />
                                     </div>
