@@ -128,6 +128,11 @@ export default function AboutForm() {
             >
                 Support Pepeunit Development
             </button>
+
+            <div className="about_section_title">License</div>
+            <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noreferrer" className="about_license_link">
+                {backendInfo.license}
+            </a>
         </div>
     );
 }

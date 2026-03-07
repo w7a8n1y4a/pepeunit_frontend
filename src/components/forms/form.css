@@ -434,3 +434,13 @@ input:checked+.slider:before {
     text-align: center;
     font-weight: bold;
 }
+
+.about_license_link {
+    color: #45a049;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.about_license_link:hover {
+    text-decoration: underline;
+}
