@@ -8,6 +8,7 @@ import RegisterForm from '../forms/user/registerForm';
 import VerificationForm from '../forms/user/verificationForm';
 import ChangeLoginForm from '../forms/user/changeLoginForm';
 import ChangePassForm from '../forms/user/changePassForm';
+import AboutForm from '../forms/user/aboutForm';
 import CreateRepoForm from '../forms/repo/createRepoForm'
 import Spinner from '@primitives/spinner'
 import { UserRole, useBlockUserMutation, useUnblockUserMutation, useDeleteUserCookiesMutation, useGetConvertTomlToMdLazyQuery } from '@rootTypes/compositionFunctions'
@@ -201,17 +202,11 @@ export default function Header(){
                         {
                             user && (!currentNodeData || currentNodeData && currentNodeData.uuid == user.uuid) && (
                                 <>
-                                    <button className="button_open_alter" onClick={() => openModal('verification')}>
+                                    <button className="button_telegram" onClick={() => openModal('verification')}>
                                         Telegram Verification
                                     </button>
-                                    <button className="button_open_alter" onClick={() => openModal('changeLogin')}>
-                                        Change Login
-                                    </button>
-                                    <button className="button_open_alter" onClick={() => openModal('changePass')}>
-                                        Change Password
-                                    </button>
 
-                                    <button className="button_open_alter_send" onClick={openTomlPicker}>
+                                    <button className="button_readme" onClick={openTomlPicker}>
                                         Generate README.md
                                     </button>
                                     <input
@@ -222,26 +217,19 @@ export default function Header(){
                                         onChange={handleTomlSelected}
                                     />
 
-                                    <div className='div_statistics'>
-                                        {
-                                            user.grafanaOrgId && (
-                                                <>
-                                                    <div className='div_statistics_text'>
-                                                        Grafana Org Id:
-                                                    </div>
-                                                    <div className='div_statistics_text'>
-                                                        {user.grafanaOrgId}
-                                                    </div>
-                                                </>
-                                            )
-                                        }
-                                        <div className='div_statistics_text'>
-                                            Grafana Org Name:
-                                        </div>
-                                        <div className='div_statistics_text'>
-                                            {user.grafanaOrgName}
-                                        </div>
+                                    <div className="buttons_row">
+                                        <button className="button_open_alter" onClick={() => openModal('changeLogin')}>
+                                            Change Login
+                                        </button>
+                                        <button className="button_open_alter" onClick={() => openModal('changePass')}>
+                                            Change Password
+                                        </button>
                                     </div>
+
+
+                                    <button className="button_open_alter" onClick={() => openModal('about')}>
+                                        About
+                                    </button>
                                 </>
                             )
                         }
@@ -297,6 +285,13 @@ export default function Header(){
                     openModalType='UserMenu'
                 >
                     <ChangePassForm />
+                </BaseModal>
+                <BaseModal
+                    modalName='About Instance'
+                    open={activeModal === 'about'}
+                    openModalType='UserMenu'
+                >
+                    <AboutForm />
                 </BaseModal>
             </div>
         </header>

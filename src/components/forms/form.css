@@ -87,7 +87,7 @@ form {
     float: right;
 }
 
-.button_del_alter, .button_add_alter, .button_core_function {
+.button_del_alter, .button_add_alter, .button_core_function, .button_telegram, .button_readme {
     background-color: transparent;
     border-radius: 10px;
     border: solid 3px;
@@ -367,4 +367,70 @@ input:checked+.slider:before {
 
 .button_registry_search:active {
     background-color: #161818;
+}
+
+.button_telegram {
+    border: solid 2px #2196F3;
+    color: #2196F3;
+}
+
+.button_telegram:hover {
+    background-color: #2196F3;
+    color: #ffffff;
+}
+
+.button_readme {
+    border: solid 2px #00bcd4;
+    color: #00bcd4;
+}
+
+.button_readme:hover {
+    background-color: #00bcd4;
+    color: #ffffff;
+}
+
+.buttons_row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px;
+}
+
+.about_section_title {
+    font-size: 14px;
+    color: #777;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.about_table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.about_table th,
+.about_table td {
+    padding: 6px 12px;
+    border: solid 2px #161818;
+    text-align: left;
+}
+
+.about_table th {
+    color: #777;
+    font-weight: normal;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+}
+
+.about_flag_on {
+    color: #45a049;
+    text-align: center;
+    font-weight: bold;
+}
+
+.about_flag_off {
+    color: #ff3c00cc;
+    text-align: center;
+    font-weight: bold;
 }
