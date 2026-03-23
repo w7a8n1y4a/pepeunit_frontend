@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import Spinner from '@primitives/spinner'
 import '../form.css'
 
-const FRONTEND_VERSION = '1.1.0'
+const FRONTEND_VERSION = '1.2.0'
 
 interface BackendInfo {
     name: string
