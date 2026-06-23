@@ -3,7 +3,7 @@ import Spinner from '@primitives/spinner'
 import { useBackendInfoStore } from '@stores/backendInfoStore';
 import '../form.css'
 
-const FRONTEND_VERSION = '1.2.0'
+const FRONTEND_VERSION = '1.2.1'
 
 export default function AboutForm() {
     const { backendInfo, loading, error, fetchBackendInfo } = useBackendInfoStore();
