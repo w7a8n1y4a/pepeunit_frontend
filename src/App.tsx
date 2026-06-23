@@ -10,6 +10,7 @@ import Header from './components/header/header';
 import { useEffect } from 'react';
 
 import { useUserStore } from '@stores/userStore';
+import { useBackendInfoStore } from '@stores/backendInfoStore';
 import { useSetGrafanaCookiesMutation } from '@rootTypes/compositionFunctions';
 
 const authLink = setContext((_, { headers }) => {
@@ -70,7 +71,7 @@ function GrafanaCookieInitializer() {
 
 	useEffect(() => {
 		setGrafanaCookies();
-	}, []);
+	}, [setGrafanaCookies]);
 
 	return null;
 }
@@ -78,6 +79,7 @@ function GrafanaCookieInitializer() {
 function App() {
   const { routerType, routerUuid } = useParams();
   const { setUser } = useUserStore();
+  const { fetchBackendInfo } = useBackendInfoStore();
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -85,7 +87,11 @@ function App() {
       const parsedUser = JSON.parse(storedUser);
       setUser(parsedUser);
     }
-  }, []);
+  }, [setUser]);
+
+  useEffect(() => {
+    fetchBackendInfo();
+  }, [fetchBackendInfo]);
 
   return (
     <>

@@ -1,49 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import Spinner from '@primitives/spinner'
+import { useBackendInfoStore } from '@stores/backendInfoStore';
 import '../form.css'
 
 const FRONTEND_VERSION = '1.2.0'
 
-interface BackendInfo {
-    name: string
-    version: string
-    description: string
-    license: string
-    swagger?: string
-    graphql?: string
-    grafana?: string
-    telegram_bot?: string
-    feature_flags?: Record<string, boolean>
-}
-
 export default function AboutForm() {
-    const [backendInfo, setBackendInfo] = useState<BackendInfo | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const { backendInfo, loading, error, fetchBackendInfo } = useBackendInfoStore();
 
     useEffect(() => {
-        const backendUri = (import.meta.env.VITE_BACKEND_URI || window.env.VITE_BACKEND_URI || '').replace(/\/graphql$/, '');
-
-        if (!backendUri) {
-            setError('Backend URI not configured');
-            setLoading(false);
-            return;
-        }
-
-        fetch(backendUri)
-            .then(res => {
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                return res.json();
-            })
-            .then(data => {
-                setBackendInfo(data);
-                setLoading(false);
-            })
-            .catch(err => {
-                setError(err.message);
-                setLoading(false);
-            });
-    }, []);
+        fetchBackendInfo();
+    }, [fetchBackendInfo]);
 
     if (loading) return <Spinner />;
     if (error) return <div className="div_unit_error_message">Failed to load backend info: {error}</div>;

@@ -18,6 +18,7 @@ import { useState, useCallback, useReducer, useEffect, useRef } from 'react';
 import { useModalStore, useNodeStore, usePickRegistryStore } from '@stores/baseStore';
 import useModalHandlers from '@handlers/useModalHandlers';
 import { useUserStore } from '@stores/userStore';
+import { TELEGRAM_BOT_ENABLE_FLAG, useBackendInfoStore } from '@stores/backendInfoStore';
 import { useErrorStore } from '@stores/errorStore';
 import micro from '/images/micro.svg'
 import grafana from '/images/grafana.svg'
@@ -32,9 +33,11 @@ export default function Header(){
     const { currentNodeData, setCurrentNodeData } = useNodeStore();
     const { setCurrentPickRegistryData, currentPickRegistryData } = usePickRegistryStore();
     const { user, clearUser } = useUserStore();
+    const { backendInfo } = useBackendInfoStore();
     const [, forceUpdate] = useReducer(x => x + 1, 0);
 
     const [login, setLogin ] = useState(user?.login)
+    const isTelegramVerificationEnabled = backendInfo?.feature_flags?.[TELEGRAM_BOT_ENABLE_FLAG] !== false;
 
     const [blockUser] = useBlockUserMutation();
     const [unblockUser] = useUnblockUserMutation();
@@ -56,11 +59,11 @@ export default function Header(){
         })
 
         forceUpdate();
-    }, [closeModal]);
+    }, [clearUser, closeModal, deleteUserCookies, runAsync]);
 
     const handleBlockUser = () => {
         runAsync(async () => {
-            let result = await blockUser({
+            const result = await blockUser({
                 variables: {
                     uuid: currentNodeData.uuid,
                 }
@@ -73,7 +76,7 @@ export default function Header(){
 
     const handleUnblockUser = () => {
         runAsync(async () => {
-            let result = await unblockUser({
+            const result = await unblockUser({
                 variables: {
                     uuid: currentNodeData.uuid,
                 }
@@ -202,9 +205,11 @@ export default function Header(){
                         {
                             user && (!currentNodeData || currentNodeData && currentNodeData.uuid == user.uuid) && (
                                 <>
-                                    <button className="button_telegram" onClick={() => openModal('verification')}>
-                                        Telegram Verification
-                                    </button>
+                                    {isTelegramVerificationEnabled && (
+                                        <button className="button_telegram" onClick={() => openModal('verification')}>
+                                            Telegram Verification
+                                        </button>
+                                    )}
 
                                     <button className="button_readme" onClick={openTomlPicker}>
                                         Generate README.md
