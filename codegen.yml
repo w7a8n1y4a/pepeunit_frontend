@@ -14,3 +14,4 @@ generates:
                 UUID: string
                 Number: number
                 Upload: File
+                JSON: Record<string, unknown>

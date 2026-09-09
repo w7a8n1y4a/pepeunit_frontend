@@ -18,7 +18,7 @@ import { useState, useCallback, useReducer, useEffect, useRef } from 'react';
 import { useModalStore, useNodeStore, usePickRegistryStore } from '@stores/baseStore';
 import useModalHandlers from '@handlers/useModalHandlers';
 import { useUserStore } from '@stores/userStore';
-import { TELEGRAM_BOT_ENABLE_FLAG, useBackendInfoStore } from '@stores/backendInfoStore';
+import { GRAFANA_INTEGRATION_ENABLE_FLAG, TELEGRAM_BOT_ENABLE_FLAG, isFeatureEnabled, useBackendInfoStore } from '@stores/backendInfoStore';
 import { useErrorStore } from '@stores/errorStore';
 import micro from '/images/micro.svg'
 import grafana from '/images/grafana.svg'
@@ -37,7 +37,8 @@ export default function Header(){
     const [, forceUpdate] = useReducer(x => x + 1, 0);
 
     const [login, setLogin ] = useState(user?.login)
-    const isTelegramVerificationEnabled = backendInfo?.feature_flags?.[TELEGRAM_BOT_ENABLE_FLAG] !== false;
+    const isTelegramVerificationEnabled = isFeatureEnabled(backendInfo, TELEGRAM_BOT_ENABLE_FLAG);
+    const isGrafanaEnabled = isFeatureEnabled(backendInfo, GRAFANA_INTEGRATION_ENABLE_FLAG);
 
     const [blockUser] = useBlockUserMutation();
     const [unblockUser] = useUnblockUserMutation();
@@ -154,9 +155,11 @@ export default function Header(){
                         <button className="signin_button" onClick={() => pickRepoCreate()}>
                             <img src={micro} width="32" height="32" alt="AddRepoImg" />
                         </button>
-                        <button className="signin_button" onClick={() => window.open((import.meta.env.VITE_SELF_URI || window.env.VITE_SELF_URI) + 'grafana/login/generic_oauth')}>
-                            <img src={grafana} width="32" height="32" alt="GrafanaOpenImg" />
-                        </button>
+                        {isGrafanaEnabled && (
+                            <button className="signin_button" onClick={() => window.open((import.meta.env.VITE_SELF_URI || window.env.VITE_SELF_URI) + 'grafana/login/generic_oauth')}>
+                                <img src={grafana} width="32" height="32" alt="GrafanaOpenImg" />
+                            </button>
+                        )}
                         <button className="user_menu_button" onClick={() => {
                             setCurrentNodeData(null)
                             openModal('UserMenu')

@@ -52,6 +52,12 @@ gql`
         }
     }
 
+    mutation updateAllRegistries {
+        updateAllRegistries {
+            isNone
+        }
+    }
+
     mutation deleteRepositoryRegistry(
         $uuid: UUID!
     ) {

@@ -1,12 +1,12 @@
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
-import { useBulkUpdateMutation, useGetBaseMetricsLazyQuery, BaseMetricsType, UserRole } from '@rootTypes/compositionFunctions'
+import { useBulkUpdateMutation, UserRole } from '@rootTypes/compositionFunctions'
 import BaseModal from '../modal/baseModal'
-import { useState, useEffect } from 'react';
 import Spinner from '@primitives/spinner'
 
 import { useModalStore, useNodeStore } from '@stores/baseStore';
 import { useUserStore } from '@stores/userStore';
 import { useErrorStore } from '@stores/errorStore';
+import { useBackendInfoStore } from '@stores/backendInfoStore';
 import useModalHandlers from '@handlers/useModalHandlers';
 
 
@@ -18,24 +18,14 @@ export default function DomainContent(){
   const { currentNodeData } = useNodeStore();
   const { openModal } = useModalHandlers();
   const { user } = useUserStore();
-
-  const [baseMetrics, setBaseMetrics] = useState<BaseMetricsType | null>(null)
+  const { backendInfo, loading: backendInfoLoading } = useBackendInfoStore();
+  const metrics = backendInfo?.metrics;
 
   const [bulkUpdate] = useBulkUpdateMutation()
-  const [getBaseMetrics] = useGetBaseMetricsLazyQuery()
-
-  useEffect(() => {
-    runAsync(async () => {
-      let result = await getBaseMetrics()
-      if (result.data?.getBaseMetrics){
-        setBaseMetrics(result.data.getBaseMetrics)
-      }
-    })
-  }, []);
 
   const handleBulkUpdate = () => {
     runAsync(async () => {
-      let result = await bulkUpdate()
+      const result = await bulkUpdate()
       if (result.data){
         setHappy("Unit and Repo update query send")
       }
@@ -52,7 +42,7 @@ export default function DomainContent(){
       >
         <div className="modal_menu_content">
           {
-            isLoaderActive && (<Spinner/>)
+            (isLoaderActive || backendInfoLoading) && (<Spinner/>)
           }
           <button className="button_open_alter" onClick={() => openModal('statistics')}>
             Statistics
@@ -72,22 +62,22 @@ export default function DomainContent(){
       <BaseModal modalName='Statistics' subName={currentNodeData?.name} open={activeModal === 'statistics'} openModalType='DomainMenu'>
           <div className='div_statistics'>
             <div className='div_statistics_text'>
-              User - {baseMetrics?.userCount}
+              User - {metrics?.user_count}
             </div>
             <div className='div_statistics_text'>
-              RegistryCount - {baseMetrics?.repositoryRegistryCount}
+              RegistryCount - {metrics?.repository_registry_count}
             </div>
             <div className='div_statistics_text'>
-              Repo - {baseMetrics?.repoCount}
+              Repo - {metrics?.repo_count}
             </div>
             <div className='div_statistics_text'>
-              Unit - {baseMetrics?.unitCount}
+              Unit - {metrics?.unit_count}
             </div>
             <div className='div_statistics_text'>
-              UnitNode - {baseMetrics?.unitNodeCount}
+              UnitNode - {metrics?.unit_node_count}
             </div>
             <div className='div_statistics_text'>
-              UnitNodeEdge - {baseMetrics?.unitNodeEdgeCount}
+              UnitNodeEdge - {metrics?.unit_node_edge_count}
             </div>
           </div>
       </BaseModal>

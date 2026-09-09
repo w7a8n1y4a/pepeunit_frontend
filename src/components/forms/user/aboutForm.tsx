@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 import Spinner from '@primitives/spinner'
-import { useBackendInfoStore } from '@stores/backendInfoStore';
+import { GRAFANA_INTEGRATION_ENABLE_FLAG, TELEGRAM_BOT_ENABLE_FLAG, isFeatureEnabled, useBackendInfoStore } from '@stores/backendInfoStore';
 import '../form.css'
 
-const FRONTEND_VERSION = '1.2.1'
+const FRONTEND_VERSION = '1.3.0'
 
 export default function AboutForm() {
     const { backendInfo, loading, error, fetchBackendInfo } = useBackendInfoStore();
@@ -16,7 +16,9 @@ export default function AboutForm() {
     if (error) return <div className="div_unit_error_message">Failed to load backend info: {error}</div>;
     if (!backendInfo) return null;
 
-    const featureFlags = backendInfo.feature_flags ? Object.entries(backendInfo.feature_flags) : [];
+    const featureFlags = Object.entries(backendInfo.feature_flags ?? {});
+    const isGrafanaEnabled = isFeatureEnabled(backendInfo, GRAFANA_INTEGRATION_ENABLE_FLAG);
+    const isTelegramEnabled = isFeatureEnabled(backendInfo, TELEGRAM_BOT_ENABLE_FLAG);
 
     return (
         <div className="modal_menu_content">
@@ -77,12 +79,12 @@ export default function AboutForm() {
                         GraphQL
                     </a>
                 )}
-                {backendInfo.grafana && (
+                {isGrafanaEnabled && backendInfo.grafana && (
                     <a href={backendInfo.grafana} target="_blank" rel="noreferrer" className="button_open_alter">
                         Grafana
                     </a>
                 )}
-                {backendInfo.telegram_bot && (
+                {isTelegramEnabled && backendInfo.telegram_bot && (
                     <a href={backendInfo.telegram_bot} target="_blank" rel="noreferrer" className="button_open_alter">
                         Telegram Bot
                     </a>

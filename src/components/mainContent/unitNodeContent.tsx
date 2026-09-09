@@ -11,6 +11,7 @@ import PermissionForm from '../forms/permission/permissionForm';
 import useModalHandlers from '@handlers/useModalHandlers';
 import Spinner from '@primitives/spinner'
 import { useUserStore } from '@stores/userStore';
+import { DATAPIPE_ENABLE_FLAG, isFeatureEnabled, useBackendInfoStore } from '@stores/backendInfoStore';
 import {stringToFormat} from '@utils/stringToFormat'
 
 export default function UnitNodeContent(){
@@ -18,7 +19,9 @@ export default function UnitNodeContent(){
   const { currentNodeData} = useNodeStore();
   const { openModal } = useModalHandlers();
   const { user } = useUserStore();
+  const { backendInfo } = useBackendInfoStore();
   const { isLoaderActive } = useAsyncHandler();
+  const isDatapipeEnabled = isFeatureEnabled(backendInfo, DATAPIPE_ENABLE_FLAG);
 
   return (
     <>
@@ -65,9 +68,11 @@ export default function UnitNodeContent(){
                         )
                       }
                       <div className='div_statistics'>
-                        <button className="button_core_function" onClick={() => openModal('unitNodeDataPipe')}>
-                          Data Pipeline
-                        </button>
+                        {isDatapipeEnabled && (
+                          <button className="button_core_function" onClick={() => openModal('unitNodeDataPipe')}>
+                            Data Pipeline
+                          </button>
+                        )}
                         <button className="button_open_alter" onClick={() => openModal('unitNodeUpdate')}>
                           Options
                         </button>

@@ -29,6 +29,7 @@ export type Scalars = {
   Int: { input: number; output: number };
   Float: { input: number; output: number };
   DateTime: { input: string; output: string };
+  JSON: { input: Record<string, unknown>; output: Record<string, unknown> };
   UUID: { input: string; output: string };
   Upload: { input: File; output: File };
 };
@@ -48,29 +49,19 @@ export type AggregationType = {
   state: Scalars["Float"]["output"];
   timeWindowSize: Scalars["Int"]["output"];
   unitNodeUuid: Scalars["UUID"]["output"];
-  uuid: Scalars["UUID"]["output"];
 };
 
 export enum BackendTopicCommand {
   EnvUpdate = "ENV_UPDATE",
   LogSync = "LOG_SYNC",
+  Reset = "RESET",
   SchemaUpdate = "SCHEMA_UPDATE",
   Update = "UPDATE",
 }
 
-export type BaseMetricsType = {
-  __typename?: "BaseMetricsType";
-  repoCount: Scalars["Int"]["output"];
-  repositoryRegistryCount: Scalars["Int"]["output"];
-  unitCount: Scalars["Int"]["output"];
-  unitNodeCount: Scalars["Int"]["output"];
-  unitNodeEdgeCount: Scalars["Int"]["output"];
-  userCount: Scalars["Int"]["output"];
-};
-
 export type CommitFilterInput = {
-  limit?: InputMaybe<Scalars["Int"]["input"]>;
-  offset?: InputMaybe<Scalars["Int"]["input"]>;
+  limit?: Scalars["Int"]["input"];
+  offset?: Scalars["Int"]["input"];
   onlyTag?: Scalars["Boolean"]["input"];
   repoBranch: Scalars["String"]["input"];
 };
@@ -99,13 +90,88 @@ export type CredentialsType = {
   username: Scalars["String"]["output"];
 };
 
+export type CurrentInstanceContactsType = {
+  __typename?: "CurrentInstanceContactsType";
+  email: Scalars["String"]["output"];
+  telegram: Scalars["String"]["output"];
+};
+
+export type CurrentInstanceMetricsType = {
+  __typename?: "CurrentInstanceMetricsType";
+  repoCount: Scalars["Int"]["output"];
+  repositoryRegistryCount: Scalars["Int"]["output"];
+  unitCount: Scalars["Int"]["output"];
+  unitNodeCount: Scalars["Int"]["output"];
+  unitNodeEdgeCount: Scalars["Int"]["output"];
+  userCount: Scalars["Int"]["output"];
+};
+
+export type CurrentInstanceSettingsType = {
+  __typename?: "CurrentInstanceSettingsType";
+  puAuthTokenExpiration: Scalars["Int"]["output"];
+  puAvailableNameEntitySymbols: Scalars["String"]["output"];
+  puAvailableTopicSymbols: Scalars["String"]["output"];
+  puGrafanaLimitUnitNodePerOnePanel: Scalars["Int"]["output"];
+  puHttpConnectTimeout: Scalars["Float"]["output"];
+  puHttpTimeout: Scalars["Float"]["output"];
+  puInstanceMaxStateSize: Scalars["Int"]["output"];
+  puInstanceRetentionDays: Scalars["Int"]["output"];
+  puMaxCipherLength: Scalars["Int"]["output"];
+  puMaxExternalRepoSize: Scalars["Int"]["output"];
+  puMaxPaginationSize: Scalars["Int"]["output"];
+  puMinIntervalSyncRepository: Scalars["Int"]["output"];
+  puMqttClientMaxBytesRate: Scalars["String"]["output"];
+  puMqttClientMaxMessagesRate: Scalars["String"]["output"];
+  puMqttHost: Scalars["String"]["output"];
+  puMqttKeepalive: Scalars["Int"]["output"];
+  puMqttMaxClientConnectionRate: Scalars["String"]["output"];
+  puMqttMaxClientIdLen: Scalars["Int"]["output"];
+  puMqttMaxClients: Scalars["Int"]["output"];
+  puMqttMaxLenMessageQueue: Scalars["Int"]["output"];
+  puMqttMaxPayloadSize: Scalars["Int"]["output"];
+  puMqttMaxQos: Scalars["Int"]["output"];
+  puMqttMaxTopicAlias: Scalars["Int"]["output"];
+  puMqttMaxTopicLevels: Scalars["Int"]["output"];
+  puMqttPort: Scalars["Int"]["output"];
+  puMqttSecure: Scalars["Boolean"]["output"];
+  puStateSendInterval: Scalars["Int"]["output"];
+  puTimeWindowSizes: Array<Scalars["Int"]["output"]>;
+  puUnitLogExpiration: Scalars["Int"]["output"];
+};
+
+export type CurrentInstanceStateType = {
+  __typename?: "CurrentInstanceStateType";
+  instanceDatetime: Scalars["DateTime"]["output"];
+  integrationTestsDatetime?: Maybe<Scalars["DateTime"]["output"]>;
+  integrationTestsStatus?: Maybe<IntegrationTestsStatus>;
+  integrationTestsSuccessPercentage?: Maybe<Scalars["Float"]["output"]>;
+};
+
+export type CurrentInstanceType = {
+  __typename?: "CurrentInstanceType";
+  contacts: CurrentInstanceContactsType;
+  description: Scalars["String"]["output"];
+  featureFlags: FeatureFlagsType;
+  grafana: Scalars["String"]["output"];
+  graphql: Scalars["String"]["output"];
+  license: Scalars["String"]["output"];
+  metrics: CurrentInstanceMetricsType;
+  name: Scalars["String"]["output"];
+  schemaVersion: Scalars["String"]["output"];
+  settings: CurrentInstanceSettingsType;
+  state: CurrentInstanceStateType;
+  swagger: Scalars["String"]["output"];
+  telegramBot: Scalars["String"]["output"];
+  version: Scalars["String"]["output"];
+};
+
 export type DashboardCreateInput = {
   name: Scalars["String"]["input"];
 };
 
 export type DashboardFilterInput = {
-  limit?: InputMaybe<Scalars["Int"]["input"]>;
-  offset?: InputMaybe<Scalars["Int"]["input"]>;
+  limit?: Scalars["Int"]["input"];
+  offset?: Scalars["Int"]["input"];
   orderByCreateDate?: InputMaybe<OrderByDate>;
   searchString?: InputMaybe<Scalars["String"]["input"]>;
 };
@@ -192,8 +258,8 @@ export type DataPipeFilterInput = {
   aggregationType?: InputMaybe<Array<AggregationFunctions>>;
   endAggWindowDatetime?: InputMaybe<Scalars["DateTime"]["input"]>;
   endCreateDatetime?: InputMaybe<Scalars["DateTime"]["input"]>;
-  limit?: InputMaybe<Scalars["Int"]["input"]>;
-  offset?: InputMaybe<Scalars["Int"]["input"]>;
+  limit?: Scalars["Int"]["input"];
+  offset?: Scalars["Int"]["input"];
   orderByCreateDate?: InputMaybe<OrderByDate>;
   relativeTime?: InputMaybe<Scalars["String"]["input"]>;
   searchString?: InputMaybe<Scalars["String"]["input"]>;
@@ -217,9 +283,92 @@ export type DataPipeValidationErrorType = {
   stage: DataPipeStage;
 };
 
+export type FeatureFlagsType = {
+  __typename?: "FeatureFlagsType";
+  puFfDatapipeDefaultLastValueEnable: Scalars["Boolean"]["output"];
+  puFfDatapipeEnable: Scalars["Boolean"]["output"];
+  puFfFederationEnable: Scalars["Boolean"]["output"];
+  puFfGrafanaIntegrationEnable: Scalars["Boolean"]["output"];
+  puFfPrometheusEnable: Scalars["Boolean"]["output"];
+  puFfTelegramBotEnable: Scalars["Boolean"]["output"];
+};
+
 export enum GitPlatform {
   Github = "GITHUB",
   Gitlab = "GITLAB",
+}
+
+export enum InstanceCollectionStatus {
+  Blocking = "BLOCKING",
+  Error = "ERROR",
+  Success = "SUCCESS",
+  Timeout = "TIMEOUT",
+}
+
+export type InstanceCreateInput = {
+  url: Scalars["String"]["input"];
+};
+
+export type InstanceFilterInput = {
+  limit?: Scalars["Int"]["input"];
+  offset?: Scalars["Int"]["input"];
+  trustStatus?: InputMaybe<Array<InstanceTrustStatus>>;
+};
+
+export type InstancePublicRegistryType = {
+  __typename?: "InstancePublicRegistryType";
+  platform: GitPlatform;
+  url: Scalars["String"]["output"];
+};
+
+export type InstanceRegistriesPageType = {
+  __typename?: "InstanceRegistriesPageType";
+  registries: Array<InstancePublicRegistryType>;
+  totalCount: Scalars["Int"]["output"];
+};
+
+export enum InstanceTrustStatus {
+  Blocking = "BLOCKING",
+  Pending = "PENDING",
+  Trust = "TRUST",
+}
+
+export type InstanceType = {
+  __typename?: "InstanceType";
+  consecutiveSuccessCount: Scalars["Int"]["output"];
+  createDatetime: Scalars["DateTime"]["output"];
+  lastAttemptDatetime?: Maybe<Scalars["DateTime"]["output"]>;
+  lastCollectionError?: Maybe<Scalars["String"]["output"]>;
+  lastCollectionStatus?: Maybe<InstanceCollectionStatus>;
+  lastPing?: Maybe<Scalars["Float"]["output"]>;
+  lastSuccessDatetime?: Maybe<Scalars["DateTime"]["output"]>;
+  state?: Maybe<Scalars["JSON"]["output"]>;
+  trustStatus: InstanceTrustStatus;
+  url: Scalars["String"]["output"];
+  uuid: Scalars["UUID"]["output"];
+};
+
+export type InstanceUpdateInput = {
+  trustStatus: InstanceTrustStatus;
+};
+
+export type InstanceUrlsPageType = {
+  __typename?: "InstanceUrlsPageType";
+  totalCount: Scalars["Int"]["output"];
+  urls: Array<Scalars["String"]["output"]>;
+};
+
+export type InstancesPageType = {
+  __typename?: "InstancesPageType";
+  instances: Array<InstanceType>;
+  totalCount: Scalars["Int"]["output"];
+};
+
+export enum IntegrationTestsStatus {
+  Error = "ERROR",
+  Running = "RUNNING",
+  Success = "SUCCESS",
+  Warning = "WARNING",
 }
 
 export type LastValueType = {
@@ -227,7 +376,6 @@ export type LastValueType = {
   lastUpdateDatetime: Scalars["DateTime"]["output"];
   state: Scalars["String"]["output"];
   unitNodeUuid: Scalars["UUID"]["output"];
-  uuid: Scalars["UUID"]["output"];
 };
 
 export type LinkUnitNodeToPanelInput = {
@@ -251,6 +399,7 @@ export type Mutation = {
   bulkUpdate: NoneType;
   createDashboard: DashboardType;
   createDashboardPanel: DashboardPanelType;
+  createInstance: InstanceType;
   createPermission: PermissionType;
   createRepo: RepoType;
   createRepositoryRegistry: RepositoryRegistryType;
@@ -259,6 +408,7 @@ export type Mutation = {
   createUser: UserType;
   deleteDashboard: NoneType;
   deleteDataPipeData: NoneType;
+  deleteInstance: NoneType;
   deleteLink: NoneType;
   deletePanel: NoneType;
   deletePermission: NoneType;
@@ -269,6 +419,9 @@ export type Mutation = {
   deleteUserCookies: NoneType;
   linkUnitNodeToPanel: UnitNodeForPanelType;
   resetUnitEnv: NoneType;
+  runIntegrationTests: NoneType;
+  scanInstance: NoneType;
+  scanInstances: NoneType;
   sendCommandToInputBaseTopic: NoneType;
   setCredentials: NoneType;
   setDataPipeConfig: NoneType;
@@ -278,6 +431,8 @@ export type Mutation = {
   setStateUnitNodeInput: UnitNodeType;
   syncDashboard: DashboardType;
   unblockUser: NoneType;
+  updateAllRegistries: NoneType;
+  updateInstance: InstanceType;
   updateLocalRepository: NoneType;
   updateRepo: RepoType;
   updateUnit: UnitType;
@@ -297,6 +452,10 @@ export type MutationCreateDashboardArgs = {
 
 export type MutationCreateDashboardPanelArgs = {
   dashboardPanel: DashboardPanelCreateInput;
+};
+
+export type MutationCreateInstanceArgs = {
+  instance: InstanceCreateInput;
 };
 
 export type MutationCreatePermissionArgs = {
@@ -328,6 +487,10 @@ export type MutationDeleteDashboardArgs = {
 };
 
 export type MutationDeleteDataPipeDataArgs = {
+  uuid: Scalars["UUID"]["input"];
+};
+
+export type MutationDeleteInstanceArgs = {
   uuid: Scalars["UUID"]["input"];
 };
 
@@ -370,6 +533,10 @@ export type MutationResetUnitEnvArgs = {
   uuid: Scalars["UUID"]["input"];
 };
 
+export type MutationScanInstanceArgs = {
+  uuid: Scalars["UUID"]["input"];
+};
+
 export type MutationSendCommandToInputBaseTopicArgs = {
   command: BackendTopicCommand;
   uuid: Scalars["UUID"]["input"];
@@ -405,6 +572,11 @@ export type MutationSyncDashboardArgs = {
 };
 
 export type MutationUnblockUserArgs = {
+  uuid: Scalars["UUID"]["input"];
+};
+
+export type MutationUpdateInstanceArgs = {
+  instance: InstanceUpdateInput;
   uuid: Scalars["UUID"]["input"];
 };
 
@@ -448,7 +620,6 @@ export type NRecordsType = {
   state: Scalars["String"]["output"];
   stateType: TypeInputValue;
   unitNodeUuid: Scalars["UUID"]["output"];
-  uuid: Scalars["UUID"]["output"];
 };
 
 export type NRecordsTypeTimeWindowTypeAggregationTypeLastValueType =
@@ -466,6 +637,48 @@ export type OneRepositoryRegistryCredentialsType = {
   __typename?: "OneRepositoryRegistryCredentialsType";
   credentials: CredentialsType;
   status: CredentialStatus;
+};
+
+export type OperationTask = {
+  __typename?: "OperationTask";
+  createDatetime: Scalars["DateTime"]["output"];
+  creatorUuid: Scalars["UUID"]["output"];
+  finishDatetime?: Maybe<Scalars["DateTime"]["output"]>;
+  result?: Maybe<Scalars["String"]["output"]>;
+  startDatetime?: Maybe<Scalars["DateTime"]["output"]>;
+  status: OperationTaskStatus;
+  taskType: OperationTaskType;
+  uuid: Scalars["UUID"]["output"];
+};
+
+export type OperationTaskFilterInput = {
+  creatorUuid?: InputMaybe<Scalars["UUID"]["input"]>;
+  limit?: Scalars["Int"]["input"];
+  offset?: Scalars["Int"]["input"];
+  status?: InputMaybe<Array<OperationTaskStatus>>;
+  taskType?: InputMaybe<Array<OperationTaskType>>;
+};
+
+export enum OperationTaskStatus {
+  Error = "ERROR",
+  Running = "RUNNING",
+  Success = "SUCCESS",
+}
+
+export enum OperationTaskType {
+  IntegrationTests = "INTEGRATION_TESTS",
+  ScanAllInstances = "SCAN_ALL_INSTANCES",
+  ScanInstance = "SCAN_INSTANCE",
+  UpdateAllRegistries = "UPDATE_ALL_REGISTRIES",
+  UpdateAllUnitsFirmware = "UPDATE_ALL_UNITS_FIRMWARE",
+  UpdateRegistry = "UPDATE_REGISTRY",
+  UpdateUnitsFirmware = "UPDATE_UNITS_FIRMWARE",
+}
+
+export type OperationTasksResultType = {
+  __typename?: "OperationTasksResultType";
+  count: Scalars["Int"]["output"];
+  operationTasks: Array<OperationTask>;
 };
 
 export enum OrderByDate {
@@ -494,8 +707,8 @@ export enum PermissionEntities {
 
 export type PermissionFilterInput = {
   agentType?: InputMaybe<PermissionEntities>;
-  limit?: InputMaybe<Scalars["Int"]["input"]>;
-  offset?: InputMaybe<Scalars["Int"]["input"]>;
+  limit?: Scalars["Int"]["input"];
+  offset?: Scalars["Int"]["input"];
   resourceType: PermissionEntities;
   resourceUuid: Scalars["UUID"]["input"];
 };
@@ -538,14 +751,19 @@ export type Query = {
   __typename?: "Query";
   checkDataPipeConfig: Array<DataPipeValidationErrorType>;
   getAvailablePlatforms: Array<PlatformType>;
-  getBaseMetrics: BaseMetricsType;
   getBranchCommits: Array<CommitType>;
   getConvertTomlToMd: Scalars["String"]["output"];
   getCredentials?: Maybe<OneRepositoryRegistryCredentialsType>;
+  getCurrentInstance: CurrentInstanceType;
   getDashboard: DashboardType;
   getDashboardPanels: DashboardPanelsResultType;
   getDashboards: DashboardsResultType;
   getDataPipeConfig: Scalars["String"]["output"];
+  getInstances: InstancesPageType;
+  getInstancesRegistries: InstanceRegistriesPageType;
+  getInstancesUrls: InstanceUrlsPageType;
+  getOperationTask: OperationTask;
+  getOperationTasks: OperationTasksResultType;
   getPipeData: PipeDataResultType;
   getRepo: RepoType;
   getRepos: ReposResultType;
@@ -605,6 +823,26 @@ export type QueryGetDashboardsArgs = {
 
 export type QueryGetDataPipeConfigArgs = {
   uuid: Scalars["UUID"]["input"];
+};
+
+export type QueryGetInstancesArgs = {
+  filters: InstanceFilterInput;
+};
+
+export type QueryGetInstancesRegistriesArgs = {
+  filters: InstanceFilterInput;
+};
+
+export type QueryGetInstancesUrlsArgs = {
+  filters: InstanceFilterInput;
+};
+
+export type QueryGetOperationTaskArgs = {
+  uuid: Scalars["UUID"]["input"];
+};
+
+export type QueryGetOperationTasksArgs = {
+  filters: OperationTaskFilterInput;
 };
 
 export type QueryGetPipeDataArgs = {
@@ -695,8 +933,8 @@ export type RepoFilterInput = {
   creatorUuid?: InputMaybe<Scalars["UUID"]["input"]>;
   creatorsUuids?: InputMaybe<Array<Scalars["UUID"]["input"]>>;
   isAutoUpdateRepo?: InputMaybe<Scalars["Boolean"]["input"]>;
-  limit?: InputMaybe<Scalars["Int"]["input"]>;
-  offset?: InputMaybe<Scalars["Int"]["input"]>;
+  limit?: Scalars["Int"]["input"];
+  offset?: Scalars["Int"]["input"];
   orderByCreateDate?: InputMaybe<OrderByDate>;
   orderByLastUpdate?: InputMaybe<OrderByDate>;
   repositoryRegistryUuid?: InputMaybe<Scalars["UUID"]["input"]>;
@@ -766,10 +1004,11 @@ export type RepositoryRegistryCreateInput = {
 export type RepositoryRegistryFilterInput = {
   creatorUuid?: InputMaybe<Scalars["UUID"]["input"]>;
   isPublicRepository?: InputMaybe<Scalars["Boolean"]["input"]>;
-  limit?: InputMaybe<Scalars["Int"]["input"]>;
-  offset?: InputMaybe<Scalars["Int"]["input"]>;
+  limit?: Scalars["Int"]["input"];
+  offset?: Scalars["Int"]["input"];
   orderByCreateDate?: InputMaybe<OrderByDate>;
   orderByLastUpdate?: InputMaybe<OrderByDate>;
+  orderByRepositoryUrl?: InputMaybe<OrderByText>;
   searchString?: InputMaybe<Scalars["String"]["input"]>;
   uuids?: InputMaybe<Array<Scalars["UUID"]["input"]>>;
 };
@@ -811,7 +1050,6 @@ export type TimeWindowType = {
   state: Scalars["String"]["output"];
   stateType: TypeInputValue;
   unitNodeUuid: Scalars["UUID"]["output"];
-  uuid: Scalars["UUID"]["output"];
 };
 
 export enum TypeInputValue {
@@ -832,8 +1070,8 @@ export type UnitCreateInput = {
 export type UnitFilterInput = {
   creatorUuid?: InputMaybe<Scalars["UUID"]["input"]>;
   isAutoUpdateFromRepoUnit?: InputMaybe<Scalars["Boolean"]["input"]>;
-  limit?: InputMaybe<Scalars["Int"]["input"]>;
-  offset?: InputMaybe<Scalars["Int"]["input"]>;
+  limit?: Scalars["Int"]["input"];
+  offset?: Scalars["Int"]["input"];
   orderByCreateDate?: InputMaybe<OrderByDate>;
   orderByLastUpdate?: InputMaybe<OrderByDate>;
   orderByUnitName?: InputMaybe<OrderByText>;
@@ -855,8 +1093,8 @@ export enum UnitFirmwareUpdateStatus {
 
 export type UnitLogFilterInput = {
   level?: InputMaybe<Array<LogLevel>>;
-  limit?: InputMaybe<Scalars["Int"]["input"]>;
-  offset?: InputMaybe<Scalars["Int"]["input"]>;
+  limit?: Scalars["Int"]["input"];
+  offset?: Scalars["Int"]["input"];
   orderByCreateDate?: InputMaybe<OrderByDate>;
   uuid: Scalars["UUID"]["input"];
 };
@@ -890,8 +1128,8 @@ export type UnitNodeEdgeType = {
 };
 
 export type UnitNodeFilterInput = {
-  limit?: InputMaybe<Scalars["Int"]["input"]>;
-  offset?: InputMaybe<Scalars["Int"]["input"]>;
+  limit?: Scalars["Int"]["input"];
+  offset?: Scalars["Int"]["input"];
   orderByCreateDate?: InputMaybe<OrderByDate>;
   outputUuid?: InputMaybe<Scalars["UUID"]["input"]>;
   searchString?: InputMaybe<Scalars["String"]["input"]>;
@@ -1008,8 +1246,8 @@ export type UserCreateInput = {
 };
 
 export type UserFilterInput = {
-  limit?: InputMaybe<Scalars["Int"]["input"]>;
-  offset?: InputMaybe<Scalars["Int"]["input"]>;
+  limit?: Scalars["Int"]["input"];
+  offset?: Scalars["Int"]["input"];
   orderByCreateDate?: InputMaybe<OrderByDate>;
   role?: InputMaybe<Array<UserRole>>;
   searchString?: InputMaybe<Scalars["String"]["input"]>;
@@ -1202,6 +1440,85 @@ export type DeleteLinkMutation = {
   deleteLink: { __typename?: "NoneType"; isNone: boolean };
 };
 
+export type CreateInstanceMutationVariables = Exact<{
+  url: Scalars["String"]["input"];
+}>;
+
+export type CreateInstanceMutation = {
+  __typename?: "Mutation";
+  createInstance: {
+    __typename?: "InstanceType";
+    uuid: string;
+    url: string;
+    trustStatus: InstanceTrustStatus;
+    lastPing?: number | null;
+    lastCollectionStatus?: InstanceCollectionStatus | null;
+    lastSuccessDatetime?: string | null;
+    lastAttemptDatetime?: string | null;
+    consecutiveSuccessCount: number;
+    lastCollectionError?: string | null;
+    state?: Record<string, unknown> | null;
+    createDatetime: string;
+  };
+};
+
+export type UpdateInstanceMutationVariables = Exact<{
+  uuid: Scalars["UUID"]["input"];
+  trustStatus: InstanceTrustStatus;
+}>;
+
+export type UpdateInstanceMutation = {
+  __typename?: "Mutation";
+  updateInstance: {
+    __typename?: "InstanceType";
+    uuid: string;
+    url: string;
+    trustStatus: InstanceTrustStatus;
+    lastPing?: number | null;
+    lastCollectionStatus?: InstanceCollectionStatus | null;
+    lastSuccessDatetime?: string | null;
+    lastAttemptDatetime?: string | null;
+    consecutiveSuccessCount: number;
+    lastCollectionError?: string | null;
+    state?: Record<string, unknown> | null;
+    createDatetime: string;
+  };
+};
+
+export type DeleteInstanceMutationVariables = Exact<{
+  uuid: Scalars["UUID"]["input"];
+}>;
+
+export type DeleteInstanceMutation = {
+  __typename?: "Mutation";
+  deleteInstance: { __typename?: "NoneType"; isNone: boolean };
+};
+
+export type ScanInstancesMutationVariables = Exact<{ [key: string]: never }>;
+
+export type ScanInstancesMutation = {
+  __typename?: "Mutation";
+  scanInstances: { __typename?: "NoneType"; isNone: boolean };
+};
+
+export type ScanInstanceMutationVariables = Exact<{
+  uuid: Scalars["UUID"]["input"];
+}>;
+
+export type ScanInstanceMutation = {
+  __typename?: "Mutation";
+  scanInstance: { __typename?: "NoneType"; isNone: boolean };
+};
+
+export type RunIntegrationTestsMutationVariables = Exact<{
+  [key: string]: never;
+}>;
+
+export type RunIntegrationTestsMutation = {
+  __typename?: "Mutation";
+  runIntegrationTests: { __typename?: "NoneType"; isNone: boolean };
+};
+
 export type CreatePermissionMutationVariables = Exact<{
   agentUuid: Scalars["UUID"]["input"];
   agentType: PermissionEntities;
@@ -1357,6 +1674,15 @@ export type UpdateLocalRepositoryMutationVariables = Exact<{
 export type UpdateLocalRepositoryMutation = {
   __typename?: "Mutation";
   updateLocalRepository: { __typename?: "NoneType"; isNone: boolean };
+};
+
+export type UpdateAllRegistriesMutationVariables = Exact<{
+  [key: string]: never;
+}>;
+
+export type UpdateAllRegistriesMutation = {
+  __typename?: "Mutation";
+  updateAllRegistries: { __typename?: "NoneType"; isNone: boolean };
 };
 
 export type DeleteRepositoryRegistryMutationVariables = Exact<{
@@ -1778,18 +2104,191 @@ export type GetDashboardPanelsQuery = {
   };
 };
 
-export type GetBaseMetricsQueryVariables = Exact<{ [key: string]: never }>;
+export type GetCurrentInstanceQueryVariables = Exact<{ [key: string]: never }>;
 
-export type GetBaseMetricsQuery = {
+export type GetCurrentInstanceQuery = {
   __typename?: "Query";
-  getBaseMetrics: {
-    __typename?: "BaseMetricsType";
-    userCount: number;
-    repositoryRegistryCount: number;
-    repoCount: number;
-    unitCount: number;
-    unitNodeCount: number;
-    unitNodeEdgeCount: number;
+  getCurrentInstance: {
+    __typename?: "CurrentInstanceType";
+    schemaVersion: string;
+    name: string;
+    version: string;
+    description: string;
+    license: string;
+    swagger: string;
+    graphql: string;
+    grafana: string;
+    telegramBot: string;
+    featureFlags: {
+      __typename?: "FeatureFlagsType";
+      puFfTelegramBotEnable: boolean;
+      puFfGrafanaIntegrationEnable: boolean;
+      puFfDatapipeEnable: boolean;
+      puFfDatapipeDefaultLastValueEnable: boolean;
+      puFfPrometheusEnable: boolean;
+      puFfFederationEnable: boolean;
+    };
+    settings: {
+      __typename?: "CurrentInstanceSettingsType";
+      puAuthTokenExpiration: number;
+      puMinIntervalSyncRepository: number;
+      puStateSendInterval: number;
+      puMaxExternalRepoSize: number;
+      puMaxCipherLength: number;
+      puHttpTimeout: number;
+      puHttpConnectTimeout: number;
+      puInstanceMaxStateSize: number;
+      puInstanceRetentionDays: number;
+      puUnitLogExpiration: number;
+      puMaxPaginationSize: number;
+      puAvailableTopicSymbols: string;
+      puAvailableNameEntitySymbols: string;
+      puTimeWindowSizes: Array<number>;
+      puMqttHost: string;
+      puMqttSecure: boolean;
+      puMqttPort: number;
+      puMqttKeepalive: number;
+      puMqttMaxClients: number;
+      puMqttMaxClientConnectionRate: string;
+      puMqttMaxClientIdLen: number;
+      puMqttClientMaxMessagesRate: string;
+      puMqttClientMaxBytesRate: string;
+      puMqttMaxPayloadSize: number;
+      puMqttMaxQos: number;
+      puMqttMaxTopicLevels: number;
+      puMqttMaxLenMessageQueue: number;
+      puMqttMaxTopicAlias: number;
+      puGrafanaLimitUnitNodePerOnePanel: number;
+    };
+    state: {
+      __typename?: "CurrentInstanceStateType";
+      instanceDatetime: string;
+      integrationTestsDatetime?: string | null;
+      integrationTestsStatus?: IntegrationTestsStatus | null;
+      integrationTestsSuccessPercentage?: number | null;
+    };
+    metrics: {
+      __typename?: "CurrentInstanceMetricsType";
+      userCount: number;
+      repositoryRegistryCount: number;
+      repoCount: number;
+      unitCount: number;
+      unitNodeCount: number;
+      unitNodeEdgeCount: number;
+    };
+    contacts: {
+      __typename?: "CurrentInstanceContactsType";
+      email: string;
+      telegram: string;
+    };
+  };
+};
+
+export type GetInstancesQueryVariables = Exact<{
+  trustStatus?: InputMaybe<Array<InstanceTrustStatus> | InstanceTrustStatus>;
+  offset?: InputMaybe<Scalars["Int"]["input"]>;
+  limit?: InputMaybe<Scalars["Int"]["input"]>;
+}>;
+
+export type GetInstancesQuery = {
+  __typename?: "Query";
+  getInstances: {
+    __typename?: "InstancesPageType";
+    totalCount: number;
+    instances: Array<{
+      __typename?: "InstanceType";
+      uuid: string;
+      url: string;
+      trustStatus: InstanceTrustStatus;
+      lastPing?: number | null;
+      lastCollectionStatus?: InstanceCollectionStatus | null;
+      lastSuccessDatetime?: string | null;
+      lastAttemptDatetime?: string | null;
+      consecutiveSuccessCount: number;
+      lastCollectionError?: string | null;
+      state?: Record<string, unknown> | null;
+      createDatetime: string;
+    }>;
+  };
+};
+
+export type GetInstancesUrlsQueryVariables = Exact<{
+  trustStatus?: InputMaybe<Array<InstanceTrustStatus> | InstanceTrustStatus>;
+  offset?: InputMaybe<Scalars["Int"]["input"]>;
+  limit?: InputMaybe<Scalars["Int"]["input"]>;
+}>;
+
+export type GetInstancesUrlsQuery = {
+  __typename?: "Query";
+  getInstancesUrls: {
+    __typename?: "InstanceUrlsPageType";
+    totalCount: number;
+    urls: Array<string>;
+  };
+};
+
+export type GetInstancesRegistriesQueryVariables = Exact<{
+  trustStatus?: InputMaybe<Array<InstanceTrustStatus> | InstanceTrustStatus>;
+  offset?: InputMaybe<Scalars["Int"]["input"]>;
+  limit?: InputMaybe<Scalars["Int"]["input"]>;
+}>;
+
+export type GetInstancesRegistriesQuery = {
+  __typename?: "Query";
+  getInstancesRegistries: {
+    __typename?: "InstanceRegistriesPageType";
+    totalCount: number;
+    registries: Array<{
+      __typename?: "InstancePublicRegistryType";
+      url: string;
+      platform: GitPlatform;
+    }>;
+  };
+};
+
+export type GetOperationTaskQueryVariables = Exact<{
+  uuid: Scalars["UUID"]["input"];
+}>;
+
+export type GetOperationTaskQuery = {
+  __typename?: "Query";
+  getOperationTask: {
+    __typename?: "OperationTask";
+    uuid: string;
+    creatorUuid: string;
+    createDatetime: string;
+    startDatetime?: string | null;
+    finishDatetime?: string | null;
+    status: OperationTaskStatus;
+    result?: string | null;
+    taskType: OperationTaskType;
+  };
+};
+
+export type GetOperationTasksQueryVariables = Exact<{
+  creatorUuid?: InputMaybe<Scalars["UUID"]["input"]>;
+  status?: InputMaybe<Array<OperationTaskStatus> | OperationTaskStatus>;
+  taskType?: InputMaybe<Array<OperationTaskType> | OperationTaskType>;
+  offset?: InputMaybe<Scalars["Int"]["input"]>;
+  limit?: InputMaybe<Scalars["Int"]["input"]>;
+}>;
+
+export type GetOperationTasksQuery = {
+  __typename?: "Query";
+  getOperationTasks: {
+    __typename?: "OperationTasksResultType";
+    count: number;
+    operationTasks: Array<{
+      __typename?: "OperationTask";
+      uuid: string;
+      creatorUuid: string;
+      createDatetime: string;
+      startDatetime?: string | null;
+      finishDatetime?: string | null;
+      status: OperationTaskStatus;
+      result?: string | null;
+      taskType: OperationTaskType;
+    }>;
   };
 };
 
@@ -2961,6 +3460,325 @@ export type DeleteLinkMutationOptions = Apollo.BaseMutationOptions<
   DeleteLinkMutation,
   DeleteLinkMutationVariables
 >;
+export const CreateInstanceDocument = gql`
+  mutation createInstance($url: String!) {
+    createInstance(instance: { url: $url }) {
+      uuid
+      url
+      trustStatus
+      lastPing
+      lastCollectionStatus
+      lastSuccessDatetime
+      lastAttemptDatetime
+      consecutiveSuccessCount
+      lastCollectionError
+      state
+      createDatetime
+    }
+  }
+`;
+export type CreateInstanceMutationFn = Apollo.MutationFunction<
+  CreateInstanceMutation,
+  CreateInstanceMutationVariables
+>;
+
+/**
+ * __useCreateInstanceMutation__
+ *
+ * To run a mutation, you first call `useCreateInstanceMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateInstanceMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createInstanceMutation, { data, loading, error }] = useCreateInstanceMutation({
+ *   variables: {
+ *      url: // value for 'url'
+ *   },
+ * });
+ */
+export function useCreateInstanceMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CreateInstanceMutation,
+    CreateInstanceMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    CreateInstanceMutation,
+    CreateInstanceMutationVariables
+  >(CreateInstanceDocument, options);
+}
+export type CreateInstanceMutationHookResult = ReturnType<
+  typeof useCreateInstanceMutation
+>;
+export type CreateInstanceMutationResult =
+  Apollo.MutationResult<CreateInstanceMutation>;
+export type CreateInstanceMutationOptions = Apollo.BaseMutationOptions<
+  CreateInstanceMutation,
+  CreateInstanceMutationVariables
+>;
+export const UpdateInstanceDocument = gql`
+  mutation updateInstance($uuid: UUID!, $trustStatus: InstanceTrustStatus!) {
+    updateInstance(uuid: $uuid, instance: { trustStatus: $trustStatus }) {
+      uuid
+      url
+      trustStatus
+      lastPing
+      lastCollectionStatus
+      lastSuccessDatetime
+      lastAttemptDatetime
+      consecutiveSuccessCount
+      lastCollectionError
+      state
+      createDatetime
+    }
+  }
+`;
+export type UpdateInstanceMutationFn = Apollo.MutationFunction<
+  UpdateInstanceMutation,
+  UpdateInstanceMutationVariables
+>;
+
+/**
+ * __useUpdateInstanceMutation__
+ *
+ * To run a mutation, you first call `useUpdateInstanceMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateInstanceMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateInstanceMutation, { data, loading, error }] = useUpdateInstanceMutation({
+ *   variables: {
+ *      uuid: // value for 'uuid'
+ *      trustStatus: // value for 'trustStatus'
+ *   },
+ * });
+ */
+export function useUpdateInstanceMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpdateInstanceMutation,
+    UpdateInstanceMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    UpdateInstanceMutation,
+    UpdateInstanceMutationVariables
+  >(UpdateInstanceDocument, options);
+}
+export type UpdateInstanceMutationHookResult = ReturnType<
+  typeof useUpdateInstanceMutation
+>;
+export type UpdateInstanceMutationResult =
+  Apollo.MutationResult<UpdateInstanceMutation>;
+export type UpdateInstanceMutationOptions = Apollo.BaseMutationOptions<
+  UpdateInstanceMutation,
+  UpdateInstanceMutationVariables
+>;
+export const DeleteInstanceDocument = gql`
+  mutation deleteInstance($uuid: UUID!) {
+    deleteInstance(uuid: $uuid) {
+      isNone
+    }
+  }
+`;
+export type DeleteInstanceMutationFn = Apollo.MutationFunction<
+  DeleteInstanceMutation,
+  DeleteInstanceMutationVariables
+>;
+
+/**
+ * __useDeleteInstanceMutation__
+ *
+ * To run a mutation, you first call `useDeleteInstanceMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteInstanceMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteInstanceMutation, { data, loading, error }] = useDeleteInstanceMutation({
+ *   variables: {
+ *      uuid: // value for 'uuid'
+ *   },
+ * });
+ */
+export function useDeleteInstanceMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    DeleteInstanceMutation,
+    DeleteInstanceMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    DeleteInstanceMutation,
+    DeleteInstanceMutationVariables
+  >(DeleteInstanceDocument, options);
+}
+export type DeleteInstanceMutationHookResult = ReturnType<
+  typeof useDeleteInstanceMutation
+>;
+export type DeleteInstanceMutationResult =
+  Apollo.MutationResult<DeleteInstanceMutation>;
+export type DeleteInstanceMutationOptions = Apollo.BaseMutationOptions<
+  DeleteInstanceMutation,
+  DeleteInstanceMutationVariables
+>;
+export const ScanInstancesDocument = gql`
+  mutation scanInstances {
+    scanInstances {
+      isNone
+    }
+  }
+`;
+export type ScanInstancesMutationFn = Apollo.MutationFunction<
+  ScanInstancesMutation,
+  ScanInstancesMutationVariables
+>;
+
+/**
+ * __useScanInstancesMutation__
+ *
+ * To run a mutation, you first call `useScanInstancesMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useScanInstancesMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [scanInstancesMutation, { data, loading, error }] = useScanInstancesMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useScanInstancesMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    ScanInstancesMutation,
+    ScanInstancesMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    ScanInstancesMutation,
+    ScanInstancesMutationVariables
+  >(ScanInstancesDocument, options);
+}
+export type ScanInstancesMutationHookResult = ReturnType<
+  typeof useScanInstancesMutation
+>;
+export type ScanInstancesMutationResult =
+  Apollo.MutationResult<ScanInstancesMutation>;
+export type ScanInstancesMutationOptions = Apollo.BaseMutationOptions<
+  ScanInstancesMutation,
+  ScanInstancesMutationVariables
+>;
+export const ScanInstanceDocument = gql`
+  mutation scanInstance($uuid: UUID!) {
+    scanInstance(uuid: $uuid) {
+      isNone
+    }
+  }
+`;
+export type ScanInstanceMutationFn = Apollo.MutationFunction<
+  ScanInstanceMutation,
+  ScanInstanceMutationVariables
+>;
+
+/**
+ * __useScanInstanceMutation__
+ *
+ * To run a mutation, you first call `useScanInstanceMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useScanInstanceMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [scanInstanceMutation, { data, loading, error }] = useScanInstanceMutation({
+ *   variables: {
+ *      uuid: // value for 'uuid'
+ *   },
+ * });
+ */
+export function useScanInstanceMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    ScanInstanceMutation,
+    ScanInstanceMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    ScanInstanceMutation,
+    ScanInstanceMutationVariables
+  >(ScanInstanceDocument, options);
+}
+export type ScanInstanceMutationHookResult = ReturnType<
+  typeof useScanInstanceMutation
+>;
+export type ScanInstanceMutationResult =
+  Apollo.MutationResult<ScanInstanceMutation>;
+export type ScanInstanceMutationOptions = Apollo.BaseMutationOptions<
+  ScanInstanceMutation,
+  ScanInstanceMutationVariables
+>;
+export const RunIntegrationTestsDocument = gql`
+  mutation runIntegrationTests {
+    runIntegrationTests {
+      isNone
+    }
+  }
+`;
+export type RunIntegrationTestsMutationFn = Apollo.MutationFunction<
+  RunIntegrationTestsMutation,
+  RunIntegrationTestsMutationVariables
+>;
+
+/**
+ * __useRunIntegrationTestsMutation__
+ *
+ * To run a mutation, you first call `useRunIntegrationTestsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRunIntegrationTestsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [runIntegrationTestsMutation, { data, loading, error }] = useRunIntegrationTestsMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useRunIntegrationTestsMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    RunIntegrationTestsMutation,
+    RunIntegrationTestsMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    RunIntegrationTestsMutation,
+    RunIntegrationTestsMutationVariables
+  >(RunIntegrationTestsDocument, options);
+}
+export type RunIntegrationTestsMutationHookResult = ReturnType<
+  typeof useRunIntegrationTestsMutation
+>;
+export type RunIntegrationTestsMutationResult =
+  Apollo.MutationResult<RunIntegrationTestsMutation>;
+export type RunIntegrationTestsMutationOptions = Apollo.BaseMutationOptions<
+  RunIntegrationTestsMutation,
+  RunIntegrationTestsMutationVariables
+>;
 export const CreatePermissionDocument = gql`
   mutation createPermission(
     $agentUuid: UUID!
@@ -3575,6 +4393,55 @@ export type UpdateLocalRepositoryMutationResult =
 export type UpdateLocalRepositoryMutationOptions = Apollo.BaseMutationOptions<
   UpdateLocalRepositoryMutation,
   UpdateLocalRepositoryMutationVariables
+>;
+export const UpdateAllRegistriesDocument = gql`
+  mutation updateAllRegistries {
+    updateAllRegistries {
+      isNone
+    }
+  }
+`;
+export type UpdateAllRegistriesMutationFn = Apollo.MutationFunction<
+  UpdateAllRegistriesMutation,
+  UpdateAllRegistriesMutationVariables
+>;
+
+/**
+ * __useUpdateAllRegistriesMutation__
+ *
+ * To run a mutation, you first call `useUpdateAllRegistriesMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateAllRegistriesMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateAllRegistriesMutation, { data, loading, error }] = useUpdateAllRegistriesMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useUpdateAllRegistriesMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpdateAllRegistriesMutation,
+    UpdateAllRegistriesMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    UpdateAllRegistriesMutation,
+    UpdateAllRegistriesMutationVariables
+  >(UpdateAllRegistriesDocument, options);
+}
+export type UpdateAllRegistriesMutationHookResult = ReturnType<
+  typeof useUpdateAllRegistriesMutation
+>;
+export type UpdateAllRegistriesMutationResult =
+  Apollo.MutationResult<UpdateAllRegistriesMutation>;
+export type UpdateAllRegistriesMutationOptions = Apollo.BaseMutationOptions<
+  UpdateAllRegistriesMutation,
+  UpdateAllRegistriesMutationVariables
 >;
 export const DeleteRepositoryRegistryDocument = gql`
   mutation deleteRepositoryRegistry($uuid: UUID!) {
@@ -5089,82 +5956,588 @@ export type GetDashboardPanelsQueryResult = Apollo.QueryResult<
   GetDashboardPanelsQuery,
   GetDashboardPanelsQueryVariables
 >;
-export const GetBaseMetricsDocument = gql`
-  query getBaseMetrics {
-    getBaseMetrics {
-      userCount
-      repositoryRegistryCount
-      repoCount
-      unitCount
-      unitNodeCount
-      unitNodeEdgeCount
+export const GetCurrentInstanceDocument = gql`
+  query getCurrentInstance {
+    getCurrentInstance {
+      schemaVersion
+      name
+      version
+      description
+      license
+      swagger
+      graphql
+      grafana
+      telegramBot
+      featureFlags {
+        puFfTelegramBotEnable
+        puFfGrafanaIntegrationEnable
+        puFfDatapipeEnable
+        puFfDatapipeDefaultLastValueEnable
+        puFfPrometheusEnable
+        puFfFederationEnable
+      }
+      settings {
+        puAuthTokenExpiration
+        puMinIntervalSyncRepository
+        puStateSendInterval
+        puMaxExternalRepoSize
+        puMaxCipherLength
+        puHttpTimeout
+        puHttpConnectTimeout
+        puInstanceMaxStateSize
+        puInstanceRetentionDays
+        puUnitLogExpiration
+        puMaxPaginationSize
+        puAvailableTopicSymbols
+        puAvailableNameEntitySymbols
+        puTimeWindowSizes
+        puMqttHost
+        puMqttSecure
+        puMqttPort
+        puMqttKeepalive
+        puMqttMaxClients
+        puMqttMaxClientConnectionRate
+        puMqttMaxClientIdLen
+        puMqttClientMaxMessagesRate
+        puMqttClientMaxBytesRate
+        puMqttMaxPayloadSize
+        puMqttMaxQos
+        puMqttMaxTopicLevels
+        puMqttMaxLenMessageQueue
+        puMqttMaxTopicAlias
+        puGrafanaLimitUnitNodePerOnePanel
+      }
+      state {
+        instanceDatetime
+        integrationTestsDatetime
+        integrationTestsStatus
+        integrationTestsSuccessPercentage
+      }
+      metrics {
+        userCount
+        repositoryRegistryCount
+        repoCount
+        unitCount
+        unitNodeCount
+        unitNodeEdgeCount
+      }
+      contacts {
+        email
+        telegram
+      }
     }
   }
 `;
 
 /**
- * __useGetBaseMetricsQuery__
+ * __useGetCurrentInstanceQuery__
  *
- * To run a query within a React component, call `useGetBaseMetricsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetBaseMetricsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetCurrentInstanceQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCurrentInstanceQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetBaseMetricsQuery({
+ * const { data, loading, error } = useGetCurrentInstanceQuery({
  *   variables: {
  *   },
  * });
  */
-export function useGetBaseMetricsQuery(
+export function useGetCurrentInstanceQuery(
   baseOptions?: Apollo.QueryHookOptions<
-    GetBaseMetricsQuery,
-    GetBaseMetricsQueryVariables
+    GetCurrentInstanceQuery,
+    GetCurrentInstanceQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<GetBaseMetricsQuery, GetBaseMetricsQueryVariables>(
-    GetBaseMetricsDocument,
-    options,
-  );
+  return Apollo.useQuery<
+    GetCurrentInstanceQuery,
+    GetCurrentInstanceQueryVariables
+  >(GetCurrentInstanceDocument, options);
 }
-export function useGetBaseMetricsLazyQuery(
+export function useGetCurrentInstanceLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
-    GetBaseMetricsQuery,
-    GetBaseMetricsQueryVariables
+    GetCurrentInstanceQuery,
+    GetCurrentInstanceQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<GetBaseMetricsQuery, GetBaseMetricsQueryVariables>(
-    GetBaseMetricsDocument,
-    options,
-  );
+  return Apollo.useLazyQuery<
+    GetCurrentInstanceQuery,
+    GetCurrentInstanceQueryVariables
+  >(GetCurrentInstanceDocument, options);
 }
-export function useGetBaseMetricsSuspenseQuery(
+export function useGetCurrentInstanceSuspenseQuery(
   baseOptions?: Apollo.SuspenseQueryHookOptions<
-    GetBaseMetricsQuery,
-    GetBaseMetricsQueryVariables
+    GetCurrentInstanceQuery,
+    GetCurrentInstanceQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useSuspenseQuery<
-    GetBaseMetricsQuery,
-    GetBaseMetricsQueryVariables
-  >(GetBaseMetricsDocument, options);
+    GetCurrentInstanceQuery,
+    GetCurrentInstanceQueryVariables
+  >(GetCurrentInstanceDocument, options);
 }
-export type GetBaseMetricsQueryHookResult = ReturnType<
-  typeof useGetBaseMetricsQuery
+export type GetCurrentInstanceQueryHookResult = ReturnType<
+  typeof useGetCurrentInstanceQuery
 >;
-export type GetBaseMetricsLazyQueryHookResult = ReturnType<
-  typeof useGetBaseMetricsLazyQuery
+export type GetCurrentInstanceLazyQueryHookResult = ReturnType<
+  typeof useGetCurrentInstanceLazyQuery
 >;
-export type GetBaseMetricsSuspenseQueryHookResult = ReturnType<
-  typeof useGetBaseMetricsSuspenseQuery
+export type GetCurrentInstanceSuspenseQueryHookResult = ReturnType<
+  typeof useGetCurrentInstanceSuspenseQuery
 >;
-export type GetBaseMetricsQueryResult = Apollo.QueryResult<
-  GetBaseMetricsQuery,
-  GetBaseMetricsQueryVariables
+export type GetCurrentInstanceQueryResult = Apollo.QueryResult<
+  GetCurrentInstanceQuery,
+  GetCurrentInstanceQueryVariables
+>;
+export const GetInstancesDocument = gql`
+  query getInstances(
+    $trustStatus: [InstanceTrustStatus!]
+    $offset: Int
+    $limit: Int
+  ) {
+    getInstances(
+      filters: { trustStatus: $trustStatus, offset: $offset, limit: $limit }
+    ) {
+      totalCount
+      instances {
+        uuid
+        url
+        trustStatus
+        lastPing
+        lastCollectionStatus
+        lastSuccessDatetime
+        lastAttemptDatetime
+        consecutiveSuccessCount
+        lastCollectionError
+        state
+        createDatetime
+      }
+    }
+  }
+`;
+
+/**
+ * __useGetInstancesQuery__
+ *
+ * To run a query within a React component, call `useGetInstancesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetInstancesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetInstancesQuery({
+ *   variables: {
+ *      trustStatus: // value for 'trustStatus'
+ *      offset: // value for 'offset'
+ *      limit: // value for 'limit'
+ *   },
+ * });
+ */
+export function useGetInstancesQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetInstancesQuery,
+    GetInstancesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetInstancesQuery, GetInstancesQueryVariables>(
+    GetInstancesDocument,
+    options,
+  );
+}
+export function useGetInstancesLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetInstancesQuery,
+    GetInstancesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetInstancesQuery, GetInstancesQueryVariables>(
+    GetInstancesDocument,
+    options,
+  );
+}
+export function useGetInstancesSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    GetInstancesQuery,
+    GetInstancesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<GetInstancesQuery, GetInstancesQueryVariables>(
+    GetInstancesDocument,
+    options,
+  );
+}
+export type GetInstancesQueryHookResult = ReturnType<
+  typeof useGetInstancesQuery
+>;
+export type GetInstancesLazyQueryHookResult = ReturnType<
+  typeof useGetInstancesLazyQuery
+>;
+export type GetInstancesSuspenseQueryHookResult = ReturnType<
+  typeof useGetInstancesSuspenseQuery
+>;
+export type GetInstancesQueryResult = Apollo.QueryResult<
+  GetInstancesQuery,
+  GetInstancesQueryVariables
+>;
+export const GetInstancesUrlsDocument = gql`
+  query getInstancesUrls(
+    $trustStatus: [InstanceTrustStatus!]
+    $offset: Int
+    $limit: Int
+  ) {
+    getInstancesUrls(
+      filters: { trustStatus: $trustStatus, offset: $offset, limit: $limit }
+    ) {
+      totalCount
+      urls
+    }
+  }
+`;
+
+/**
+ * __useGetInstancesUrlsQuery__
+ *
+ * To run a query within a React component, call `useGetInstancesUrlsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetInstancesUrlsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetInstancesUrlsQuery({
+ *   variables: {
+ *      trustStatus: // value for 'trustStatus'
+ *      offset: // value for 'offset'
+ *      limit: // value for 'limit'
+ *   },
+ * });
+ */
+export function useGetInstancesUrlsQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetInstancesUrlsQuery,
+    GetInstancesUrlsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetInstancesUrlsQuery, GetInstancesUrlsQueryVariables>(
+    GetInstancesUrlsDocument,
+    options,
+  );
+}
+export function useGetInstancesUrlsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetInstancesUrlsQuery,
+    GetInstancesUrlsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    GetInstancesUrlsQuery,
+    GetInstancesUrlsQueryVariables
+  >(GetInstancesUrlsDocument, options);
+}
+export function useGetInstancesUrlsSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    GetInstancesUrlsQuery,
+    GetInstancesUrlsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<
+    GetInstancesUrlsQuery,
+    GetInstancesUrlsQueryVariables
+  >(GetInstancesUrlsDocument, options);
+}
+export type GetInstancesUrlsQueryHookResult = ReturnType<
+  typeof useGetInstancesUrlsQuery
+>;
+export type GetInstancesUrlsLazyQueryHookResult = ReturnType<
+  typeof useGetInstancesUrlsLazyQuery
+>;
+export type GetInstancesUrlsSuspenseQueryHookResult = ReturnType<
+  typeof useGetInstancesUrlsSuspenseQuery
+>;
+export type GetInstancesUrlsQueryResult = Apollo.QueryResult<
+  GetInstancesUrlsQuery,
+  GetInstancesUrlsQueryVariables
+>;
+export const GetInstancesRegistriesDocument = gql`
+  query getInstancesRegistries(
+    $trustStatus: [InstanceTrustStatus!]
+    $offset: Int
+    $limit: Int
+  ) {
+    getInstancesRegistries(
+      filters: { trustStatus: $trustStatus, offset: $offset, limit: $limit }
+    ) {
+      totalCount
+      registries {
+        url
+        platform
+      }
+    }
+  }
+`;
+
+/**
+ * __useGetInstancesRegistriesQuery__
+ *
+ * To run a query within a React component, call `useGetInstancesRegistriesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetInstancesRegistriesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetInstancesRegistriesQuery({
+ *   variables: {
+ *      trustStatus: // value for 'trustStatus'
+ *      offset: // value for 'offset'
+ *      limit: // value for 'limit'
+ *   },
+ * });
+ */
+export function useGetInstancesRegistriesQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetInstancesRegistriesQuery,
+    GetInstancesRegistriesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    GetInstancesRegistriesQuery,
+    GetInstancesRegistriesQueryVariables
+  >(GetInstancesRegistriesDocument, options);
+}
+export function useGetInstancesRegistriesLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetInstancesRegistriesQuery,
+    GetInstancesRegistriesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    GetInstancesRegistriesQuery,
+    GetInstancesRegistriesQueryVariables
+  >(GetInstancesRegistriesDocument, options);
+}
+export function useGetInstancesRegistriesSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    GetInstancesRegistriesQuery,
+    GetInstancesRegistriesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<
+    GetInstancesRegistriesQuery,
+    GetInstancesRegistriesQueryVariables
+  >(GetInstancesRegistriesDocument, options);
+}
+export type GetInstancesRegistriesQueryHookResult = ReturnType<
+  typeof useGetInstancesRegistriesQuery
+>;
+export type GetInstancesRegistriesLazyQueryHookResult = ReturnType<
+  typeof useGetInstancesRegistriesLazyQuery
+>;
+export type GetInstancesRegistriesSuspenseQueryHookResult = ReturnType<
+  typeof useGetInstancesRegistriesSuspenseQuery
+>;
+export type GetInstancesRegistriesQueryResult = Apollo.QueryResult<
+  GetInstancesRegistriesQuery,
+  GetInstancesRegistriesQueryVariables
+>;
+export const GetOperationTaskDocument = gql`
+  query getOperationTask($uuid: UUID!) {
+    getOperationTask(uuid: $uuid) {
+      uuid
+      creatorUuid
+      createDatetime
+      startDatetime
+      finishDatetime
+      status
+      result
+      taskType
+    }
+  }
+`;
+
+/**
+ * __useGetOperationTaskQuery__
+ *
+ * To run a query within a React component, call `useGetOperationTaskQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetOperationTaskQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetOperationTaskQuery({
+ *   variables: {
+ *      uuid: // value for 'uuid'
+ *   },
+ * });
+ */
+export function useGetOperationTaskQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GetOperationTaskQuery,
+    GetOperationTaskQueryVariables
+  > &
+    (
+      | { variables: GetOperationTaskQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetOperationTaskQuery, GetOperationTaskQueryVariables>(
+    GetOperationTaskDocument,
+    options,
+  );
+}
+export function useGetOperationTaskLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetOperationTaskQuery,
+    GetOperationTaskQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    GetOperationTaskQuery,
+    GetOperationTaskQueryVariables
+  >(GetOperationTaskDocument, options);
+}
+export function useGetOperationTaskSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    GetOperationTaskQuery,
+    GetOperationTaskQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<
+    GetOperationTaskQuery,
+    GetOperationTaskQueryVariables
+  >(GetOperationTaskDocument, options);
+}
+export type GetOperationTaskQueryHookResult = ReturnType<
+  typeof useGetOperationTaskQuery
+>;
+export type GetOperationTaskLazyQueryHookResult = ReturnType<
+  typeof useGetOperationTaskLazyQuery
+>;
+export type GetOperationTaskSuspenseQueryHookResult = ReturnType<
+  typeof useGetOperationTaskSuspenseQuery
+>;
+export type GetOperationTaskQueryResult = Apollo.QueryResult<
+  GetOperationTaskQuery,
+  GetOperationTaskQueryVariables
+>;
+export const GetOperationTasksDocument = gql`
+  query getOperationTasks(
+    $creatorUuid: UUID
+    $status: [OperationTaskStatus!]
+    $taskType: [OperationTaskType!]
+    $offset: Int
+    $limit: Int
+  ) {
+    getOperationTasks(
+      filters: {
+        creatorUuid: $creatorUuid
+        status: $status
+        taskType: $taskType
+        offset: $offset
+        limit: $limit
+      }
+    ) {
+      count
+      operationTasks {
+        uuid
+        creatorUuid
+        createDatetime
+        startDatetime
+        finishDatetime
+        status
+        result
+        taskType
+      }
+    }
+  }
+`;
+
+/**
+ * __useGetOperationTasksQuery__
+ *
+ * To run a query within a React component, call `useGetOperationTasksQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetOperationTasksQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetOperationTasksQuery({
+ *   variables: {
+ *      creatorUuid: // value for 'creatorUuid'
+ *      status: // value for 'status'
+ *      taskType: // value for 'taskType'
+ *      offset: // value for 'offset'
+ *      limit: // value for 'limit'
+ *   },
+ * });
+ */
+export function useGetOperationTasksQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetOperationTasksQuery,
+    GetOperationTasksQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    GetOperationTasksQuery,
+    GetOperationTasksQueryVariables
+  >(GetOperationTasksDocument, options);
+}
+export function useGetOperationTasksLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetOperationTasksQuery,
+    GetOperationTasksQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    GetOperationTasksQuery,
+    GetOperationTasksQueryVariables
+  >(GetOperationTasksDocument, options);
+}
+export function useGetOperationTasksSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    GetOperationTasksQuery,
+    GetOperationTasksQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<
+    GetOperationTasksQuery,
+    GetOperationTasksQueryVariables
+  >(GetOperationTasksDocument, options);
+}
+export type GetOperationTasksQueryHookResult = ReturnType<
+  typeof useGetOperationTasksQuery
+>;
+export type GetOperationTasksLazyQueryHookResult = ReturnType<
+  typeof useGetOperationTasksLazyQuery
+>;
+export type GetOperationTasksSuspenseQueryHookResult = ReturnType<
+  typeof useGetOperationTasksSuspenseQuery
+>;
+export type GetOperationTasksQueryResult = Apollo.QueryResult<
+  GetOperationTasksQuery,
+  GetOperationTasksQueryVariables
 >;
 export const GetResourceAgentsDocument = gql`
   query getResourceAgents(

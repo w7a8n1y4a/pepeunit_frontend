@@ -10,7 +10,7 @@ import Header from './components/header/header';
 import { useEffect } from 'react';
 
 import { useUserStore } from '@stores/userStore';
-import { useBackendInfoStore } from '@stores/backendInfoStore';
+import { useBackendInfoStore, GRAFANA_INTEGRATION_ENABLE_FLAG } from '@stores/backendInfoStore';
 import { useSetGrafanaCookiesMutation } from '@rootTypes/compositionFunctions';
 
 const authLink = setContext((_, { headers }) => {
@@ -68,10 +68,13 @@ const client = new ApolloClient({
 
 function GrafanaCookieInitializer() {
 	const [setGrafanaCookies] = useSetGrafanaCookiesMutation();
+	const { backendInfo, error, loading } = useBackendInfoStore();
 
 	useEffect(() => {
+		if (loading || (!backendInfo && !error)) return;
+		if (backendInfo?.feature_flags?.[GRAFANA_INTEGRATION_ENABLE_FLAG] === false) return;
 		setGrafanaCookies();
-	}, [setGrafanaCookies]);
+	}, [setGrafanaCookies, backendInfo, error, loading]);
 
 	return null;
 }
