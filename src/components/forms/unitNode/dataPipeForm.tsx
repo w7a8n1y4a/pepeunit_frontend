@@ -5,6 +5,7 @@ import createYamlFile from '@src/utils/createYamlFile';
 import YAMLEditor from '../../forms/unitNode/ymlEditorForm';
 import { useState, useEffect } from 'react';
 import '../form.css'
+import download_img from '/images/download.svg'
 
 import { useNodeStore } from '@stores/baseStore';
 import { useErrorStore } from '@stores/errorStore';
@@ -254,9 +255,10 @@ export default function DataPipeForm() {
                                 Export YML Config
                             </button>
                             <button 
-                                className="button_add_alter" 
+                                className="button_add_alter button_with_icon" 
                                 onClick={handleExportCSV}
                             >
+                                <img src={download_img} width="18" height="18" alt=""/>
                                 Export CSV Data
                             </button>
                         </div>

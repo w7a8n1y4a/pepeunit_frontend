@@ -13,6 +13,7 @@ import Spinner from '@primitives/spinner'
 import { useUserStore } from '@stores/userStore';
 import { DATAPIPE_ENABLE_FLAG, isFeatureEnabled, useBackendInfoStore } from '@stores/backendInfoStore';
 import {stringToFormat} from '@utils/stringToFormat'
+import formatJsonOrText from '@utils/formatJsonOrText'
 
 export default function UnitNodeContent(){
   const { activeModal } = useModalStore();
@@ -39,9 +40,9 @@ export default function UnitNodeContent(){
           {
             isLoaderActive && (<Spinner/>)
           }
-          <div className='div_unit_message'>
-            {currentNodeData?.state || "No Data"}
-          </div>
+          <pre className='div_unit_message unit_node_state'>
+            {formatJsonOrText(currentNodeData?.state)}
+          </pre>
           {
             user && currentNodeData && (
               <>

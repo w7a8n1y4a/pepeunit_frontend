@@ -278,6 +278,22 @@ input:checked+.slider:before {
     font-size: 15px;
 }
 
+.unit_node_state {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    margin: 0;
+    box-sizing: border-box;
+    text-align: left;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    overflow-x: auto;
+    font-family: Consolas, monospace;
+    font-size: 13px;
+}
+
 .div_unit_error_message {
     border-color: #ff3c00cc;
     color: #ff3c00cc;
@@ -319,7 +335,41 @@ input:checked+.slider:before {
     font-size: 0.85rem;
     line-height: 1.4;
     color: #aaa;
-}   
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.log_toolbar {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.log_toolbar .entity-type-selector {
+    flex: 1;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+
+.log_download {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 6px 0 0 0;
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.log_download:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.log_download:hover:not(:disabled) img {
+    opacity: 0.8;
+} 
 
 .data_pipe_editor {
     padding: 0px;
@@ -357,6 +407,13 @@ input:checked+.slider:before {
     display: flex;
     justify-content: space-between;
     margin-bottom: 10px;
+}
+
+.button_with_icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
 }
 
 
