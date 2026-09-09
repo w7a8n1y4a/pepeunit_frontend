@@ -19,20 +19,10 @@ gql`
     }
 
     query getOperationTasks(
-        $creatorUuid: UUID
-        $status: [OperationTaskStatus!]
-        $taskType: [OperationTaskType!]
-        $offset: Int
-        $limit: Int
+        $filters: OperationTaskFilterInput!
     ) {
         getOperationTasks (
-            filters: {
-                creatorUuid: $creatorUuid
-                status: $status
-                taskType: $taskType
-                offset: $offset
-                limit: $limit
-            }
+            filters: $filters
         ){
             count
             operationTasks {

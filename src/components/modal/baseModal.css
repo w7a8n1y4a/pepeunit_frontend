@@ -4,8 +4,20 @@ dialog {
     border-color: #161818;
     min-width: 400px;
     max-width: 700px;
+    max-height: 90vh;
+    overflow-y: auto;
     background-color: #070909;
     color: #ffffff;
+}
+
+dialog.wide {
+    min-width: min(720px, 96vw);
+    max-width: min(1100px, 96vw);
+}
+
+dialog.extra-wide {
+    min-width: min(960px, 96vw);
+    max-width: min(1400px, 98vw);
 }
 
 .modal_header {

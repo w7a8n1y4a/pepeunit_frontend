@@ -1,12 +1,22 @@
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
-import { useBulkUpdateMutation, UserRole } from '@rootTypes/compositionFunctions'
+import {
+  FetchResult,
+} from '@apollo/client'
+import {
+  useBulkUpdateMutation,
+  useRunIntegrationTestsMutation,
+  useScanInstancesMutation,
+  useUpdateAllRegistriesMutation,
+  UserRole,
+} from '@rootTypes/compositionFunctions'
 import BaseModal from '../modal/baseModal'
 import Spinner from '@primitives/spinner'
 
 import { useModalStore, useNodeStore } from '@stores/baseStore';
 import { useUserStore } from '@stores/userStore';
 import { useErrorStore } from '@stores/errorStore';
-import { useBackendInfoStore } from '@stores/backendInfoStore';
+import { FEDERATION_ENABLE_FLAG, isFeatureEnabled, useBackendInfoStore } from '@stores/backendInfoStore';
+import { useOperationTaskStore } from '@stores/operationTaskStore';
 import useModalHandlers from '@handlers/useModalHandlers';
 
 
@@ -19,15 +29,21 @@ export default function DomainContent(){
   const { openModal } = useModalHandlers();
   const { user } = useUserStore();
   const { backendInfo, loading: backendInfoLoading } = useBackendInfoStore();
+  const { notifyTaskStarted } = useOperationTaskStore();
   const metrics = backendInfo?.metrics;
+  const isFederationEnabled = isFeatureEnabled(backendInfo, FEDERATION_ENABLE_FLAG);
 
   const [bulkUpdate] = useBulkUpdateMutation()
+  const [runIntegrationTests] = useRunIntegrationTestsMutation()
+  const [scanInstances] = useScanInstancesMutation()
+  const [updateAllRegistries] = useUpdateAllRegistriesMutation()
 
-  const handleBulkUpdate = () => {
+  const startTask = (mutation: () => Promise<FetchResult>, message: string) => {
     runAsync(async () => {
-      const result = await bulkUpdate()
+      const result = await mutation()
       if (result.data){
-        setHappy("Unit and Repo update query send")
+        notifyTaskStarted()
+        setHappy(message)
       }
     })
   };
@@ -51,8 +67,31 @@ export default function DomainContent(){
           {
             user?.role === UserRole.Admin && (
               <>
-                <button className="button_open_alter_send" onClick={handleBulkUpdate}>
-                  Update all Repo and Unit
+                <button
+                  className="button_open_alter_send"
+                  onClick={() => startTask(runIntegrationTests, 'Started Integration Tests, it takes 3 minutes or more')}
+                >
+                  Integration Tests
+                </button>
+                {isFederationEnabled && (
+                  <button
+                    className="button_open_alter_send"
+                    onClick={() => startTask(scanInstances, 'Started Scan All Instances')}
+                  >
+                    Scan All Instances
+                  </button>
+                )}
+                <button
+                  className="button_open_alter_send"
+                  onClick={() => startTask(updateAllRegistries, 'Started Update All Registries')}
+                >
+                  Update All Registries
+                </button>
+                <button
+                  className="button_open_alter_send"
+                  onClick={() => startTask(bulkUpdate, 'Started Update All Units Firmware')}
+                >
+                  Update All Units Firmware
                 </button>
               </>
             )

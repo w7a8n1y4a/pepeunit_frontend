@@ -327,6 +327,25 @@ input:checked+.slider:before {
     margin: 0 auto;
 }
 
+.task_result_editor {
+    width: 100%;
+}
+
+.task_result_toolbar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 8px;
+}
+
+.task_result_copy {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+}
+
 .data_pipe_error {
     color: #ff3c00cc;
     padding: 8px;
@@ -443,4 +462,238 @@ input:checked+.slider:before {
 
 .about_license_link:hover {
     text-decoration: underline;
+}
+
+.about_current_url {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 13px;
+    color: #0077ff;
+    min-width: 0;
+}
+
+.about_instance_link {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.about_instance_link .about_current_url {
+    flex: 1;
+    text-align: center;
+}
+
+.about_instance_link .repo_link_button {
+    flex-shrink: 0;
+    margin-left: 4px;
+    margin-top: 0;
+}
+
+.instance_details {
+    gap: 8px;
+}
+
+.instance_details_grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 16px;
+    align-items: start;
+}
+
+.about_table_compact th,
+.about_table_compact td {
+    padding: 3px 8px;
+    font-size: 13px;
+    word-break: break-word;
+}
+
+.instance_details_error {
+    color: #ff3c00cc;
+    font-size: 13px;
+    border: solid 2px #161818;
+    border-radius: 8px;
+    padding: 6px 8px;
+}
+
+.instance_details_about {
+    color: #aaa;
+    font-size: 13px;
+}
+
+.instance_metrics_row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.instance_metric_chip {
+    border: solid 2px #161818;
+    border-radius: 8px;
+    padding: 3px 8px;
+    font-size: 13px;
+}
+
+.instance_details_links {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.instance_settings_grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border: solid 2px #161818;
+}
+
+.instance_setting_item {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 3px 8px;
+    font-size: 12px;
+    border: solid 1px #161818;
+}
+
+.instance_setting_item span:first-child {
+    color: #aaa;
+}
+
+.instance_setting_item span:last-child {
+    text-align: right;
+    word-break: break-all;
+}
+
+@media (max-width: 900px) {
+    .instance_details_grid,
+    .instance_settings_grid,
+    .instance_details_links {
+        grid-template-columns: 1fr;
+    }
+}
+
+.instance_urls_input {
+    width: 100%;
+    min-height: 120px;
+    padding: 10px;
+    margin: 5px 0;
+    border: 3px solid #161818;
+    border-radius: 4px;
+    background-color: #070909;
+    box-sizing: border-box;
+    color: #ffffff;
+    resize: vertical;
+    font-family: inherit;
+}
+
+.instance_urls_input:focus {
+    border-color: #666;
+    outline: none;
+}
+
+.cmp_table_wrap {
+    overflow-x: auto;
+    max-width: 100%;
+}
+
+.cmp_table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.cmp_table th {
+    background-color: #161818;
+    color: #2196F3;
+    padding: 8px 10px;
+    text-align: left;
+    white-space: nowrap;
+    font-weight: normal;
+}
+
+.cmp_table td {
+    padding: 8px 10px;
+    color: #e0e0e0;
+    border-bottom: 2px solid #161818;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+.cmp_table tr:last-child td {
+    border-bottom: none;
+}
+
+.cmp_table tr:hover td {
+    background-color: #1e1e1e;
+}
+
+.cmp_table td:last-child {
+    white-space: normal;
+}
+
+.cmp_table th.cmp_col_task,
+.cmp_table td.cmp_col_task {
+    max-width: 110px;
+    white-space: normal;
+}
+
+.cmp_table th.cmp_col_time,
+.cmp_table td.cmp_col_time {
+    max-width: 72px;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
+.cmp_result_text {
+    white-space: normal;
+    word-break: break-word;
+}
+
+.cmp_poll_countdown {
+    margin-top: 4px;
+    font-size: 12px;
+    color: #777;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.cmp_domain_link,
+.cmp_domain_link:visited {
+    color: #0077ff;
+}
+
+.cmp_toolbar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.cmp_status_trust,
+.cmp_status_success {
+    color: #45a049;
+}
+
+.cmp_status_pending {
+    color: #ffd900cc;
+}
+
+.cmp_status_blocking,
+.cmp_status_error {
+    color: #ff3c00cc;
+}
+
+.cmp_status_timeout {
+    color: #ff8f00;
+}
+
+.cmp_status_running {
+    color: #2196F3;
+}
+
+.instance_info_button {
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
 }

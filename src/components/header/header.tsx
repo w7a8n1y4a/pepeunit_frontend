@@ -18,11 +18,14 @@ import { useState, useCallback, useReducer, useEffect, useRef } from 'react';
 import { useModalStore, useNodeStore, usePickRegistryStore } from '@stores/baseStore';
 import useModalHandlers from '@handlers/useModalHandlers';
 import { useUserStore } from '@stores/userStore';
-import { GRAFANA_INTEGRATION_ENABLE_FLAG, TELEGRAM_BOT_ENABLE_FLAG, isFeatureEnabled, useBackendInfoStore } from '@stores/backendInfoStore';
+import { FEDERATION_ENABLE_FLAG, GRAFANA_INTEGRATION_ENABLE_FLAG, TELEGRAM_BOT_ENABLE_FLAG, isFeatureEnabled, useBackendInfoStore } from '@stores/backendInfoStore';
 import { useErrorStore } from '@stores/errorStore';
 import micro from '/images/micro.svg'
 import grafana from '/images/grafana.svg'
+import instances_icon from '/images/instances.svg'
+import tasks_icon from '/images/tasks.svg'
 import SearchMenu from '../searchMenu/searchMenu';
+import { useOperationTaskStore } from '@stores/operationTaskStore';
 
 export default function Header(){
     const { setHappy, setError } = useErrorStore();
@@ -34,11 +37,13 @@ export default function Header(){
     const { setCurrentPickRegistryData, currentPickRegistryData } = usePickRegistryStore();
     const { user, clearUser } = useUserStore();
     const { backendInfo } = useBackendInfoStore();
+    const { runningCount } = useOperationTaskStore();
     const [, forceUpdate] = useReducer(x => x + 1, 0);
 
     const [login, setLogin ] = useState(user?.login)
     const isTelegramVerificationEnabled = isFeatureEnabled(backendInfo, TELEGRAM_BOT_ENABLE_FLAG);
     const isGrafanaEnabled = isFeatureEnabled(backendInfo, GRAFANA_INTEGRATION_ENABLE_FLAG);
+    const isFederationEnabled = isFeatureEnabled(backendInfo, FEDERATION_ENABLE_FLAG);
 
     const [blockUser] = useBlockUserMutation();
     const [unblockUser] = useUnblockUserMutation();
@@ -150,8 +155,21 @@ export default function Header(){
             <SearchMenu/>
 
             <div className='user_controls'>
+                {isFederationEnabled && (
+                    <button className="signin_button" onClick={() => openModal('instancesList')}>
+                        <img src={instances_icon} width="32" height="32" alt="Instances" />
+                    </button>
+                )}
                 {login ? (
                     <>
+                        <button className="signin_button header_badge_button" onClick={() => openModal('operationTasksList')}>
+                            <img src={tasks_icon} width="32" height="32" alt="Operation Tasks" />
+                            {runningCount > 0 && (
+                                <span className="header_notification_badge">
+                                    {runningCount > 99 ? '99+' : runningCount}
+                                </span>
+                            )}
+                        </button>
                         <button className="signin_button" onClick={() => pickRepoCreate()}>
                             <img src={micro} width="32" height="32" alt="AddRepoImg" />
                         </button>

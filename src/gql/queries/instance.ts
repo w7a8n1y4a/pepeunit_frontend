@@ -73,16 +73,10 @@ gql`
     }
 
     query getInstances(
-        $trustStatus: [InstanceTrustStatus!]
-        $offset: Int
-        $limit: Int
+        $filters: InstanceFilterInput!
     ) {
         getInstances(
-            filters: {
-                trustStatus: $trustStatus
-                offset: $offset
-                limit: $limit
-            }
+            filters: $filters
         ) {
             totalCount
             instances {
@@ -102,16 +96,10 @@ gql`
     }
 
     query getInstancesUrls(
-        $trustStatus: [InstanceTrustStatus!]
-        $offset: Int
-        $limit: Int
+        $filters: InstanceFilterInput!
     ) {
         getInstancesUrls(
-            filters: {
-                trustStatus: $trustStatus
-                offset: $offset
-                limit: $limit
-            }
+            filters: $filters
         ) {
             totalCount
             urls
@@ -119,16 +107,10 @@ gql`
     }
 
     query getInstancesRegistries(
-        $trustStatus: [InstanceTrustStatus!]
-        $offset: Int
-        $limit: Int
+        $filters: InstanceFilterInput!
     ) {
         getInstancesRegistries(
-            filters: {
-                trustStatus: $trustStatus
-                offset: $offset
-                limit: $limit
-            }
+            filters: $filters
         ) {
             totalCount
             registries {

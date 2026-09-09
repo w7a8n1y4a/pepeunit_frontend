@@ -36,9 +36,12 @@ interface ModalProps {
     reloadEntityType?: NodeType | UnitNodeTypeEnum
     copyLink?: string
     showParentEntityButton?: boolean
+    wide?: boolean
+    extraWide?: boolean
+    onReload?: () => void
 }
 
-export default function BaseModal({modalName, subName, visibilityLevel, lastUpdateDatetime, children, open, openModalType, reloadEntityType, copyLink, showParentEntityButton}: ModalProps) {
+export default function BaseModal({modalName, subName, visibilityLevel, lastUpdateDatetime, children, open, openModalType, reloadEntityType, copyLink, showParentEntityButton, wide, extraWide, onReload}: ModalProps) {
     const { openModal, closeModal } = useModalHandlers();
     const { runAsync } = useAsyncHandler();
     const { currentNodeData, setCurrentNodeData } = useNodeStore();
@@ -141,7 +144,7 @@ export default function BaseModal({modalName, subName, visibilityLevel, lastUpda
         })
     }
     return ReactDOM.createPortal(
-        <dialog open={open}>
+        <dialog open={open} className={extraWide ? 'extra-wide' : wide ? 'wide' : undefined}>
             <div className="modal_header">
                 <div className="modal_name">
                     {modalName}
@@ -178,8 +181,19 @@ export default function BaseModal({modalName, subName, visibilityLevel, lastUpda
                         )
                     }
                     {
-                        reloadEntityType && currentNodeData && (
-                            <button className="modal_menu_button" onClick={() => updateData(reloadEntityType)}>
+                        (onReload || (reloadEntityType && currentNodeData)) && (
+                            <button
+                                className="modal_menu_button"
+                                onClick={() => {
+                                    if (onReload) {
+                                        onReload()
+                                        return
+                                    }
+                                    if (reloadEntityType) {
+                                        updateData(reloadEntityType)
+                                    }
+                                }}
+                            >
                                 <img src={reload_img} width="20" height="20" alt="Reload"/>
                             </button>
                         )

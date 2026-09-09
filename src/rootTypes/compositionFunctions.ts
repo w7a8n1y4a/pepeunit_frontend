@@ -2185,9 +2185,7 @@ export type GetCurrentInstanceQuery = {
 };
 
 export type GetInstancesQueryVariables = Exact<{
-  trustStatus?: InputMaybe<Array<InstanceTrustStatus> | InstanceTrustStatus>;
-  offset?: InputMaybe<Scalars["Int"]["input"]>;
-  limit?: InputMaybe<Scalars["Int"]["input"]>;
+  filters: InstanceFilterInput;
 }>;
 
 export type GetInstancesQuery = {
@@ -2213,9 +2211,7 @@ export type GetInstancesQuery = {
 };
 
 export type GetInstancesUrlsQueryVariables = Exact<{
-  trustStatus?: InputMaybe<Array<InstanceTrustStatus> | InstanceTrustStatus>;
-  offset?: InputMaybe<Scalars["Int"]["input"]>;
-  limit?: InputMaybe<Scalars["Int"]["input"]>;
+  filters: InstanceFilterInput;
 }>;
 
 export type GetInstancesUrlsQuery = {
@@ -2228,9 +2224,7 @@ export type GetInstancesUrlsQuery = {
 };
 
 export type GetInstancesRegistriesQueryVariables = Exact<{
-  trustStatus?: InputMaybe<Array<InstanceTrustStatus> | InstanceTrustStatus>;
-  offset?: InputMaybe<Scalars["Int"]["input"]>;
-  limit?: InputMaybe<Scalars["Int"]["input"]>;
+  filters: InstanceFilterInput;
 }>;
 
 export type GetInstancesRegistriesQuery = {
@@ -2266,11 +2260,7 @@ export type GetOperationTaskQuery = {
 };
 
 export type GetOperationTasksQueryVariables = Exact<{
-  creatorUuid?: InputMaybe<Scalars["UUID"]["input"]>;
-  status?: InputMaybe<Array<OperationTaskStatus> | OperationTaskStatus>;
-  taskType?: InputMaybe<Array<OperationTaskType> | OperationTaskType>;
-  offset?: InputMaybe<Scalars["Int"]["input"]>;
-  limit?: InputMaybe<Scalars["Int"]["input"]>;
+  filters: OperationTaskFilterInput;
 }>;
 
 export type GetOperationTasksQuery = {
@@ -6094,14 +6084,8 @@ export type GetCurrentInstanceQueryResult = Apollo.QueryResult<
   GetCurrentInstanceQueryVariables
 >;
 export const GetInstancesDocument = gql`
-  query getInstances(
-    $trustStatus: [InstanceTrustStatus!]
-    $offset: Int
-    $limit: Int
-  ) {
-    getInstances(
-      filters: { trustStatus: $trustStatus, offset: $offset, limit: $limit }
-    ) {
+  query getInstances($filters: InstanceFilterInput!) {
+    getInstances(filters: $filters) {
       totalCount
       instances {
         uuid
@@ -6132,17 +6116,19 @@ export const GetInstancesDocument = gql`
  * @example
  * const { data, loading, error } = useGetInstancesQuery({
  *   variables: {
- *      trustStatus: // value for 'trustStatus'
- *      offset: // value for 'offset'
- *      limit: // value for 'limit'
+ *      filters: // value for 'filters'
  *   },
  * });
  */
 export function useGetInstancesQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions: Apollo.QueryHookOptions<
     GetInstancesQuery,
     GetInstancesQueryVariables
-  >,
+  > &
+    (
+      | { variables: GetInstancesQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
 ) {
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useQuery<GetInstancesQuery, GetInstancesQueryVariables>(
@@ -6188,14 +6174,8 @@ export type GetInstancesQueryResult = Apollo.QueryResult<
   GetInstancesQueryVariables
 >;
 export const GetInstancesUrlsDocument = gql`
-  query getInstancesUrls(
-    $trustStatus: [InstanceTrustStatus!]
-    $offset: Int
-    $limit: Int
-  ) {
-    getInstancesUrls(
-      filters: { trustStatus: $trustStatus, offset: $offset, limit: $limit }
-    ) {
+  query getInstancesUrls($filters: InstanceFilterInput!) {
+    getInstancesUrls(filters: $filters) {
       totalCount
       urls
     }
@@ -6214,17 +6194,19 @@ export const GetInstancesUrlsDocument = gql`
  * @example
  * const { data, loading, error } = useGetInstancesUrlsQuery({
  *   variables: {
- *      trustStatus: // value for 'trustStatus'
- *      offset: // value for 'offset'
- *      limit: // value for 'limit'
+ *      filters: // value for 'filters'
  *   },
  * });
  */
 export function useGetInstancesUrlsQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions: Apollo.QueryHookOptions<
     GetInstancesUrlsQuery,
     GetInstancesUrlsQueryVariables
-  >,
+  > &
+    (
+      | { variables: GetInstancesUrlsQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
 ) {
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useQuery<GetInstancesUrlsQuery, GetInstancesUrlsQueryVariables>(
@@ -6270,14 +6252,8 @@ export type GetInstancesUrlsQueryResult = Apollo.QueryResult<
   GetInstancesUrlsQueryVariables
 >;
 export const GetInstancesRegistriesDocument = gql`
-  query getInstancesRegistries(
-    $trustStatus: [InstanceTrustStatus!]
-    $offset: Int
-    $limit: Int
-  ) {
-    getInstancesRegistries(
-      filters: { trustStatus: $trustStatus, offset: $offset, limit: $limit }
-    ) {
+  query getInstancesRegistries($filters: InstanceFilterInput!) {
+    getInstancesRegistries(filters: $filters) {
       totalCount
       registries {
         url
@@ -6299,17 +6275,19 @@ export const GetInstancesRegistriesDocument = gql`
  * @example
  * const { data, loading, error } = useGetInstancesRegistriesQuery({
  *   variables: {
- *      trustStatus: // value for 'trustStatus'
- *      offset: // value for 'offset'
- *      limit: // value for 'limit'
+ *      filters: // value for 'filters'
  *   },
  * });
  */
 export function useGetInstancesRegistriesQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions: Apollo.QueryHookOptions<
     GetInstancesRegistriesQuery,
     GetInstancesRegistriesQueryVariables
-  >,
+  > &
+    (
+      | { variables: GetInstancesRegistriesQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
 ) {
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useQuery<
@@ -6439,22 +6417,8 @@ export type GetOperationTaskQueryResult = Apollo.QueryResult<
   GetOperationTaskQueryVariables
 >;
 export const GetOperationTasksDocument = gql`
-  query getOperationTasks(
-    $creatorUuid: UUID
-    $status: [OperationTaskStatus!]
-    $taskType: [OperationTaskType!]
-    $offset: Int
-    $limit: Int
-  ) {
-    getOperationTasks(
-      filters: {
-        creatorUuid: $creatorUuid
-        status: $status
-        taskType: $taskType
-        offset: $offset
-        limit: $limit
-      }
-    ) {
+  query getOperationTasks($filters: OperationTaskFilterInput!) {
+    getOperationTasks(filters: $filters) {
       count
       operationTasks {
         uuid
@@ -6482,19 +6446,19 @@ export const GetOperationTasksDocument = gql`
  * @example
  * const { data, loading, error } = useGetOperationTasksQuery({
  *   variables: {
- *      creatorUuid: // value for 'creatorUuid'
- *      status: // value for 'status'
- *      taskType: // value for 'taskType'
- *      offset: // value for 'offset'
- *      limit: // value for 'limit'
+ *      filters: // value for 'filters'
  *   },
  * });
  */
 export function useGetOperationTasksQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions: Apollo.QueryHookOptions<
     GetOperationTasksQuery,
     GetOperationTasksQueryVariables
-  >,
+  > &
+    (
+      | { variables: GetOperationTasksQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    ),
 ) {
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useQuery<

@@ -106,6 +106,27 @@
     gap: 10px;
   }
 
+  .header_badge_button {
+    position: relative;
+  }
+
+  .header_notification_badge {
+    position: absolute;
+    top: -2px;
+    right: -4px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    border-radius: 8px;
+    background: #ff3c00;
+    color: #ffffff;
+    font-size: 10px;
+    line-height: 16px;
+    text-align: center;
+    pointer-events: none;
+    box-sizing: border-box;
+  }
+
   a {
     text-decoration: none;
     color: inherit;

@@ -1,6 +1,9 @@
 import { useEffect } from 'react';
 import Spinner from '@primitives/spinner'
-import { GRAFANA_INTEGRATION_ENABLE_FLAG, TELEGRAM_BOT_ENABLE_FLAG, isFeatureEnabled, useBackendInfoStore } from '@stores/backendInfoStore';
+import copy_img from '/images/copy.svg'
+import copyToClipboard from '@utils/copyToClipboard'
+import showClipboardNotification from '@utils/showClipboardNotification'
+import { GRAFANA_INTEGRATION_ENABLE_FLAG, TELEGRAM_BOT_ENABLE_FLAG, getCurrentInstanceUri, isFeatureEnabled, useBackendInfoStore } from '@stores/backendInfoStore';
 import '../form.css'
 
 const FRONTEND_VERSION = '1.3.0'
@@ -19,6 +22,7 @@ export default function AboutForm() {
     const featureFlags = Object.entries(backendInfo.feature_flags ?? {});
     const isGrafanaEnabled = isFeatureEnabled(backendInfo, GRAFANA_INTEGRATION_ENABLE_FLAG);
     const isTelegramEnabled = isFeatureEnabled(backendInfo, TELEGRAM_BOT_ENABLE_FLAG);
+    const currentInstanceUri = getCurrentInstanceUri();
 
     return (
         <div className="modal_menu_content">
@@ -66,6 +70,22 @@ export default function AboutForm() {
                     </tr>
                 </tbody>
             </table>
+
+            <div className="about_section_title">Current Instance</div>
+            {currentInstanceUri && (
+                <div className="repo_link about_instance_link">
+                    <span className="about_current_url">{currentInstanceUri}</span>
+                    <button
+                        className="repo_link_button"
+                        onClick={(e) => {
+                            copyToClipboard(currentInstanceUri)
+                            showClipboardNotification(e)
+                        }}
+                    >
+                        <img src={copy_img} width="24" height="24" alt="Copy current instance URL"/>
+                    </button>
+                </div>
+            )}
 
             <div className="about_section_title">Links</div>
             <div className="buttons_row">
