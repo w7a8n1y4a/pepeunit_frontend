@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import path from 'path';
+import path from 'node:path'
 import { visualizer } from 'rollup-plugin-visualizer';
 
 // https://vitejs.dev/config/
@@ -15,13 +15,13 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@src': path.resolve(__dirname, './src'),
-      '@components': path.resolve(__dirname, './src/components'),
-      '@utils': path.resolve(__dirname, './src/utils'),
-      '@rootTypes': path.resolve(__dirname, './src/rootTypes'),
-      '@stores': path.resolve(__dirname, './src/components/stores'),
-      '@handlers': path.resolve(__dirname, './src/handlers'),
-      '@primitives': path.resolve(__dirname, './src/components/forms/primitives'),
+      '@src': path.resolve(import.meta.dirname, './src'),
+      '@components': path.resolve(import.meta.dirname, './src/components'),
+      '@utils': path.resolve(import.meta.dirname, './src/utils'),
+      '@rootTypes': path.resolve(import.meta.dirname, './src/rootTypes'),
+      '@stores': path.resolve(import.meta.dirname, './src/components/stores'),
+      '@handlers': path.resolve(import.meta.dirname, './src/handlers'),
+      '@primitives': path.resolve(import.meta.dirname, './src/components/forms/primitives'),
     }
   }
 })

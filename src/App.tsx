@@ -1,10 +1,16 @@
 import GraphContent from './components/mainContent/graphContent'
 import './App.css'
 import { useParams } from "react-router-dom";
-import { onError } from '@apollo/client/link/error';
-import { setContext } from '@apollo/client/link/context';
-import { createUploadLink } from 'apollo-upload-client';
-import { ApolloClient, InMemoryCache, ApolloProvider, from } from '@apollo/client';
+import { ErrorLink } from '@apollo/client/link/error';
+import { SetContextLink } from '@apollo/client/link/context';
+import UploadHttpLink from 'apollo-upload-client/UploadHttpLink.mjs';
+import {
+  ApolloClient,
+  ApolloLink,
+  CombinedGraphQLErrors,
+  InMemoryCache,
+} from '@apollo/client';
+import { ApolloProvider } from '@apollo/client/react';
 import { isAuthTokenExpired } from './utils/isAuthTokenExpired';
 import Header from './components/header/header';
 import { useEffect } from 'react';
@@ -13,46 +19,48 @@ import { useUserStore } from '@stores/userStore';
 import { useBackendInfoStore, GRAFANA_INTEGRATION_ENABLE_FLAG } from '@stores/backendInfoStore';
 import { useSetGrafanaCookiesMutation } from '@rootTypes/compositionFunctions';
 
-const authLink = setContext((_, { headers }) => {
+const authLink = new SetContextLink((prevContext) => {
   const token = localStorage.getItem('token');
 
   if (token && isAuthTokenExpired(token)) {
       localStorage.removeItem('token');
 
       return {
-          headers: { ...headers },
+          ...prevContext,
+          headers: { ...prevContext.headers },
       };
   }
   return {
+    ...prevContext,
     headers: {
-      ...headers,
+      ...prevContext.headers,
       'x-auth-token': token || '',
     },
   };
 });
 
-const errorLink = onError(({ graphQLErrors, networkError }) => {
-  if (graphQLErrors) {
-      if (graphQLErrors[0]?.extensions?.code === 401) {
+const errorLink = new ErrorLink(({ error }) => {
+  if (CombinedGraphQLErrors.is(error)) {
+      if (error.errors[0]?.extensions?.code === 401) {
           console.log('401')
       }
 
-      if (graphQLErrors[0]?.extensions?.code === 403) {
+      if (error.errors[0]?.extensions?.code === 403) {
           console.log('403')
       }
+  } else if (error) {
+      console.error(`[Network error]: ${error.message}`);
   }
-
-  if (networkError) console.error(`[Network error]: ${networkError.message}`);
 });
 
-const uploadLink = createUploadLink({
+const uploadLink = new UploadHttpLink({
   uri: `${import.meta.env.VITE_BACKEND_URI || window.env.VITE_BACKEND_URI}`,
 });
 
 const cache = new InMemoryCache();
 
 const client = new ApolloClient({
-  link: from([authLink, errorLink, uploadLink]),
+  link: ApolloLink.from([authLink, errorLink, uploadLink]),
   cache,
   defaultOptions: {
     watchQuery: {

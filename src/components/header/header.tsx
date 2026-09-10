@@ -109,8 +109,8 @@ export default function Header(){
                     }
                 });
 
-                if (result.errors && result.errors.length) {
-                    setError(result);
+                if (result.error) {
+                    setError(result.error);
                     return;
                 }
 

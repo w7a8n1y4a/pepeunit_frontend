@@ -8,7 +8,7 @@ import './primitives.css'
 interface DefaultInputProps {
     id: string;
     type: string;
-    inputRef?: RefObject<HTMLInputElement>;
+    inputRef?: RefObject<HTMLInputElement | null>;
     placeholder: string;
     value: string;
     validateState: any;

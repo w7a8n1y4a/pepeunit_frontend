@@ -2,12 +2,28 @@ overwrite: true
 schema: 'https://devunit.pepeunit.com/pepeunit/graphql'
 documents: 'src/gql/**/**.ts'
 generates:
-    src/rootTypes/compositionFunctions.ts:
+    src/rootTypes/schemaTypes.ts:
         plugins:
             - typescript
-            - typescript-operations
-            - typescript-react-apollo
         config:
+            skipTypename: false
+            enumsAsTypes: false
+            scalars:
+                Date: string
+                DateTime: string
+                UUID: string
+                Number: number
+                Upload: File
+                JSON: Record<string, unknown>
+    src/rootTypes/generated.ts:
+        plugins:
+            - typescript-operations
+            - typed-document-node
+        config:
+            skipTypename: false
+            onlyOperationTypes: true
+            enumsAsTypes: false
+            preResolveTypes: false
             scalars:
                 Date: string
                 DateTime: string

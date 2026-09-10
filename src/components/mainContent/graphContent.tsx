@@ -15,7 +15,7 @@ import {
   useGetRepositoryRegistryLazyQuery,
   useGetDashboardLazyQuery
 } from '@rootTypes/compositionFunctions'
-import { ForceGraph2D } from 'react-force-graph';
+import ForceGraph2D from 'react-force-graph-2d';
 import { useState, useMemo, useEffect, useRef } from 'react';
 import DomainContent from './domainContent'
 import RegistryContent from './registryContent'

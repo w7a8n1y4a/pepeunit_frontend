@@ -136,7 +136,7 @@ export default function BaseModal({modalName, subName, visibilityLevel, lastUpda
             }
 
             if (targetdata?.uuid){
-                if (targetdata.__typename != 'RepositoryRegistryType'){
+                if (reloadEntityType != NodeType.Registry){
                     updateNodeDataById(targetdata.uuid, targetdata)
                 }
                 setCurrentNodeData(targetdata)

@@ -1,8 +1,5 @@
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import {
-  FetchResult,
-} from '@apollo/client'
-import {
   useBulkUpdateMutation,
   useRunIntegrationTestsMutation,
   useScanInstancesMutation,
@@ -38,7 +35,7 @@ export default function DomainContent(){
   const [scanInstances] = useScanInstancesMutation()
   const [updateAllRegistries] = useUpdateAllRegistriesMutation()
 
-  const startTask = (mutation: () => Promise<FetchResult>, message: string) => {
+  const startTask = (mutation: () => Promise<{ data?: unknown }>, message: string) => {
     runAsync(async () => {
       const result = await mutation()
       if (result.data){

@@ -40,10 +40,12 @@ export const useErrorStore = create<ErrorState>((set) => ({
   setError: (error) => {
     let errorMessage = 'Unknown error';
     
-    if (error?.graphQLErrors?.length) {
-      errorMessage = error.graphQLErrors[0]?.message?.slice(4) || errorMessage;
-    } else if (error?.errors?.length) {
+    if (error?.errors?.length) {
       errorMessage = error.errors[0]?.message?.slice(4) || errorMessage;
+    } else if (error?.graphQLErrors?.length) {
+      errorMessage = error.graphQLErrors[0]?.message?.slice(4) || errorMessage;
+    } else if (typeof error?.message === 'string' && error.message) {
+      errorMessage = error.message.slice(4) || error.message;
     }
     
     set({ 

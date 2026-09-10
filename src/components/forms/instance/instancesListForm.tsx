@@ -104,7 +104,6 @@ export default function InstancesListForm({ refreshNonce = 0, onOpenDetails }: I
         }
 
         const result = await getInstances({
-            fetchPolicy: 'no-cache',
             variables: { filters },
         });
         if (requestId !== loadSeq.current) return;

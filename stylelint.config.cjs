@@ -1,23 +1,13 @@
-const postcssScss = require('postcss-scss');
-const postcssHtml = require('postcss-html');
-
 module.exports = {
     extends: [
         'stylelint-config-standard',
         'stylelint-config-recommended-scss',
-        'stylelint-config-rational-order',
+        'stylelint-config-recess-order',
         'stylelint-prettier/recommended',
     ],
     plugins: ['stylelint-order', 'stylelint-scss', 'stylelint-prettier'],
-    overrides: [
-        {
-            files: ['**/*.ts'],
-            customSyntax: postcssHtml(),
-        },
-    ],
     defaultSeverity: 'warning',
     rules: {
-        "@typescript-eslint/no-explicit-any": "off",
         'prettier/prettier': [
             true,
             {
