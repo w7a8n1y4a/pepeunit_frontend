@@ -22,7 +22,7 @@
     "dayjs": "^1.11.23",
     "dotenv": "^17.4.2",
     "graphql": "^17.0.2",
-    "graphql-tag": "^2.12.6",
+    "graphql-tag": "^2.12.7",
     "postprocessing": "^6.39.5",
     "react": "^19.3.0",
     "react-chartjs-2": "^5.3.1",
