@@ -278,20 +278,46 @@ input:checked+.slider:before {
     font-size: 15px;
 }
 
+.unit_node_menu {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+}
+
 .unit_node_state {
     display: block;
     width: 100%;
     max-width: 100%;
     min-width: 0;
+    min-height: 0;
+    flex: 1 1 auto;
+    max-height: calc(90vh - 280px);
     margin: 0;
     box-sizing: border-box;
     text-align: left;
     white-space: pre-wrap;
     overflow-wrap: anywhere;
     word-break: break-word;
-    overflow-x: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
     font-family: Consolas, monospace;
     font-size: 13px;
+}
+
+.unit_node_actions {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    flex-shrink: 0;
+}
+
+.unit_node_actions .button_add_alter,
+.unit_node_actions .button_open_alter,
+.unit_node_actions .button_core_function {
+    float: none;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .div_unit_error_message {

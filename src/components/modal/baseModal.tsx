@@ -38,10 +38,11 @@ interface ModalProps {
     showParentEntityButton?: boolean
     wide?: boolean
     extraWide?: boolean
+    className?: string
     onReload?: () => void
 }
 
-export default function BaseModal({modalName, subName, visibilityLevel, lastUpdateDatetime, children, open, openModalType, reloadEntityType, copyLink, showParentEntityButton, wide, extraWide, onReload}: ModalProps) {
+export default function BaseModal({modalName, subName, visibilityLevel, lastUpdateDatetime, children, open, openModalType, reloadEntityType, copyLink, showParentEntityButton, wide, extraWide, className, onReload}: ModalProps) {
     const { openModal, closeModal } = useModalHandlers();
     const { runAsync } = useAsyncHandler();
     const { currentNodeData, setCurrentNodeData } = useNodeStore();
@@ -144,7 +145,7 @@ export default function BaseModal({modalName, subName, visibilityLevel, lastUpda
         })
     }
     return ReactDOM.createPortal(
-        <dialog open={open} className={extraWide ? 'extra-wide' : wide ? 'wide' : undefined}>
+        <dialog open={open} className={[extraWide ? 'extra-wide' : wide ? 'wide' : undefined, className].filter(Boolean).join(' ') || undefined}>
             <div className="modal_header">
                 <div className="modal_name">
                     {modalName}

@@ -22,6 +22,20 @@ dialog.extra-wide {
     max-width: min(1400px, 98vw);
 }
 
+dialog.unit_node_modal[open] {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+dialog.unit_node_modal .modal_header,
+dialog.unit_node_modal .modal_last_update,
+dialog.unit_node_modal .result_happy,
+dialog.unit_node_modal .result_default,
+dialog.unit_node_modal .result_angry {
+    flex-shrink: 0;
+}
+
 .modal_header {
     display: flex;
 }

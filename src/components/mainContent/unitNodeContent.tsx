@@ -35,8 +35,9 @@ export default function UnitNodeContent(){
         copyLink={window.location.origin + '/unit-node/' + currentNodeData?.uuid}
         reloadEntityType={currentNodeData?.type}
         showParentEntityButton
+        className="unit_node_modal"
       >
-        <div className="modal_menu_content">
+        <div className="modal_menu_content unit_node_menu">
           {
             isLoaderActive && (<Spinner/>)
           }
@@ -45,7 +46,7 @@ export default function UnitNodeContent(){
           </pre>
           {
             user && currentNodeData && (
-              <>
+              <div className="unit_node_actions">
                 {
                   currentNodeData?.type == UnitNodeTypeEnum.Input && (
                     <>
@@ -81,7 +82,7 @@ export default function UnitNodeContent(){
                     </>
                   )
                 }
-              </>
+              </div>
             )
           }
         </div>
