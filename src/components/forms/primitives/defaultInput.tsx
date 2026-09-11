@@ -28,7 +28,7 @@ export default function DefaultInput({id, type, inputRef, placeholder, value, va
         const validation = validateFunc(validateState);
 
         if (!firstRender.current) {
-            if ((validation === null) !== isValid) {
+            if ((validation === null) !== isValid || validation !== errorMessage) {
                 setIsValid(validation === null);
                 setErrorMessage(validation)
                 setIsErrorExist(validation !== null);
@@ -36,7 +36,7 @@ export default function DefaultInput({id, type, inputRef, placeholder, value, va
         } else {
             firstRender.current = false;
         }
-    }, [validateState, validateFunc, isValid, setIsErrorExist]);
+    }, [validateState, validateFunc, isValid, errorMessage, setIsErrorExist]);
 
     return (
         <div>

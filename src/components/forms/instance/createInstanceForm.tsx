@@ -2,78 +2,70 @@ import { useState } from 'react';
 import { useAsyncHandler } from '@handlers/useAsyncHandler';
 import { useCreateInstanceMutation } from '@rootTypes/compositionFunctions';
 import isValidInstanceUrl from '@utils/isValidInstanceUrl';
+import DefaultInput from '@primitives/defaultInput';
 import Spinner from '@primitives/spinner';
 import '../form.css';
 
 import { useModalStore } from '@stores/baseStore';
 import { useErrorStore } from '@stores/errorStore';
 
-function parseInstanceUrls(raw: string): string[] {
-    return raw
-        .split(/[\n,;\s]+/)
-        .map((url) => url.trim())
-        .filter(Boolean);
-}
-
 export default function CreateInstanceForm() {
     const { setHappy, setError } = useErrorStore();
     const { isLoaderActive, runAsync } = useAsyncHandler();
     const { setActiveModal } = useModalStore();
 
-    const [urlsText, setUrlsText] = useState('');
+    const [url, setUrl] = useState('');
+    const [errorState, setErrorState] = useState({
+        url: true,
+    });
     const [createInstance] = useCreateInstanceMutation();
 
-    const parsedUrls = parseInstanceUrls(urlsText);
-    const invalidUrl = parsedUrls.find((url) => isValidInstanceUrl(url));
-    const canSubmit = parsedUrls.length > 0 && !invalidUrl;
+    const updateErrorState = (field: keyof typeof errorState, hasError: boolean) => {
+        setErrorState((prevState) => ({
+            ...prevState,
+            [field]: hasError,
+        }));
+    };
 
     const handleCreate = () => {
         runAsync(async () => {
-            let created = 0;
+            const result = await createInstance({
+                variables: { url: url.trim() },
+            });
 
-            for (const url of parsedUrls) {
-                const result = await createInstance({
-                    variables: { url }
-                });
-
-                if (!result.data) {
-                    setError(result);
-                    return;
-                }
-
-                created += 1;
+            if (!result.data) {
+                setError(result);
+                return;
             }
 
-            setUrlsText('');
+            setUrl('');
             setActiveModal('instancesList');
-            setHappy(created === 1 ? 'Instance added' : `Created ${created} instances`);
+            setHappy('Instance added');
         });
     };
 
     return (
         <>
             {isLoaderActive && <Spinner />}
-            <div className="modal_menu_content">
-                <div className="about_section_title">Paste /current links</div>
-                <textarea
-                    className="instance_urls_input"
+            <form>
+                <DefaultInput
+                    id="instance_url"
+                    type="text"
                     placeholder="https://host/pepeunit/api/v1/instances/current"
-                    value={urlsText}
-                    onChange={(event) => setUrlsText(event.target.value)}
+                    value={url}
+                    validateState={url}
+                    onChange={setUrl}
+                    validateFunc={isValidInstanceUrl}
+                    setIsErrorExist={(hasError) => updateErrorState('url', hasError)}
                 />
-                {invalidUrl && (
-                    <div className="div_unit_error_message">
-                        {isValidInstanceUrl(invalidUrl)}
-                    </div>
-                )}
-                <button
-                    className="button_main_action"
-                    onClick={handleCreate}
-                    disabled={!canSubmit}
-                >
-                    Add
-                </button>
-            </div>
+            </form>
+            <button
+                className="button_main_action"
+                onClick={handleCreate}
+                disabled={Object.values(errorState).some((isError) => isError)}
+            >
+                Add
+            </button>
         </>
     );
 }

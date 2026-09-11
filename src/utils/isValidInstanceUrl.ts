@@ -1,26 +1,27 @@
 export default function isValidInstanceUrl(value: string) {
-    let errorMessage: null | string = null;
     const url = value.trim();
 
     if (!url) {
-        errorMessage = 'Enter a /current instance URL';
-        return errorMessage;
+        return 'Enter a /current instance URL';
+    }
+
+    if (/\s/.test(url) || url.includes(',') || url.includes(';')) {
+        return 'Enter exactly one instance URL';
+    }
+
+    if (!url.startsWith('https://') && !url.startsWith('http://')) {
+        return 'URL must start with http:// or https://';
+    }
+
+    if (!url.replace(/\/+$/, '').endsWith('/instances/current')) {
+        return 'URL must end with /instances/current';
     }
 
     try {
-        const parsed = new URL(url);
-        if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
-            errorMessage = 'URL scheme must be http or https';
-        } else if (parsed.search || parsed.hash) {
-            errorMessage = 'URL must not include query or fragment';
-        } else if (parsed.username || parsed.password) {
-            errorMessage = 'URL must not include credentials';
-        } else if (!parsed.pathname.replace(/\/+$/, '').endsWith('/instances/current')) {
-            errorMessage = 'URL must end with /instances/current';
-        }
+        new URL(url);
     } catch {
-        errorMessage = 'URL is not correct';
+        return 'URL is not correct';
     }
 
-    return errorMessage;
+    return null;
 }

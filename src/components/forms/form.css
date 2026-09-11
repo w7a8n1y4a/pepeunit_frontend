@@ -662,25 +662,6 @@ input:checked+.slider:before {
     }
 }
 
-.instance_urls_input {
-    width: 100%;
-    min-height: 120px;
-    padding: 10px;
-    margin: 5px 0;
-    border: 3px solid #161818;
-    border-radius: 4px;
-    background-color: #070909;
-    box-sizing: border-box;
-    color: #ffffff;
-    resize: vertical;
-    font-family: inherit;
-}
-
-.instance_urls_input:focus {
-    border-color: #666;
-    outline: none;
-}
-
 .cmp_table_wrap {
     overflow-x: auto;
     max-width: 100%;
