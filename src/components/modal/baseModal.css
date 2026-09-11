@@ -22,6 +22,18 @@ dialog.extra-wide {
     max-width: min(1400px, 98vw);
 }
 
+dialog.logs_modal {
+    width: min(700px, 96vw);
+    overflow-x: hidden;
+}
+
+dialog.logs_modal .unit-env-form,
+dialog.logs_modal .log-entry,
+dialog.logs_modal .log-content {
+    min-width: 0;
+    max-width: 100%;
+}
+
 dialog.unit_node_modal[open] {
     display: flex;
     flex-direction: column;

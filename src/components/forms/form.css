@@ -236,6 +236,8 @@ input:checked+.slider:before {
 .unit-env-form {
     display: flex;
     flex-direction: column;
+    min-width: 0;
+    max-width: 100%;
 }
 
 .buttons_load_firmware {
@@ -337,6 +339,10 @@ input:checked+.slider:before {
     margin-bottom: 12px;
     padding: 8px;
     border-left: 3px solid #161818;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
 }
 
 .log-header {
@@ -369,8 +375,12 @@ input:checked+.slider:before {
     font-size: 0.85rem;
     line-height: 1.4;
     color: #aaa;
+    white-space: pre-wrap;
     overflow-wrap: anywhere;
     word-break: break-word;
+    min-width: 0;
+    max-width: 100%;
+    overflow-x: auto;
 }
 
 .log_toolbar {

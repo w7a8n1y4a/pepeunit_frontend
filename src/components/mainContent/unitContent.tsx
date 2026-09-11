@@ -359,6 +359,7 @@ export default function UnitContent(){
         open={activeModal === 'unitLogsMenu'}
         openModalType='UnitMenu'
         reloadEntityType={NodeType.Unit}
+        className="logs_modal"
         >
         {
           currentNodeData && (
