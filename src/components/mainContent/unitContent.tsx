@@ -198,7 +198,8 @@ export default function UnitContent(){
               'Firmware': "update/pepeunit" in inputCommand,
               'Schema': "schema_update/pepeunit" in inputCommand,
               'Env': "env_update/pepeunit" in inputCommand,
-              'Log': "log_sync/pepeunit" in inputCommand
+              'Log': "log_sync/pepeunit" in inputCommand,
+              'Reset': "reset/pepeunit" in inputCommand
             }
 
             const outputTopics = JSON.parse(currentSchema.data?.getUnitCurrentSchema)['output_base_topic']
@@ -313,6 +314,13 @@ export default function UnitContent(){
                           availableCommand['Log'] && (
                             <button className="button_load_data_grid" onClick={() => handleSendUnitCommand(BackendTopicCommand.LogSync)}>
                               Log
+                            </button>
+                          )
+                        }
+                        {
+                          availableCommand['Reset'] && (
+                            <button className="button_load_data_grid" onClick={() => handleSendUnitCommand(BackendTopicCommand.Reset)}>
+                              Reset
                             </button>
                           )
                         }
