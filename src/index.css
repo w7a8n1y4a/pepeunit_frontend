@@ -34,3 +34,8 @@ body {
 *::after {
   font-family: var(--font-family);
 }
+
+.monaco-editor,
+.monaco-editor * {
+  font-family: monospace;
+}

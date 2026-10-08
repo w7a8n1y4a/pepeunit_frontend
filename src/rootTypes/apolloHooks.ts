@@ -44,6 +44,15 @@ import {
   RunIntegrationTestsDocument,
   type RunIntegrationTestsMutation,
   type RunIntegrationTestsMutationVariables,
+  MarkNotificationReadDocument,
+  type MarkNotificationReadMutation,
+  type MarkNotificationReadMutationVariables,
+  MarkAllNotificationsReadDocument,
+  type MarkAllNotificationsReadMutation,
+  type MarkAllNotificationsReadMutationVariables,
+  UpdateNotificationSettingsDocument,
+  type UpdateNotificationSettingsMutation,
+  type UpdateNotificationSettingsMutationVariables,
   CreatePermissionDocument,
   type CreatePermissionMutation,
   type CreatePermissionMutationVariables,
@@ -161,6 +170,12 @@ import {
   GetInstancesRegistriesDocument,
   type GetInstancesRegistriesQuery,
   type GetInstancesRegistriesQueryVariables,
+  GetNotificationsDocument,
+  type GetNotificationsQuery,
+  type GetNotificationsQueryVariables,
+  GetNotificationSettingsDocument,
+  type GetNotificationSettingsQuery,
+  type GetNotificationSettingsQueryVariables,
   GetOperationTaskDocument,
   type GetOperationTaskQuery,
   type GetOperationTaskQueryVariables,
@@ -267,6 +282,9 @@ export {
   ScanInstancesDocument,
   ScanInstanceDocument,
   RunIntegrationTestsDocument,
+  MarkNotificationReadDocument,
+  MarkAllNotificationsReadDocument,
+  UpdateNotificationSettingsDocument,
   CreatePermissionDocument,
   DeletePermissionDocument,
   CreateRepoDocument,
@@ -306,6 +324,8 @@ export {
   GetInstancesDocument,
   GetInstancesUrlsDocument,
   GetInstancesRegistriesDocument,
+  GetNotificationsDocument,
+  GetNotificationSettingsDocument,
   GetOperationTaskDocument,
   GetOperationTasksDocument,
   GetResourceAgentsDocument,
@@ -364,6 +384,12 @@ export type {
   ScanInstanceMutationVariables,
   RunIntegrationTestsMutation,
   RunIntegrationTestsMutationVariables,
+  MarkNotificationReadMutation,
+  MarkNotificationReadMutationVariables,
+  MarkAllNotificationsReadMutation,
+  MarkAllNotificationsReadMutationVariables,
+  UpdateNotificationSettingsMutation,
+  UpdateNotificationSettingsMutationVariables,
   CreatePermissionMutation,
   CreatePermissionMutationVariables,
   DeletePermissionMutation,
@@ -442,6 +468,10 @@ export type {
   GetInstancesUrlsQueryVariables,
   GetInstancesRegistriesQuery,
   GetInstancesRegistriesQueryVariables,
+  GetNotificationsQuery,
+  GetNotificationsQueryVariables,
+  GetNotificationSettingsQuery,
+  GetNotificationSettingsQueryVariables,
   GetOperationTaskQuery,
   GetOperationTaskQueryVariables,
   GetOperationTasksQuery,
@@ -619,6 +649,33 @@ export function useRunIntegrationTestsMutation(
   >,
 ) {
   return useMutation(RunIntegrationTestsDocument, options as any);
+}
+
+export function useMarkNotificationReadMutation(
+  options?: MutationHookOptions<
+    MarkNotificationReadMutation,
+    MarkNotificationReadMutationVariables
+  >,
+) {
+  return useMutation(MarkNotificationReadDocument, options as any);
+}
+
+export function useMarkAllNotificationsReadMutation(
+  options?: MutationHookOptions<
+    MarkAllNotificationsReadMutation,
+    MarkAllNotificationsReadMutationVariables
+  >,
+) {
+  return useMutation(MarkAllNotificationsReadDocument, options as any);
+}
+
+export function useUpdateNotificationSettingsMutation(
+  options?: MutationHookOptions<
+    UpdateNotificationSettingsMutation,
+    UpdateNotificationSettingsMutationVariables
+  >,
+) {
+  return useMutation(UpdateNotificationSettingsDocument, options as any);
 }
 
 export function useCreatePermissionMutation(
@@ -1015,6 +1072,42 @@ export function useGetInstancesRegistriesLazyQuery(
   >,
 ) {
   return useLazyQuery(GetInstancesRegistriesDocument, options as any);
+}
+
+export function useGetNotificationsQuery(
+  options?: QueryHookOptions<
+    GetNotificationsQuery,
+    GetNotificationsQueryVariables
+  >,
+) {
+  return useQuery(GetNotificationsDocument, options as any);
+}
+
+export function useGetNotificationsLazyQuery(
+  options?: LazyQueryHookOptions<
+    GetNotificationsQuery,
+    GetNotificationsQueryVariables
+  >,
+) {
+  return useLazyQuery(GetNotificationsDocument, options as any);
+}
+
+export function useGetNotificationSettingsQuery(
+  options?: QueryHookOptions<
+    GetNotificationSettingsQuery,
+    GetNotificationSettingsQueryVariables
+  >,
+) {
+  return useQuery(GetNotificationSettingsDocument, options as any);
+}
+
+export function useGetNotificationSettingsLazyQuery(
+  options?: LazyQueryHookOptions<
+    GetNotificationSettingsQuery,
+    GetNotificationSettingsQueryVariables
+  >,
+) {
+  return useLazyQuery(GetNotificationSettingsDocument, options as any);
 }
 
 export function useGetOperationTaskQuery(

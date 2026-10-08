@@ -66,7 +66,7 @@ export default function TaskResultEditor({ taskUuid, fallbackResult }: TaskResul
                 options={{
                     readOnly: true,
                     fontSize: 14,
-                    fontFamily: 'Consolas, monospace',
+                    fontFamily: 'monospace',
                     lineHeight: 20,
                     minimap: { enabled: false },
                     scrollBeyondLastLine: false,

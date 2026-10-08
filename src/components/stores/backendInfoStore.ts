@@ -7,12 +7,14 @@ export interface FeatureFlags {
     pu_ff_datapipe_default_last_value_enable: boolean
     pu_ff_prometheus_enable: boolean
     pu_ff_federation_enable: boolean
+    pu_ff_notification_enable: boolean
 }
 
 export const TELEGRAM_BOT_ENABLE_FLAG: keyof FeatureFlags = 'pu_ff_telegram_bot_enable';
 export const GRAFANA_INTEGRATION_ENABLE_FLAG: keyof FeatureFlags = 'pu_ff_grafana_integration_enable';
 export const DATAPIPE_ENABLE_FLAG: keyof FeatureFlags = 'pu_ff_datapipe_enable';
 export const FEDERATION_ENABLE_FLAG: keyof FeatureFlags = 'pu_ff_federation_enable';
+export const NOTIFICATION_ENABLE_FLAG: keyof FeatureFlags = 'pu_ff_notification_enable';
 
 export interface CurrentInstanceSettings {
     pu_auth_token_expiration: number

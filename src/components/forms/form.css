@@ -311,7 +311,7 @@ input:checked+.slider:before {
     overflow-x: hidden;
     overflow-y: auto;
     overscroll-behavior: contain;
-    font-family: Consolas, monospace;
+    font-family: monospace;
     font-size: 13px;
 }
 
@@ -778,4 +778,67 @@ input:checked+.slider:before {
     cursor: pointer;
     display: inline-flex;
     align-items: center;
+}
+
+.ntf_toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.ntf_filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.ntf_action_button {
+    padding: 8px 14px;
+    font-size: 14px;
+    color: #fff;
+    cursor: pointer;
+    background-color: transparent;
+    border: solid 3px #161818;
+    border-radius: 10px;
+}
+
+.ntf_action_button:hover:not(:disabled) {
+    border-color: #666;
+}
+
+.ntf_action_button:disabled {
+    cursor: not-allowed;
+    opacity: 0.4;
+}
+
+.ntf_text_row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.ntf_preview {
+    max-width: 420px;
+    overflow: hidden;
+    font-family: monospace;
+    color: #e0e0e0;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ntf_read .ntf_preview {
+    color: #888;
+}
+
+.ntf_hint {
+    margin: 2px 0 8px;
+    font-size: 13px;
+    color: #777;
+}
+
+.ntf_save_button:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
 }

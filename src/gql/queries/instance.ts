@@ -19,6 +19,7 @@ gql`
                 puFfDatapipeDefaultLastValueEnable
                 puFfPrometheusEnable
                 puFfFederationEnable
+                puFfNotificationEnable
             }
             settings {
                 puAuthTokenExpiration

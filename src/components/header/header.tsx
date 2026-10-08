@@ -9,6 +9,7 @@ import VerificationForm from '../forms/user/verificationForm';
 import ChangeLoginForm from '../forms/user/changeLoginForm';
 import ChangePassForm from '../forms/user/changePassForm';
 import AboutForm from '../forms/user/aboutForm';
+import NotificationSettingsForm from '../forms/notification/notificationSettingsForm';
 import CreateRepoForm from '../forms/repo/createRepoForm'
 import Spinner from '@primitives/spinner'
 import { UserRole, useBlockUserMutation, useUnblockUserMutation, useDeleteUserCookiesMutation, useGetConvertTomlToMdLazyQuery } from '@rootTypes/compositionFunctions'
@@ -18,14 +19,16 @@ import { useState, useCallback, useReducer, useEffect, useRef } from 'react';
 import { useModalStore, useNodeStore, usePickRegistryStore } from '@stores/baseStore';
 import useModalHandlers from '@handlers/useModalHandlers';
 import { useUserStore } from '@stores/userStore';
-import { FEDERATION_ENABLE_FLAG, GRAFANA_INTEGRATION_ENABLE_FLAG, TELEGRAM_BOT_ENABLE_FLAG, isFeatureEnabled, useBackendInfoStore } from '@stores/backendInfoStore';
+import { FEDERATION_ENABLE_FLAG, GRAFANA_INTEGRATION_ENABLE_FLAG, NOTIFICATION_ENABLE_FLAG, TELEGRAM_BOT_ENABLE_FLAG, isFeatureEnabled, useBackendInfoStore } from '@stores/backendInfoStore';
 import { useErrorStore } from '@stores/errorStore';
 import micro from '/images/micro.svg'
 import grafana from '/images/grafana.svg'
 import instances_icon from '/images/instances.svg'
 import tasks_icon from '/images/tasks.svg'
+import notifications_icon from '/images/notifications.svg'
 import SearchMenu from '../searchMenu/searchMenu';
 import { useOperationTaskStore } from '@stores/operationTaskStore';
+import { useNotificationStore } from '@stores/notificationStore';
 
 export default function Header(){
     const { setHappy, setError } = useErrorStore();
@@ -38,12 +41,14 @@ export default function Header(){
     const { user, clearUser } = useUserStore();
     const { backendInfo } = useBackendInfoStore();
     const { runningCount } = useOperationTaskStore();
+    const { unreadCount } = useNotificationStore();
     const [, forceUpdate] = useReducer(x => x + 1, 0);
 
     const [login, setLogin ] = useState(user?.login)
     const isTelegramVerificationEnabled = isFeatureEnabled(backendInfo, TELEGRAM_BOT_ENABLE_FLAG);
     const isGrafanaEnabled = isFeatureEnabled(backendInfo, GRAFANA_INTEGRATION_ENABLE_FLAG);
     const isFederationEnabled = isFeatureEnabled(backendInfo, FEDERATION_ENABLE_FLAG);
+    const isNotificationsEnabled = backendInfo?.feature_flags?.[NOTIFICATION_ENABLE_FLAG] === true;
 
     const [blockUser] = useBlockUserMutation();
     const [unblockUser] = useUnblockUserMutation();
@@ -170,6 +175,16 @@ export default function Header(){
                                 </span>
                             )}
                         </button>
+                        {isNotificationsEnabled && (
+                            <button className="signin_button header_badge_button" onClick={() => openModal('notificationsList')}>
+                                <img src={notifications_icon} width="32" height="32" alt="Notifications" />
+                                {unreadCount > 0 && (
+                                    <span className="header_notification_badge">
+                                        {unreadCount > 99 ? '99+' : unreadCount}
+                                    </span>
+                                )}
+                            </button>
+                        )}
                         <button className="signin_button" onClick={() => pickRepoCreate()}>
                             <img src={micro} width="32" height="32" alt="AddRepoImg" />
                         </button>
@@ -229,6 +244,11 @@ export default function Header(){
                                     {isTelegramVerificationEnabled && (
                                         <button className="button_telegram" onClick={() => openModal('verification')}>
                                             Telegram Verification
+                                        </button>
+                                    )}
+                                    {isNotificationsEnabled && (
+                                        <button className="button_open_alter" onClick={() => openModal('notificationSettings')}>
+                                            Notification Settings
                                         </button>
                                     )}
 
@@ -319,6 +339,16 @@ export default function Header(){
                 >
                     <AboutForm />
                 </BaseModal>
+                {isNotificationsEnabled && (
+                    <BaseModal
+                        modalName='Notification Settings'
+                        subName={user?.login}
+                        open={activeModal === 'notificationSettings'}
+                        openModalType='UserMenu'
+                    >
+                        <NotificationSettingsForm />
+                    </BaseModal>
+                )}
             </div>
         </header>
     );

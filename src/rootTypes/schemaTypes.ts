@@ -251,6 +251,7 @@ export type DataPipeFilterInput = {
 
 export enum DataPipeStage {
   ActivePeriod = "ACTIVE_PERIOD",
+  Alerts = "ALERTS",
   Filters = "FILTERS",
   ProcessingPolicy = "PROCESSING_POLICY",
   Transformations = "TRANSFORMATIONS",
@@ -268,6 +269,7 @@ export type FeatureFlagsType = {
   puFfDatapipeEnable: Scalars["Boolean"]["output"];
   puFfFederationEnable: Scalars["Boolean"]["output"];
   puFfGrafanaIntegrationEnable: Scalars["Boolean"]["output"];
+  puFfNotificationEnable: Scalars["Boolean"]["output"];
   puFfPrometheusEnable: Scalars["Boolean"]["output"];
   puFfTelegramBotEnable: Scalars["Boolean"]["output"];
 };
@@ -397,6 +399,8 @@ export type Mutation = {
   deleteUnitNodeEdge: NoneType;
   deleteUserCookies: NoneType;
   linkUnitNodeToPanel: UnitNodeForPanelType;
+  markAllNotificationsRead: Scalars["Int"]["output"];
+  markNotificationRead: Notification;
   resetUnitEnv: NoneType;
   runIntegrationTests: NoneType;
   scanInstance: NoneType;
@@ -413,6 +417,7 @@ export type Mutation = {
   updateAllRegistries: NoneType;
   updateInstance: InstanceType;
   updateLocalRepository: NoneType;
+  updateNotificationSettings: NotificationSettings;
   updateRepo: RepoType;
   updateUnit: UnitType;
   updateUnitEnv: NoneType;
@@ -508,6 +513,10 @@ export type MutationLinkUnitNodeToPanelArgs = {
   dashboard: LinkUnitNodeToPanelInput;
 };
 
+export type MutationMarkNotificationReadArgs = {
+  uuid: Scalars["UUID"]["input"];
+};
+
 export type MutationResetUnitEnvArgs = {
   uuid: Scalars["UUID"]["input"];
 };
@@ -563,6 +572,10 @@ export type MutationUpdateLocalRepositoryArgs = {
   uuid: Scalars["UUID"]["input"];
 };
 
+export type MutationUpdateNotificationSettingsArgs = {
+  data: NotificationSettingsUpdateInput;
+};
+
 export type MutationUpdateRepoArgs = {
   repo: RepoUpdateInput;
   uuid: Scalars["UUID"]["input"];
@@ -607,6 +620,53 @@ export type NRecordsTypeTimeWindowTypeAggregationTypeLastValueType =
 export type NoneType = {
   __typename?: "NoneType";
   isNone: Scalars["Boolean"]["output"];
+};
+
+export type Notification = {
+  __typename?: "Notification";
+  createDatetime: Scalars["DateTime"]["output"];
+  isRead: Scalars["Boolean"]["output"];
+  readDatetime?: Maybe<Scalars["DateTime"]["output"]>;
+  text: Scalars["String"]["output"];
+  type: NotificationType;
+  userUuid: Scalars["UUID"]["output"];
+  uuid: Scalars["UUID"]["output"];
+};
+
+export type NotificationFilterInput = {
+  isRead?: InputMaybe<Scalars["Boolean"]["input"]>;
+  limit?: Scalars["Int"]["input"];
+  offset?: Scalars["Int"]["input"];
+  type?: InputMaybe<Array<NotificationType>>;
+};
+
+export type NotificationSettings = {
+  __typename?: "NotificationSettings";
+  isDataPipeAlertEnable: Scalars["Boolean"]["output"];
+  isScheduledAlertEnable: Scalars["Boolean"]["output"];
+  isTelegramAlertEnable: Scalars["Boolean"]["output"];
+  scheduledNotificationTime: Scalars["String"]["output"];
+  userUuid: Scalars["UUID"]["output"];
+  uuid: Scalars["UUID"]["output"];
+};
+
+export type NotificationSettingsUpdateInput = {
+  isDataPipeAlertEnable?: InputMaybe<Scalars["Boolean"]["input"]>;
+  isScheduledAlertEnable?: InputMaybe<Scalars["Boolean"]["input"]>;
+  isTelegramAlertEnable?: InputMaybe<Scalars["Boolean"]["input"]>;
+  scheduledNotificationTime?: InputMaybe<Scalars["String"]["input"]>;
+};
+
+export enum NotificationType {
+  DataPipeAlert = "DATA_PIPE_ALERT",
+  InstanceDailyState = "INSTANCE_DAILY_STATE",
+  UnitDailySummary = "UNIT_DAILY_SUMMARY",
+}
+
+export type NotificationsResultType = {
+  __typename?: "NotificationsResultType";
+  count: Scalars["Int"]["output"];
+  notifications: Array<Notification>;
 };
 
 export type OneRepositoryRegistryCredentialsType = {
@@ -738,6 +798,9 @@ export type Query = {
   getInstances: InstancesPageType;
   getInstancesRegistries: InstanceRegistriesPageType;
   getInstancesUrls: InstanceUrlsPageType;
+  getNotification: Notification;
+  getNotificationSettings: NotificationSettings;
+  getNotifications: NotificationsResultType;
   getOperationTask: OperationTask;
   getOperationTasks: OperationTasksResultType;
   getPipeData: PipeDataResultType;
@@ -811,6 +874,14 @@ export type QueryGetInstancesRegistriesArgs = {
 
 export type QueryGetInstancesUrlsArgs = {
   filters: InstanceFilterInput;
+};
+
+export type QueryGetNotificationArgs = {
+  uuid: Scalars["UUID"]["input"];
+};
+
+export type QueryGetNotificationsArgs = {
+  filters: NotificationFilterInput;
 };
 
 export type QueryGetOperationTaskArgs = {

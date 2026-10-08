@@ -63,6 +63,7 @@ import type {
   MutationDeleteUnitArgs,
   MutationDeleteUnitNodeEdgeArgs,
   MutationLinkUnitNodeToPanelArgs,
+  MutationMarkNotificationReadArgs,
   MutationResetUnitEnvArgs,
   MutationScanInstanceArgs,
   MutationSendCommandToInputBaseTopicArgs,
@@ -75,6 +76,7 @@ import type {
   MutationUnblockUserArgs,
   MutationUpdateInstanceArgs,
   MutationUpdateLocalRepositoryArgs,
+  MutationUpdateNotificationSettingsArgs,
   MutationUpdateRepoArgs,
   MutationUpdateUnitArgs,
   MutationUpdateUnitEnvArgs,
@@ -84,6 +86,12 @@ import type {
   NRecordsType,
   NRecordsTypeTimeWindowTypeAggregationTypeLastValueType,
   NoneType,
+  Notification,
+  NotificationFilterInput,
+  NotificationSettings,
+  NotificationSettingsUpdateInput,
+  NotificationType,
+  NotificationsResultType,
   OneRepositoryRegistryCredentialsType,
   OperationTask,
   OperationTaskFilterInput,
@@ -113,6 +121,8 @@ import type {
   QueryGetInstancesArgs,
   QueryGetInstancesRegistriesArgs,
   QueryGetInstancesUrlsArgs,
+  QueryGetNotificationArgs,
+  QueryGetNotificationsArgs,
   QueryGetOperationTaskArgs,
   QueryGetOperationTasksArgs,
   QueryGetPipeDataArgs,
@@ -377,6 +387,45 @@ export type RunIntegrationTestsMutationVariables = Exact<{
 
 export type RunIntegrationTestsMutation = {
   runIntegrationTests: { isNone: boolean };
+};
+
+export type MarkNotificationReadMutationVariables = Exact<{
+  uuid: string;
+}>;
+
+export type MarkNotificationReadMutation = {
+  markNotificationRead: {
+    uuid: string;
+    createDatetime: string;
+    type: NotificationType;
+    text: string;
+    isRead: boolean;
+    readDatetime: string | null;
+    userUuid: string;
+  };
+};
+
+export type MarkAllNotificationsReadMutationVariables = Exact<{
+  [key: string]: never;
+}>;
+
+export type MarkAllNotificationsReadMutation = {
+  markAllNotificationsRead: number;
+};
+
+export type UpdateNotificationSettingsMutationVariables = Exact<{
+  data: NotificationSettingsUpdateInput;
+}>;
+
+export type UpdateNotificationSettingsMutation = {
+  updateNotificationSettings: {
+    uuid: string;
+    userUuid: string;
+    isScheduledAlertEnable: boolean;
+    scheduledNotificationTime: string;
+    isDataPipeAlertEnable: boolean;
+    isTelegramAlertEnable: boolean;
+  };
 };
 
 export type CreatePermissionMutationVariables = Exact<{
@@ -911,6 +960,7 @@ export type GetCurrentInstanceQuery = {
       puFfDatapipeDefaultLastValueEnable: boolean;
       puFfPrometheusEnable: boolean;
       puFfFederationEnable: boolean;
+      puFfNotificationEnable: boolean;
     };
     settings: {
       puAuthTokenExpiration: number;
@@ -1000,6 +1050,40 @@ export type GetInstancesRegistriesQuery = {
   getInstancesRegistries: {
     totalCount: number;
     registries: Array<{ url: string; platform: GitPlatform }>;
+  };
+};
+
+export type GetNotificationsQueryVariables = Exact<{
+  filters: NotificationFilterInput;
+}>;
+
+export type GetNotificationsQuery = {
+  getNotifications: {
+    count: number;
+    notifications: Array<{
+      uuid: string;
+      createDatetime: string;
+      type: NotificationType;
+      text: string;
+      isRead: boolean;
+      readDatetime: string | null;
+      userUuid: string;
+    }>;
+  };
+};
+
+export type GetNotificationSettingsQueryVariables = Exact<{
+  [key: string]: never;
+}>;
+
+export type GetNotificationSettingsQuery = {
+  getNotificationSettings: {
+    uuid: string;
+    userUuid: string;
+    isScheduledAlertEnable: boolean;
+    scheduledNotificationTime: string;
+    isDataPipeAlertEnable: boolean;
+    isTelegramAlertEnable: boolean;
   };
 };
 
@@ -2703,6 +2787,156 @@ export const RunIntegrationTestsDocument = {
 } as unknown as DocumentNode<
   RunIntegrationTestsMutation,
   RunIntegrationTestsMutationVariables
+>;
+export const MarkNotificationReadDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "markNotificationRead" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "uuid" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "UUID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "markNotificationRead" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "uuid" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "uuid" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "uuid" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "createDatetime" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "type" } },
+                { kind: "Field", name: { kind: "Name", value: "text" } },
+                { kind: "Field", name: { kind: "Name", value: "isRead" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "readDatetime" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "userUuid" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  MarkNotificationReadMutation,
+  MarkNotificationReadMutationVariables
+>;
+export const MarkAllNotificationsReadDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "markAllNotificationsRead" },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "markAllNotificationsRead" },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  MarkAllNotificationsReadMutation,
+  MarkAllNotificationsReadMutationVariables
+>;
+export const UpdateNotificationSettingsDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "updateNotificationSettings" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "data" } },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "NotificationSettingsUpdateInput" },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "updateNotificationSettings" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "data" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "data" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "uuid" } },
+                { kind: "Field", name: { kind: "Name", value: "userUuid" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "isScheduledAlertEnable" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "scheduledNotificationTime" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "isDataPipeAlertEnable" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "isTelegramAlertEnable" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  UpdateNotificationSettingsMutation,
+  UpdateNotificationSettingsMutationVariables
 >;
 export const CreatePermissionDocument = {
   kind: "Document",
@@ -5948,6 +6182,10 @@ export const GetCurrentInstanceDocument = {
                         kind: "Field",
                         name: { kind: "Name", value: "puFfFederationEnable" },
                       },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "puFfNotificationEnable" },
+                      },
                     ],
                   },
                 },
@@ -6415,6 +6653,133 @@ export const GetInstancesRegistriesDocument = {
 } as unknown as DocumentNode<
   GetInstancesRegistriesQuery,
   GetInstancesRegistriesQueryVariables
+>;
+export const GetNotificationsDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "getNotifications" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "filters" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "NotificationFilterInput" },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "getNotifications" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "filters" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "filters" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "count" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "notifications" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "uuid" } },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "createDatetime" },
+                      },
+                      { kind: "Field", name: { kind: "Name", value: "type" } },
+                      { kind: "Field", name: { kind: "Name", value: "text" } },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "isRead" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "readDatetime" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "userUuid" },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  GetNotificationsQuery,
+  GetNotificationsQueryVariables
+>;
+export const GetNotificationSettingsDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "getNotificationSettings" },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "getNotificationSettings" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "uuid" } },
+                { kind: "Field", name: { kind: "Name", value: "userUuid" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "isScheduledAlertEnable" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "scheduledNotificationTime" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "isDataPipeAlertEnable" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "isTelegramAlertEnable" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  GetNotificationSettingsQuery,
+  GetNotificationSettingsQueryVariables
 >;
 export const GetOperationTaskDocument = {
   kind: "Document",

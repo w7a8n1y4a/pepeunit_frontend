@@ -77,7 +77,7 @@ const YAMLEditor = ({
         theme='vs-dark'
         options={{
           fontSize: 16,
-          fontFamily: "Consolas, monospace",
+          fontFamily: "monospace",
           lineHeight: 20,
           minimap: { enabled: false },
           scrollBeyondLastLine: false,
