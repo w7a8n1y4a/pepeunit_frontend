@@ -29,7 +29,6 @@ import useModalHandlers from '@handlers/useModalHandlers';
 import { useModalStore } from '@stores/baseStore';
 import { FEDERATION_ENABLE_FLAG, isFeatureEnabled, useBackendInfoStore } from '@stores/backendInfoStore';
 import { useErrorStore } from '@stores/errorStore';
-import { useOperationTaskStore } from '@stores/operationTaskStore';
 import { useUserStore } from '@stores/userStore';
 
 type InstanceRow = GetInstancesQuery['getInstances']['instances'][number];
@@ -66,8 +65,6 @@ export default function InstancesListForm({ refreshNonce = 0, onOpenDetails }: I
     const { openModal } = useModalHandlers();
     const { user } = useUserStore();
     const { backendInfo } = useBackendInfoStore();
-    const { notifyTaskStarted } = useOperationTaskStore();
-
     const isAdmin = user?.role === UserRole.Admin;
     const isFederationEnabled = isFeatureEnabled(backendInfo, FEDERATION_ENABLE_FLAG);
 
@@ -167,7 +164,6 @@ export default function InstancesListForm({ refreshNonce = 0, onOpenDetails }: I
                 variables: { uuid }
             });
             if (result.data) {
-                notifyTaskStarted();
                 setHappy('Started instance scan');
             }
         });
@@ -177,7 +173,6 @@ export default function InstancesListForm({ refreshNonce = 0, onOpenDetails }: I
         runAsync(async () => {
             const result = await scanInstances();
             if (result.data) {
-                notifyTaskStarted();
                 setHappy('Started scan all instances');
             }
         });

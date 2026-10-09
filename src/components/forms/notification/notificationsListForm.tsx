@@ -18,11 +18,19 @@ import '../form.css';
 import { useModalStore } from '@stores/baseStore';
 import { useNotificationStore } from '@stores/notificationStore';
 import { useErrorStore } from '@stores/errorStore';
+import NotificationTableHint from './notificationTableHint';
 
 const ALL_TYPES = [
     NotificationType.InstanceDailyState,
     NotificationType.UnitDailySummary,
     NotificationType.DataPipeAlert,
+    NotificationType.IntegrationTests,
+    NotificationType.ScanAllInstances,
+    NotificationType.ScanInstance,
+    NotificationType.UpdateAllRegistries,
+    NotificationType.UpdateRegistry,
+    NotificationType.UpdateUnitsFirmware,
+    NotificationType.UpdateAllUnitsFirmware,
 ];
 
 const READ_FILTERS = [
@@ -33,17 +41,6 @@ const READ_FILTERS = [
 
 type ReadFilter = (typeof READ_FILTERS)[number]['id'];
 type NotificationRow = GetNotificationsQuery['getNotifications']['notifications'][number];
-
-const PREVIEW_LIMIT = 96;
-
-function notificationPreview(text: string): { preview: string; isLarge: boolean } {
-    const singleLine = text.replace(/\s+/g, ' ').trim();
-    const isLarge = text.includes('\n') || singleLine.length > PREVIEW_LIMIT;
-    const preview = singleLine.length > PREVIEW_LIMIT
-        ? `${singleLine.slice(0, PREVIEW_LIMIT)}…`
-        : singleLine;
-    return { preview, isLarge };
-}
 
 interface NotificationsListFormProps {
     onOpenText: (notification: NotificationRow) => void
@@ -56,6 +53,7 @@ export default function NotificationsListForm({ onOpenText }: NotificationsListF
     const { unreadCount, refreshNonce, notifyChanged } = useNotificationStore();
 
     const [readFilter, setReadFilter] = useState<ReadFilter>('all');
+    const [typesOpen, setTypesOpen] = useState(false);
     const [selectedTypes, setSelectedTypes] = useState<NotificationType[]>(ALL_TYPES);
     const [currentPage, setCurrentPage] = useState(0);
     const [totalCount, setTotalCount] = useState(0);
@@ -143,6 +141,7 @@ export default function NotificationsListForm({ onOpenText }: NotificationsListF
     };
 
     const totalPages = Math.max(1, Math.ceil(totalCount / itemsPerPage));
+    const typesFiltered = selectedTypes.length > 0 && selectedTypes.length < ALL_TYPES.length;
 
     return (
         <>
@@ -154,6 +153,12 @@ export default function NotificationsListForm({ onOpenText }: NotificationsListF
                     disabled={unreadCount === 0}
                 >
                     Mark all read
+                </button>
+                <button
+                    className={`ntf_action_button ${typesOpen || typesFiltered ? 'active' : ''}`}
+                    onClick={() => setTypesOpen((open) => !open)}
+                >
+                    Types
                 </button>
             </div>
             <div className="ntf_filters">
@@ -167,17 +172,19 @@ export default function NotificationsListForm({ onOpenText }: NotificationsListF
                     </button>
                 ))}
             </div>
-            <div className="ntf_filters">
-                {ALL_TYPES.map((type) => (
-                    <button
-                        key={type}
-                        className={`entity-button ${selectedTypes.includes(type) ? 'active' : ''}`}
-                        onClick={() => toggleType(type)}
-                    >
-                        {enumToLabel(type)}
-                    </button>
-                ))}
-            </div>
+            {typesOpen && (
+                <div className="ntf_filters">
+                    {ALL_TYPES.map((type) => (
+                        <button
+                            key={type}
+                            className={`entity-button ${selectedTypes.includes(type) ? 'active' : ''}`}
+                            onClick={() => toggleType(type)}
+                        >
+                            {enumToLabel(type)}
+                        </button>
+                    ))}
+                </div>
+            )}
             <div className="cmp_table_wrap">
                 <table className="cmp_table">
                     <thead>
@@ -195,20 +202,24 @@ export default function NotificationsListForm({ onOpenText }: NotificationsListF
                                     No notifications found
                                 </td>
                             </tr>
-                        ) : notifications.map((notification) => {
-                            const { preview, isLarge } = notificationPreview(notification.text);
-                            return (
+                        ) : notifications.map((notification) => (
                             <tr key={notification.uuid} className={notification.isRead ? 'ntf_read' : 'ntf_unread'}>
                                 <td className="cmp_col_task">{enumToLabel(notification.type)}</td>
                                 <td className="ntf_text_cell">
                                     <div className="ntf_text_row">
-                                        <span className="ntf_preview">{preview}</span>
-                                        {isLarge && (
+                                        {notification.tableText ? (
+                                            <NotificationTableHint text={notification.tableText}>
+                                                {notification.smallText}
+                                            </NotificationTableHint>
+                                        ) : (
+                                            <span className="ntf_preview">{notification.smallText}</span>
+                                        )}
+                                        {notification.bigText && (
                                             <button
                                                 className="instance_info_button"
                                                 onClick={() => onOpenText(notification)}
                                             >
-                                                <img src={attention_img} width="20" height="20" alt="Open text" />
+                                                <img src={attention_img} width="20" height="20" alt="Open log" />
                                             </button>
                                         )}
                                     </div>
@@ -229,8 +240,7 @@ export default function NotificationsListForm({ onOpenText }: NotificationsListF
                                     )}
                                 </td>
                             </tr>
-                            );
-                        })}
+                        ))}
                     </tbody>
                 </table>
             </div>

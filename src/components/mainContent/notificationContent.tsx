@@ -92,8 +92,8 @@ export default function NotificationContent() {
                 openModalType="notificationsList"
                 extraWide
             >
-                {selectedNotification && (
-                    <NotificationTextView text={selectedNotification.text} />
+                {selectedNotification?.bigText && (
+                    <NotificationTextView text={selectedNotification.bigText} />
                 )}
             </BaseModal>
         </>

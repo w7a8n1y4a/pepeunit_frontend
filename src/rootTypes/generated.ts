@@ -93,11 +93,6 @@ import type {
   NotificationType,
   NotificationsResultType,
   OneRepositoryRegistryCredentialsType,
-  OperationTask,
-  OperationTaskFilterInput,
-  OperationTaskStatus,
-  OperationTaskType,
-  OperationTasksResultType,
   OrderByDate,
   OrderByText,
   PermissionCreateInput,
@@ -123,8 +118,6 @@ import type {
   QueryGetInstancesUrlsArgs,
   QueryGetNotificationArgs,
   QueryGetNotificationsArgs,
-  QueryGetOperationTaskArgs,
-  QueryGetOperationTasksArgs,
   QueryGetPipeDataArgs,
   QueryGetRepoArgs,
   QueryGetReposArgs,
@@ -398,7 +391,9 @@ export type MarkNotificationReadMutation = {
     uuid: string;
     createDatetime: string;
     type: NotificationType;
-    text: string;
+    smallText: string;
+    tableText: string;
+    bigText: string | null;
     isRead: boolean;
     readDatetime: string | null;
     userUuid: string;
@@ -1064,7 +1059,9 @@ export type GetNotificationsQuery = {
       uuid: string;
       createDatetime: string;
       type: NotificationType;
-      text: string;
+      smallText: string;
+      tableText: string;
+      bigText: string | null;
       isRead: boolean;
       readDatetime: string | null;
       userUuid: string;
@@ -1084,43 +1081,6 @@ export type GetNotificationSettingsQuery = {
     scheduledNotificationTime: string;
     isDataPipeAlertEnable: boolean;
     isTelegramAlertEnable: boolean;
-  };
-};
-
-export type GetOperationTaskQueryVariables = Exact<{
-  uuid: string;
-}>;
-
-export type GetOperationTaskQuery = {
-  getOperationTask: {
-    uuid: string;
-    creatorUuid: string;
-    createDatetime: string;
-    startDatetime: string | null;
-    finishDatetime: string | null;
-    status: OperationTaskStatus;
-    result: string | null;
-    taskType: OperationTaskType;
-  };
-};
-
-export type GetOperationTasksQueryVariables = Exact<{
-  filters: OperationTaskFilterInput;
-}>;
-
-export type GetOperationTasksQuery = {
-  getOperationTasks: {
-    count: number;
-    operationTasks: Array<{
-      uuid: string;
-      creatorUuid: string;
-      createDatetime: string;
-      startDatetime: string | null;
-      finishDatetime: string | null;
-      status: OperationTaskStatus;
-      result: string | null;
-      taskType: OperationTaskType;
-    }>;
   };
 };
 
@@ -2830,7 +2790,9 @@ export const MarkNotificationReadDocument = {
                   name: { kind: "Name", value: "createDatetime" },
                 },
                 { kind: "Field", name: { kind: "Name", value: "type" } },
-                { kind: "Field", name: { kind: "Name", value: "text" } },
+                { kind: "Field", name: { kind: "Name", value: "smallText" } },
+                { kind: "Field", name: { kind: "Name", value: "tableText" } },
+                { kind: "Field", name: { kind: "Name", value: "bigText" } },
                 { kind: "Field", name: { kind: "Name", value: "isRead" } },
                 {
                   kind: "Field",
@@ -6709,7 +6671,18 @@ export const GetNotificationsDocument = {
                         name: { kind: "Name", value: "createDatetime" },
                       },
                       { kind: "Field", name: { kind: "Name", value: "type" } },
-                      { kind: "Field", name: { kind: "Name", value: "text" } },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "smallText" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "tableText" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "bigText" },
+                      },
                       {
                         kind: "Field",
                         name: { kind: "Name", value: "isRead" },
@@ -6780,162 +6753,6 @@ export const GetNotificationSettingsDocument = {
 } as unknown as DocumentNode<
   GetNotificationSettingsQuery,
   GetNotificationSettingsQueryVariables
->;
-export const GetOperationTaskDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "query",
-      name: { kind: "Name", value: "getOperationTask" },
-      variableDefinitions: [
-        {
-          kind: "VariableDefinition",
-          variable: { kind: "Variable", name: { kind: "Name", value: "uuid" } },
-          type: {
-            kind: "NonNullType",
-            type: { kind: "NamedType", name: { kind: "Name", value: "UUID" } },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "getOperationTask" },
-            arguments: [
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "uuid" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "uuid" },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                { kind: "Field", name: { kind: "Name", value: "uuid" } },
-                { kind: "Field", name: { kind: "Name", value: "creatorUuid" } },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "createDatetime" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "startDatetime" },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "finishDatetime" },
-                },
-                { kind: "Field", name: { kind: "Name", value: "status" } },
-                { kind: "Field", name: { kind: "Name", value: "result" } },
-                { kind: "Field", name: { kind: "Name", value: "taskType" } },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  GetOperationTaskQuery,
-  GetOperationTaskQueryVariables
->;
-export const GetOperationTasksDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "query",
-      name: { kind: "Name", value: "getOperationTasks" },
-      variableDefinitions: [
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "filters" },
-          },
-          type: {
-            kind: "NonNullType",
-            type: {
-              kind: "NamedType",
-              name: { kind: "Name", value: "OperationTaskFilterInput" },
-            },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "getOperationTasks" },
-            arguments: [
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "filters" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "filters" },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                { kind: "Field", name: { kind: "Name", value: "count" } },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "operationTasks" },
-                  selectionSet: {
-                    kind: "SelectionSet",
-                    selections: [
-                      { kind: "Field", name: { kind: "Name", value: "uuid" } },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "creatorUuid" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "createDatetime" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "startDatetime" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "finishDatetime" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "status" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "result" },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "taskType" },
-                      },
-                    ],
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  GetOperationTasksQuery,
-  GetOperationTasksQueryVariables
 >;
 export const GetResourceAgentsDocument = {
   kind: "Document",

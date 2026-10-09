@@ -808,6 +808,10 @@ input:checked+.slider:before {
     border-color: #666;
 }
 
+.ntf_action_button.active {
+    border-color: #007bff;
+}
+
 .ntf_action_button:disabled {
     cursor: not-allowed;
     opacity: 0.4;
@@ -841,4 +845,23 @@ input:checked+.slider:before {
 .ntf_save_button:disabled {
     cursor: not-allowed;
     opacity: 0.45;
+}
+
+.ntf_table_tooltip {
+    position: fixed;
+    z-index: 10000;
+    max-width: min(720px, calc(100vw - 16px));
+    max-height: min(420px, calc(100vh - 16px));
+    padding: 10px 12px;
+    margin: 0;
+    overflow: auto;
+    font-family: monospace;
+    font-size: 12px;
+    line-height: 1.35;
+    color: #e0e0e0;
+    white-space: pre;
+    pointer-events: none;
+    background-color: #070909;
+    border: solid 2px #161818;
+    border-radius: 8px;
 }

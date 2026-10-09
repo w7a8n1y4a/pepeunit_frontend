@@ -624,10 +624,12 @@ export type NoneType = {
 
 export type Notification = {
   __typename?: "Notification";
+  bigText?: Maybe<Scalars["String"]["output"]>;
   createDatetime: Scalars["DateTime"]["output"];
   isRead: Scalars["Boolean"]["output"];
   readDatetime?: Maybe<Scalars["DateTime"]["output"]>;
-  text: Scalars["String"]["output"];
+  smallText: Scalars["String"]["output"];
+  tableText: Scalars["String"]["output"];
   type: NotificationType;
   userUuid: Scalars["UUID"]["output"];
   uuid: Scalars["UUID"]["output"];
@@ -660,7 +662,14 @@ export type NotificationSettingsUpdateInput = {
 export enum NotificationType {
   DataPipeAlert = "DATA_PIPE_ALERT",
   InstanceDailyState = "INSTANCE_DAILY_STATE",
+  IntegrationTests = "INTEGRATION_TESTS",
+  ScanAllInstances = "SCAN_ALL_INSTANCES",
+  ScanInstance = "SCAN_INSTANCE",
   UnitDailySummary = "UNIT_DAILY_SUMMARY",
+  UpdateAllRegistries = "UPDATE_ALL_REGISTRIES",
+  UpdateAllUnitsFirmware = "UPDATE_ALL_UNITS_FIRMWARE",
+  UpdateRegistry = "UPDATE_REGISTRY",
+  UpdateUnitsFirmware = "UPDATE_UNITS_FIRMWARE",
 }
 
 export type NotificationsResultType = {
@@ -673,48 +682,6 @@ export type OneRepositoryRegistryCredentialsType = {
   __typename?: "OneRepositoryRegistryCredentialsType";
   credentials: CredentialsType;
   status: CredentialStatus;
-};
-
-export type OperationTask = {
-  __typename?: "OperationTask";
-  createDatetime: Scalars["DateTime"]["output"];
-  creatorUuid: Scalars["UUID"]["output"];
-  finishDatetime?: Maybe<Scalars["DateTime"]["output"]>;
-  result?: Maybe<Scalars["String"]["output"]>;
-  startDatetime?: Maybe<Scalars["DateTime"]["output"]>;
-  status: OperationTaskStatus;
-  taskType: OperationTaskType;
-  uuid: Scalars["UUID"]["output"];
-};
-
-export type OperationTaskFilterInput = {
-  creatorUuid?: InputMaybe<Scalars["UUID"]["input"]>;
-  limit?: Scalars["Int"]["input"];
-  offset?: Scalars["Int"]["input"];
-  status?: InputMaybe<Array<OperationTaskStatus>>;
-  taskType?: InputMaybe<Array<OperationTaskType>>;
-};
-
-export enum OperationTaskStatus {
-  Error = "ERROR",
-  Running = "RUNNING",
-  Success = "SUCCESS",
-}
-
-export enum OperationTaskType {
-  IntegrationTests = "INTEGRATION_TESTS",
-  ScanAllInstances = "SCAN_ALL_INSTANCES",
-  ScanInstance = "SCAN_INSTANCE",
-  UpdateAllRegistries = "UPDATE_ALL_REGISTRIES",
-  UpdateAllUnitsFirmware = "UPDATE_ALL_UNITS_FIRMWARE",
-  UpdateRegistry = "UPDATE_REGISTRY",
-  UpdateUnitsFirmware = "UPDATE_UNITS_FIRMWARE",
-}
-
-export type OperationTasksResultType = {
-  __typename?: "OperationTasksResultType";
-  count: Scalars["Int"]["output"];
-  operationTasks: Array<OperationTask>;
 };
 
 export enum OrderByDate {
@@ -801,8 +768,6 @@ export type Query = {
   getNotification: Notification;
   getNotificationSettings: NotificationSettings;
   getNotifications: NotificationsResultType;
-  getOperationTask: OperationTask;
-  getOperationTasks: OperationTasksResultType;
   getPipeData: PipeDataResultType;
   getRepo: RepoType;
   getRepos: ReposResultType;
@@ -882,14 +847,6 @@ export type QueryGetNotificationArgs = {
 
 export type QueryGetNotificationsArgs = {
   filters: NotificationFilterInput;
-};
-
-export type QueryGetOperationTaskArgs = {
-  uuid: Scalars["UUID"]["input"];
-};
-
-export type QueryGetOperationTasksArgs = {
-  filters: OperationTaskFilterInput;
 };
 
 export type QueryGetPipeDataArgs = {

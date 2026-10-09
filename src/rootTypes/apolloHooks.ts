@@ -176,12 +176,6 @@ import {
   GetNotificationSettingsDocument,
   type GetNotificationSettingsQuery,
   type GetNotificationSettingsQueryVariables,
-  GetOperationTaskDocument,
-  type GetOperationTaskQuery,
-  type GetOperationTaskQueryVariables,
-  GetOperationTasksDocument,
-  type GetOperationTasksQuery,
-  type GetOperationTasksQueryVariables,
   GetResourceAgentsDocument,
   type GetResourceAgentsQuery,
   type GetResourceAgentsQueryVariables,
@@ -326,8 +320,6 @@ export {
   GetInstancesRegistriesDocument,
   GetNotificationsDocument,
   GetNotificationSettingsDocument,
-  GetOperationTaskDocument,
-  GetOperationTasksDocument,
   GetResourceAgentsDocument,
   GetRepoDocument,
   GetReposDocument,
@@ -472,10 +464,6 @@ export type {
   GetNotificationsQueryVariables,
   GetNotificationSettingsQuery,
   GetNotificationSettingsQueryVariables,
-  GetOperationTaskQuery,
-  GetOperationTaskQueryVariables,
-  GetOperationTasksQuery,
-  GetOperationTasksQueryVariables,
   GetResourceAgentsQuery,
   GetResourceAgentsQueryVariables,
   GetRepoQuery,
@@ -1108,42 +1096,6 @@ export function useGetNotificationSettingsLazyQuery(
   >,
 ) {
   return useLazyQuery(GetNotificationSettingsDocument, options as any);
-}
-
-export function useGetOperationTaskQuery(
-  options?: QueryHookOptions<
-    GetOperationTaskQuery,
-    GetOperationTaskQueryVariables
-  >,
-) {
-  return useQuery(GetOperationTaskDocument, options as any);
-}
-
-export function useGetOperationTaskLazyQuery(
-  options?: LazyQueryHookOptions<
-    GetOperationTaskQuery,
-    GetOperationTaskQueryVariables
-  >,
-) {
-  return useLazyQuery(GetOperationTaskDocument, options as any);
-}
-
-export function useGetOperationTasksQuery(
-  options?: QueryHookOptions<
-    GetOperationTasksQuery,
-    GetOperationTasksQueryVariables
-  >,
-) {
-  return useQuery(GetOperationTasksDocument, options as any);
-}
-
-export function useGetOperationTasksLazyQuery(
-  options?: LazyQueryHookOptions<
-    GetOperationTasksQuery,
-    GetOperationTasksQueryVariables
-  >,
-) {
-  return useLazyQuery(GetOperationTasksDocument, options as any);
 }
 
 export function useGetResourceAgentsQuery(

@@ -24,7 +24,6 @@ import UnitContent from './unitContent';
 import UnitNodeContent from './unitNodeContent';
 import GrafanaContent from './grafanaContent'
 import InstanceContent from './instanceContent'
-import OperationTaskContent from './operationTaskContent'
 import NotificationContent from './notificationContent'
 import BaseModal from '../modal/baseModal'
 import SearchForm from '../forms/search/searchForm';
@@ -621,7 +620,6 @@ export default function GraphContent({routerType, routerUuid}: GraphContentProps
       <UnitNodeContent/>
       <GrafanaContent/>
       <InstanceContent/>
-      <OperationTaskContent/>
       <NotificationContent/>
     </>
   )

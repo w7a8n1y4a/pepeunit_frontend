@@ -12,7 +12,6 @@ import { useGraphStore } from '@stores/graphStore';
 import { useModalStore, useNodeStore } from '@stores/baseStore';
 import { useUserStore } from '@stores/userStore';
 import { useErrorStore } from '@stores/errorStore';
-import { useOperationTaskStore } from '@stores/operationTaskStore';
 import useModalHandlers from '@handlers/useModalHandlers';
 
 import {
@@ -22,7 +21,6 @@ import { NodeType } from '@src/rootTypes/nodeTypeEnum';
 
 export default function RepoContent(){
   const { setHappy } = useErrorStore();
-  const { notifyTaskStarted } = useOperationTaskStore();
   const { isLoaderActive, runAsync } = useAsyncHandler();
 
   const { activeModal, setActiveModal } = useModalStore();
@@ -49,7 +47,6 @@ export default function RepoContent(){
           }
         )
         if (result.data){
-          notifyTaskStarted()
           setHappy("Unit`s update query send")
         }
       }

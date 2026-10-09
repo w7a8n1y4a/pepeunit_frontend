@@ -10,7 +10,9 @@ gql`
             uuid
             createDatetime
             type
-            text
+            smallText
+            tableText
+            bigText
             isRead
             readDatetime
             userUuid

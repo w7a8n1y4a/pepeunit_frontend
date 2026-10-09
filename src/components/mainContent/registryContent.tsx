@@ -16,7 +16,6 @@ import { useGraphStore } from '@stores/graphStore';
 import { useModalStore, useNodeStore, usePickRegistryStore } from '@stores/baseStore';
 import { useUserStore } from '@stores/userStore';
 import { useErrorStore } from '@stores/errorStore';
-import { useOperationTaskStore } from '@stores/operationTaskStore';
 import useModalHandlers from '@handlers/useModalHandlers';
 import SearchForm from '../forms/search/searchForm';
 
@@ -26,7 +25,6 @@ import angry_img from '/images/pepe/angry.svg'
 
 export default function RegistryContent(){
   const { setHappy } = useErrorStore();
-  const { notifyTaskStarted } = useOperationTaskStore();
   const { isLoaderActive, runAsync } = useAsyncHandler();
 
   const { activeModal, setActiveModal } = useModalStore();
@@ -50,7 +48,6 @@ export default function RegistryContent(){
           }
         })
         if (result.data){
-          notifyTaskStarted()
           setHappy("Git Repo update request send")
         }
       }

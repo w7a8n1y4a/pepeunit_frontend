@@ -13,7 +13,6 @@ import { useModalStore, useNodeStore } from '@stores/baseStore';
 import { useUserStore } from '@stores/userStore';
 import { useErrorStore } from '@stores/errorStore';
 import { FEDERATION_ENABLE_FLAG, isFeatureEnabled, useBackendInfoStore } from '@stores/backendInfoStore';
-import { useOperationTaskStore } from '@stores/operationTaskStore';
 import useModalHandlers from '@handlers/useModalHandlers';
 
 
@@ -26,7 +25,6 @@ export default function DomainContent(){
   const { openModal } = useModalHandlers();
   const { user } = useUserStore();
   const { backendInfo, loading: backendInfoLoading } = useBackendInfoStore();
-  const { notifyTaskStarted } = useOperationTaskStore();
   const metrics = backendInfo?.metrics;
   const isFederationEnabled = isFeatureEnabled(backendInfo, FEDERATION_ENABLE_FLAG);
 
@@ -39,7 +37,6 @@ export default function DomainContent(){
     runAsync(async () => {
       const result = await mutation()
       if (result.data){
-        notifyTaskStarted()
         setHappy(message)
       }
     })

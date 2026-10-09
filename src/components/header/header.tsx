@@ -24,10 +24,8 @@ import { useErrorStore } from '@stores/errorStore';
 import micro from '/images/micro.svg'
 import grafana from '/images/grafana.svg'
 import instances_icon from '/images/instances.svg'
-import tasks_icon from '/images/tasks.svg'
 import notifications_icon from '/images/notifications.svg'
 import SearchMenu from '../searchMenu/searchMenu';
-import { useOperationTaskStore } from '@stores/operationTaskStore';
 import { useNotificationStore } from '@stores/notificationStore';
 
 export default function Header(){
@@ -40,7 +38,6 @@ export default function Header(){
     const { setCurrentPickRegistryData, currentPickRegistryData } = usePickRegistryStore();
     const { user, clearUser } = useUserStore();
     const { backendInfo } = useBackendInfoStore();
-    const { runningCount } = useOperationTaskStore();
     const { unreadCount } = useNotificationStore();
     const [, forceUpdate] = useReducer(x => x + 1, 0);
 
@@ -167,14 +164,14 @@ export default function Header(){
                 )}
                 {login ? (
                     <>
-                        <button className="signin_button header_badge_button" onClick={() => openModal('operationTasksList')}>
-                            <img src={tasks_icon} width="32" height="32" alt="Operation Tasks" />
-                            {runningCount > 0 && (
-                                <span className="header_notification_badge">
-                                    {runningCount > 99 ? '99+' : runningCount}
-                                </span>
-                            )}
+                        <button className="signin_button" onClick={() => pickRepoCreate()}>
+                            <img src={micro} width="32" height="32" alt="AddRepoImg" />
                         </button>
+                        {isGrafanaEnabled && (
+                            <button className="signin_button" onClick={() => window.open((import.meta.env.VITE_SELF_URI || window.env.VITE_SELF_URI) + 'grafana/login/generic_oauth')}>
+                                <img src={grafana} width="32" height="32" alt="GrafanaOpenImg" />
+                            </button>
+                        )}
                         {isNotificationsEnabled && (
                             <button className="signin_button header_badge_button" onClick={() => openModal('notificationsList')}>
                                 <img src={notifications_icon} width="32" height="32" alt="Notifications" />
@@ -183,14 +180,6 @@ export default function Header(){
                                         {unreadCount > 99 ? '99+' : unreadCount}
                                     </span>
                                 )}
-                            </button>
-                        )}
-                        <button className="signin_button" onClick={() => pickRepoCreate()}>
-                            <img src={micro} width="32" height="32" alt="AddRepoImg" />
-                        </button>
-                        {isGrafanaEnabled && (
-                            <button className="signin_button" onClick={() => window.open((import.meta.env.VITE_SELF_URI || window.env.VITE_SELF_URI) + 'grafana/login/generic_oauth')}>
-                                <img src={grafana} width="32" height="32" alt="GrafanaOpenImg" />
                             </button>
                         )}
                         <button className="user_menu_button" onClick={() => {
