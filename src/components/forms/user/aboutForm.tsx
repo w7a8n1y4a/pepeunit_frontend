@@ -6,7 +6,7 @@ import showClipboardNotification from '@utils/showClipboardNotification'
 import { GRAFANA_INTEGRATION_ENABLE_FLAG, TELEGRAM_BOT_ENABLE_FLAG, getCurrentInstanceUri, isFeatureEnabled, useBackendInfoStore } from '@stores/backendInfoStore';
 import '../form.css'
 
-const FRONTEND_VERSION = '1.3.0'
+const FRONTEND_VERSION = '1.4.0'
 
 export default function AboutForm() {
     const { backendInfo, loading, error, fetchBackendInfo } = useBackendInfoStore();
