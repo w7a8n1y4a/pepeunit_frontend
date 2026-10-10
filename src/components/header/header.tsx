@@ -232,7 +232,7 @@ export default function Header(){
                                 <>
                                     {isTelegramVerificationEnabled && (
                                         <button className="button_telegram" onClick={() => openModal('verification')}>
-                                            Telegram Verification
+                                            Link Telegram
                                         </button>
                                     )}
                                     {isNotificationsEnabled && (
@@ -298,7 +298,7 @@ export default function Header(){
                     </div>
                 </BaseModal>
                 <BaseModal
-                    modalName='Verification'
+                    modalName='Telegram'
                     subName={user && !currentNodeData ? user.login : ( currentNodeData ? currentNodeData.login : '')}
                     open={activeModal === 'verification'}
                     openModalType='UserMenu'

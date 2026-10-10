@@ -1265,9 +1265,8 @@ export enum UserRole {
 }
 
 export enum UserStatus {
+  Active = "ACTIVE",
   Blocked = "BLOCKED",
-  Unverified = "UNVERIFIED",
-  Verified = "VERIFIED",
 }
 
 export type UserType = {

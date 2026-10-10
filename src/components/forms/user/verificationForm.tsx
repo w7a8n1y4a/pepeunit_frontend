@@ -26,7 +26,7 @@ export default function VerificationForm() {
                 isLoaderActive && (<Spinner/>)
             }
             <p>
-                1. Generate a unique Telegram verification link
+                1. Generate a link to connect Telegram
             </p>
             <div className='code_view'>
                 <a style={{color: "#0077ff"}} href={verificationCode} target="_blank">
